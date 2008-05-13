@@ -93,7 +93,7 @@ package reprise.media
 		
 		protected override function doPlay():void 
 		{
-			MovieClip(m_loader.content).gotoAndPlay(m_recentPosition);
+			MovieClip(m_loader.content).gotoAndPlay(timeToFrame(position()));
 		}
 		
 		protected override function doSeek(offset:Number):void 
