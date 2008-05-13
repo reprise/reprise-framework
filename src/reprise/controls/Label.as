@@ -190,23 +190,20 @@ package reprise.controls
 			m_elementDefaultStyles.setStyle('multiline', 'true');
 		}
 		
-		protected override function calculateStyles() : void
+		protected override function applyStyles() : void
 		{
-			super.calculateStyles();
-			if (m_stylesInvalidated)
+			super.applyStyles();
+			m_selectable = m_currentStyles.selectable;
+			var fmt : TextFormat = new TextFormat();
+			if (m_currentStyles.tabStops)
 			{
-				m_selectable = m_currentStyles.selectable;
-				var fmt : TextFormat = new TextFormat();
-				if (m_currentStyles.tabStops)
-				{
-					var tabStops : Array = 
-						m_currentStyles.tabStops.split(", ").join(",").split(",");
-					fmt.tabStops = tabStops;
-				}
-				else
-				{
-					fmt.tabStops = null;
-				}
+				var tabStops : Array = 
+					m_currentStyles.tabStops.split(", ").join(",").split(",");
+				fmt.tabStops = tabStops;
+			}
+			else
+			{
+				fmt.tabStops = null;
 			}
 		}
 		

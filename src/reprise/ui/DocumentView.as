@@ -238,9 +238,9 @@ package reprise.ui
 			super.validateElement(forceValidation, validateStyles);
 			stageDimensionsChanged = false;
 		}
-		protected override function calculateStyles() : void
+		protected override function applyStyles() : void
 		{
-			super.calculateStyles();
+			super.applyStyles();
 			stage.frameRate = m_currentStyles.frameRate;
 		}
 		protected override function resolveRelativeStyles(styles:CSSDeclaration) : void

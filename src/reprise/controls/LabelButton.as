@@ -27,6 +27,8 @@ package reprise.controls
 		***************************************************************************/
 		protected var m_labelDisplay : Label;
 		protected var m_label : String = '';
+		
+		protected var m_lastStyles : Object;
 	
 		
 		/***************************************************************************
@@ -88,10 +90,10 @@ package reprise.controls
 			return super.calculateContentWidth();
 		}
 		
-		protected override function calculateStyles() : void
+		protected override function applyStyles() : void
 		{
-			var oldStyles : Object = m_currentStyles || {};
-			super.calculateStyles();
+			super.applyStyles();
+			var oldStyles : Object = m_lastStyles || {};
 			if (m_currentStyles.selectable != oldStyles.selectable)
 			{
 				m_labelDisplay.setStyle('selectable', m_currentStyles.selectable);
@@ -100,6 +102,7 @@ package reprise.controls
 			{
 				m_labelDisplay.setStyle('cursor', m_currentStyles.cursor);
 			}
+			m_lastStyles = m_currentStyles;
 		}
 	}
 }

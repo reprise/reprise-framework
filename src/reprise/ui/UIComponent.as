@@ -917,11 +917,16 @@ package reprise.ui
 			var oldSpecifiedDimensions : Point = 
 				new Point(m_currentStyles.width, m_currentStyles.height);
 			
-			if (m_stylesInvalidated || m_activeTransitions)
+			if (m_activeTransitions)
+			{
+				m_stylesInvalidated = true;
+			}
+			if (m_stylesInvalidated)
 			{
 				calculateStyles();
 				if (m_stylesInvalidated)
 				{
+					applyStyles();
 					m_specifiedDimensionsChanged = !oldSpecifiedDimensions.equals(
 						new Point(m_currentStyles.width, m_currentStyles.height));
 					if (m_specifiedDimensionsChanged)
@@ -1193,9 +1198,12 @@ package reprise.ui
 			resolvePositioningProperties(styles);
 			resolveContainingBlock();
 			resolveRelativeStyles(styles);
+		}
 			
-			
+		protected function applyStyles() : void
+		{	
 			var autoFlag:String = CSSProperty.AUTO_FLAG;
+			var styles : CSSDeclaration = m_complexStyles;
 			
 			var prop:CSSProperty;
 			prop = styles.getStyle('left');
@@ -1308,8 +1316,6 @@ package reprise.ui
 			{
 				m_tabIndex = m_currentStyles.tabIndex;
 			}
-	//		trace("f calculateStyles of " + m_elementType + "." + m_cssClasses + 
-	//			" finished. Took "+(getTimer() - t2));
 				
 			m_tooltipRenderer = m_currentStyles.tooltipRenderer;
 			m_tooltipDelay = m_currentStyles.tooltipDelay;
