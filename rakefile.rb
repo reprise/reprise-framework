@@ -41,4 +41,6 @@ asdoc model.doc_dir do |t|
 # Uncomment to use the Flex 3 SDK
   t.gem_name                  = 'sprout-flex3sdk-tool'
   t.doc_sources               << model.src_dir
+  t.window_title              = '"Reprise API Documentation"'
+  t.main_title                = '"Reprise API Documentation"'
 end
