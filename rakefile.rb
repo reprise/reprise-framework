@@ -37,7 +37,8 @@ end
 # Build documentation for your application
 
 desc "Create documentation"
-asdoc model.doc_dir => model.test_output do |t|
+asdoc model.doc_dir do |t|
 # Uncomment to use the Flex 3 SDK
   t.gem_name                  = 'sprout-flex3sdk-tool'
+  t.doc_sources               << model.src_dir
 end

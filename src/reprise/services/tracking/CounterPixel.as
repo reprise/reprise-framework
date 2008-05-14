@@ -37,6 +37,7 @@ package reprise.services.tracking
 	import reprise.core.ApplicationRegistry;
 	
 	import flash.system.System;
+	import flash.system.Security;
 	public class CounterPixel implements ITrackingService
 	{
 		/***************************************************************************
@@ -73,6 +74,11 @@ package reprise.services.tracking
 			return g_instance;
 		}
 		
+		public function CounterPixel()
+		{
+			init();
+		}
+		
 		public function track (trackingId : String) : void
 		{
 			callPixel(trackingId);
@@ -101,14 +107,15 @@ package reprise.services.tracking
 			
 			var pixel1:String = "http://" + getHost(0) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
 			var pixel2:String = "http://" + getHost(1) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
-	
-			if(_root._url.substr(0,7).toLowerCase() != "file://")
+
+			//@FIXME
+			/*if(_root._url.substr(0,7).toLowerCase() != "file://")
 			{
 				var loadVars1:LoadVars = new LoadVars();
 				loadVars1.sendAndLoad(pixel1, loadVars1);
 				var loadVars2:LoadVars = new LoadVars();
 				loadVars2.sendAndLoad(pixel2, loadVars2);
-			}
+			}*/
 			
 			if(m_debug)
 			{
@@ -181,14 +188,10 @@ package reprise.services.tracking
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function CounterPixel()
-		{
-			init();
-		}
 	    protected function init() : void
 	    {
-			System.security.allowDomain(getHost(0));
-			System.security.allowDomain(getHost(1));
+			Security.allowDomain(getHost(0));
+			Security.allowDomain(getHost(1));
 			
 			var parameters : Object = ApplicationRegistry.instance().
 				applicationForURL().stage.loaderInfo.parameters;
@@ -221,8 +224,9 @@ package reprise.services.tracking
 				var begin:Number = tmp.lastIndexOf( '<' );
 				var end:Number = tmp.lastIndexOf( '>' );
 				var varname:String = tmp.substr( begin + 1, end - begin - 1 );
-				var x:String = _root[varname];
-				if( x == undefined )
+				//@FIXME
+				var x:String;// = _root[varname];
+				if( x == null )
 				{
 					x	= "";
 				}
@@ -254,8 +258,8 @@ package reprise.services.tracking
 		}
 		protected function getHost(pixelNumber: Number) : String
 		{
-			//TODO: adapt this
-			var host:String = _root.hostname.toLowerCase();
+			//@FIXME
+			var host:String;// = _root.hostname.toLowerCase();
 			if(!host)
 			{
 				host = 'http://www.nivea.com';

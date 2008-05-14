@@ -13,14 +13,13 @@ package reprise.controls
 {
 	import reprise.controls.Label;
 	import reprise.controls.LabelButton;
-	import reprise.events.MouseEvent;
-	import reprise.controls.IDataInput;
 	import reprise.data.validators.IDataValidator;
+	import flash.events.MouseEvent;
 	
 	/**
 	 * @author marco
 	 */
-	class Checkbox extends LabelButton implements IDataInput
+	public class Checkbox extends LabelButton
 	{
 		/***************************************************************************
 		*							public properties							   *
@@ -75,23 +74,24 @@ package reprise.controls
 		{
 			return m_required;
 		}
-	
-		public function setValidator(validator : IDataValidator) : void
+
+		//@FIXME
+		/*public function setValidator(validator : IDataValidator) : void
 		{
 			m_validator = validator;
-		}
+		}*/
 		
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function initialize () : void
+		protected override function initialize () : void
 		{
 			super.initialize();
 			isToggleButton = true;
 			m_labelDisplay.html = true;
 		}
 		
-		protected function buttonDisplay_click(event:MouseEvent) : void
+		protected override function buttonDisplay_click(event:MouseEvent) : void
 		{
 			super.buttonDisplay_click(event);
 			if(selected)
@@ -103,10 +103,11 @@ package reprise.controls
 				selected = true;	
 			}	
 		}
-		
-		public function validator() : IDataValidator
+
+		//@FIXME
+		/*public function validator() : IDataValidator
 		{
 			return m_validator;	
-		}
+		}*/
 	}
 }

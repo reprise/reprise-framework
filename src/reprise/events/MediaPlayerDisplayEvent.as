@@ -11,7 +11,6 @@
 
 package reprise.events
 { 
-	import reprise.media.IMediaPlayer;
 	import flash.events.Event;
 	
 	/**

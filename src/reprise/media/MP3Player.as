@@ -45,7 +45,7 @@ package reprise.media
 		public override function setResource(resource:IResource):void
 		{
 			super.setResource(resource);
-			m_sound = Sound(resource.content());
+			m_sound = Sound(MP3Resource(resource.content()));
 			m_sound.addEventListener(Event.ID3, sound_id3);
 			m_soundTransform = new SoundTransform(1.0, 0.0);
 		}

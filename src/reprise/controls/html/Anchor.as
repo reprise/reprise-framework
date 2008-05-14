@@ -9,10 +9,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.controls.html { 
+package reprise.controls.html 
+{ 
 	import reprise.controls.AbstractButton;
 	import reprise.utils.GfxUtil;
 	import reprise.events.HTMLEvent;
+	import flash.events.MouseEvent;
 	
 	
 	public class Anchor extends AbstractButton
@@ -24,12 +26,6 @@ package reprise.controls.html {
 		
 		
 		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
-		protected var m_elementType : String = className;
-		
-		
-		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
 		public function Anchor() {}	
@@ -38,13 +34,13 @@ package reprise.controls.html {
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function createButtonDisplay() : void {}
+		protected override function createButtonDisplay() : void {}
 	
 		
-		protected function buttonDisplay_click() : void
+		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
-			var event : HTMLEvent = new HTMLEvent(HTMLEvent.ANCHOR_CLICK, this);
-			dispatchEvent(event);
+			var htmlEvent : HTMLEvent = new HTMLEvent(HTMLEvent.ANCHOR_CLICK);
+			dispatchEvent(htmlEvent);
 		}
 	}
 }

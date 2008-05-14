@@ -16,7 +16,6 @@ package reprise.media
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
 	import flash.events.TimerEvent;
-	import reprise.commands.TimeCommandExecutor;
 	import reprise.events.CommandEvent;
 	import reprise.events.StateChangeEvent;
 	import reprise.events.MediaEvent;

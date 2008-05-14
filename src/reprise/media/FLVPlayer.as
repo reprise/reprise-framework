@@ -51,7 +51,7 @@ package reprise.media
 		public override function setResource(resource:IResource):void
 		{
 			super.setResource(resource);
-			m_stream = NetStream(resource.content());
+			m_stream = NetStream(FLVResource(resource).content());
 			m_stream.client = this;
 			m_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
 			m_soundTransform = m_stream.soundTransform = new SoundTransform(1.0, 0.0);

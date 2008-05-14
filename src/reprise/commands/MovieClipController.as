@@ -12,12 +12,12 @@
 package reprise.commands
 {
 	import reprise.data.Range;
-	import reprise.events.FrameEventBroadcaster;
+	import flash.display.MovieClip;
+	import flash.events.Event;
 	
 	
 	public class MovieClipController 
 		extends AbstractAsynchronousCommand
-		implements IFrameEventListener
 	{
 		
 		/***************************************************************************
@@ -43,10 +43,10 @@ package reprise.commands
 		public function MovieClipController() {}
 		
 		
-		public function execute() : void
+		public override function execute(...args) : void
 		{
 			super.execute();
-			FrameEventBroadcaster.instance().addFrameListener(this);
+			m_target.addEventListener(Event.ENTER_FRAME, enterFrame);
 		}
 		
 		public function setTarget(mc:MovieClip) : void
@@ -54,7 +54,7 @@ package reprise.commands
 			m_target = mc;
 			if (m_frameRange == null)
 			{
-				m_frameRange = new Range(1, mc._totalframes);
+				m_frameRange = new Range(1, mc.totalFrames);
 			}
 		}
 		
@@ -65,12 +65,12 @@ package reprise.commands
 	
 		public function currentFrame() : Number
 		{
-			return m_target._currentframe;
+			return m_target.currentFrame;
 		}
 		
 		public function totalFrames() : Number
 		{
-			return m_target._totalframes;
+			return m_target.totalFrames;
 		}
 		
 		public function gotoAndStop(frame:Number) : void
@@ -89,9 +89,9 @@ package reprise.commands
 			execute();
 		}
 		
-		public function cancel() : void
+		public override function cancel() : void
 		{
-			FrameEventBroadcaster.instance().removeFrameListener(this);
+			m_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			super.cancel();
 		}
 		
@@ -120,9 +120,9 @@ package reprise.commands
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function notifyComplete(success:Boolean) : void
+		protected override function notifyComplete(success:Boolean) : void
 		{
-			FrameEventBroadcaster.instance().removeFrameListener(this);
+			m_target.removeFrameListener(Event.ENTER_FRAME, enterFrame);
 			super.notifyComplete(success);
 		}
 		
