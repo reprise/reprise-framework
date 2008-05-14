@@ -1345,8 +1345,15 @@ package reprise.ui
 				m_visible = visible = true;
 			}
 			
-			rotation = m_currentStyles.rotation || 0;
-			opacity = m_currentStyles.opacity || 1;
+			super.rotation = m_currentStyles.rotation || 0;
+			if (m_currentStyles.opacity != null)
+			{
+				super.alpha = m_currentStyles.opacity;
+			}
+			else
+			{
+				super.alpha = 1;
+			}
 			
 			if (!m_currentStyles.outerWidth)
 			{
