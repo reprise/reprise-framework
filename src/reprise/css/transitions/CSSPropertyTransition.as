@@ -115,8 +115,6 @@ package reprise.css.transitions
 				currentValue = endValue;
 				return;
 			}
-			var end : Number = endValue.valueOf() as Number;
-			var start : Number = startValue.valueOf() as Number;
 			currentRatio = easing(currentTime, 0, 1, durationValue);
 			currentValue.setSpecifiedValue(
 				m_propertyTransition.setCurrentValueToRatio(currentRatio));
