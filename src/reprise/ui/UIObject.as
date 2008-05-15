@@ -684,9 +684,6 @@ package reprise.ui {
 				return name;
 			}
 			return m_parentElement.toString() + '.' + name;
-			//TODO: check if serializing the full path is needed for inspection
-			refreshSelectorPath();
-			return m_selectorPath.split('@').join('');
 		}
 		
 		
