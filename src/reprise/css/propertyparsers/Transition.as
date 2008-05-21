@@ -21,9 +21,11 @@ package reprise.css.propertyparsers
 	import com.robertpenner.easing.Quint;
 	import com.robertpenner.easing.Sine;
 	
+	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
+	import reprise.css.CSSPropertyCache;
 	import reprise.css.CSSPropertyParser; 
 
 	public class Transition extends CSSPropertyParser
@@ -70,17 +72,18 @@ package reprise.css.propertyparsers
 			var durations : Array = [];
 			var easings : Array = [];
 			var delays : Array = [];
+			var defaultValues : Array = [];
 			
 			for each (var part : String in val.split(','))
 			{
 				var partResult : Object = parseRepriseTransitionPart(part, file);
 				if (partResult)
 				{
-					properties.push(
-						CSSParsingHelper.camelCaseCSSValueName(partResult.property));
-					durations.push(partResult.duration || null);
-					easings.push(partResult.easing || null);
-					delays.push(partResult.delay || null);
+					properties.push(partResult.property);
+					durations.push(partResult.duration);
+					easings.push(partResult.easing);
+					delays.push(partResult.delay);
+					defaultValues[partResult.property] = partResult.defaultValue;
 				}
 			}
 			
@@ -104,6 +107,11 @@ package reprise.css.propertyparsers
 			delayProp.setSpecifiedValue(delays);
 			result.addPropertyForKey(delayProp, 'RepriseTransitionDelay');
 			
+			var defaultValueProp : CSSProperty = new CSSProperty();
+			defaultValueProp.setImportant(important);
+			defaultValueProp.setSpecifiedValue(defaultValues);
+			result.addPropertyForKey(defaultValueProp, 'RepriseTransitionDefaultValue');
+			
 			return result;
 		}
 		public static function parseRepriseTransitionPart(
@@ -121,7 +129,7 @@ package reprise.css.propertyparsers
 				return null;
 			}
 			//is property
-			result.property = currentPart;
+			result.property = CSSParsingHelper.camelCaseCSSValueName(currentPart);
 			if (!parts.length)
 			{
 				return result;
@@ -149,12 +157,6 @@ package reprise.css.propertyparsers
 			{
 				//delay is the last part
 				result.delay = strToDurationProperty(currentPart, file);
-				if (parts.length)
-				{
-					//there shouldn't be any parts left
-					return null;
-				}
-				return result;
 			}
 			if (!parts.length)
 			{
@@ -167,6 +169,14 @@ package reprise.css.propertyparsers
 				return null;
 			}
 			result.delay = strToDurationProperty(currentPart, file);
+			if (!parts.length)
+			{
+				return result;
+			}
+			currentPart = parts.shift();
+			//the last part has to be a default value
+			result.defaultValue = CSSPropertyCache.propertyForKeyValue(
+				result.property, currentPart, file);
 			
 			return result;
 		}

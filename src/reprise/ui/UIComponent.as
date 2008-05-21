@@ -1470,18 +1470,19 @@ package reprise.ui
 			var transitionPropName : String;
 			var transition : CSSPropertyTransition;
 			var startTime : int = getTimer();
-			if (m_currentStyles.RepriseTransitionProperty)
+			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
 			{
 				var transitionProperties : Array = 
-					m_currentStyles.RepriseTransitionProperty;
+					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
 				var transitionDurations : Array = 
-					m_currentStyles.RepriseTransitionDuration;
+					newStyles.getStyle('RepriseTransitionDuration').specifiedValue();
 				var transitionDelays : Array = 
-					m_currentStyles.RepriseTransitionDelay;
-				var transitionEasings : Array = 
-					m_currentStyles.RepriseTransitionTimingFunction;
+					newStyles.getStyle('RepriseTransitionDelay').specifiedValue();
+				var transitionEasings : Array = newStyles.getStyle(
+					'RepriseTransitionTimingFunction').specifiedValue();
+				var defaultValues : Array = newStyles.getStyle(
+					'RepriseTransitionDefaultValue').specifiedValue();
 				
-				//TODO: add support for modifying running transitions
 				//remove any transitions that aren't supposed to be active anymore
 				if (m_activeTransitions)
 				{
@@ -1506,6 +1507,27 @@ package reprise.ui
 						oldStyles.getStyle(transitionPropName)) as CSSProperty;
 					var targetValue : CSSProperty = 
 						newStyles.getStyle(transitionPropName);
+					
+					//check for default value if we have a target value but no old value
+					if (targetValue && !oldValue)
+					{
+						oldValue = defaultValues[transitionPropName];
+					}
+					
+					//exception for intrinsic dimensions
+//					if (!targetValue && (transitionPropName == 'intrinsicHeight' || 
+//						transitionPropName == 'intrinsicWidth'))
+//					{
+//						//TODO: cache these properties
+//						trace("exception for " + transitionPropName);
+//						if (!m_firstDraw)
+//						{
+//							oldValue = new CSSProperty();
+//							oldValue.setSpecifiedValue(0);
+//						}
+//						targetValue = new CSSProperty();
+//						targetValue.setSpecifiedValue(999);
+//					}
 					
 					//ignore properties that don't have previous values or target values
 					//TODO: check if we can implement default values for new elements
