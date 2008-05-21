@@ -1,4 +1,7 @@
 require 'sprout'
+require 'doc/assets/ruby/help_builder'
+require 'doc/assets/ruby/help_document'
+
 # Optionally load gems from a server other than rubyforge:
 # set_sources 'http://gems.projectsprouts.org'
 sprout 'as3'
@@ -12,6 +15,7 @@ Sprout::ProjectModel.setup do |model|
 end
 
 model = Sprout::ProjectModel.instance
+asdocdir = "#{model.doc_dir}/bin/asdoc"
 
 library :asunit3
 
@@ -36,10 +40,16 @@ end
 ############################################
 # Build documentation for your application
 
+task :custom_docs do |t|
+  builder = HelpBuilder.new("#{model.doc_dir}/src", 
+    "#{model.doc_dir}/assets/templates")
+  builder.render_to_path("#{model.doc_dir}/bin")
+end
+
 desc "Create documentation"
-asdoc model.doc_dir do |t|
-# Uncomment to use the Flex 3 SDK
+asdoc model.doc_dir => [:custom_docs] do |t|
   t.gem_name                  = 'sprout-flex3sdk-tool'
+  t.output                    = asdocdir
   t.doc_sources               << model.src_dir
   t.window_title              = '"Reprise API Documentation"'
   t.main_title                = '"Reprise API Documentation"'

@@ -1,0 +1,111 @@
+body
+{
+	font: 11px 'Lucida Grande';
+	margin: 0;
+}
+
+a
+{
+	color: #082a38;
+	text-decoration: none;
+}
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+a img
+{
+	border: 0;
+}
+
+#header
+{
+	background: url(../_img/curve.gif) no-repeat 0 100%;
+	position: relative;
+	margin-left: 240px;
+	margin-bottom: 40px;
+	height: 175px;
+}
+
+#mainNavigation
+{
+	right: 57px;
+	top: 15px;
+	position: absolute;
+	list-style: none;
+}
+
+#mainNavigation li
+{
+	float: left;
+	margin-right: 7px;
+}
+
+#logo
+{
+	left: 74px;
+	top: 43px;
+	position: absolute;
+}
+
+div#toc
+{
+	position: fixed;
+	left: 20px;
+	width: 200px;
+}
+
+#toc ul ul
+{
+	display: none;
+}
+
+#toc iframe
+{
+	width: 200px;
+	height: 100%;
+	border: 0;
+}
+
+#toc ul
+{
+	list-style: none;
+	padding: 0;
+}
+
+#toc ul ul
+{
+	border: 1px solid #efefef;
+	background-color: #fcfcfc;
+	padding: 10px;
+	margin: 2px 0 8px 0;
+	line-height: 14px;
+}
+
+#toc a.selected
+{
+	font-weight: bold;
+}
+
+#content
+{
+	margin-left: 240px;
+	margin-right: 50px;
+}
+
+hr
+{
+	height: 1px;
+	border: 0;
+	border-top: 1px dotted #8c8b8d;
+	margin: 25px 0 20px 0;
+}
+
+pre
+{
+	border: 1px solid #dff0f7;
+	background-color: #f2f9fc;
+	padding: 15px;
+}

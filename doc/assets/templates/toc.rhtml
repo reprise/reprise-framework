@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>toc</title>
+	<style type="text/css">@import url(<%= document_root %>/_css/styles.css);</style>
+	<script src="<%= document_root %>/_js/prototype.js" type="text/javascript" charset="utf-8"></script>
+	<base id="base_target" target="_top">
+	<script type="text/javascript">
+		Event.observe(window, 'load', updateActiveContent);
+	
+		function updateActiveContent()
+		{
+			var content_id = parent.content_id;
+			$(content_id).setStyle({'display': 'block'});
+		}
+	</script>
+</head>
+<body id="toc">
+	<ul>
+		<% toc.subentries.each do |entry| %>
+		<li>
+			<a href="<%= entry.filepath %>"><%= entry.title %></a>
+			<ul id="<%= entry.title %>">
+				<% entry.subentries.each do |subentry| %>
+				<li><a href="<%= entry.filepath %>#<%= subentry.html_name %>"><%= subentry.title %></a></li>
+				<% end %>
+			</ul>
+		</li>
+		<% end %>
+	</ul>
+</body>
+</html>
