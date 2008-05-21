@@ -16,7 +16,7 @@ class HelpBuilder
     target_path = Pathname.new(path)
     FileList["#{@docs_path}/**/*"].each do |item|
       item_path = Pathname.new(item)
-      next if item_path.extname.downcase == '.md' || item_path.basename.to_s[0] == '.'
+      next if item_path.extname.downcase == '.md' || item_path.basename.to_s[0,1] == '.'
       item_target_path = target_path + item_path.relative_path_from(@docs_path)
       next if item_target_path.exist?
       if (item_path.directory?)
@@ -45,7 +45,7 @@ class HelpBuilder
     docs = []
     relative_document_root = document_root.realpath.relative_path_from(source_path.realpath).to_s
     source_path.each_entry do |item|
-      next if item.to_s == '.' || item.to_s == '..'
+      next if item.to_s[0,1] == '.'
       item_target_path = target_path.realpath + item
       item = source_path.realpath + item
       if (item.directory?)
