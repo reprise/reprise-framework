@@ -483,7 +483,7 @@ package reprise.ui
 		public function hasClass(className : String) : Boolean
 		{
 			return StringUtil.delimitedStringContainsSubstring(
-				m_cssClasses, name, ' ');
+				m_cssClasses, className, ' ');
 		}
 		
 		public function setStyle(name : String, value : String = null) : void
