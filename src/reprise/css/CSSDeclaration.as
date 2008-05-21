@@ -132,6 +132,23 @@ package reprise.css
 			}
 		}
 		
+		public static function parserForProperty(key : String) : Function
+		{
+			// get the name of the associated class
+			var parser : Function = CSSDeclaration.m_propertyToParserTable[key];
+			if (parser == null)
+			{
+				parser = DefaultParser.parseAnything;
+				if (!m_thrownErrors[key])
+				{
+					trace('n No parser registered for css property "' + key + 
+						'". Parsing property via DefaultParser (probably as string).');
+					m_thrownErrors[key] = true;
+				}
+			}		
+			return parser;
+		}
+		
 		// Alias for setPropertyForKey
 		public function setStyle(key : String, value : String = null) : void
 		{
@@ -358,13 +375,7 @@ package reprise.css
 		public function setValueForKeyDefinedInFile(
 			val:String, key:String, file:String = '') : void
 		{
-			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val + file);
-			if (!result)
-			{
-				var parser : Function = parserForProperty(key);
-				result = parser(val, file);
-				CSSPropertyCache.setPropertyForKeyValue(key, val + file, result);
-			}
+			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file);
 			
 			if (result is CSSProperty)
 			{
@@ -391,23 +402,6 @@ package reprise.css
 			m_properties[key] = result;
 			
 			trace(msg);
-		}	
-		
-		protected function parserForProperty(key : String) : Function
-		{
-			// get the name of the associated class
-			var parser : Function = CSSDeclaration.m_propertyToParserTable[key];
-			if (parser == null)
-			{
-				parser = DefaultParser.parseAnything;
-				if (!m_thrownErrors[key])
-				{
-					trace('n No parser registered for css property "' + key + 
-						'". Parsing property via DefaultParser (probably as string).');
-					m_thrownErrors[key] = true;
-				}
-			}		
-			return parser;
 		}
 		
 		protected static function registerDefaultProperties() : Boolean

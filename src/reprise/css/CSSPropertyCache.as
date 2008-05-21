@@ -30,17 +30,19 @@ package reprise.css {
 		*							public methods								   *
 		***************************************************************************/
 		public static function propertyForKeyValue(
-			key:String, value:String) : Object
+			key:String, value:String, file : String) : Object
 		{
-			var prop:Object = g_propertyCache[key+"="+value];
-	//		if (!prop)
-	//		{
-	//			trace("no prop found for "+key+"="+value);
-	//		}
+			var prop:Object = g_propertyCache[key+"="+value+file];
+			if (!prop)
+			{
+				var parser : Function = CSSDeclaration.parserForProperty(key);
+				prop = parser(value, file);
+				setPropertyForKeyValue(key, value, file, prop);
+			}
 			return g_propertyCache[key+"="+value];
 		}
 		public static function setPropertyForKeyValue(
-			key:String, value:String, property:Object) : void
+			key:String, value:String, file : String, property:Object) : void
 		{
 			g_propertyCache[key+"="+value] = property;
 		}
