@@ -100,7 +100,7 @@ package reprise.css.transitions
 					timeOffset += 5;
 					ratio = easing(timeOffset, 0, 1, durationValue);
 				}
-				this.startTime -= timeOffset + delay.specifiedValue();
+				this.startTime -= timeOffset + (delay && delay.specifiedValue()) || 0;
 			}
 			else
 			{
@@ -131,7 +131,7 @@ package reprise.css.transitions
 		public function setValueForTimeInContext(time : int, context : Object) : void
 		{
 			var durationValue : int = duration.valueOf() as int;
-			var delayValue : int = delay.valueOf() as int;
+			var delayValue : int = (delay && delay.specifiedValue()) || 0;
 			var currentTime : int = time - startTime - delayValue;
 			if (currentTime < 0)
 			{
