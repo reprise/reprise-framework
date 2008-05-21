@@ -257,6 +257,11 @@ package reprise.css
 						prop.m_computedValue = compValue;
 					}
 				}
+				else
+				{
+					prop.m_specifiedValue = m_specifiedValue;
+					prop.m_computedValue = m_computedValue;
+				}
 			}
 			else
 			{
