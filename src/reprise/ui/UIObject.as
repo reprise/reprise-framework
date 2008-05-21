@@ -69,8 +69,11 @@ package reprise.ui {
 		***************************************************************************/
 		public function UIObject()
 		{
-			m_class = Class(getDefinitionByName(getQualifiedClassName(this)));
-			m_elementType = m_class.className;
+//			m_class = Class(getDefinitionByName(getQualifiedClassName(this)));
+//			m_elementType = m_class.className;
+			var name : String = getQualifiedClassName(this);
+			m_class = Class(getDefinitionByName(name));
+			m_elementType = m_class.className || name.substr(name.indexOf('::') + 2);
 		}
 		
 		/**
