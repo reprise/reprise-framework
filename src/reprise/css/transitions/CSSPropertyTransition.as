@@ -123,7 +123,7 @@ package reprise.css.transitions
 				else
 				{
 					//already moving, don't delay any further
-					this.startTime -= delay.specifiedValue();
+					this.startTime -= (delay && delay.specifiedValue()) || 0;
 				}
 			}
 		}
