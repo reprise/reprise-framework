@@ -152,6 +152,13 @@ package reprise.ui.renderers {
 			width : Number, pt1 : Point, pt2 : Point, pt3 : Point, pt4 : Point, 
 			side : Number) : void
 		{
+			var colorValue : int = 0;
+			var opacityValue : int = 1;
+			if (color)
+			{
+				colorValue = color.rgb();
+				opacityValue = color.opacity();
+			}
 			switch (style)
 			{
 				case Border.BORDER_STYLE_DOTTED :
@@ -162,8 +169,8 @@ package reprise.ui.renderers {
 					{
 						dashLength *= 3;
 					}
-					m_display.graphics.lineStyle(width, color && color.rgb() || 0, 
-						color && color.opacity() || 1, false, "normal", "none");
+					m_display.graphics.lineStyle(width, colorValue, opacityValue, 
+						false, "normal", "none");
 					
 					switch (side)
 					{
@@ -199,8 +206,7 @@ package reprise.ui.renderers {
 				case Border.BORDER_STYLE_SOLID :
 				{
 					m_display.graphics.lineStyle();
-					m_display.graphics.beginFill(color && color.rgb() || 0, 
-						color && color.opacity() || 1);
+					m_display.graphics.beginFill(colorValue, opacityValue);
 					m_display.graphics.moveTo(pt1.x, pt1.y);
 					m_display.graphics.lineTo(pt2.x, pt2.y);
 					m_display.graphics.lineTo(pt3.x, pt3.y);
