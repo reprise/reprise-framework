@@ -110,15 +110,16 @@ package reprise.css.transitions
 				{
 					//add new delay minus the delay already spent
 					var spentDelay : int = getTimer() - oldStartTime;
-					if (delay.specifiedValue() > spentDelay)
+					var delayValue : int = (delay && delay.specifiedValue()) || 0;
+					if (delayValue > spentDelay)
 					{
 						this.startTime -= spentDelay;
 					}
 					else
 					{
-						this.startTime -= delay.specifiedValue();
+						this.startTime -= delayValue;
 					}
-					this.startTime -=  spentDelay - delay.specifiedValue();
+					this.startTime -=  spentDelay - delayValue;
 				}
 				else
 				{
