@@ -11,6 +11,8 @@
 
 package reprise.css.transitions
 {
+	import flash.utils.getTimer;
+	
 	import reprise.css.CSSProperty;
 	
 	public class CSSPropertyTransition
@@ -24,7 +26,7 @@ package reprise.css.transitions
 		public var easing : Function;
 		
 		public var currentValue : CSSProperty;
-		public var currentRatio : Number;
+		public var currentRatio : Number = 0;
 		public var startTime : int;
 		
 		public var hasCompleted : Boolean;
@@ -77,6 +79,8 @@ package reprise.css.transitions
 			var oldStart : CSSProperty = this.startValue;
 			var oldEnd : CSSProperty = this.endValue;
 			var oldCurrent : CSSProperty = this.currentValue;
+			var oldDelay : CSSProperty = this.delay;
+			var oldStartTime : int = this.startTime;
 			
 			this.endValue = endValue;
 			this.duration = duration;
@@ -96,19 +100,43 @@ package reprise.css.transitions
 					timeOffset += 5;
 					ratio = easing(timeOffset, 0, 1, durationValue);
 				}
-				this.startTime -= timeOffset;
+				this.startTime -= timeOffset + delay.specifiedValue();
 			}
 			else
 			{
 				//let the transition start from the current value without adjusting time
 				this.startValue = oldCurrent;
+				if (currentRatio == 0)
+				{
+					//add new delay minus the delay already spent
+					var spentDelay : int = getTimer() - oldStartTime;
+					if (delay.specifiedValue() > spentDelay)
+					{
+						this.startTime -= spentDelay;
+					}
+					else
+					{
+						this.startTime -= delay.specifiedValue();
+					}
+					this.startTime -=  spentDelay - delay.specifiedValue();
+				}
+				else
+				{
+					//already moving, don't delay any further
+					this.startTime -= delay.specifiedValue();
+				}
 			}
 		}
 		
 		public function setValueForTimeInContext(time : int, context : Object) : void
 		{
 			var durationValue : int = duration.valueOf() as int;
-			var currentTime : int = time - startTime;
+			var delayValue : int = delay.valueOf() as int;
+			var currentTime : int = time - startTime - delayValue;
+			if (currentTime < 0)
+			{
+				return;
+			}
 			if (durationValue <= currentTime)
 			{
 				hasCompleted = true;
