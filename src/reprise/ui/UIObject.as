@@ -451,7 +451,7 @@ package reprise.ui {
 					break;
 				}
 			}
-			
+			m_rootElement.markChildAsValid(this);
 			validateElement(true);
 		}	
 		/**

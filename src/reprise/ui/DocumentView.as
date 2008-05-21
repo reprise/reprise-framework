@@ -206,6 +206,19 @@ package reprise.ui
 			stage.invalidate();
 		}
 		
+		public function markChildAsValid(child : UIObject) : void
+		{
+			var path : String = child.toString();
+			var i : int = m_invalidChildren.length;
+			while (i--)
+			{
+				if (m_invalidChildren[i].path.indexOf(path) == 0)
+				{
+					m_invalidChildren.splice(i, 1);
+				}
+			}
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
