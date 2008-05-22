@@ -8,14 +8,16 @@ include REXML
 
 class HelpDocument
   
+  attr_reader :toc
+  
   def initialize(source_file)
     @source_file = source_file
     @source_tree = Maruku.new(extract_metadata_from_string(IO.read(source_file))).
       to_html_document_tree
   end
 
-  def toc
-    toc = TOC.new(html_filename, @metadata['toc-title'] || @metadata['title'] || 'Untitled',
+  def build_toc
+    @toc = TOC.new(html_filename, @metadata['toc-title'] || @metadata['title'] || 'Untitled',
       @metadata['toc-sort-order'].to_i || 0)
     i = 0
     XPath.each(@source_tree, "//h2") do |element|
@@ -28,10 +30,10 @@ class HelpDocument
       toc.add_subentry(entry)
       i += 1
     end
-    toc
   end
   
   def render_to_file(template_path, target_path, document_root)
+    build_toc
     vars = OpenStruct.new('content' => @source_tree.to_s, 'document_root' => document_root)
     vars.title = @metadata['title'] || 'Untitled'
     vars.toc_title = @metadata['toc-title'] || 'Untitled'

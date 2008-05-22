@@ -55,6 +55,7 @@ div#toc
 	position: fixed;
 	left: 20px;
 	width: 200px;
+	height: 100%;
 }
 
 #toc ul ul

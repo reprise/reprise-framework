@@ -18,9 +18,8 @@ class HelpBuilder
       item_path = Pathname.new(item)
       next if item_path.extname.downcase == '.md' || item_path.basename.to_s[0,1] == '.'
       item_target_path = target_path + item_path.relative_path_from(@docs_path)
-      next if item_target_path.exist?
       if (item_path.directory?)
-        item_target_path.mkpath
+        item_target_path.mkpath unless item_target_path.exist?
       else
         File.copy(item_path, item_target_path)
       end
