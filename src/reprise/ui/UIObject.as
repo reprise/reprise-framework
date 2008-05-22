@@ -746,7 +746,7 @@ package reprise.ui {
 			}
 			draw();
 			
-			m_isValidating = false;
+			finishValidation();
 			
 			dispatchEvent(new DisplayEvent(DisplayEvent.VALIDATION_COMPLETE));
 		}
@@ -881,6 +881,18 @@ package reprise.ui {
 		 */
 		protected function draw() : void
 		{
+		}
+		
+		/**
+		 * Hook method that gets called after all validation has completed and 
+		 * the element has been drawn.
+		 * 
+		 * Override this method if you need to execute cleanup or reset invalidation 
+		 * markers after validation has completed.
+		 */
+		protected function finishValidation() : void
+		{
+			m_isValidating = false;
 		}
 	}
 }
