@@ -96,6 +96,11 @@ div#toc
 	margin-right: 50px;
 }
 
+#content h2, #content p, #content ul, #content dl
+{
+	margin-bottom: 20px;
+}
+
 hr
 {
 	height: 1px;
@@ -109,4 +114,10 @@ pre
 	border: 1px solid #dff0f7;
 	background-color: #f2f9fc;
 	padding: 15px;
+}
+
+dd
+{
+	margin-left: 10px;
+	margin-bottom: 5px;
 }
