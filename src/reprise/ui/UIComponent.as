@@ -898,11 +898,6 @@ package reprise.ui
 				m_stylesInvalidated = true;
 			}
 			super.validateElement(forceValidation);
-			
-			m_dimensionsChanged = false;
-			m_specifiedDimensionsChanged = false;
-			
-			m_stylesInvalidated = false;
 		}
 		/**
 		 * Hook method, executed before the UIObjects' children get validated
@@ -1061,6 +1056,15 @@ package reprise.ui
 				}
 			}
 			applyDepthSorting();
+		}
+		protected override function finishValidation() : void
+		{
+			super.finishValidation();
+			
+			m_dimensionsChanged = false;
+			m_specifiedDimensionsChanged = false;
+			
+			m_stylesInvalidated = false;
 		}
 		
 		protected function applyDepthSorting() : void
