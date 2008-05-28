@@ -46,6 +46,7 @@ package reprise.media
 		public static const STATUS_SHOULD_PLAY:uint = 1 << 5;
 		public static const STATUS_BUFFER_FULL:uint = 1 << 6;
 		public static const STATUS_DID_AUTOPLAY:uint = 1 << 7;
+		public static const STATUS_PAUSED_AT_END:uint = 1 << 8;
 		public static const BUFFERING_RELEVANT_STATUS:uint = 
 			STATUS_DURATION_KNOWN | STATUS_FILESIZE_KNOWN | STATUS_BANDWIDTH_KNOWN;
 		
@@ -168,6 +169,11 @@ package reprise.media
 		
 		public function play():void
 		{
+			if (m_status & STATUS_PAUSED_AT_END)
+			{
+				stop();
+			}
+			
 			load();
 			m_status |= STATUS_SHOULD_PLAY;
 			
@@ -205,6 +211,7 @@ package reprise.media
 			// again: what's ever happening right now, but we notice that the user wishes to 
 			// stop the mediafile
 			m_status &= ~STATUS_SHOULD_PLAY;
+			m_status &= ~STATUS_PAUSED_AT_END;
 			
 			if (m_state != STATE_PLAYING && m_state != STATE_PAUSED)
 			{
@@ -394,6 +401,7 @@ package reprise.media
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				return;
 			}
+			m_status |= STATUS_PAUSED_AT_END
 			pause();
 			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 		}
