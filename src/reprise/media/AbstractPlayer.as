@@ -97,38 +97,17 @@ package reprise.media
 		
 		public function setAutoplayEnabled(bFlag:Boolean):void
 		{
-			if (bFlag)
-			{
-				m_options |= OPTIONS_AUTOPLAY;
-			}
-			else
-			{
-				m_options &= ~OPTIONS_AUTOPLAY;
-			}
+			setOptionsFlag(OPTIONS_AUTOPLAY, bFlag);
 		}
 		
 		public function setLoops(bFlag:Boolean):void
 		{
-			if (bFlag)
-			{
-				m_options |= OPTIONS_LOOP;
-			}
-			else
-			{
-				m_options &= ~OPTIONS_LOOP;
-			}
+			setOptionsFlag(OPTIONS_LOOP, bFlag);
 		}
 		
 		public function setReversesOnComplete(bFlag:Boolean):void
 		{
-			if (bFlag)
-			{
-				m_options |= OPTIONS_REVERSE_ON_COMPLETE;
-			}
-			else
-			{
-				m_options &= ~OPTIONS_REVERSE_ON_COMPLETE;
-			}
+			setOptionsFlag(OPTIONS_REVERSE_ON_COMPLETE, bFlag);
 		}
 		
 		public function load():void
@@ -561,6 +540,18 @@ package reprise.media
 			updateBuffer();
 			goIdle();
 			dispatchEvent(new MediaEvent(MediaEvent.LOAD_COMPLETE));
+		}
+		
+		protected function setOptionsFlag(flag:Number, value:Boolean):void
+		{
+			if (value)
+			{
+				m_options |= flag;
+			}
+			else
+			{
+				m_options &= ~flag;
+			}
 		}
 	
 		protected function observeStatus(e:TimerEvent):void

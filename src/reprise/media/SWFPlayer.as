@@ -99,7 +99,6 @@ package reprise.media
 		protected override function doSeek(offset:Number):void 
 		{
 			offset = timeToFrame(offset);
-			trace('seek ' + offset);
 			if (!isPlaying())
 			{
 				MovieClip(m_loader.content).gotoAndStop(offset);
