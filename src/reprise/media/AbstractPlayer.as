@@ -105,6 +105,18 @@ package reprise.media
 			}
 		}
 		
+		public function setLoops(bFlag:Boolean):void
+		{
+			if (bFlag)
+			{
+				m_options |= OPTIONS_LOOP;
+			}
+			else
+			{
+				m_options &= ~OPTIONS_LOOP;
+			}
+		}
+		
 		public function load():void
 		{
 			if (m_status & STATUS_LOAD_FINISHED || m_status & STATUS_IS_LOADING)
@@ -357,6 +369,7 @@ package reprise.media
 		{
 			if (m_options & OPTIONS_LOOP)
 			{
+				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				play();
 				return;
 			}
