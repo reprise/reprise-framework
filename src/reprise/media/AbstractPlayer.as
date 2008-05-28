@@ -56,12 +56,13 @@ package reprise.media
 		***************************************************************************/
 		protected static const OPTIONS_AUTOPLAY:uint = 1 << 0;
 		protected static const OPTIONS_LOOP:uint = 1 << 1;
+		protected static const OPTIONS_REVERSE_ON_COMPLETE:uint = 1 << 2;
 		
 		protected var m_debug:Boolean = false;
 		
 		protected var m_state:uint;
 		protected var m_status:uint;
-		protected var m_options:uint;
+		protected var m_options:uint = OPTIONS_REVERSE_ON_COMPLETE;
 		
 		protected var m_buffer:AbstractBuffer;
 		protected var m_statusObserverTimer:Timer;
@@ -114,6 +115,18 @@ package reprise.media
 			else
 			{
 				m_options &= ~OPTIONS_LOOP;
+			}
+		}
+		
+		public function setReversesOnComplete(bFlag:Boolean):void
+		{
+			if (bFlag)
+			{
+				m_options |= OPTIONS_REVERSE_ON_COMPLETE;
+			}
+			else
+			{
+				m_options &= ~OPTIONS_REVERSE_ON_COMPLETE;
 			}
 		}
 		
@@ -369,13 +382,19 @@ package reprise.media
 		{
 			if (m_options & OPTIONS_LOOP)
 			{
+				stop();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				play();
 				return;
 			}
-			
-			stop();
-			goIdle();
+			if (m_options & OPTIONS_REVERSE_ON_COMPLETE)
+			{
+				stop();
+				goIdle();
+				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
+				return;
+			}
+			pause();
 			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 		}
 
