@@ -129,6 +129,25 @@ package reprise.media
 			m_loader.unload();
 		}
 		
+		protected override function setState(state:uint):void
+		{
+			super.setState(state);
+			if (!m_loader.content)
+			{
+				return;
+			}
+			if (state != AbstractPlayer.STATE_PLAYING)
+			{
+				MovieClip(m_loader.content).removeEventListener(Event.ENTER_FRAME, 
+					content_enterFrame);
+			}
+			else
+			{
+				MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, 
+					content_enterFrame);
+			}
+		}
+		
 		protected function frameToTime(frame:Number):Number
 		{
 			return frame / framerate();
@@ -163,6 +182,11 @@ package reprise.media
 		{
 			MovieClip(m_loader.content).stop();
 			MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, content_enterFrame);
+			if (state() == AbstractPlayer.STATE_PLAYING)
+			{
+				MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, 
+					content_enterFrame);
+			}
 		}
 		
 		protected function loader_error(e:IOErrorEvent):void

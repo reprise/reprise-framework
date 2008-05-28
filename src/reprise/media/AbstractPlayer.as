@@ -169,8 +169,10 @@ package reprise.media
 		
 		public function play():void
 		{
+			trace("play");
 			if (m_status & STATUS_PAUSED_AT_END)
 			{
+				trace("stop first then play");
 				stop();
 			}
 			
@@ -212,7 +214,7 @@ package reprise.media
 			// stop the mediafile
 			m_status &= ~STATUS_SHOULD_PLAY;
 			m_status &= ~STATUS_PAUSED_AT_END;
-			
+			trace(stateToString());
 			if (m_state != STATE_PLAYING && m_state != STATE_PAUSED)
 			{
 				return;
@@ -387,8 +389,10 @@ package reprise.media
 		
 		protected function mediaReachedEnd():void
 		{
+			trace("media reached end");
 			if (m_options & OPTIONS_LOOP)
 			{
+				trace("loop!");
 				stop();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				play();
@@ -396,11 +400,13 @@ package reprise.media
 			}
 			if (m_options & OPTIONS_REVERSE_ON_COMPLETE)
 			{
+				trace("reverse!");
 				stop();
 				goIdle();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				return;
 			}
+			trace("pause!");
 			m_status |= STATUS_PAUSED_AT_END
 			pause();
 			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
@@ -408,7 +414,7 @@ package reprise.media
 
 		protected function goIdle():void
 		{
-			if (m_state == STATE_PLAYING || m_status & STATUS_IS_LOADING)
+			if (m_state == STATE_PLAYING || m_status & STATUS_IS_LOADING || STATE_PAUSED)
 			{
 				return;
 			}
