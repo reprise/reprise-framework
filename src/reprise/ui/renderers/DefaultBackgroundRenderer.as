@@ -560,7 +560,7 @@ package reprise.ui.renderers
 			
 			var scale9Rect : Rectangle = new Rectangle();
 			scale9Rect.top = m_styles.backgroundScale9RectTop;
-			scale9Rect.left = m_styles.backgroundScale9RectRight;
+			scale9Rect.left = m_styles.backgroundScale9RectLeft;
 			scale9Rect.width = imgWidth - m_styles.backgroundScale9RectRight - 
 				m_styles.backgroundScale9RectLeft;
 			scale9Rect.height = imgHeight - m_styles.backgroundScale9RectTop - 
