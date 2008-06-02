@@ -26,6 +26,7 @@ package reprise.ui
 	import reprise.core.UIRendererFactory;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSProperty;
+	import reprise.css.CSSPropertyCache;
 	import reprise.css.math.ICSSCalculationContext;
 	import reprise.css.propertyparsers.Filters;
 	import reprise.css.transitions.CSSPropertyTransition;
@@ -1513,9 +1514,10 @@ package reprise.ui
 						newStyles.getStyle(transitionPropName);
 					
 					//check for default value if we have a target value but no old value
-					if (targetValue && !oldValue)
+					if (targetValue && !oldValue && defaultValues[transitionPropName])
 					{
-						oldValue = defaultValues[transitionPropName];
+						oldValue = CSSProperty(CSSPropertyCache.propertyForKeyValue(
+							transitionPropName, defaultValues[transitionPropName], null));
 					}
 					
 					//exception for intrinsic dimensions
@@ -1542,8 +1544,7 @@ package reprise.ui
 					}
 					if (transitionEasings[i])
 					{ 
-						var easing : Function =
-							transitionEasings[i].valueOf() as Function;
+						var easing : Function = transitionEasings[i];
 					}
 					else
 					{

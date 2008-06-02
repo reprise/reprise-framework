@@ -21,12 +21,12 @@ package reprise.css.propertyparsers
 	import com.robertpenner.easing.Quint;
 	import com.robertpenner.easing.Sine;
 	
-	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyCache;
-	import reprise.css.CSSPropertyParser; 
+	import reprise.css.CSSPropertyParser;
+	import reprise.utils.StringUtil;
+ 
 
 	public class Transition extends CSSPropertyParser
 	{
@@ -35,8 +35,9 @@ package reprise.css.propertyparsers
 			'RepriseTransition',
 			'RepriseTransitionProperty',
 			'RepriseTransitionDuration',
+			'RepriseTransitionDelay',
 			'RepriseTransitionTimingFunction',
-			'RepriseTransitionDelay'
+			'RepriseTransitionDefault'
 		];
 		public static var EASINGS : Object = 
 		{
@@ -74,7 +75,8 @@ package reprise.css.propertyparsers
 			var delays : Array = [];
 			var defaultValues : Array = [];
 			
-			for each (var part : String in val.split(','))
+			var parts : Array = CSSParsingHelper.splitPropertyList(val);
+			for each (var part : String in parts)
 			{
 				var partResult : Object = parseRepriseTransitionPart(part, file);
 				if (partResult)
@@ -119,64 +121,29 @@ package reprise.css.propertyparsers
 		{
 			var result : Object = {};
 			
-			var parts : Array = str.split(' ');
+			//extract default value
+			var extractionResult : Object = 
+				extractFunctionLiteralFromString(str, 'default', false);
+			result.defaultValue = extractionResult.functionLiteral;
+			str = extractionResult.filteredString;
 			
-			var currentPart : String = parts.shift();
+			//extract duration
+			extractionResult = extractDurationFromString(str, file);
+			result.duration = extractionResult.duration;
+			str = extractionResult.filteredString;
 			
-			//the first part has to be a property name
-			if ('0123456789.'.indexOf(currentPart.charAt(0)) != -1)
-			{
-				return null;
-			}
-			//is property
-			result.property = CSSParsingHelper.camelCaseCSSValueName(currentPart);
-			if (!parts.length)
-			{
-				return result;
-			}
-			currentPart = parts.shift();
-			//the second part has to be a duration
-			if ('0123456789.'.indexOf(currentPart.charAt(0)) == -1)
-			{
-				return null;
-			}
-			result.duration = strToDurationProperty(currentPart, file);
-			if (!parts.length)
-			{
-				return result;
-			}
-			currentPart = parts.shift();
-			//the third part can be either an easing function name or a duration
-			if ('0123456789.'.indexOf(currentPart.charAt(0)) == -1)
-			{
-				result.easing = 
-					parseRepriseTransitionTimingFunctionPart(currentPart, file);
-				currentPart = parts.shift();
-			}
-			else
-			{
-				//delay is the last part
-				result.delay = strToDurationProperty(currentPart, file);
-			}
-			if (!parts.length)
-			{
-				return result;
-			}
-			//the fourth part has to be a delay
-			if ('0123456789.'.indexOf(currentPart.charAt(0)) == -1)
-			{
-				//anything but a duration is invalid here, return nothing
-				return null;
-			}
-			result.delay = strToDurationProperty(currentPart, file);
-			if (!parts.length)
-			{
-				return result;
-			}
-			currentPart = parts.shift();
-			//the last part has to be a default value
-			result.defaultValue = CSSPropertyCache.propertyForKeyValue(
-				result.property, currentPart, file);
+			//extract delay
+			extractionResult = extractDurationFromString(str, file);
+			result.delay = extractionResult.duration;
+			str = extractionResult.filteredString;
+			
+			//extract property name
+			extractionResult = extractPropertyNameFromString(str);
+			result.property = extractionResult.propertyName;
+			str = extractionResult.filteredString;
+			
+			//extract easing
+			result.easing = parseRepriseTransitionTimingFunctionPart(str, file);
 			
 			return result;
 		}
@@ -236,8 +203,8 @@ package reprise.css.propertyparsers
 			}
 			var entries : Array = [];
 			
-			for each (var entry : String in 
-				(intermediateResult.filteredString as String).split(','))
+			for each (var entry : String in CSSParsingHelper.splitPropertyList(
+				intermediateResult.filteredString as String))
 			{
 				entries.push(parseRepriseTransitionTimingFunctionPart(entry, file));
 			}
@@ -245,20 +212,35 @@ package reprise.css.propertyparsers
 			return property;
 		}
 		public static function parseRepriseTransitionTimingFunctionPart(
+			val:String, file : String) : Function
+		{
+			var easingName : String = CSSParsingHelper.camelCaseCSSValueName(val);
+			var regExp : RegExp = /ease(InOut|In|Out)(\w+)/;
+			var matchResult : Array = regExp.exec(easingName);
+			if (!matchResult)
+			{
+				return EASINGS.linear;
+			}
+			var easingType : Class = EASINGS[matchResult[2]] || Linear;
+			return easingType['ease' + matchResult[1]] || EASINGS.linear;
+		}
+		public static function parseRepriseTransitionDefault(
 			val:String, file : String) : CSSProperty
 		{
 			var intermediateResult : Object = strToProperty(val, file);
 			var property : CSSProperty = intermediateResult.property;
-			var easingName : String = 
-				CSSParsingHelper.camelCaseCSSValueName(intermediateResult.filteredString);
-			var regExp : RegExp = /ease(InOut|In|Out)(\w+)/;
-			var matchResult : Array = regExp.exec(easingName);
-			var easing : Function = EASINGS.linear;
-			if (matchResult)
+			if (property.inheritsValue())
 			{
-				easing = EASINGS[matchResult[2]]['ease' + matchResult[1]];
+				return property;
 			}
-			property.setSpecifiedValue(easing);
+			var entries : Array = [];
+			
+			for each (var entry : String in 
+				(intermediateResult.filteredString as String).split(','))
+			{
+				entries.push(StringUtil.trim(entry));
+			}
+			property.setSpecifiedValue(entries);
 			return property;
 		}
 	}

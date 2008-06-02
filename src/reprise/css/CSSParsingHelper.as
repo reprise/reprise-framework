@@ -19,7 +19,7 @@ package reprise.css
 	public class CSSParsingHelper
 	{
 		public static var percentageExpression : RegExp = /\d+%/;
-		public static var lengthExpression : RegExp = /\d+px|\d+/;
+		public static var lengthExpression : RegExp = /\d+px|0/;
 		public static var URIExpression : RegExp = 
 			/(?:url\([ ]*(['"]).*\1[ ]*\)|url\([ ]*[^'"][^)]*\))/;
 		public static var repeatExpression : RegExp = 
@@ -35,6 +35,8 @@ package reprise.css
 		
 		public static var attachmentExpression : RegExp = /scroll|fixed/;
 		public static var preloadExpression : RegExp = /no[-]preload|preload/;
+		public static var durationExpression : RegExp = /\d+m?s|0/;
+		public static var propertyNameExpression : RegExp = /(?:[-]?\w+)+/;
 		
 		
 		protected static var g_colorExpression : RegExp;
@@ -169,6 +171,123 @@ package reprise.css
 				declaration.setValueForKeyDefinedInFile(value, name, url);
 			}
 			return declaration;
+		}
+		
+		/**
+		 * splits a list of CSS properties into an array containing the entries
+		 **/
+		public static function splitPropertyList(input : String) : Array
+		{
+			//a property might contain urls as well as paranthesized lists, each of which 
+			//can contain commas. Therefore, we can't just split at ',' but have to parse 
+			//the string instead.
+			//NOTE: This parser doesn't check for errors at all, if the input contains 
+			//unbalanced parantheses or other syntactical errors, it will simply return 
+			//wrong results.
+			var result : Array = [];
+			var offset : int = 0;
+			var openParens : int = 0;
+			while (true)
+			{
+				var nextSingleQuote : int = input.indexOf("'", offset);
+				nextSingleQuote == -1 && (nextSingleQuote = 99999);
+				var nextDoubleQuote : int = input.indexOf('"', offset);
+				nextDoubleQuote == -1 && (nextDoubleQuote = 99999);
+				var nextOpeningParen : int = input.indexOf('(', offset);
+				nextOpeningParen == -1 && (nextOpeningParen = 99999);
+				var nextClosingParen : int = input.indexOf(')', offset);
+				nextClosingParen == -1 && (nextClosingParen = 99999);
+				
+				if (openParens > 0 && nextClosingParen == 99999)
+				{
+					//syntax error
+					return result;
+				}
+				
+				if (openParens == 0)
+				{
+					var nextComma : int = input.indexOf(',', offset);
+					if (nextComma == -1)
+					{
+						//no more commas, add the last result and we're done!
+						result.push(input);
+						return result;
+					}
+					if (nextComma < nextOpeningParen && nextComma < nextSingleQuote && 
+						nextComma < nextDoubleQuote)
+					{
+						//we have a result, add it to the array
+						result.push(input.substr(0, nextComma));
+						input = input.substr(nextComma + 1);
+						offset = 0;
+						continue;
+					}
+				}
+				if (nextOpeningParen < nextSingleQuote && 
+					nextOpeningParen < nextDoubleQuote && 
+					nextOpeningParen < nextClosingParen)
+				{
+					openParens++;
+					offset = nextOpeningParen + 1;
+					continue;
+				}
+				if (nextClosingParen < nextSingleQuote && 
+					nextClosingParen < nextDoubleQuote)
+				{
+					openParens--;
+					offset = nextClosingParen + 1;
+					continue;
+				}
+				if (nextSingleQuote < nextDoubleQuote)
+				{
+					offset = nextSingleQuote + 1;
+					//skip to the end of the single quoted string
+					while (true)
+					{
+						var closingQuote : int = input.indexOf("'", offset);
+						if (closingQuote == -1)
+						{
+							//error in this segment, return the valid segments
+							//TODO: check if we should do this or throw away the entire 
+							//list
+							return result;
+						}
+						offset = closingQuote + 1;
+						if (input.charAt(closingQuote - 1) != '\\')
+						{
+							break;
+						}
+						else
+						{
+						}
+					}
+					continue;
+				}
+				if (nextDoubleQuote < nextSingleQuote)
+				{
+					offset = nextDoubleQuote + 1;
+					//skip to the end of the single quoted string
+					while (true)
+					{
+						
+						var closingQuote : int = input.indexOf('"', offset);
+						if (closingQuote == -1)
+						{
+							//error in this segment, return the valid segments
+							//TODO: check if we should do this or throw away the entire 
+							//list
+							return result;
+						}
+						offset = closingQuote + 1;
+						if (input.charAt(closingQuote - 1) != '\\')
+						{
+							break;
+						}
+					}
+					continue;
+				}
+			}
+			return result;
 		}
 		
 		public static function camelCaseCSSValueName(name : String) : String

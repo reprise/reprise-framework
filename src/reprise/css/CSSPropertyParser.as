@@ -295,5 +295,75 @@ package reprise.css {
 			
 			return prop;	
 		}
+		
+		public static function extractDurationFromString(
+			input : String, file : String = null) : Object
+		{
+			var result : Object = {};
+			var match : Array = input.match(CSSParsingHelper.durationExpression);
+			if (match)
+			{
+				result.duration = strToDurationProperty(match[0], file);
+				result.filteredString = input.substr(
+					0, match.index) + input.substr(match.index + match[0].length);
+			}
+			else
+			{
+				result.filteredString = input;
+			}
+			return result;
+		}
+		
+		public static function extractPropertyNameFromString(input : String) : Object
+		{
+			var result : Object = {};
+			var match : Array = input.match(CSSParsingHelper.propertyNameExpression);
+			if (match)
+			{
+				result.propertyName = match[0];
+				result.filteredString = input.substr(
+					0, match.index) + input.substr(match.index + match[0].length);
+			}
+			else
+			{
+				result.filteredString = input;
+			}
+			return result;
+		}
+		
+		/**
+		 * Extracts a function literal (e.g. 'color(0, 0, 0)') from a given input String.
+		 * NOTE: Right now, the parser doesn't support string literals as parameters to 
+		 * the function literal, because it just uses the next right parentheses as the 
+		 * function literals end. A string literal might contain a right parentheses that 
+		 * doesn't close the function literal.
+		 */
+		public static function extractFunctionLiteralFromString(
+			input : String, name : String, keepFunctionName : Boolean = true) : Object
+		{
+			var result : Object = {};
+			var match : int = input.indexOf(name + '(');
+			if (match != -1)
+			{
+				var matchEnd : int = input.indexOf(')', match);
+				if (keepFunctionName)
+				{
+					result.functionLiteral = input.substring(match, matchEnd + 1);
+				}
+				else
+				{
+					result.functionLiteral = 
+						input.substring(match + name.length + 1, matchEnd);
+				}
+				result.filteredString = 
+					input.substr(0, match) + input.substr(matchEnd + 1);
+			}
+			else
+			{
+				result.filteredString = input;
+			}
+			
+			return result;
+		}
 	}
 }
