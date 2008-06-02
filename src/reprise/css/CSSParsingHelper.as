@@ -35,7 +35,7 @@ package reprise.css
 		
 		public static var attachmentExpression : RegExp = /scroll|fixed/;
 		public static var preloadExpression : RegExp = /no[-]preload|preload/;
-		public static var durationExpression : RegExp = /\d+m?s|0/;
+		public static var durationExpression : RegExp = /(?:\d*[.]\d+m?s)|(?:\d+m?s)|0/;
 		public static var propertyNameExpression : RegExp = /(?:[-]?\w+)+/;
 		
 		
