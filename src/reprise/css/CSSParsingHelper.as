@@ -198,6 +198,8 @@ package reprise.css
 				var nextClosingParen : int = input.indexOf(')', offset);
 				nextClosingParen == -1 && (nextClosingParen = 99999);
 				
+				var closingQuote : int;
+				
 				if (openParens > 0 && nextClosingParen == 99999)
 				{
 					//syntax error
@@ -244,7 +246,7 @@ package reprise.css
 					//skip to the end of the single quoted string
 					while (true)
 					{
-						var closingQuote : int = input.indexOf("'", offset);
+						closingQuote = input.indexOf("'", offset);
 						if (closingQuote == -1)
 						{
 							//error in this segment, return the valid segments
@@ -270,7 +272,7 @@ package reprise.css
 					while (true)
 					{
 						
-						var closingQuote : int = input.indexOf('"', offset);
+						closingQuote = input.indexOf('"', offset);
 						if (closingQuote == -1)
 						{
 							//error in this segment, return the valid segments
