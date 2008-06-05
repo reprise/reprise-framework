@@ -13,13 +13,15 @@ package reprise.media
 {
 	
 	import flash.events.EventDispatcher;
+	import com.robertpenner.easing.Linear;
+	import flash.events.TimerEvent;
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
-	import flash.events.TimerEvent;
 	import reprise.events.CommandEvent;
-	import reprise.events.StateChangeEvent;
 	import reprise.events.MediaEvent;
+	import reprise.events.StateChangeEvent;
 	import reprise.external.IResource;
+	import reprise.tweens.SimpleTween;
 	import reprise.utils.MathUtil;
 	
 	
@@ -76,6 +78,8 @@ package reprise.media
 		protected var m_speed:Number;
 		protected var m_lastLoadProgress:uint = 0;
 		protected var m_lastSpeedCheck:uint;
+		protected var m_muteTween:SimpleTween;
+		protected var m_volumeBeforeFade:Number;
 				
 		
 		
@@ -238,6 +242,21 @@ package reprise.media
 			doSetVolume(vol);
 		}
 		
+		public function muteAndPause(duration:uint):void
+		{
+			if (m_state != STATE_PLAYING)
+			{
+				return;
+			}
+			m_volumeBeforeFade = volume();
+			cancelMuteTween();
+			m_muteTween = new SimpleTween(duration);
+			m_muteTween.addTweenProperty(this, 'setVolume', m_volumeBeforeFade, 0, 
+				Linear.easeNone, false, true);
+			m_muteTween.addEventListener(CommandEvent.COMPLETE, muteTween_complete);
+			m_muteTween.execute();
+		}
+		
 		public function volume():Number
 		{
 			return m_volume;
@@ -393,6 +412,15 @@ package reprise.media
 				return;
 			}
 			setState(STATE_IDLE);
+		}
+		
+		protected function cancelMuteTween():void
+		{
+			if (m_muteTween && m_muteTween.isRunning())
+			{
+				m_muteTween.removeEventListener(CommandEvent.COMPLETE, muteTween_complete);
+				m_muteTween.cancel();
+			}
 		}
 		
 		protected function setState(state:uint):void
@@ -623,6 +651,12 @@ package reprise.media
 					}
 				}
 			}
+		}
+		
+		protected function muteTween_complete(e:CommandEvent):void
+		{
+			pause();
+			setVolume(m_volumeBeforeFade);
 		}
 	}
 }
