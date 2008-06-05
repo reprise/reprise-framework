@@ -112,7 +112,7 @@ package reprise.tweens {
 			var result : Number = tweenFunction.apply(null, args);
 			var methodArgs : Array = 
 				[roundResults ? Math.round(result) : result].concat(extraParams);
-			Function(scope[property]).apply(scope, methodArgs);
+			(scope[property] as Function).apply(scope, methodArgs);
 		}
 		
 		/*
