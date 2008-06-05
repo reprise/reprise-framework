@@ -13,6 +13,7 @@ package reprise.media
 {
 	
 	import flash.events.EventDispatcher;
+	import flash.events.Event;
 	import com.robertpenner.easing.Linear;
 	import flash.events.TimerEvent;
 	import flash.utils.getTimer;
@@ -253,7 +254,7 @@ package reprise.media
 			m_muteTween = new SimpleTween(duration);
 			m_muteTween.addTweenProperty(this, 'setVolume', m_volumeBeforeFade, 0, 
 				Linear.easeNone, false, true);
-			m_muteTween.addEventListener(CommandEvent.COMPLETE, muteTween_complete);
+			m_muteTween.addEventListener(Event.COMPLETE, muteTween_complete);
 			m_muteTween.execute();
 		}
 		
