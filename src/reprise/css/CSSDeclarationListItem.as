@@ -156,7 +156,9 @@ package reprise.css
 			while (i--)
 			{
 				spec += specificityForPattern(patterns[i]);
-			}			
+			}
+			
+			trace("spec " + spec + " for selector " + selector);
 			return spec;
 		}
 		
@@ -167,7 +169,7 @@ package reprise.css
 			var specificityFactorId : Number = 100;
 	
 			var spec : Number = 0;
-			var patternParts : Array = pattern.split('.');
+			var patternParts : Array = pattern.split(':').join('.:').split('.');
 			
 			//add specificity of classes multiplied by class count
 			spec += (patternParts.length - 1) * specificityFactorClass;
