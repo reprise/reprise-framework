@@ -37,7 +37,7 @@ package reprise.css.propertyparsers
 			'RepriseTransitionDuration',
 			'RepriseTransitionDelay',
 			'RepriseTransitionTimingFunction',
-			'RepriseTransitionDefault'
+			'RepriseTransitionDefaultValue'
 		];
 		public static var EASINGS : Object = 
 		{
@@ -85,7 +85,7 @@ package reprise.css.propertyparsers
 					durations.push(partResult.duration);
 					easings.push(partResult.easing);
 					delays.push(partResult.delay);
-					defaultValues[partResult.property] = partResult.defaultValue;
+					defaultValues.push(partResult.defaultValue);
 				}
 			}
 			
@@ -224,7 +224,7 @@ package reprise.css.propertyparsers
 			var easingType : Class = EASINGS[matchResult[2]] || Linear;
 			return easingType['ease' + matchResult[1]] || EASINGS.linear;
 		}
-		public static function parseRepriseTransitionDefault(
+		public static function parseRepriseTransitionDefaultValue(
 			val:String, file : String) : CSSProperty
 		{
 			var intermediateResult : Object = strToProperty(val, file);

@@ -1514,10 +1514,11 @@ package reprise.ui
 						newStyles.getStyle(transitionPropName);
 					
 					//check for default value if we have a target value but no old value
-					if (targetValue && !oldValue && defaultValues[transitionPropName])
+					if (targetValue && !oldValue && 
+						defaultValues[i] && defaultValues[i] != 'none')
 					{
 						oldValue = CSSProperty(CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, defaultValues[transitionPropName], null));
+							transitionPropName, defaultValues[i], null));
 					}
 					
 					//exception for intrinsic dimensions
