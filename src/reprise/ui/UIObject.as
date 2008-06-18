@@ -10,8 +10,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.ui { 
-	import reprise.events.DisplayEvent;
-	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -19,6 +17,8 @@ package reprise.ui {
 	import flash.geom.Point;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+	
+	import reprise.events.DisplayEvent;
 	public class UIObject extends Sprite
 	{
 		/***************************************************************************
@@ -145,18 +145,7 @@ package reprise.ui {
 		
 		public override function addChild(child : DisplayObject) : DisplayObject
 		{
-			if (child is UIObject)
-			{
-				m_contentDisplay.addChild(child);
-				UIObject(child).setParent(this);
-				m_children.push(child);
-				invalidate();
-			}
-			else
-			{
-				m_contentDisplay.addChild(child);
-			}
-			return child;
+			return addChildAt(child, m_children.length);
 		}
 		
 		public override function addChildAt(
@@ -164,8 +153,38 @@ package reprise.ui {
 		{
 			if (child is UIObject)
 			{
+				var element : UIObject = UIObject(child);
 				m_contentDisplay.addChildAt(child, index);
-				UIObject(child).setParent(this);
+				element.setParent(this);
+				
+				
+				if (index == 0)
+				{
+					element.m_isFirstChild = true;
+					if (m_children.length)
+					{
+						UIObject(m_children[0]).m_isFirstChild = false;
+					}
+				}
+				//if the child is reparented, the value needs to be reset
+				else
+				{
+					element.m_isFirstChild = false;
+				}
+				if (index == m_children.length)
+				{
+					element.m_isLastChild = true;
+					if (m_children.length)
+					{
+						UIObject(m_children[m_children.length-1]).m_isLastChild = false;
+					}
+				}
+				//if the child is reparented, the value needs to be reset
+				else
+				{
+					element.m_isLastChild = false;
+				}
+				
 				m_children.splice(index, 0, child);
 				invalidate();
 			}
@@ -752,8 +771,8 @@ package reprise.ui {
 		}
 		protected function validateChildren() : void
 		{
-			var childCount : uint = m_children.length;
-			for (var i : uint = 0; i < childCount; i++)
+			var childCount : int = m_children.length;
+			for (var i : int = 0; i < childCount; i++)
 			{
 				validateChild(UIObject(m_children[i]));
 			}
@@ -789,8 +808,8 @@ package reprise.ui {
 			{
 				return;
 			}
-			var len : Number = m_children.length;
-			var i : uint;
+			var len : int = m_children.length;
+			var i : int;
 			var keyOrder : Array = [];
 			
 			for (i = 0; i < len; i++)
