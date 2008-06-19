@@ -1350,6 +1350,20 @@ package reprise.ui
 				m_visible = visible = true;
 			}
 			
+			if (m_currentStyles.cursor == 'pointer')
+			{
+				if (!buttonMode)
+				{
+					buttonMode = true;
+					useHandCursor = true;
+				}
+			}
+			else if (buttonMode)
+			{
+				buttonMode = false;
+				useHandCursor = false;
+			}
+			
 			super.rotation = m_currentStyles.rotation || 0;
 			if (m_currentStyles.opacity != null)
 			{
@@ -1409,20 +1423,6 @@ package reprise.ui
 			else
 			{
 				m_positionInFlow = 0;
-			}
-			
-			if (m_currentStyles.cursor == 'pointer')
-			{
-				if (!buttonMode)
-				{
-					buttonMode = true;
-					useHandCursor = true;
-				}
-			}
-			else if (buttonMode)
-			{
-				buttonMode = false;
-				useHandCursor = false;
 			}
 		}
 		
