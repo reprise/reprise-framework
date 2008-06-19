@@ -158,7 +158,6 @@ package reprise.css
 				spec += specificityForPattern(patterns[i]);
 			}
 			
-			trace("spec " + spec + " for selector " + selector);
 			return spec;
 		}
 		
