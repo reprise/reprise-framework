@@ -45,7 +45,33 @@ package reprise.ui
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var DEFAULT_SCROLLBAR_WIDTH : int = 16;
+		protected static const WIDTH_RELATIVE_PROPERTIES : Array = 
+		[
+			['marginTop', false],
+			['marginBottom', false],
+			['marginLeft', false],
+			['marginRight', false],
+			['paddingTop', false],
+			['paddingBottom', false],
+			['paddingLeft', false],
+			['paddingRight', false],
+			['left', true],
+			['right', true]
+		];
+		protected static const HEIGHT_RELATIVE_PROPERTIES : Array = 
+		[
+			['top', true],
+			['bottom', true]
+		];
+		protected static const OWN_WIDTH_RELATIVE_PROPERTIES:Array = 
+		[
+			['borderTopLeftRadius', false],
+			['borderTopRightRadius', false],
+			['borderBottomLeftRadius', false],
+			['borderBottomRightRadius', false]
+		];
+		
+		protected static const DEFAULT_SCROLLBAR_WIDTH : int = 16;
 		
 		
 		protected var m_containingBlock : UIComponent;
@@ -74,10 +100,7 @@ package reprise.ui
 		
 		protected var m_positionOffset : Point;
 		
-		protected var m_leftIsAuto : Boolean;
-		protected var m_rightIsAuto : Boolean;
-		protected var m_topIsAuto : Boolean;
-		protected var m_bottomIsAuto : Boolean;
+		protected var m_autoFlags : Object = {};
 		
 		protected var m_paddingTop : Number = 0;
 		protected var m_paddingLeft : Number = 0;
@@ -268,7 +291,7 @@ package reprise.ui
 			}
 			m_currentStyles.top = value;
 			m_instanceStyles.setStyle('top', value + "px");
-			m_topIsAuto = false;
+			m_autoFlags.top = false;
 			if (!m_positionInFlow)
 			{
 				m_top = value;
@@ -295,7 +318,7 @@ package reprise.ui
 			}
 			m_currentStyles.left = value;
 			m_instanceStyles.setStyle('left', value + "px");
-			m_leftIsAuto = false;
+			m_autoFlags.left = false;
 			if (!m_positionInFlow)
 			{
 				m_left = value;
@@ -322,7 +345,7 @@ package reprise.ui
 			}
 			m_currentStyles.right = value;
 			m_instanceStyles.setStyle('right', value + "px");
-			m_rightIsAuto = false;
+			m_autoFlags.right = false;
 			if (!m_positionInFlow)
 			{
 				m_right = value;
@@ -350,7 +373,7 @@ package reprise.ui
 			}
 			m_currentStyles.bottom = value;
 			m_instanceStyles.setStyle('bottom', value + "px");
-			m_bottomIsAuto = false;
+			m_autoFlags.bottom = false;
 			if (!m_positionInFlow)
 			{
 				m_bottom = value;
@@ -947,35 +970,20 @@ package reprise.ui
 			
 			var autoFlag:String = CSSProperty.AUTO_FLAG;
 			
-			var widthProperty:CSSProperty = m_complexStyles.getStyle('width');
-			var outerWidthProperty:CSSProperty = 
-				m_complexStyles.getStyle('outerWidth');
-			var widthIsAuto:Boolean = 
-				widthProperty.specifiedValue() == autoFlag && 
-				(!outerWidthProperty ||
-				outerWidthProperty.specifiedValue() == autoFlag);
-			var heightProperty:CSSProperty = m_complexStyles.getStyle('height');
-			var outerHeightProperty:CSSProperty = 
-				m_complexStyles.getStyle('outerHeight');
-			var heightIsAuto:Boolean = 
-				(!heightProperty || heightProperty.specifiedValue() == autoFlag) && 
-				(!outerHeightProperty || 
-				outerHeightProperty.specifiedValue() == autoFlag);
-			
 			var oldIntrinsicHeight : Number = m_intrinsicHeight;
 			var oldIntrinsicWidth : Number = m_intrinsicWidth;
 			
 			measure();
 			
-			if (widthIsAuto || heightIsAuto)
+			if (m_autoFlags.width || m_autoFlags.height)
 			{
-				if (widthIsAuto && 
+				if (m_autoFlags.width && 
 					(m_currentStyles.display == 'inline' ||
-					(!m_positionInFlow && (m_leftIsAuto || m_rightIsAuto))))
+					(!m_positionInFlow && (m_autoFlags.left || m_autoFlags.right))))
 				{
 					m_width = m_intrinsicWidth;
 				}
-				if (m_intrinsicHeight != -1 && heightIsAuto)
+				if (m_intrinsicHeight != -1 && m_autoFlags.height)
 				{
 					m_height = m_intrinsicHeight;
 				}
@@ -1021,8 +1029,8 @@ package reprise.ui
 					//check if at least one of the vertical and one of the 
 					//horizontal dimensions is specified. If not, we need to 
 					//let the parent do the positioning
-					if ((m_topIsAuto && m_bottomIsAuto) || 
-						(m_leftIsAuto && m_rightIsAuto))
+					if ((m_autoFlags.top && m_autoFlags.bottom) || 
+						(m_autoFlags.left && m_autoFlags.right))
 					{
 						parentReflowNeeded = true;
 	//					trace("f reason for reflow: All positions in " +
@@ -1204,57 +1212,10 @@ package reprise.ui
 			resolveContainingBlock();
 			resolveRelativeStyles(styles);
 		}
-			
+		
 		protected function applyStyles() : void
 		{	
-			var autoFlag:String = CSSProperty.AUTO_FLAG;
 			var styles : CSSDeclaration = m_complexStyles;
-			
-			var prop:CSSProperty;
-			prop = styles.getStyle('left');
-			if (!prop || prop.specifiedValue() == autoFlag)
-			{
-				m_leftIsAuto = true;
-				m_left = 0;
-			}
-			else
-			{
-				m_leftIsAuto = false;
-				m_left = prop.valueOf() as Number;
-			}
-			prop = styles.getStyle('right');
-			if (!prop || prop.specifiedValue() == autoFlag)
-			{
-				m_rightIsAuto = true;
-				m_right = 0;
-			}
-			else
-			{
-				m_rightIsAuto = false;
-				m_right = prop.valueOf() as Number;
-			}
-			prop = styles.getStyle('top');
-			if (!prop || prop.specifiedValue() == autoFlag)
-			{
-				m_topIsAuto = true;
-				m_top = 0;
-			}
-			else
-			{
-				m_topIsAuto = false;
-				m_top = prop.valueOf() as Number;
-			}
-			prop = styles.getStyle('bottom');
-			if (!prop || prop.specifiedValue() == autoFlag)
-			{
-				m_bottomIsAuto = true;
-				m_bottom = 0;
-			}
-			else
-			{
-				m_bottomIsAuto = false;
-				m_bottom = prop.valueOf() as Number;
-			}
 			
 			m_positionOffset = new Point(0, 0);
 			if (m_positioningType == 'relative')
@@ -1317,6 +1278,22 @@ package reprise.ui
 			}
 			
 			
+			if (!m_currentStyles.outerWidth)
+			{
+				m_currentStyles.outerWidth = m_width + 
+					m_borderLeftWidth + m_paddingLeft + 
+					m_borderRightWidth + m_paddingRight;
+			}
+			if (!m_currentStyles.outerHeight)
+			{
+				m_currentStyles.outerHeight = m_height + 
+					m_borderTopWidth + m_paddingTop + 
+					m_borderBottomWidth + m_paddingBottom;
+			}
+			m_paddingBoxWidth = m_paddingLeft + m_width + m_paddingRight;
+			m_paddingBoxHeight = m_paddingTop + m_height + m_paddingBottom;
+			
+			
 			if (m_currentStyles.tabIndex != null)
 			{
 				m_tabIndex = m_currentStyles.tabIndex;
@@ -1374,20 +1351,6 @@ package reprise.ui
 				super.alpha = 1;
 			}
 			
-			if (!m_currentStyles.outerWidth)
-			{
-				m_currentStyles.outerWidth = m_width + 
-					m_borderLeftWidth + m_paddingLeft + 
-					m_borderRightWidth + m_paddingRight;
-			}
-			if (!m_currentStyles.outerHeight)
-			{
-				m_currentStyles.outerHeight = m_height + 
-					m_borderTopWidth + m_paddingTop + 
-					m_borderBottomWidth + m_paddingBottom;
-			}
-			m_paddingBoxWidth = m_paddingLeft + m_width + m_paddingRight;
-			m_paddingBoxHeight = m_paddingTop + m_height + m_paddingBottom;
 //			trace(m_selectorPath);
 //			trace(m_complexStyles);
 		}
@@ -1611,18 +1574,8 @@ package reprise.ui
 			var parentW:Number = m_containingBlock.m_currentStyles.width;
 			var parentH:Number = m_containingBlock.m_currentStyles.height;
 			
-			var propsResolvableToContainingWidth:Array = 
-			[
-				'marginTop',
-				'marginBottom',
-				'marginLeft',
-				'marginRight',
-				'paddingTop',
-				'paddingBottom',
-				'paddingLeft',
-				'paddingRight'
-			];
-			resolvePropsToValue(styles, propsResolvableToContainingWidth, parentW);
+			resolvePropsToValue(styles, WIDTH_RELATIVE_PROPERTIES, parentW);
+			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
 			
 			var wProp : CSSProperty = styles.getStyle('width');
 			var hProp : CSSProperty = styles.getStyle('height');
@@ -1630,14 +1583,13 @@ package reprise.ui
 			if (wProp.specifiedValue() == 'auto')
 			{
 				var outerWidthProp : CSSProperty = styles.getStyle('outerWidth');
-				if (outerWidthProp != null && 
-					outerWidthProp.specifiedValue() != 'auto')
+				if (outerWidthProp && outerWidthProp.specifiedValue() != 'auto')
 				{
 					var specOuterWidth : Number;
 					if (outerWidthProp.isRelativeValue())
 					{
 						specOuterWidth = Math.round(
-							outerWidthProp.resolveRelativeValueTo(parentW));
+							outerWidthProp.resolveRelativeValueTo(parentW, this));
 					}
 					else
 					{
@@ -1647,49 +1599,50 @@ package reprise.ui
 						m_marginLeft - m_marginRight - 
 						m_paddingLeft - m_paddingRight - 
 						m_borderLeftWidth - m_borderRightWidth;
+					m_autoFlags.width = false;
 				}
-				else if (!m_positionInFlow)
+				else 
 				{
-					m_width = m_currentStyles.width = parentW - 
-						m_left - m_right - 
-						m_marginLeft - m_marginRight - 
-						m_paddingLeft - m_paddingRight - 
-						m_borderLeftWidth - m_borderRightWidth;
+					m_autoFlags.width = true;
+					if (!m_positionInFlow)
+					{
+						m_width = m_currentStyles.width = parentW - 
+							m_left - m_right - 
+							m_marginLeft - m_marginRight - 
+							m_paddingLeft - m_paddingRight - 
+							m_borderLeftWidth - m_borderRightWidth;
+					}
+					else
+					{
+						m_width = m_currentStyles.width = parentW - 
+							m_marginLeft - m_marginRight - 
+							m_paddingLeft - m_paddingRight - 
+							m_borderLeftWidth - m_borderRightWidth;
+					}
 				}
-				else
-				{
-					m_width = m_currentStyles.width = parentW - 
-						m_marginLeft - m_marginRight - 
-						m_paddingLeft - m_paddingRight - 
-						m_borderLeftWidth - m_borderRightWidth;
-				}
-			}
-			else if (wProp.isRelativeValue())
-			{
-				var relevantWidth : Number = parentW;
-				if (m_positioningType == 'absolute')
-				{
-					relevantWidth = m_containingBlock.calculateContentWidth() + 
-						m_containingBlock.m_paddingLeft + 
-						m_containingBlock.m_paddingRight;
-				}
-				m_width = m_currentStyles.width = 
-					wProp.resolveRelativeValueTo(relevantWidth);
 			}
 			else
 			{
-				m_width = m_currentStyles.width || 0;
+				m_autoFlags.width = false;
+				if (wProp.isRelativeValue())
+				{
+					var relevantWidth : Number = parentW;
+					if (m_positioningType == 'absolute')
+					{
+						relevantWidth = m_containingBlock.calculateContentWidth() + 
+							m_containingBlock.m_paddingLeft + 
+							m_containingBlock.m_paddingRight;
+					}
+					m_width = m_currentStyles.width = 
+						wProp.resolveRelativeValueTo(relevantWidth);
+				}
+				else
+				{
+					m_width = m_currentStyles.width || 0;
+				}
 			}
-			
-			var propsResolvableToOwnWidth:Array = 
-			[
-				'borderTopLeftRadius',
-				'borderTopRightRadius',
-				'borderBottomLeftRadius',
-				'borderBottomRightRadius'
-			];
 			//TODO: verify that we should really resolve the border-radii this way
-			resolvePropsToValue(styles, propsResolvableToOwnWidth, 
+			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
 				m_width + m_borderTopWidth);
 			
 			if (hProp.specifiedValue() == 'auto')
@@ -1701,7 +1654,8 @@ package reprise.ui
 					var specOuterHeight : Number;
 					if (outerHeightProp.isRelativeValue())
 					{
-						specOuterHeight = outerHeightProp.resolveRelativeValueTo(parentH);
+						specOuterHeight = 
+							outerHeightProp.resolveRelativeValueTo(parentH, this);
 					}
 					else
 					{
@@ -1711,14 +1665,17 @@ package reprise.ui
 						m_marginTop - m_marginBottom - 
 						m_paddingTop - m_paddingBottom - 
 						m_borderTopWidth - m_borderBottomWidth;
+					m_autoFlags.height = false;
 				}
 				else
 				{
-					m_height = m_currentStyles.height;
+					m_autoFlags.height = true;
+					m_height = 0;
 				}
 			}
 			else
 			{
+				m_autoFlags.height = false;
 				if (hProp.isRelativeValue())
 				{
 					m_height = hProp.resolveRelativeValueTo(parentH);
@@ -1733,9 +1690,9 @@ package reprise.ui
 		protected function resolvePropsToValue(styles : CSSDeclaration, 
 			props : Array, baseValue : Number) : void
 		{
-			for (var i:Number = props.length; i--;)
+			for (var i : int = props.length; i--;)
 			{
-				var propName:String = props[i];
+				var propName:String = props[i][0];
 				var cssProperty:CSSProperty = styles.getStyle(propName);
 				if (cssProperty)
 				{
@@ -1744,10 +1701,12 @@ package reprise.ui
 						m_currentStyles[propName] = this["m_"+propName] = 
 							Math.round(cssProperty.resolveRelativeValueTo(baseValue));
 					}
+					m_autoFlags[propName] = cssProperty.isAuto();
 					this["m_"+propName] = m_currentStyles[propName];
 				}
 				else 
 				{
+					m_autoFlags[propName] = props[i][1];
 					m_currentStyles[propName] = this["m_"+propName] = 0;
 				}
 			}
@@ -1865,7 +1824,7 @@ package reprise.ui
 					}
 				}
 				else if (child.m_positionInFlow || 
-					(child.m_leftIsAuto && child.m_rightIsAuto))
+					(child.m_autoFlags.left && child.m_autoFlags.right))
 				{
 					var childMarginLeft : CSSProperty = 
 						childStyles.getStyle('marginLeft');
@@ -1946,7 +1905,7 @@ package reprise.ui
 				else
 				{
 					if (child.m_float || 
-						(child.m_topIsAuto && child.m_bottomIsAuto))
+						(child.m_autoFlags.top && child.m_autoFlags.bottom))
 					{
 						child.y = currentLineBoxTop + child.m_marginTop;
 					}
@@ -2019,15 +1978,10 @@ package reprise.ui
 					absolutePosition.x -= child.x;
 					absolutePosition.y -= child.y;
 					
-					if (!child.m_leftIsAuto)
+					if (!child.m_autoFlags.left)
 					{
-						var childMarginLeft : CSSProperty = 
-							child.m_complexStyles.getStyle('marginLeft');
-						var childMarginRight : CSSProperty = 
-							child.m_complexStyles.getStyle('marginRight');
-						if (!child.m_rightIsAuto && 
-							childMarginLeft && childMarginLeft.isAuto() && 
-							childMarginRight && childMarginRight.isAuto())
+						if (!child.m_autoFlags.right && 
+							child.m_autoFlags.marginLeft && child.m_autoFlags.marginRight)
 						{
 							//center horizontally if margin-left and margin-right 
 							//are both auto and left and right have values.
@@ -2042,22 +1996,17 @@ package reprise.ui
 								child.m_marginLeft - absolutePosition.x;
 						}
 					}
-					else if (!child.m_rightIsAuto)
+					else if (!child.m_autoFlags.right)
 					{
 						child.x = child.m_containingBlock.m_paddingBoxWidth - 
 							child.m_paddingBoxWidth - child.m_borderRightWidth - 
 							child.m_right - child.m_marginRight - absolutePosition.x;
 					}
 					
-					if (!child.m_topIsAuto)
+					if (!child.m_autoFlags.top)
 					{
-						var childMarginTop : CSSProperty = 
-							child.m_complexStyles.getStyle('marginTop');
-						var childMarginBottom : CSSProperty = 
-							child.m_complexStyles.getStyle('marginBottom');
-						if (!child.m_bottomIsAuto && 
-							childMarginTop && childMarginTop.isAuto() && 
-							childMarginBottom && childMarginBottom.isAuto())
+						if (!child.m_autoFlags.bottom && 
+							child.m_autoFlags.marginTop && child.m_autoFlags.marginBottom)
 						{
 							//center vertically if margin-top and margin-bottom 
 							//are both auto and top and bottom have values.
@@ -2072,7 +2021,7 @@ package reprise.ui
 								child.m_marginTop - absolutePosition.y;
 						}
 					}
-					else if (!child.m_bottomIsAuto)
+					else if (!child.m_autoFlags.bottom)
 					{
 						child.y = child.m_containingBlock.m_paddingBoxHeight - 
 							child.m_paddingBoxHeight - child.m_borderBottomWidth - 
