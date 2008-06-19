@@ -50,6 +50,7 @@ package reprise.ui {
 		protected var m_tabIndex : Number;
 	
 		protected var m_contentDisplay : DisplayObjectContainer;
+		protected var m_filters : Array;
 		
 		protected var m_nextKeyView : UIObject;
 		protected var m_previousKeyView : UIObject;
@@ -666,31 +667,29 @@ package reprise.ui {
 		
 		public function addFilter(filter : Object) : void
 		{
-			var filters : Array = m_contentDisplay.filters;
-			if (!filters)
+			if (!m_filters)
 			{
-				filters = [];
+				m_filters = [];
 			}
-			if (filters.indexOf(filter != -1))
+			if (m_filters.indexOf(filter) != -1)
 			{
 				return;
 			}
-			filters.push(filter);
-			m_contentDisplay.filters = filters;
+			m_filters.push(filter);
+			m_contentDisplay.filters = m_filters;
 		}
 		
 		public function removeFilter(filter : Object) : void
 		{
-			var filters : Array = m_contentDisplay.filters;
-			if (!filters)
+			if (!m_filters)
 			{
 				return;
 			}
-			var filterIndex : int = filters.indexOf(filter);
+			var filterIndex : int = m_filters.indexOf(filter);
 			if (filterIndex != -1)
 			{
-				filters.splice(filterIndex, 1);
-				m_contentDisplay.filters = filters;
+				m_filters.splice(filterIndex, 1);
+				m_contentDisplay.filters = m_filters;
 			}
 		}
 		
