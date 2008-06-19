@@ -218,6 +218,10 @@ package reprise.css
 			prop.m_unit = m_unit;
 			prop.m_inheritsValue = m_inheritsValue;
 			prop.m_isRelativeValue = m_isRelativeValue;
+			if (m_isRelativeValue)
+			{
+				prop.m_calculationResultsCache = {};
+			}
 			prop.m_cssFile = m_cssFile;
 			
 			if (deep)
