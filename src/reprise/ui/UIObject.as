@@ -146,7 +146,14 @@ package reprise.ui {
 		
 		public override function addChild(child : DisplayObject) : DisplayObject
 		{
-			return addChildAt(child, m_children.length);
+			if (child is UIObject)
+			{
+				return addChildAt(child, m_children.length);
+			}
+			else
+			{
+				return super.addChild(child);
+			}
 		}
 		
 		public override function addChildAt(
@@ -191,7 +198,7 @@ package reprise.ui {
 			}
 			else
 			{
-				m_contentDisplay.addChildAt(child, index);
+				super.addChildAt(child, index);
 			}
 			return child;
 		}
