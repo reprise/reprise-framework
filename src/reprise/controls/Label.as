@@ -169,7 +169,6 @@ package reprise.controls
 		{
 			super.initialize();
 			
-			mouseChildren = false;
 			m_xmlDefinition = new XML('<p/>');
 			m_textLinkHrefs = [];
 		}
@@ -194,6 +193,8 @@ package reprise.controls
 		{
 			super.applyStyles();
 			m_selectable = m_currentStyles.selectable;
+			m_contentDisplay.mouseChildren = m_selectable;
+			
 			var fmt : TextFormat = new TextFormat();
 			if (m_currentStyles.tabStops)
 			{
