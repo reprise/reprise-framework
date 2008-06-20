@@ -10,12 +10,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls { 
-	import reprise.core.ccInternal;
-	import reprise.events.DisplayEvent;
-	import reprise.events.MouseEventConstants;
-	import reprise.ui.UIComponent;
-	import reprise.utils.ProxyFunction;
-	
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
@@ -23,6 +17,12 @@ package reprise.controls {
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
+	
+	import reprise.core.ccInternal;
+	import reprise.events.DisplayEvent;
+	import reprise.events.MouseEventConstants;
+	import reprise.ui.UIComponent;
+	import reprise.utils.ProxyFunction;
 	
 	use namespace ccInternal;
 	
@@ -295,7 +295,6 @@ package reprise.controls {
 				specHeight - m_scrollUpBtn.outerHeight - m_scrollDownBtn.outerHeight;
 			m_scrollTrack.setStyle('outerHeight', trackHeight + 'px');
 			m_scrollTrack.forceRedraw();
-			applyInFlowChildPositions();
 				
 			super.validateAfterChildren();
 			
