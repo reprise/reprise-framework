@@ -33,7 +33,7 @@ package reprise.css.math
 		protected static var g_operations : Object = initializeOperations();
 		//note that we ignore absolute value suffixes (ie, pt and px) for now
 		protected static var g_tokenizer : RegExp = 
-			/([()]|mod|[+\-*\/]|[0-9.][0-9.exEX]*|%|[$]|[\[][\w.#:\-? ]+[\]])|[ptx]{2}/g;
+			/(?<!\w)binding(?=\(\()|(?<=(?<!\w)binding)\(\(\s*[\w_\-.:#\[\] ]+\s*,\s*[\w_]+\s*\)\)|(?<=\d)pt|(?<=\d)px|[()]|mod|[+\-*\/]|(?<!\w)[0-9.][0-9.exEX]*|%/g;
 		
 		protected var m_operand1 : Object;
 		protected var m_operand2 : Object;
@@ -177,10 +177,10 @@ package reprise.css.math
 						ops.push(token);
 						break;
 					}
-					case '$':
+					case 'binding':
 					{
 						token = tokens.shift();
-						vals.push(new CSSCalculationVariable(token));
+						vals.push(new CSSCalculationBinding(token));
 						break;
 					}
 					default :
@@ -193,6 +193,10 @@ package reprise.css.math
 						else
 						{
 							vals.push(parseFloat(token));
+							if (tokens[0] == 'px' || tokens[0] == 'pt')
+							{
+								tokens.shift();
+							}
 						}
 					}
 				}
@@ -208,14 +212,16 @@ package reprise.css.math
 		}
 		protected static function tokenize(expression : String) : Array
 		{
+			//clean whitespace
+			expression = expression.replace(/\s*([+\-*\^()])\s*/g, '$1'), 
 			expression = 
 				'(((' + expression.split('(').join('((').split(')').join('))') + ')))';
-			var count : int = 100;
+			var guard : int = 100;
 			var tokens : Array = [];
 			var result : Array;
-			while ((result = g_tokenizer.exec(expression)) && count--)
+			while ((result = g_tokenizer.exec(expression)) && guard--)
 			{
-				var token : String = result[1];
+				var token : String = result[0];
 				switch(token)
 				{
 					case '^' : 

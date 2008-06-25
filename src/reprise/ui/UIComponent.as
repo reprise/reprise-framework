@@ -734,14 +734,7 @@ package reprise.ui
 					continue;
 				}
 				var childView : UIComponent = child as UIComponent;
-				var cssClasses : String = childView.cssClasses;
-	
-				if (cssClasses.indexOf(className) != -1 &&
-					(cssClasses == className || 
-					cssClasses.indexOf(' ' + className + ' ') != -1 || 
-					cssClasses.indexOf(className + ' ') == 0 || 
-					cssClasses.indexOf(' ' + className) == 
-					(cssClasses.length - className.length - 1)))
+				if (childView.hasClass(className))
 				{
 					elements.push(childView);
 				}
@@ -769,7 +762,7 @@ package reprise.ui
 				selectorParts = selector.split(' ');
 				var id : String = selectorParts.shift();
 				//discard every other information in the ID selector
-				id = (id.split('.')[0] as String).split('[')[0] as String;
+				id = ((id.split('.')[0] as String).split('[')[0] as String).split(':')[0];
 				element = m_rootElement.getElementById(id);
 				if (!element)
 				{
@@ -810,11 +803,11 @@ package reprise.ui
 				{
 					while (oldCandidates.length)
 					{
-						element = candidates.shift();
+						element = oldCandidates.shift();
 						children = element.getElementsByTagName(tag);
 						if (children.length)
 						{
-							candidates.concat(children);
+							candidates = candidates.concat(children);
 						}
 					}
 				}
@@ -823,11 +816,11 @@ package reprise.ui
 					className = classes.shift();
 					while (oldCandidates.length)
 					{
-						element = candidates.shift();
+						element = oldCandidates.shift();
 						children = element.getElementsByClassName(className);
 						if (children.length)
 						{
-							candidates.concat(children);
+							candidates = candidates.concat(children);
 						}
 					}
 				}
@@ -852,30 +845,36 @@ package reprise.ui
 			return m_elementType;
 		}
 		
-		public function valueBySelector(selector : String) : Number
+		public function valueBySelectorProperty(
+			selector : String, property : String) : *
 		{
-			var target : Object;
-			var property : String;
+			var target : UIComponent;
 			
-			//split path and property
-			var split : Array = selector.split(':');
-			//the property has to be the last element in the selector.
-			//Note that if you forget to add a property, the whole selector is treated 
-			//as the property, causing an Exception to be thrown below.
-			property = split.pop();
-			//If there's no path, this element has to be the target
-			if (!split.length || !split[0].length)
+			//If there's no selector, this element is the target
+			if (selector == '' || selector == null)
 			{
 				target = this;
 			}
 			else
 			{
-				var path : String = split.pop();
-				target = getElementBySelector(path);
+				target = getElementBySelector(selector);
 			}
 			
-			var value : Number = Number(target[property]);
-			return value;
+			var targetProperty : *;
+			try
+			{
+				targetProperty = target[property];
+			}
+			catch (error : Error)
+			{
+				if (target.m_currentStyles[property])
+				{
+					return target.m_currentStyles[property];
+				}
+				throw error;
+			}
+			
+			return targetProperty;
 		}
 		
 		
@@ -1634,7 +1633,7 @@ package reprise.ui
 							m_containingBlock.m_paddingRight;
 					}
 					m_width = m_currentStyles.width = 
-						wProp.resolveRelativeValueTo(relevantWidth);
+						wProp.resolveRelativeValueTo(relevantWidth, this);
 				}
 				else
 				{
@@ -1678,7 +1677,7 @@ package reprise.ui
 				m_autoFlags.height = false;
 				if (hProp.isRelativeValue())
 				{
-					m_height = hProp.resolveRelativeValueTo(parentH);
+					m_height = hProp.resolveRelativeValueTo(parentH, this);
 				}
 				else
 				{
@@ -1698,8 +1697,8 @@ package reprise.ui
 				{
 					if (cssProperty.isRelativeValue())
 					{
-						m_currentStyles[propName] = this["m_"+propName] = 
-							Math.round(cssProperty.resolveRelativeValueTo(baseValue));
+						m_currentStyles[propName] = this["m_"+propName] = Math.round(
+							cssProperty.resolveRelativeValueTo(baseValue, this));
 					}
 					m_autoFlags[propName] = cssProperty.isAuto();
 					this["m_"+propName] = m_currentStyles[propName];

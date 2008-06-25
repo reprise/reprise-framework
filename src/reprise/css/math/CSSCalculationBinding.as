@@ -14,31 +14,52 @@
  */
 package reprise.css.math
 {
-	public class CSSCalculationVariable 
+	public class CSSCalculationBinding 
 		extends AbstractCSSCalculation 
 	{
 		/***************************************************************************
 		*							private properties							   *
 		***************************************************************************/
-		private var m_selector : String;
+		protected var m_selector : String;
+		protected var m_value : String;
+		protected var m_property : String;
+		
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function CSSCalculationVariable(selector : String)
+		public function CSSCalculationBinding(value : String)
 		{
-			m_selector = selector.substr(1, -2);
+			m_value = value;
+			value = value.substring(2, value.length - 2);
+			var valueParts : Array = value.split(',');
+			if (valueParts.length == 1)
+			{
+				m_selector = '';
+				m_property = valueParts[0];
+			}
+			else
+			{
+				var selector : String = valueParts[0];
+				var lastIDIndex : int = selector.lastIndexOf('#');
+				if (lastIDIndex > -1)
+				{
+					selector = selector.substr(lastIDIndex);
+				}
+				m_selector = selector;
+				m_property = valueParts[1];
+			}
 		}
 		
 		public override function resolve(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
-			return context.valueBySelector(m_selector);
+			return context.valueBySelectorProperty(m_selector, m_property);
 		}
 		
 		public function toString() : String
 		{
-			return "CSSCalculationVariable, selector: " + m_selector;
+			return "CSSCalculationBinding, value: " + m_value;
 		}
 	}
 }
