@@ -40,7 +40,7 @@ package reprise.controls
 		public function Checkbox()
 		{
 		}
-		public function get checked () : Boolean
+		public function get checked() : Boolean
 		{
 			return selected;	
 		}
@@ -84,24 +84,11 @@ package reprise.controls
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected override function initialize () : void
+		protected override function initialize() : void
 		{
 			super.initialize();
 			isToggleButton = true;
 			m_labelDisplay.html = true;
-		}
-		
-		protected override function buttonDisplay_click(event:MouseEvent) : void
-		{
-			super.buttonDisplay_click(event);
-			if(selected)
-			{
-				selected = false;	
-			}
-			else
-			{
-				selected = true;	
-			}	
 		}
 
 		//@FIXME
