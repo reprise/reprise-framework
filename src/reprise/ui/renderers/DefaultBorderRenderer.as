@@ -9,12 +9,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.ui.renderers { 
+package reprise.ui.renderers
+{ 
+	import flash.geom.Point;
+	
 	import reprise.css.propertyparsers.Border;
 	import reprise.data.AdvancedColor;
 	import reprise.utils.GfxUtil;
-	
-	import flash.geom.Point;
 	
 	
 	public class DefaultBorderRenderer extends AbstractCSSRenderer
@@ -102,44 +103,64 @@ package reprise.ui.renderers {
 				return;
 			}
 			
+			var topLeft : Point = new Point();
+			var topRight : Point = new Point();
+			var bottomRight : Point = new Point();
+			var bottomLeft : Point = new Point();
 			if (borderWidth.top > 0 && borderStyle.top != 'none')
 			{
+				topLeft.x = 0;
+				topLeft.y = 0;
+				topRight.x = m_width;
+				topRight.y = 0;
+				bottomRight.x = m_width - borderWidth.right;
+				bottomRight.y = borderWidth.top;
+				bottomLeft.x = borderWidth.left;
+				bottomLeft.y = borderWidth.top;
 				drawBorderInRect(borderColor.top, borderStyle.top, borderWidth.top, 
-					new Point(0, 0), 
-					new Point(m_width, 0), 
-					new Point(m_width - borderWidth.right, borderWidth.top), 
-					new Point(borderWidth.left, borderWidth.top),
-					SIDE_TOP);
+					topLeft, topRight, bottomRight, bottomLeft, SIDE_TOP);
 			}
 			
 			if (borderWidth.right > 0 && borderStyle.right != 'none')
 			{
+				topLeft.x = m_width;
+				topLeft.y = 0;
+				topRight.x = m_width;
+				topRight.y = m_height;
+				bottomRight.x = m_width - borderWidth.right;
+				bottomRight.y = m_height - borderWidth.bottom;
+				bottomLeft.x = m_width - borderWidth.right;
+				bottomLeft.y = borderWidth.top;
 				drawBorderInRect(borderColor.right, borderStyle.right, borderWidth.right, 
-					new Point(m_width, 0),
-					new Point(m_width, m_height),
-					new Point(m_width - borderWidth.right, m_height - borderWidth.bottom),
-					new Point(m_width - borderWidth.right, borderWidth.top),
-					SIDE_RIGHT);
+					topLeft, topRight, bottomRight, bottomLeft, SIDE_RIGHT);
 			}
 	
 			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none')
 			{
+				topLeft.x = 0;
+				topLeft.y = m_height;
+				topRight.x = m_width;
+				topRight.y = m_height;
+				bottomRight.x = m_width - borderWidth.right;
+				bottomRight.y =  m_height - borderWidth.bottom;
+				bottomLeft.x = borderWidth.left;
+				bottomLeft.y = m_height - borderWidth.bottom;
 				drawBorderInRect(borderColor.bottom, borderStyle.bottom, borderWidth.bottom, 
-					new Point(0, m_height),
-					new Point(m_width, m_height),
-					new Point(m_width - borderWidth.right, m_height - borderWidth.bottom),
-					new Point(borderWidth.left, m_height - borderWidth.bottom),
-					SIDE_BOTTOM);
+					topLeft, topRight, bottomRight, bottomLeft, SIDE_BOTTOM);
 			}
 			
 			if (borderWidth.left > 0 && borderStyle.left != 'none')
 			{
+				topLeft.x = 0;
+				topLeft.y = 0;
+				topRight.x = 0;
+				topRight.y = m_height;
+				bottomRight.x = borderWidth.left;
+				bottomRight.y = m_height - borderWidth.bottom;
+				bottomLeft.x = borderWidth.left;
+				bottomLeft.y = borderWidth.top;
 				drawBorderInRect(borderColor.left, borderStyle.left, borderWidth.left, 
-					new Point(0, 0),
-					new Point(0, m_height),
-					new Point(borderWidth.left, m_height - borderWidth.bottom),
-					new Point(borderWidth.left, borderWidth.top),
-					SIDE_LEFT);
+					topLeft, topRight, bottomRight, bottomLeft, SIDE_LEFT);
 			}
 		}
 		
@@ -200,7 +221,8 @@ package reprise.ui.renderers {
 						}
 					}
 					
-					GfxUtil.drawDashedLine(m_display, pt1.x, pt1.y, pt2.x, pt2.y, dashLength, dashLength);
+					GfxUtil.drawDashedLine(m_display, 
+						pt1.x, pt1.y, pt2.x, pt2.y, dashLength, dashLength);
 					break;
 				}
 				case Border.BORDER_STYLE_SOLID :
