@@ -11,8 +11,6 @@
 
 package reprise.ui
 {
-	import com.robertpenner.easing.Linear;
-	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -20,16 +18,14 @@ package reprise.ui
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.getTimer;
 	
 	import reprise.controls.Scrollbar;
 	import reprise.core.UIRendererFactory;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyCache;
 	import reprise.css.math.ICSSCalculationContext;
 	import reprise.css.propertyparsers.Filters;
-	import reprise.css.transitions.CSSPropertyTransition;
+	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.ui.renderers.ICSSRenderer;
 	import reprise.utils.GfxUtil;
 	import reprise.utils.StringUtil;
@@ -57,6 +53,13 @@ package reprise.ui
 			['paddingRight', false],
 			['left', true],
 			['right', true]
+		];
+		protected static const EDGE_NAMES : Array = 
+		[
+			'Top',
+			'Right',
+			'Bottom',
+			'Left'
 		];
 		protected static const HEIGHT_RELATIVE_PROPERTIES : Array = 
 		[
@@ -88,7 +91,7 @@ package reprise.ui
 		protected var m_specifiedStyles : CSSDeclaration;
 		protected var m_elementDefaultStyles : CSSDeclaration;
 		protected var m_instanceStyles : CSSDeclaration;
-		protected var m_activeTransitions : Object;
+		protected var m_transitionsManager : CSSTransitionsManager;
 	
 		protected var m_left : Number = 0;
 		protected var m_top : Number = 0;
@@ -895,6 +898,7 @@ package reprise.ui
 				m_elementDefaultStyles = m_class.basicStyles;
 			}
 			m_instanceStyles = new CSSDeclaration();
+			m_transitionsManager = new CSSTransitionsManager();
 			m_currentStyles = {};
 			m_stylesInvalidated = true;
 			super.initialize();
@@ -923,7 +927,10 @@ package reprise.ui
 			super.validateElement(forceValidation);
 		}
 		/**
-		 * Hook method, executed before the UIObjects' children get validated
+		 * Hook method, executed before the UIComponents' children get validated.
+		 * 
+		 * Stores values for some settings for later comparison and executes style 
+		 * validation. If that results in changed settings, it applies those.
 		 */
 		protected override function validateBeforeChildren() : void
 		{
@@ -931,11 +938,11 @@ package reprise.ui
 				m_borderBoxWidth + m_marginLeft + m_marginRight, 
 				m_borderBoxHeight + m_marginTop + m_marginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
-		
-			var oldSpecifiedDimensions : Point = 
-				new Point(m_currentStyles.width, m_currentStyles.height);
 			
-			if (m_activeTransitions)
+			var oldWidth : Number = m_currentStyles.width;
+			var oldHeight : Number = m_currentStyles.height;
+			
+			if (!m_stylesInvalidated && m_transitionsManager.isActive())
 			{
 				m_stylesInvalidated = true;
 			}
@@ -945,10 +952,10 @@ package reprise.ui
 				if (m_stylesInvalidated)
 				{
 					applyStyles();
-					m_specifiedDimensionsChanged = !oldSpecifiedDimensions.equals(
-						new Point(m_currentStyles.width, m_currentStyles.height));
-					if (m_specifiedDimensionsChanged)
+					if (m_currentStyles.width != oldWidth || 
+						m_currentStyles.height != oldHeight)
 					{
+						m_specifiedDimensionsChanged = true;
 						resolveSpecifiedDimensions();
 					}
 				}
@@ -1167,8 +1174,10 @@ package reprise.ui
 		}
 	
 		/**
-		 * parses all styles associated with this element and its classes
-		 * and creates a combined style object
+		 * parses all styles associated with this element and its classes and creates a 
+		 * combined style object.
+		 * CalculateStyles also invokes processing of transitions and resolution of 
+		 * relative values.
 		 */
 		protected function calculateStyles() : void
 		{
@@ -1194,7 +1203,7 @@ package reprise.ui
 			//check if styles or other relevant factors have changed and stop validation 
 			//if not.
 			if (!(m_containingBlock && m_containingBlock.m_specifiedDimensionsChanged) && 
-				styles.compare(oldStyles) && !m_activeTransitions && 
+				styles.compare(oldStyles) && !m_transitionsManager.isActive() && 
 				!(this == m_rootElement && DocumentView(this).stageDimensionsChanged))
 			{
 				m_stylesInvalidated = false;
@@ -1202,20 +1211,28 @@ package reprise.ui
 			}
 			
 			m_specifiedStyles = styles;
-			styles = processTransitions(oldStyles, styles);
+			styles = m_transitionsManager.processTransitions(oldStyles, styles);
 			m_complexStyles = styles;
 			m_currentStyles = styles.toObject();
 			
+			if (m_transitionsManager.isActive())
+			{
+				m_stylesInvalidated = true;
+				invalidate();
+			}
 			
-			resolvePositioningProperties(styles);
+			resolvePositioningProperties();
 			resolveContainingBlock();
 			resolveRelativeStyles(styles);
 		}
 		
+		/**
+		 * Applies a wide array of style settings.
+		 * When implementing components, this method should be overridden to implement 
+		 * additional settings derived from stylesheets.
+		 */
 		protected function applyStyles() : void
 		{	
-			var styles : CSSDeclaration = m_complexStyles;
-			
 			m_positionOffset = new Point(0, 0);
 			if (m_positioningType == 'relative')
 			{
@@ -1225,55 +1242,20 @@ package reprise.ui
 			
 			
 			//calculate border widths
-			var borderWidthProp : CSSProperty;
-			var borderStyleProp : CSSProperty;
-			
-			borderWidthProp = styles.getStyle('borderLeftWidth');
-			borderStyleProp = styles.getStyle('borderLeftStyle');
-			if (borderWidthProp && borderStyleProp && 
-				borderStyleProp.valueOf() != 'none')
+			for each (var borderName : String in EDGE_NAMES)
 			{
-				m_borderLeftWidth = borderWidthProp.valueOf() as Number;
-			}
-			else
-			{
-				m_borderLeftWidth = 0;
-			}
-			
-			borderWidthProp = styles.getStyle('borderTopWidth');
-			borderStyleProp = styles.getStyle('borderTopStyle');
-			if (borderWidthProp && borderStyleProp && 
-				borderStyleProp.valueOf() != 'none')
-			{
-				m_borderTopWidth = borderWidthProp.valueOf() as Number;
-			}
-			else
-			{
-				m_borderTopWidth = 0;
-			}
-			
-			borderWidthProp = styles.getStyle('borderRightWidth');
-			borderStyleProp = styles.getStyle('borderRightStyle');
-			if (borderWidthProp && borderStyleProp && 
-				borderStyleProp.valueOf() != 'none')
-			{
-				m_borderRightWidth = borderWidthProp.valueOf() as Number;
-			}
-			else
-			{
-				m_borderRightWidth = 0;
-			}
-			
-			borderWidthProp = styles.getStyle('borderBottomWidth');
-			borderStyleProp = styles.getStyle('borderBottomStyle');
-			if (borderWidthProp && borderStyleProp && 
-				borderStyleProp.valueOf() != 'none')
-			{
-				m_borderBottomWidth = borderWidthProp.valueOf() as Number;
-			}
-			else
-			{
-				m_borderBottomWidth = 0;
+				var style : String = 
+					m_currentStyles['border' + borderName + 'Style'] || 'none';
+				var width : Number;
+				if (style == 'none')
+				{
+					this['m_border' + borderName + 'Width'] = 0;
+				}
+				else
+				{
+					this['m_border' + borderName + 'Width'] = 
+						m_currentStyles['border' + borderName + 'Width'] || 0;
+				}
 			}
 			
 			
@@ -1297,14 +1279,11 @@ package reprise.ui
 			{
 				m_tabIndex = m_currentStyles.tabIndex;
 			}
-				
+			
 			m_tooltipRenderer = m_currentStyles.tooltipRenderer;
 			m_tooltipDelay = m_currentStyles.tooltipDelay;
 			
-			if (m_currentStyles.blendMode != null)
-			{
-				m_contentDisplay.blendMode = m_currentStyles.blendMode;
-			}
+			m_contentDisplay.blendMode = m_currentStyles.blendMode || 'normal';
 			
 			if (m_dropShadowFilter != null)
 			{
@@ -1341,42 +1320,29 @@ package reprise.ui
 			}
 			
 			super.rotation = m_currentStyles.rotation || 0;
-			if (m_currentStyles.opacity != null)
-			{
-				super.alpha = m_currentStyles.opacity;
-			}
-			else
+			if (m_currentStyles.opacity == null)
 			{
 				super.alpha = 1;
 			}
-			
-//			trace(m_selectorPath);
-//			trace(m_complexStyles);
+			else
+			{
+				super.alpha = m_currentStyles.opacity;
+			}
 		}
 		
-		protected function resolvePositioningProperties(styles : CSSDeclaration) : void
+		protected function resolvePositioningProperties() : void
 		{
-			var floatProperty : CSSProperty = styles.getStyle('float');
-			if (floatProperty != null && floatProperty.valueOf() != 'none')
+			if (m_currentStyles.float && m_currentStyles.float != 'none')
 			{
-				m_float = floatProperty.valueOf() as String;
+				m_float = m_currentStyles.float;
 			}
 			else
 			{
 				m_float = null;
 			}
 			
-			var positioningProperty:CSSProperty = styles.getStyle('position');
-			var positioning:String;
-			if (!positioningProperty)
-			{
-				positioning = m_positioningType = 'static';
-			}
-			else
-			{
-				positioning = m_positioningType = 
-					String(positioningProperty.valueOf());
-			}
+			var positioning:String = m_positioningType = 
+				m_currentStyles.position || 'static';
 			
 			if (!m_float && (positioning == 'static' || positioning == 'relative'))
 			{
@@ -1429,143 +1395,6 @@ package reprise.ui
 					m_containingBlock = parentComponent;
 				}
 			}
-		}
-		
-		protected function processTransitions(
-			oldStyles : CSSDeclaration, newStyles : CSSDeclaration) : CSSDeclaration
-		{
-			var transitionPropName : String;
-			var transition : CSSPropertyTransition;
-			var startTime : int = getTimer();
-			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
-			{
-				var transitionProperties : Array = 
-					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
-				var transitionDurations : Array = 
-					newStyles.getStyle('RepriseTransitionDuration').specifiedValue();
-				var transitionDelays : Array = 
-					newStyles.getStyle('RepriseTransitionDelay').specifiedValue();
-				var transitionEasings : Array = newStyles.getStyle(
-					'RepriseTransitionTimingFunction').specifiedValue();
-				var defaultValues : Array = newStyles.getStyle(
-					'RepriseTransitionDefaultValue').specifiedValue();
-				
-				//remove any transitions that aren't supposed to be active anymore
-				if (m_activeTransitions)
-				{
-					for (transitionPropName in m_activeTransitions)
-					{
-						if (transitionProperties.indexOf(transitionPropName) == -1)
-						{
-							delete m_activeTransitions[transitionPropName];
-						}
-					}
-				}
-				else
-				{
-					m_activeTransitions = {};
-				}
-				
-				//add all new properties and update already active ones
-				for (var i : int = transitionProperties.length; i--;)
-				{
-					transitionPropName = transitionProperties[i];
-					var oldValue : CSSProperty = (oldStyles && 
-						oldStyles.getStyle(transitionPropName)) as CSSProperty;
-					var targetValue : CSSProperty = 
-						newStyles.getStyle(transitionPropName);
-					
-					//check for default value if we have a target value but no old value
-					if (targetValue && !oldValue && 
-						defaultValues[i] && defaultValues[i] != 'none')
-					{
-						oldValue = CSSProperty(CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, defaultValues[i], null));
-					}
-					
-					//exception for intrinsic dimensions
-//					if (!targetValue && (transitionPropName == 'intrinsicHeight' || 
-//						transitionPropName == 'intrinsicWidth'))
-//					{
-//						//TODO: cache these properties
-//						trace("exception for " + transitionPropName);
-//						if (!m_firstDraw)
-//						{
-//							oldValue = new CSSProperty();
-//							oldValue.setSpecifiedValue(0);
-//						}
-//						targetValue = new CSSProperty();
-//						targetValue.setSpecifiedValue(999);
-//					}
-					
-					//ignore properties that don't have previous values or target values
-					//TODO: check if we can implement default values for new elements
-					if (!oldValue || !targetValue || 
-						oldValue.specifiedValue() == targetValue.specifiedValue())
-					{
-						continue;
-					}
-					if (transitionEasings[i])
-					{ 
-						var easing : Function = transitionEasings[i];
-					}
-					else
-					{
-						easing = Linear.easeNone;
-					}
-					transition = m_activeTransitions[transitionPropName];
-					if (!transition)
-					{
-						transition = new CSSPropertyTransition(transitionPropName);
-						transition.duration = transitionDurations[i];
-						transition.delay = transitionDelays[i];
-						transition.easing = easing;
-						transition.startTime = startTime;
-						transition.startValue = oldValue;
-						transition.endValue = targetValue;
-						m_activeTransitions[transitionPropName] = transition;
-					}
-					else if (transition.endValue != targetValue)
-					{
-						transition.easing = easing;
-						transition.updateValues(targetValue, transitionDurations[i], 
-							transitionDelays[i], startTime, this);
-					}
-				}
-			}
-			
-			if (!m_activeTransitions)
-			{
-				return newStyles;
-			}
-			
-			var styles : CSSDeclaration = newStyles.clone();
-			var activeTransitionsCount : int = 0;
-			for (transitionPropName in m_activeTransitions)
-			{
-				transition = m_activeTransitions[transitionPropName];
-				transition.setValueForTimeInContext(startTime, this);
-				styles.setPropertyForKey(transition.currentValue, transitionPropName);
-				if (transition.hasCompleted)
-				{
-					delete m_activeTransitions[transitionPropName];
-				}
-				else
-				{
-					activeTransitionsCount++;
-				}
-			}
-			
-			if (!activeTransitionsCount)
-			{
-				m_activeTransitions = null;
-			}
-			else
-			{
-				m_stylesInvalidated = true;
-				invalidate();
-			}
-			return styles;
 		}
 		
 		protected function resolveRelativeStyles(styles:CSSDeclaration) : void
@@ -1748,8 +1577,6 @@ package reprise.ui
 				return;
 			}
 			
-			var autoFlag:String = CSSProperty.AUTO_FLAG;
-			
 			var widestChildWidth:Number = 0;
 			var collapsibleMargin:Number = 0;
 			var topMarginCollapsible:Boolean = 
@@ -1774,7 +1601,6 @@ package reprise.ui
 				{
 					continue;
 				}
-				var childStyles:CSSDeclaration = child.m_complexStyles;
 				
 				//apply horizontal position
 				if (child.m_float)
@@ -1825,15 +1651,9 @@ package reprise.ui
 				else if (child.m_positionInFlow || 
 					(child.m_autoFlags.left && child.m_autoFlags.right))
 				{
-					var childMarginLeft : CSSProperty = 
-						childStyles.getStyle('marginLeft');
-					if (childMarginLeft && 
-						childMarginLeft.specifiedValue() == autoFlag)
+					if (child.m_autoFlags.marginLeft)
 					{
-						var childMarginRight : CSSProperty = 
-							childStyles.getStyle('marginRight');
-						if (childMarginRight && 
-							childMarginRight.specifiedValue() == autoFlag)
+						if (child.m_autoFlags.marginRight)
 						{
 							//center horizontally
 							child.x = Math.round(totalAvailableWidth / 2 - 
@@ -2185,10 +2005,8 @@ package reprise.ui
 			m_borderRenderer.draw();
 			
 			//TODO: move into renderer
-			if (m_currentStyles.backgroundBlendMode != null)
-			{
-				m_backgroundDisplay.blendMode = m_currentStyles.backgroundBlendMode;
-			}
+			m_backgroundDisplay.blendMode = 
+				m_currentStyles.backgroundBlendMode || 'normal';
 		}
 		protected function applyOverflowProperty() : void
 		{
@@ -2452,6 +2270,15 @@ package reprise.ui
 			{
 				super.unregisterChildView(child);
 			}
+		}
+		
+		internal function valueForKey(key : String) : *
+		{
+			return this[key];
+		}
+		internal function setValueForKey(key : String, value : *) : void
+		{
+			this[key] = value;
 		}
 	}
 }
