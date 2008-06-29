@@ -574,7 +574,7 @@ package reprise.controls
 			}
 			if (overflow == 0) //'auto' gets resolved to '0'
 			{
-				if (m_labelDisplay.textHeight > availableHeight)
+				if (m_labelDisplay.maxScrollV > 1)
 				{
 					if (!m_vScrollbar)
 					{
@@ -589,8 +589,7 @@ package reprise.controls
 					m_vScrollbar.setVisibility(false);
 				}
 				
-				if (!m_labelDisplay.wordWrap && 
-					m_labelDisplay.textWidth > m_labelDisplay.width - 3)
+				if (!m_labelDisplay.wordWrap && m_labelDisplay.maxScrollH > 0)
 				{
 					if (!m_hScrollbar)
 					{
@@ -600,7 +599,7 @@ package reprise.controls
 					m_hScrollbar.setVisibility(true);
 					
 					if ((!m_vScrollbar || !m_vScrollbar.getVisibility()) && 
-						m_labelDisplay.textHeight > availableHeight)
+						m_labelDisplay.maxScrollV > 1)
 					{
 						if (!m_vScrollbar)
 						{
@@ -628,10 +627,13 @@ package reprise.controls
 			availableHeight += m_paddingTop + m_paddingBottom;
 			availableWidth += m_paddingLeft + m_paddingRight;
 			
-			m_vScrollbar.outerHeight = availableHeight;
-			m_vScrollbar.top = m_borderTopWidth;
-			m_vScrollbar.left = availableWidth + m_borderLeftWidth;
-			m_vScrollbar.delayValidation();
+			if (m_vScrollbar)
+			{
+				m_vScrollbar.outerHeight = availableHeight;
+				m_vScrollbar.top = m_borderTopWidth;
+				m_vScrollbar.left = availableWidth + m_borderLeftWidth;
+				m_vScrollbar.delayValidation();
+			}
 			
 			if (m_hScrollbar)
 			{
