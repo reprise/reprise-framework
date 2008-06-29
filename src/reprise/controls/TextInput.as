@@ -27,6 +27,9 @@ package reprise.controls
 		***************************************************************************/
 		protected var m_enabled : Boolean;
 		protected var m_labelStr : String;
+		protected var m_verticalScrollingOn : Boolean;
+		protected var m_horizontalScrollingOn : Boolean;
+		
 		protected var m_hasFocus : Boolean;
 		
 		/***************************************************************************
@@ -88,13 +91,13 @@ package reprise.controls
 		/***************************************************************************
 		*							protected methods					
 		***************************************************************************/
-		protected override function initialize () : void
+		protected override function initialize() : void
 		{
 			super.initialize();
 			enabled = true;
 //			m_labelDisplay.onSetFocus = label_focusIn;
 //			m_labelDisplay.onKillFocus = label_focusOut;
-//			m_labelDisplay.onChanged = label_change;
+			m_labelDisplay.addEventListener(Event.CHANGE, label_change);
 		}
 	
 		protected override function initDefaultStyles() : void
@@ -125,14 +128,26 @@ package reprise.controls
 			m_labelDisplay.height = calculateContentHeight();
 		}
 		
-		protected function label_change() : void
+		protected function label_change(event : Event) : void
 		{
 			m_labelStr = m_labelDisplay.text;
 			dispatchEvent(new Event(Event.CHANGE));
 			applyOverflowProperty();
 		}
 		
-		protected override function draw () : void
+		protected override function applyOverflowProperty() : void
+		{
+			if ((m_labelDisplay.maxScrollV > 1) != m_verticalScrollingOn || 
+				(m_labelDisplay.maxScrollH > 0) != m_horizontalScrollingOn)
+			{
+				m_overflowIsInvalid = true;
+				super.applyOverflowProperty();
+				m_verticalScrollingOn = m_labelDisplay.maxScrollV > 1;
+				m_horizontalScrollingOn = m_labelDisplay.maxScrollH > 0;
+			}
+		}
+		
+		protected override function draw() : void
 		{
 			super.draw();
 			if (!isNaN(m_tabIndex))
