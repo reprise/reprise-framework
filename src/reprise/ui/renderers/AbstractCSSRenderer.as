@@ -96,8 +96,8 @@ package reprise.ui.renderers {
 		
 		public function setSize(w : Number, h : Number) : void
 		{
-			setWidth(w);
-			setHeight(h);
+			m_width = w;
+			m_height = h;
 		}
 		
 		public function draw() : void
