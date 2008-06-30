@@ -574,7 +574,13 @@ package reprise.controls
 			}
 			if (overflow == 0) //'auto' gets resolved to '0'
 			{
-				if (m_labelDisplay.maxScrollV > 1)
+				m_labelDisplay.height = availableHeight + 4;
+				m_labelDisplay.width = availableWidth + 4;
+				//we have to query maxScrollH before maxScrollV because otherwise the 
+				//value returned for maxScrollV isn't always correct.
+				var maxScrollH : int = m_labelDisplay.maxScrollH;
+				var maxScrollV : int = m_labelDisplay.maxScrollV;
+				if (maxScrollV > 1)
 				{
 					if (!m_vScrollbar)
 					{
@@ -589,7 +595,7 @@ package reprise.controls
 					m_vScrollbar.setVisibility(false);
 				}
 				
-				if (!m_labelDisplay.wordWrap && m_labelDisplay.maxScrollH > 0)
+				if (!m_labelDisplay.wordWrap && maxScrollH > 0)
 				{
 					if (!m_hScrollbar)
 					{
