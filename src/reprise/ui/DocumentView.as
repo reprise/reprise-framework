@@ -11,8 +11,13 @@
 
 package reprise.ui
 { 
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
@@ -54,6 +59,9 @@ package reprise.ui
 		protected var m_heightIsRelative : Boolean;
 		
 		protected var m_stageInvalidationTimeout : int;
+		
+		protected var m_debuggingMode : Boolean;
+		protected var m_debugInterface : Sprite;
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -232,6 +240,7 @@ package reprise.ui
 			stage.addEventListener(Event.RESIZE, stage_resize);
 			super.initialize();
 			stage.addEventListener(Event.RENDER, stage_render);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, key_down);
 		}
 		
 		protected override function initDefaultStyles() : void
@@ -339,6 +348,82 @@ package reprise.ui
 			clearTimeout(m_stageInvalidationTimeout);
 			stage.invalidate();
 		}
+		protected function toggleDebuggingMode() : void
+		{
+			if (m_debuggingMode)
+			{
+				deactivateDebuggingMode();
+			}
+			else
+			{
+				activateDebuggingMode();
+			}
+		}
+		protected function activateDebuggingMode() : void
+		{
+			if (m_debuggingMode)
+			{
+				return;
+			}
+			m_debuggingMode = true;
+			
+			m_debugInterface = new Sprite();
+			m_debugInterface.mouseEnabled = false;
+			addChild(m_debugInterface);
+			
+			stage.addEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true, 100);
+		}
+		protected function deactivateDebuggingMode() : void
+		{
+			if (!m_debuggingMode)
+			{
+				return;
+			}
+			m_debuggingMode = false;
+			
+			removeChild(m_debugInterface);
+			m_debugInterface = null;
+			
+			stage.removeEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true);
+		}
+		protected function debugMarkElement(element : UIComponent) : void
+		{
+			var output : String = 'Element: ' + element + '\n';
+			
+			var display : Sprite = element.valueForKey('m_contentDisplay');
+			var position : Point = new Point(display.x, display.y);
+			position = element.localToGlobal(position);
+			m_debugInterface.x = position.x;
+			m_debugInterface.y = position.y;
+			
+			m_debugInterface.graphics.clear();
+			m_debugInterface.graphics.lineStyle(1, 0xffff);
+			
+			var boxWidth : Number = element.valueForKey('m_borderBoxWidth');
+			var boxHeight : Number = element.valueForKey('m_borderBoxHeight');
+			output += 'Border Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
+			m_debugInterface.graphics.drawRect(-element.valueForKey('m_borderLeftWidth'), 
+				-element.valueForKey('m_borderTopWidth'), boxWidth, boxHeight);
+			
+			boxWidth -= element.valueForKey('m_borderLeftWidth');
+			boxWidth -= element.valueForKey('m_borderRightWidth');
+			boxHeight -= element.valueForKey('m_borderTopWidth');
+			boxHeight -= element.valueForKey('m_borderBottomWidth');
+			output += 'Padding Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
+			m_debugInterface.graphics.endFill();
+			m_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
+			
+			boxWidth -= element.valueForKey('m_paddingLeft');
+			boxWidth -= element.valueForKey('m_paddingRight');
+			boxHeight -= element.valueForKey('m_paddingTop');
+			boxHeight -= element.valueForKey('m_paddingBottom');
+			output += 'Content Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
+			m_debugInterface.graphics.endFill();
+			m_debugInterface.graphics.drawRect(element.valueForKey('m_paddingLeft'), 
+				element.valueForKey('m_paddingTop'), boxWidth, boxHeight);
+			
+			log(output);
+		}
 		
 		protected function stage_resize(event : Event) : void
 		{
@@ -354,6 +439,33 @@ package reprise.ui
 		protected function stage_render(event : Event) : void
 		{
 			validateElements();
+		}
+		
+		protected function key_down(event : KeyboardEvent) : void
+		{
+			if (event.shiftKey && event.ctrlKey && event.keyCode == 4)
+			{
+				toggleDebuggingMode();
+			}
+		}
+		protected function debugging_mouseOver(event : MouseEvent) : void
+		{
+			var parent : DisplayObject = DisplayObject(event.target);
+			var element : UIComponent;
+			while (parent)
+			{
+				if (parent is UIComponent)
+				{
+					element = UIComponent(parent);
+					break;
+				}
+				parent = parent.parent;
+			}
+			if (!element)
+			{
+				return;
+			}
+			debugMarkElement(element);
 		}
 	}
 }
