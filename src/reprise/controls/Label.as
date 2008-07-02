@@ -635,7 +635,7 @@ package reprise.controls
 			
 			if (m_vScrollbar)
 			{
-				m_vScrollbar.outerHeight = availableHeight;
+				m_vScrollbar.height = availableHeight;
 				m_vScrollbar.top = m_borderTopWidth;
 				m_vScrollbar.left = availableWidth + m_borderLeftWidth;
 				m_vScrollbar.delayValidation();
@@ -643,7 +643,7 @@ package reprise.controls
 			
 			if (m_hScrollbar)
 			{
-				m_hScrollbar.outerHeight = availableWidth;
+				m_hScrollbar.height = availableWidth;
 				m_hScrollbar.top = availableHeight + scrollbarWidth;
 				m_hScrollbar.left = m_borderLeftWidth;
 				m_hScrollbar.delayValidation();

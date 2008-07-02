@@ -29,11 +29,10 @@ package reprise.css.propertyparsers {
 			'bottom',
 			'zIndex',
 			'width',
-			'outerWidth',
+			'boxSizing',
 			'minWidth',
 			'maxWidth',
 			'height',
-			'outerHeight',
 			'minHeight',
 			'maxHeight',
 			'clear',
@@ -143,20 +142,10 @@ package reprise.css.propertyparsers {
 			return strToIntProperty(val, file);
 		}
 		
-		public static function parseMaxWidth(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}		
-		
 		public static function parseHeight(val:String, file:String):CSSProperty
 		{
 			return strToIntProperty(val, file);
 		}		
-		
-		public static function parseOuterHeight(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}	
 		
 		public static function parseMinHeight(val:String, file:String):CSSProperty
 		{
@@ -166,6 +155,11 @@ package reprise.css.propertyparsers {
 		public static function parseMaxHeight(val:String, file:String):CSSProperty
 		{
 			return strToIntProperty(val, file);
+		}
+		
+		public static function parseBoxSizing(val:String, file:String) : CSSProperty
+		{
+			return strToStringProperty(val, file);
 		}
 		
 		public static function parseFloat(val:String, file:String):CSSProperty

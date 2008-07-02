@@ -64,7 +64,8 @@ package reprise.ui
 		protected static const HEIGHT_RELATIVE_PROPERTIES : Array = 
 		[
 			['top', true],
-			['bottom', true]
+			['bottom', true],
+			['height', true]
 		];
 		protected static const OWN_WIDTH_RELATIVE_PROPERTIES:Array = 
 		[
@@ -240,13 +241,9 @@ package reprise.ui
 			return m_width;
 		}
 		
-		public function set outerWidth(value : Number) : void
-		{
-			setStyle('outerWidth', value + 'px');
-		}
 		public function get outerWidth() : Number
 		{
-			return m_currentStyles.outerWidth;
+			return m_borderBoxWidth;
 		}
 		
 		public function get intrinsicWidth() : Number
@@ -265,11 +262,7 @@ package reprise.ui
 		
 		public function get outerHeight() : Number
 		{
-			return m_currentStyles.outerHeight;
-		}
-		public function set outerHeight(value : Number) : void
-		{
-			setStyle('outerHeight', value + 'px');
+			return m_borderBoxHeight;
 		}
 		
 		public function get intrinsicHeight() : Number
@@ -1240,37 +1233,6 @@ package reprise.ui
 				m_positionOffset.y = m_top;
 			}
 			
-			
-			//calculate border widths
-			for each (var borderName : String in EDGE_NAMES)
-			{
-				var style : String = 
-					m_currentStyles['border' + borderName + 'Style'] || 'none';
-				var width : Number;
-				if (style == 'none')
-				{
-					this['m_border' + borderName + 'Width'] = 0;
-				}
-				else
-				{
-					this['m_border' + borderName + 'Width'] = 
-						m_currentStyles['border' + borderName + 'Width'] || 0;
-				}
-			}
-			
-			
-			if (!m_currentStyles.outerWidth)
-			{
-				m_currentStyles.outerWidth = m_width + 
-					m_borderLeftWidth + m_paddingLeft + 
-					m_borderRightWidth + m_paddingRight;
-			}
-			if (!m_currentStyles.outerHeight)
-			{
-				m_currentStyles.outerHeight = m_height + 
-					m_borderTopWidth + m_paddingTop + 
-					m_borderBottomWidth + m_paddingBottom;
-			}
 			m_paddingBoxWidth = m_paddingLeft + m_width + m_paddingRight;
 			m_paddingBoxHeight = m_paddingTop + m_height + m_paddingBottom;
 			
@@ -1399,54 +1361,51 @@ package reprise.ui
 		
 		protected function resolveRelativeStyles(styles:CSSDeclaration) : void
 		{
+			var borderBoxSizing : Boolean = 
+				m_currentStyles.boxSizing && m_currentStyles.boxSizing == 'border-box';
+			
 			var parentW:Number = m_containingBlock.m_currentStyles.width;
 			var parentH:Number = m_containingBlock.m_currentStyles.height;
 			
 			resolvePropsToValue(styles, WIDTH_RELATIVE_PROPERTIES, parentW);
-			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
+			
+			//calculate border widths. width resolution relies on correct border widths, 
+			//so we have to do this here.
+			for each (var borderName : String in EDGE_NAMES)
+			{
+				var style : String = 
+					m_currentStyles['border' + borderName + 'Style'] || 'none';
+				var width : Number;
+				if (style == 'none')
+				{
+					this['m_border' + borderName + 'Width'] = 0;
+				}
+				else
+				{
+					this['m_border' + borderName + 'Width'] = 
+						m_currentStyles['border' + borderName + 'Width'] || 0;
+				}
+			}
+			
 			
 			var wProp : CSSProperty = styles.getStyle('width');
-			var hProp : CSSProperty = styles.getStyle('height');
-			
 			if (wProp.specifiedValue() == 'auto')
 			{
-				var outerWidthProp : CSSProperty = styles.getStyle('outerWidth');
-				if (outerWidthProp && outerWidthProp.specifiedValue() != 'auto')
+				m_autoFlags.width = true;
+				if (!m_positionInFlow)
 				{
-					var specOuterWidth : Number;
-					if (outerWidthProp.isRelativeValue())
-					{
-						specOuterWidth = Math.round(
-							outerWidthProp.resolveRelativeValueTo(parentW, this));
-					}
-					else
-					{
-						specOuterWidth = outerWidthProp.valueOf() as Number;
-					}
-					m_width = m_currentStyles.width = specOuterWidth - 
+					m_width = m_currentStyles.width = parentW - 
+						m_left - m_right - 
 						m_marginLeft - m_marginRight - 
 						m_paddingLeft - m_paddingRight - 
 						m_borderLeftWidth - m_borderRightWidth;
-					m_autoFlags.width = false;
 				}
-				else 
+				else
 				{
-					m_autoFlags.width = true;
-					if (!m_positionInFlow)
-					{
-						m_width = m_currentStyles.width = parentW - 
-							m_left - m_right - 
-							m_marginLeft - m_marginRight - 
-							m_paddingLeft - m_paddingRight - 
-							m_borderLeftWidth - m_borderRightWidth;
-					}
-					else
-					{
-						m_width = m_currentStyles.width = parentW - 
-							m_marginLeft - m_marginRight - 
-							m_paddingLeft - m_paddingRight - 
-							m_borderLeftWidth - m_borderRightWidth;
-					}
+					m_width = m_currentStyles.width = parentW - 
+						m_marginLeft - m_marginRight - 
+						m_paddingLeft - m_paddingRight - 
+						m_borderLeftWidth - m_borderRightWidth;
 				}
 			}
 			else
@@ -1457,62 +1416,42 @@ package reprise.ui
 					var relevantWidth : Number = parentW;
 					if (m_positioningType == 'absolute')
 					{
-						relevantWidth = m_containingBlock.calculateContentWidth() + 
+						relevantWidth += 
 							m_containingBlock.m_paddingLeft + 
 							m_containingBlock.m_paddingRight;
 					}
-					m_width = m_currentStyles.width = 
+					m_currentStyles.width = 
 						wProp.resolveRelativeValueTo(relevantWidth, this);
 				}
-				else
+				if (borderBoxSizing)
 				{
-					m_width = m_currentStyles.width || 0;
+					m_currentStyles.width -= 
+						m_borderLeftWidth + m_paddingLeft + 
+						m_borderRightWidth + m_paddingRight;
+					if (m_currentStyles.width < 0)
+					{
+						m_currentStyles = 0;
+					}
 				}
+				m_width = m_currentStyles.width || 0;
+			}
+			
+			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
+			
+			if (borderBoxSizing && !m_autoFlags.height)
+			{
+				m_height -= 
+					m_borderTopWidth + m_paddingTop + 
+					m_borderBottomWidth + m_paddingBottom;
+				if (m_height < 0)
+				{
+					m_height = 0;
+				}
+				m_currentStyles.height = m_height;
 			}
 			//TODO: verify that we should really resolve the border-radii this way
 			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
 				m_width + m_borderTopWidth);
-			
-			if (hProp.specifiedValue() == 'auto')
-			{
-				var outerHeightProp : CSSProperty = styles.getStyle('outerHeight');
-				if (outerHeightProp && 
-					outerHeightProp.specifiedValue() != 'auto')
-				{
-					var specOuterHeight : Number;
-					if (outerHeightProp.isRelativeValue())
-					{
-						specOuterHeight = 
-							outerHeightProp.resolveRelativeValueTo(parentH, this);
-					}
-					else
-					{
-						specOuterHeight = outerHeightProp.valueOf() as Number;
-					}
-					m_height = m_currentStyles.height = specOuterHeight - 
-						m_marginTop - m_marginBottom - 
-						m_paddingTop - m_paddingBottom - 
-						m_borderTopWidth - m_borderBottomWidth;
-					m_autoFlags.height = false;
-				}
-				else
-				{
-					m_autoFlags.height = true;
-					m_height = 0;
-				}
-			}
-			else
-			{
-				m_autoFlags.height = false;
-				if (hProp.isRelativeValue())
-				{
-					m_height = hProp.resolveRelativeValueTo(parentH, this);
-				}
-				else
-				{
-					m_height = m_currentStyles.height;
-				}
-			}
 		}
 		
 		protected function resolvePropsToValue(styles : CSSDeclaration, 
@@ -2171,12 +2110,12 @@ package reprise.ui
 			availableWidth += m_paddingLeft + m_paddingRight;
 			
 			m_vScrollbar.top = m_borderTopWidth;
-			m_vScrollbar.outerHeight = availableHeight;
+			m_vScrollbar.height = availableHeight;
 			m_vScrollbar.left = availableWidth + m_borderLeftWidth;
 			m_vScrollbar.forceRedraw();
 			
 			m_hScrollbar.top = availableHeight + m_hScrollbar.outerWidth;
-			m_hScrollbar.outerHeight = availableWidth;
+			m_hScrollbar.height = availableWidth;
 		}
 	
 		protected function createScrollbar(

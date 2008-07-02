@@ -241,8 +241,9 @@ package reprise.controls {
 		{
 			m_elementDefaultStyles.setStyle('lineScrollSize', '1');
 			m_elementDefaultStyles.setStyle('pageScrollSize', '5');
-			m_elementDefaultStyles.setStyle('outerWidth', '16px');
-			m_elementDefaultStyles.setStyle('outerHeight', '50px');
+			m_elementDefaultStyles.setStyle('width', '16px');
+			m_elementDefaultStyles.setStyle('height', '50px');
+			m_elementDefaultStyles.setStyle('boxSizing', 'border-box');
 		}
 		
 		protected override function createChildren() : void
@@ -293,7 +294,7 @@ package reprise.controls {
 			var specHeight:Number = m_currentStyles.height;
 			var trackHeight:Number = 
 				specHeight - m_scrollUpBtn.outerHeight - m_scrollDownBtn.outerHeight;
-			m_scrollTrack.setStyle('outerHeight', trackHeight + 'px');
+			m_scrollTrack.setStyle('height', trackHeight + 'px');
 			m_scrollTrack.forceRedraw();
 				
 			super.validateAfterChildren();
@@ -322,8 +323,8 @@ package reprise.controls {
 				m_thumbMinPos = scrollTrackBox.top;
 				if (m_currentStyles.scaleScrollThumb)
 				{
-					m_scrollThumb.setStyle('height', 'auto');
-					m_scrollThumb.outerHeight = Math.ceil(
+					m_scrollThumb.setStyle('boxSizing', 'border-box');
+					m_scrollThumb.height = Math.ceil(
 						m_scrollTrack.outerHeight * pageScrollSize / 
 						(pageScrollSize + m_maxPos - m_minPos));
 					m_scrollThumb.forceRedraw();
