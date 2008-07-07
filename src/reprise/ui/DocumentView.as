@@ -422,7 +422,7 @@ package reprise.ui
 			m_debugInterface.graphics.drawRect(element.valueForKey('m_paddingLeft'), 
 				element.valueForKey('m_paddingTop'), boxWidth, boxHeight);
 			
-			log(output);
+//			log(output);
 		}
 		
 		protected function stage_resize(event : Event) : void
