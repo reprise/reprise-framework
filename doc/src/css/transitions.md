@@ -1,8 +1,8 @@
 title: CSS Transitions Properties
 toc-title: Transitions
 
-For more information, see the specification at
-<http://webkit.org/specs/CSSVisualEffects/CSSTransitions.html>
+For more information, see the CSS Transition specification [here](http://webkit.org/specs/CSSVisualEffects/CSSTransitions.html).
+{: .sticky}
 
 ## -reprise-transition-property
 

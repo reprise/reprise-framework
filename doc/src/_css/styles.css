@@ -10,7 +10,7 @@ a
 	text-decoration: none;
 }
 
-a:hover
+a:hover, #content a
 {
 	text-decoration: underline;
 }
@@ -120,4 +120,10 @@ dd
 {
 	margin-left: 10px;
 	margin-bottom: 5px;
+}
+
+.sticky
+{
+	padding: 25px;
+	background: #fefcce url(../_img/sticky_bg.gif) no-repeat 100% 0;
 }
