@@ -41,24 +41,9 @@ package reprise.external {
 		
 		public override function execute(...rest) : void
 		{
-			if (m_applicationURL == null)
-			{
-				throw new Error('You didn\'t specify an ApplicationURL ' + 
-					'for your BitmapResource! (' + m_url + ')');
-			}
 			super.execute();
 			// we rely on the events dispatched by ImageResource
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
-		}
-		
-		public function setApplicationURL(appURL:String) : void
-		{
-			m_applicationURL = appURL;
-		}
-		
-		public function applicationURL() : String
-		{
-			return m_applicationURL;
 		}
 		
 		public override function getBytesLoaded() : Number

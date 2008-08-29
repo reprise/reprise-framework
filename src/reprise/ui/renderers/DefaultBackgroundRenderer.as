@@ -193,8 +193,6 @@ package reprise.ui.renderers
 				m_backgroundImageLoader.setURL(m_styles.backgroundImage);
 				BitmapResource(m_backgroundImageLoader).setCacheBitmap(true);
 				BitmapResource(m_backgroundImageLoader).setCloneBitmap(false);
-				BitmapResource(m_backgroundImageLoader).setApplicationURL(
-					m_display.loaderInfo.url);
 				m_backgroundImageLoader.addEventListener(
 					Event.COMPLETE, bitmapLoader_complete);
 				m_backgroundImageLoader.execute();

@@ -59,7 +59,6 @@ package reprise.controls.html
 			}
 			m_loaded = false;
 			m_imageLoader = new BitmapResource();
-			m_imageLoader.setApplicationURL(applicationURL());
 			m_imageLoader.setPriority(m_priority);
 			m_imageLoader.setURL(src);
 			m_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);

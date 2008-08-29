@@ -15,8 +15,6 @@ package reprise.css
 	import flash.events.EventDispatcher;
 	import flash.utils.getTimer;
 	
-	import reprise.core.Application;
-	import reprise.core.ApplicationRegistry;
 	import reprise.css.propertyparsers.RuntimeParser;
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
@@ -202,12 +200,6 @@ package reprise.css
 		
 		public function baseURL() : String
 		{
-			if (m_baseURL == null)
-			{
-				var app : Application = 
-					ApplicationRegistry.instance().applicationForURL(null);
-				return app.applicationURL();
-			}
 			return m_baseURL; 
 		}
 	
@@ -589,8 +581,6 @@ package reprise.css
 			}
 			var loader : BitmapResource = 
 				new BitmapResource(prop.valueOf() as String, true);
-			loader.setApplicationURL(
-				ApplicationRegistry.instance().applicationForURL(null).applicationURL());
 			m_imagePreloadingResource.addResource(loader);
 		}
 		
