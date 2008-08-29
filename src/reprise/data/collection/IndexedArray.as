@@ -10,10 +10,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.data.collection
-{ 
+{
+	
+	
 	public dynamic class IndexedArray extends Array
 	{
-		
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -28,23 +29,19 @@ package reprise.data.collection
 			AS3::splice(0, this.length);
 		}
 		
-		public function getIndex(o : Object) : Number
+		public function getIndex(o : Object) : int
 		{
-			var i : Number = this.length;
-			while (i--)
-				if (this[i] == o)
-					return i;
-			return -1;
+			return indexOf(o);
 		}
 		
 		public function objectExists(o : Object) : Boolean
 		{
-			return getIndex(o) != -1;
+			return indexOf(o) != -1;
 		}	
 		
 		public function remove(o : Object) : Boolean
 		{
-			var i : Number = getIndex(o);
+			var i : int = indexOf(o);
 			if (i == -1)
 			{
 				return false;
@@ -53,7 +50,7 @@ package reprise.data.collection
 			return true;
 		}
 		
-		public function removeObjectAtIndex(index : Number) : Boolean
+		public function removeObjectAtIndex(index : int) : Boolean
 		{
 			if (index < 0 || index > length - 1)
 			{
@@ -63,14 +60,14 @@ package reprise.data.collection
 			return true;			
 		}
 		
-		public function insertObjectAtIndex(o:Object, index:Number) : void
+		public function insertObjectAtIndex(o:Object, index:int) : void
 		{
 			AS3::splice(index, 0, o);
 		}
 		
 		public function replaceObjectWithObject(objectToReplace:Object, objectToUse:Object) : Boolean
 		{
-			var index:Number = getIndex(objectToReplace);
+			var index:int = indexOf(objectToReplace);
 			if (index == -1)
 			{
 				return false;
