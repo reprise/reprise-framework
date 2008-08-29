@@ -23,6 +23,8 @@ package reprise.core
 	import reprise.external.ResourceLoader;
 	import reprise.ui.DocumentView;
 	import reprise.ui.UIObject;
+	import reprise.utils.PathUtil;
+	
 	public class Application extends Sprite
 	{
 		/***************************************************************************
@@ -55,6 +57,11 @@ package reprise.core
 		public function rootElement() : DocumentView
 		{
 			return m_rootElement;
+		}
+		
+		public function basePath() : String
+		{
+			return PathUtil.stringByDeletingLastPathComponent(stage.loaderInfo.url);
 		}
 		
 		
@@ -114,7 +121,9 @@ package reprise.core
 				cssURL = this['cssURL'];
 			}
 			cssURL = stage.loaderInfo.parameters.css_url || cssURL;
-			m_css = addResource(new CSS(cssURL)) as CSS;
+			m_css = new CSS(cssURL);
+			m_css.setBaseURL(applicationURL());
+			addResource(m_css);
 		}
 		
 		protected function loadResources() : void
