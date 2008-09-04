@@ -667,7 +667,7 @@ package reprise.controls
 			}
 			//TODO: check if caching should only ever happen for device fonts
 			if ((m_currentStyles.opacity < 1 && !m_currentStyles.embedFonts) || 
-				m_currentStyles.cacheAsBitmap)
+				m_currentStyles.rasterizeDeviceFonts)
 			{
 				m_labelDisplay.visible = false;
 				if (m_currentStyles.opacity == 0)
