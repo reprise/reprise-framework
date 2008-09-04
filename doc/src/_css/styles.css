@@ -94,6 +94,7 @@ div#toc
 {
 	margin-left: 240px;
 	margin-right: 50px;
+	margin-bottom: 50px;
 }
 
 #content h2, #content p, #content ul, #content dl
@@ -126,4 +127,32 @@ dd
 {
 	padding: 25px;
 	background: #fefcce url(../_img/sticky_bg.gif) no-repeat 100% 0;
+}
+
+table
+{
+	border: 1px dotted #8c8b8d;
+}
+
+th, td
+{
+	padding: 10px 20px;
+	border-right: 1px dotted #8c8b8d;
+}
+
+td img
+{
+	display: block;
+	margin: 0 auto;
+}
+
+th:last-child, td:last-child
+{
+	border-right: none;
+}
+
+th
+{
+	border-bottom: 1px dotted #8c8b8d;
+	background-color: #fcfcfc;
 }
