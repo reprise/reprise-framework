@@ -27,6 +27,7 @@ package reprise.css.propertyparsers {
 			'fontFamily',
 			'embedFonts',
 			'cacheAsBitmap',
+			'rasterizeDeviceFonts',
 			'antiAliasType',
 			'gridFitType',
 			'sharpness',
@@ -60,7 +61,8 @@ package reprise.css.propertyparsers {
 			textAlign : true,
 			textTransform : true,
 			letterSpacing : true,
-			leading : true
+			leading : true,
+			rasterizeDeviceFonts : true
 		};
 		
 		public static var PROPERTY_TRANSITIONS	: Object	=
@@ -200,6 +202,11 @@ package reprise.css.propertyparsers {
 		public static function parseFixLineEndings(val:String, file:String) : CSSProperty
 		{
 			return strToBoolProperty(val, null, file);
+		}
+		
+		public static function parseRasterizeDeviceFonts(val:String, file:String) : CSSProperty
+		{
+			return strToBoolProperty(val, ['rasterize', 'true'], file);
 		}
 	}
 }
