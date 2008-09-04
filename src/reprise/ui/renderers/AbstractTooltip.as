@@ -11,15 +11,14 @@
 
 package reprise.ui.renderers
 { 
-	import reprise.controls.Label;
-	import reprise.core.ccInternal;
-	import reprise.events.DisplayEvent;
-	import reprise.ui.UIComponent;
-	import reprise.ui.UIObject;
-	
+	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
-	use namespace ccInternal;
+	import reprise.controls.Label;
+	import reprise.core.ccInternal;
+	import reprise.css.propertyparsers.DisplayPosition;
+	import reprise.ui.UIComponent;
+	import reprise.ui.UIObject;
 	
 	public class AbstractTooltip extends UIComponent
 	{
@@ -31,10 +30,11 @@ package reprise.ui.renderers
 		
 		
 		/***************************************************************************
-		*							protected properties							   *
+		*							protected properties						   *
 		***************************************************************************/
-		protected var m_target : UIObject;
-		protected var m_dataSupplyTarget : Object;
+		protected var m_mousedElement : DisplayObject;
+		protected var m_mousedComponent : UIComponent;
+		protected var m_tooltipDataProvider : Object;
 		protected var m_label : Label;
 			
 		
@@ -59,53 +59,73 @@ package reprise.ui.renderers
 		
 		public function updatePosition() : void
 		{
-			setPosition(m_target.stage.mouseX, m_target.stage.mouseY);
+			var pos:Point = new Point();
+			switch (style.position)
+			{
+				case DisplayPosition.POSITION_ABSOLUTE:
+				{
+					pos = positionRelativeToElement(m_mousedComponent);
+					break;
+				}
+				case DisplayPosition.POSITION_FIXED:
+				{
+					pos = positionRelativeToElement(stage);
+					break;
+				}
+				case DisplayPosition.POSITION_STATIC:
+				{
+					pos.x = m_mousedElement.stage.mouseX + style.left;
+					pos.y = m_mousedElement.stage.mouseY + style.top;
+					break;
+				}
+			}
+			setPosition(pos.x, pos.y);
 		}
 		
-		public override function setPosition(x : Number, y : Number) : void
+		public override function setPosition(xValue:Number, yValue:Number) : void
 		{
-			var newPos : Point = new Point(x, y);
+			var newPos : Point = new Point(xValue, yValue);
 			newPos = stage.localToGlobal(newPos);
 			newPos.y = Math.max(-m_marginTop, newPos.y + m_marginTop);
 			newPos.y = Math.min(stage.stageHeight - outerHeight - m_marginTop, newPos.y);
 			newPos.x = Math.max(-m_marginLeft, newPos.x + m_marginLeft);
 			newPos.x = Math.min(stage.stageWidth - outerWidth - m_marginLeft, newPos.x);
 			newPos = parent.globalToLocal(newPos);
-			left = newPos.x;
-			top = newPos.y;
+			x = newPos.x;
+			y = newPos.y;
 		}
 		
-		public function setTarget(target : UIObject) : void
+		public function setMousedElement(mousedElement : DisplayObject) : void
 		{
-			if (m_target != null)
-			{
-				removeEventListenersFromTargets();
-			}
-			
-			m_target = target;
-			addEventListenersToTargets();
+			m_mousedElement = mousedElement;
 		}
 		
-		public function target() : Object
+		public function mousedElement() : DisplayObject
 		{
-			return m_target;
+			return m_mousedElement;
 		}
 		
-		public override function remove(...args) : void
+		public function setMousedComponent(mousedComponent:UIComponent):void
 		{
-			removeEventListenersFromTargets();
-			super.remove();
+			m_mousedComponent = mousedComponent;
+			refreshSelectorPath();
 		}
 		
-		public function setDataSupplyTarget(target:Object) : void
+		public function mousedComponent():UIComponent
 		{
-			m_dataSupplyTarget = target;
+			return m_mousedComponent;
 		}
 		
-		public function dataSupplyTarget() : Object
+		public function setTooltipDataProvider(target:Object) : void
 		{
-			return m_dataSupplyTarget;
+			m_tooltipDataProvider = target;
 		}
+		
+		public function tooltipDataProvider() : Object
+		{
+			return m_tooltipDataProvider;
+		}
+		
 		
 		
 		/***************************************************************************
@@ -116,11 +136,12 @@ package reprise.ui.renderers
 			m_label = Label(addChild(new Label()));
 			m_label.cssClasses = 'tooltipLabel';
 		}
+		
 		protected override function initDefaultStyles() : void
 		{
 			super.initDefaultStyles();
-			m_elementDefaultStyles.setStyle('position', 'absolute');
-			m_elementDefaultStyles.setStyle('top', '0');
+			m_elementDefaultStyles.setStyle('position', 'static');
+			m_elementDefaultStyles.setStyle('top', '18');
 			m_elementDefaultStyles.setStyle('left', '0');
 		}
 		
@@ -128,11 +149,11 @@ package reprise.ui.renderers
 		{
 			var oldPath:String = m_selectorPath;
 			super.refreshSelectorPath();
-			if (!m_target is UIComponent)
+			if (!m_mousedElement is UIComponent)
 			{
 				return;
 			}
-			m_selectorPath = UIComponent(m_target).selectorPath + 
+			m_selectorPath = UIComponent(m_mousedComponent).selectorPath + 
 				' ' + m_selectorPath.split(' ').pop();
 			if (m_selectorPath != oldPath)
 			{
@@ -142,63 +163,38 @@ package reprise.ui.renderers
 			m_selectorPathChanged = false;
 		}
 		
-		protected function target_remove(event : DisplayEvent) : void
+		protected override function resolveContainingBlock() : void
 		{
-			dispatchEvent(new DisplayEvent(DisplayEvent.REMOVE));
+			m_containingBlock = m_rootElement;
 		}
 		
-		protected function target_visibleChanged(e : DisplayEvent) : void
+		protected override function resolvePositioningProperties() : void
 		{
-			if (e.target.getVisibility())
-				return;
-			dispatchEvent(new DisplayEvent(DisplayEvent.REMOVE));
+			m_positionInFlow = 0;
 		}
 		
-		protected function target_tooltipDataChanged(e : DisplayEvent) : void
+		protected function positionRelativeToElement(element:DisplayObject):Point
 		{
-			if (m_dataSupplyTarget.tooltipData() == null)
+			var p:Point = new Point();
+			
+			if (style.right && !style.left)
 			{
-				dispatchEvent(new DisplayEvent(DisplayEvent.REMOVE));
-				return;
+				p.x = element.width - style.right - width;
+			}
+			else
+			{
+				p.x = style.left;
 			}
 			
-			if (m_dataSupplyTarget.tooltipData() != m_tooltipData)
+			if (style.bottom && !style.top)
 			{
-				setData(m_dataSupplyTarget.tooltipData());
+				p.y = element.height - style.bottom - height;
 			}
-		}
-		
-		protected function removeEventListenersFromTargets() : void
-		{
-			var parent : Object = m_target;
-			while (true && parent != null)
+			else
 			{
-				parent.removeEventListener(this);
-				if (parent == m_dataSupplyTarget)
-				{
-					break;
-				}
-				parent = parent['m_parentElement'];
+				p.y = style.top;
 			}
-		}
-		
-		protected function addEventListenersToTargets() : void
-		{
-			var parent : Object = m_target;
-			while (true && parent != null)
-			{
-				parent.addEventListener(DisplayEvent.REMOVE,
-				 target_remove);
-				parent.addEventListener(DisplayEvent.VISIBLE_CHANGED,
-				 target_visibleChanged);
-				if (parent == m_dataSupplyTarget)
-				{
-					break;
-				}
-				parent = parent['m_parentElement'];			
-			}
-			m_dataSupplyTarget.addEventListener(
-				DisplayEvent.TOOLTIPDATA_CHANGED, target_tooltipDataChanged);
+			return element.localToGlobal(p);
 		}
 	}
 }

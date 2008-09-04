@@ -17,6 +17,7 @@ package reprise.core
 	import flash.events.Event;
 	import flash.utils.Timer;
 	
+	import reprise.core.TooltipManager;
 	import reprise.css.CSS;
 	import reprise.events.DisplayEvent;
 	import reprise.external.IResource;
@@ -41,6 +42,7 @@ package reprise.core
 		protected var m_currentView : UIObject;
 		protected var m_lastView : UIObject;
 		protected var m_stageCheckTimer : Timer;
+		protected var m_tooltipManager : TooltipManager;
 		
 		protected var m_resourceLoader : ResourceLoader;
 		protected var m_css : CSS;
@@ -90,7 +92,6 @@ package reprise.core
 		{
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			GlobalMCManager.instance(this);
 			initResourceLoading();
 		}
 		
@@ -152,6 +153,8 @@ package reprise.core
 			m_rootElement = new DocumentView();
 			addChild(m_rootElement);
 			m_rootElement.setParent(m_rootElement);
+			GlobalMCManager.instance(this);
+			m_tooltipManager = new TooltipManager(m_rootElement);
 		}
 		
 		protected function startApplication() : void

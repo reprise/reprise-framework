@@ -61,11 +61,6 @@ package reprise.ui.renderers {
 			FrameCommandExecutor.instance().removeCommand(fadeIn);
 			FrameCommandExecutor.instance().addCommand(fadeOut);
 		}
-		
-		public override function updatePosition() : void
-		{
-			setPosition(stage.mouseX, stage.mouseY + 18);
-		}
 	
 	
 		/***************************************************************************
@@ -82,10 +77,10 @@ package reprise.ui.renderers {
 			alpha = 0;
 		}
 		
-		protected function doShow() : void
+		protected function doShow(...rest) : void
 		{
-			alpha += 10;
-			if (alpha >= 100)
+			opacity += .1;
+			if (opacity >= 1)
 			{
 				FrameCommandExecutor.instance().removeCommand(fadeIn);
 				isFadingIn = false;
@@ -94,10 +89,10 @@ package reprise.ui.renderers {
 			}
 		}
 		
-		protected function doHide() : void
+		protected function doHide(...rest) : void
 		{
-			alpha -= 10;		
-			if (alpha <= 0)
+			opacity -= .1;
+			if (opacity <= 0)
 			{
 				FrameCommandExecutor.instance().removeCommand(fadeOut);
 				isFadingOut = false;
