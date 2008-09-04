@@ -86,6 +86,7 @@ package reprise.core
 			//TODO: check if the changes in the AS2 version that happened in 622:15.3.08
 			//are relevant to the as3 version
 			m_lowLevelContainer = new Sprite();
+			m_lowLevelContainer.name = 'low_level_container';
 			stage.addChildAt(m_lowLevelContainer, 0);
 		}
 		
@@ -94,6 +95,8 @@ package reprise.core
 			//TODO: check if the changes in the AS2 version that happened in 622:15.3.08
 			//are relevant to the as3 version
 			m_highLevelContainer = new Sprite();
+			m_highLevelContainer.mouseEnabled = false;
+			m_highLevelContainer.name = 'high_level_container';
 			stage.addChild(m_highLevelContainer);
 		}
 	}
