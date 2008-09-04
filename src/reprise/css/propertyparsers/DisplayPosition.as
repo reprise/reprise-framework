@@ -59,6 +59,7 @@ package reprise.css.propertyparsers {
 		public static var POSITION_STATIC 			: String 	= "static";
 		public static var POSITION_ABSOLUTE 		: String 	= "absolute";
 		public static var POSITION_RELATIVE 		: String 	= "relative";
+		public static var POSITION_FIXED	 		: String 	= "fixed";
 			                                                 
 		public static var OVERFLOW_VISIBLE 			: String 	= "visible";
 		public static var OVERFLOW_HIDDEN 			: String 	= "hidden";
