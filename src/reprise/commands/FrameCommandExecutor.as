@@ -107,7 +107,7 @@ package reprise.commands
 		
 		
 		// defined by IFrameEventListener
-		public function enterFrame() : void
+		public function enterFrame(e:Event) : void
 		{
 			var commands : Object = m_commands.toObject();
 			var key : String;
