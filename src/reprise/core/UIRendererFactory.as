@@ -248,6 +248,10 @@ package reprise.core
 		
 		public function tooltipRendererById(id : String) : AbstractTooltip
 		{
+			if (id == null)
+			{
+				return new m_defaultTooltipRenderer();
+			}
 			var renderer:Class = m_tooltipRenderers[id.toLowerCase()];
 			if (renderer == null)
 			{
