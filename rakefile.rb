@@ -54,3 +54,18 @@ asdoc model.doc_dir => [:custom_docs] do |t|
   t.window_title              = '"Reprise API Documentation"'
   t.main_title                = '"Reprise API Documentation"'
 end
+
+desc "Find internet password"
+task :pw do |t|
+  result = `security find-internet-password -s reprise-framework.org -a ssh-959926-reprise -g 2>&1 >/dev/null`
+  puts result[/password: "(.*)"/, 1]
+  #password: "b"
+end
+
+desc "Deploy pre-generated documentation"
+task :deploy_docs do |t|
+  sh "rsync -r -v -delete --exclude=*.svn --exclude=.DS_Store --progress --rsh=ssh ./doc/bin/ ssh-959926-reprise@reprise-framework.org:doc/"
+end
+
+desc "Built and deploy documentation"
+task :built_and_deploy_docs => [model.doc_dir, :deploy_docs]
