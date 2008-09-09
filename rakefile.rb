@@ -51,6 +51,7 @@ asdoc model.doc_dir => [:custom_docs] do |t|
   t.gem_name                  = 'sprout-flex3sdk-tool'
   t.output                    = asdocdir
   t.doc_sources               << model.src_dir
+  t.templates_path            << 'doc/assets/templates/asdoc'
   t.window_title              = '"Reprise API Documentation"'
   t.main_title                = '"Reprise API Documentation"'
 end

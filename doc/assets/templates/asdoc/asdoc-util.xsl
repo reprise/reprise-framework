@@ -1258,6 +1258,7 @@
 	</xsl:template>
 
 	<xsl:template name="sees">
+		
 		<xsl:param name="labelClass" select="'label'" />
 		<xsl:param name="xrefId">
 			<xsl:choose>
@@ -1319,6 +1320,7 @@
 			</xsl:choose>
 			<xsl:value-of select="@name" />
 		</xsl:param>
+		
 		<xsl:param name="packageName">
 			<xsl:if test="ancestor-or-self::asPackage/@name!='$$Global$$'">
 				<xsl:value-of select="ancestor-or-self::asPackage/@name" />
@@ -1327,58 +1329,55 @@
 
 		<xsl:variable name="numSees" select="count(sees/see[normalize-space(@label) or @href])" />
 		<xsl:if test="$numSees or exslt:nodeSet($xrefs)/helpreferences/helpreference[normalize-space(id/.)=$xrefId]">
-			<p>
-				<span class="{$labelClass}">See also</span>
-			</p>
-			<div class="seeAlso">
+			<span class="{$labelClass} seeAlsoLabel">See also</span>
+			
+			<ul class="seeAlso">
 				<xsl:for-each select="sees/see[string-length(@href) or string-length(@label)]">
-					<xsl:if test="string-length(@href)">
-						<a href="{@href}">
-							<xsl:attribute name="target">
-								<xsl:if test="starts-with(@href,'http:')">
-									<xsl:text>mm_external</xsl:text>
+					<li>
+						<xsl:if test="string-length(@href)">
+							<a href="{@href}">
+								<xsl:attribute name="target">
+									<xsl:if test="starts-with(@href,'http:')">
+										<xsl:text>mm_external</xsl:text>
+									</xsl:if>
+								</xsl:attribute>
+								<xsl:if test="normalize-space(@label)">
+									<xsl:value-of select="normalize-space(@label)"/>
 								</xsl:if>
-							</xsl:attribute>
-							<xsl:if test="normalize-space(@label)">
-								<xsl:value-of select="normalize-space(@label)"/>
-							</xsl:if>
-							<xsl:if test="not(normalize-space(@label))">
-								<xsl:value-of select="@href"/>
-							</xsl:if>
-						</a>
-					</xsl:if>
-					<xsl:if test="not(string-length(@href)) and string-length(@label) &gt; 0">
-						<xsl:value-of select="normalize-space(@label)"/>
-					</xsl:if>
-					<xsl:if test="position() != last()">
-						<br />
-					</xsl:if>
+								<xsl:if test="not(normalize-space(@label))">
+									<xsl:value-of select="@href"/>
+								</xsl:if>
+							</a>
+						</xsl:if>
+						<xsl:if test="not(string-length(@href)) and string-length(@label) &gt; 0">
+							<xsl:value-of select="normalize-space(@label)"/>
+						</xsl:if>
+					</li>
 				</xsl:for-each>
+				
 				<xsl:variable name="baseRef">
 					<xsl:call-template name="getBaseRef">
 						<xsl:with-param name="packageName" select="$packageName" />
 					</xsl:call-template>
 				</xsl:variable>
+				
 				<xsl:for-each select="exslt:nodeSet($xrefs)/helpreferences/helpreference[normalize-space(id/.)=$xrefId]">
-					<xsl:if test="position()=1 and $numSees">
-						<br />
-					</xsl:if>
-					<xsl:element name="a">
-						<xsl:attribute name="href">
-							<xsl:value-of select="concat($baseRef,$config/xrefs/@baseRef,href/.)" />
-						</xsl:attribute>
-						<xsl:if test="string-length($config/xrefs/@target)">
-							<xsl:attribute name="target">
-								<xsl:value-of select="$config/xrefs/@target" />
+					<li>
+						<xsl:element name="a">
+							<xsl:attribute name="href">
+								<xsl:value-of select="concat($baseRef,$config/xrefs/@baseRef,href/.)" />
 							</xsl:attribute>
-						</xsl:if>
-						<xsl:value-of select="title/." />
-					</xsl:element>
-					<xsl:if test="position() != last()">
-						<br />
-					</xsl:if>
+							<xsl:if test="string-length($config/xrefs/@target)">
+								<xsl:attribute name="target">
+									<xsl:value-of select="$config/xrefs/@target" />
+								</xsl:attribute>
+							</xsl:if>
+							<xsl:value-of select="title/." />
+						</xsl:element>
+					</li>
 				</xsl:for-each>
-			</div>
+				
+			</ul>
 		</xsl:if>
 	</xsl:template>
 	

@@ -76,10 +76,10 @@ exclude-result-prefixes="redirect str exslt">
 				<xsl:copy-of select="$docType"/>
 				<xsl:element name="html">
 					<head>
-						<xsl:call-template name="getStyleLink">
+						<!-- <xsl:call-template name="getStyleLink">
 							<xsl:with-param name="link" select="/asdoc/link"/>
 							<xsl:with-param name="packageName" select="@packageName"/>
-						</xsl:call-template>
+						</xsl:call-template> -->
 						<xsl:call-template name="getKeywords"/>
 						<title>
 							<xsl:if test="$isTopLevel='false'">
@@ -89,23 +89,34 @@ exclude-result-prefixes="redirect str exslt">
 							<xsl:value-of select="@name" />
 							<xsl:call-template name="getPageTitlePostFix" />
 						</title>
-						<xsl:if test="$showIncludeExamples='true' and includeExamples/includeExample/codepart">
-							<script src="{$baseRef}AC_OETags.js" type="text/javascript"></script>
-						</xsl:if>
+						<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+						<style type="text/css">
+							<xsl:text>@import url(../</xsl:text>
+							<xsl:value-of select="$baseRef"/>
+							<xsl:text>_css/asdoc.css);</xsl:text></style>
+						<script src="../{$baseRef}_js/mootools-1.2-core.js" type="text/javascript" charset="utf-8"></script>
 					</head>
 					<xsl:element name="body">
-						<xsl:if test="$isEclipse">
-							<xsl:attribute name="class">
-								<xsl:text>eclipseBody</xsl:text>
-							</xsl:attribute>
-						</xsl:if>
+						<div id="toc">
+							<iframe src="{$baseRef}package-list.html" name="toc_frame"></iframe>
+						</div>
+						<div id="header">
+							<a href="#" id="logo"><img src="../{$baseRef}_img/logo.gif" /></a>
+							<ul id="mainNavigation">
+								<li><a href="../{$baseRef}abstract/introduction.html">Abstract</a></li>
+								<li><a href="../{$baseRef}css/background.html">CSS Documentation</a></li>
+								<li><a href="../{$baseRef}asdoc/index.html">Source Documentation</a></li>
+								<li><a href="../{$baseRef}cookbook/doing_stuff.html">Cookbook</a></li>
+							</ul>
+						</div>
+						<div id="content">
+						
 						<xsl:call-template name="getTitleScript">
 							<xsl:with-param name="title" select="$title"/>
 							<xsl:with-param name="packageName" select="@packageName"/>
 						</xsl:call-template>
-<!-- 						<xsl:call-template name="getFeedbackLink">
-							<xsl:with-param name="topic" select="@name"/>
-						</xsl:call-template> -->
+
+						<h1><xsl:value-of select="@name"/></h1>
 
 						<xsl:call-template name="classHeader">
 							<xsl:with-param name="classDeprecated" select="$classDeprecated" />
@@ -234,9 +245,9 @@ exclude-result-prefixes="redirect str exslt">
 						<!-- CONSTRUCTOR DETAIL -->
 						<xsl:if test="@type != 'interface' and count(constructors/constructor) &gt; 0">
 							<a name="constructorDetail"/>
-							<div class="detailSectionHeader">
+							<h3 class="detailSectionHeader">
 								<xsl:text>Constructor detail</xsl:text>
-							</div>
+							</h3>
 							<xsl:variable name="className" select="@name"/>
 							<xsl:apply-templates select="constructors/constructor[@name = $className]" mode="detail">
 								<xsl:with-param name="isConstructor">true</xsl:with-param>
@@ -321,6 +332,7 @@ exclude-result-prefixes="redirect str exslt">
 							</xsl:call-template>
 						</xsl:if>
 					</div>
+					</div>
 					</xsl:element>
 				</xsl:element>
 				<xsl:copy-of select="$copyrightComment"/>
@@ -358,16 +370,23 @@ exclude-result-prefixes="redirect str exslt">
 			<a name="innerClassSummary"/>
 			<table cellspacing="0" cellpadding="3" width="100%" class="withBorder">
 				<tr>
-					<td colspan="2" bgcolor="#CCCCCC" class="SummaryTableHeader">
-						<font size="+1">
-							<b>Inner Class summary</b>
-						</font>
+					<td class="SummaryTableHeader">
+						Inner Class summary
 					</td>
 				</tr>
 				<xsl:for-each select="classes/asClass">
 					<xsl:sort select="@name" order="ascending"/>
-
-					<tr class="row{position() mod 2}">
+					<xsl:variable name="rowStyle">
+						<xsl:choose>
+							<xsl:when test="position() mod 2">
+								<xsl:text>even</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>odd</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<tr class="{$rowStyle}">
 						<td width="50px" valign="top">
 							<code>
 								<font size="1" style="font-weight:bold">
@@ -450,7 +469,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>
 			</xsl:if>
 			<div class="summarySection">
-				<div class="summaryTableTitle">
+				<h2 class="summaryTableTitle">
 					<xsl:choose>
 						<xsl:when test="$isGlobal">
 							<xsl:text>Global </xsl:text>
@@ -468,7 +487,7 @@ exclude-result-prefixes="redirect str exslt">
 					<xsl:if test="$isConst='false'">
 						<xsl:text>Properties</xsl:text>
 					</xsl:if>
-				</div>
+				</h2>
 				<xsl:if test="$hasInherited">
 					<div class="showHideLinks">
 						<xsl:if test="$isConst='true' and $accessLevel!='protected'">
@@ -534,9 +553,6 @@ exclude-result-prefixes="redirect str exslt">
 				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="{$tableId}">
 					<tr>
 						<th>
-							<xsl:value-of select="$nbsp" />
-						</th>
-						<th colspan="2">
 							<xsl:if test="$isConst='false'">
 								<xsl:text>Property</xsl:text>
 							</xsl:if>
@@ -565,20 +581,26 @@ exclude-result-prefixes="redirect str exslt">
 								<xsl:if test="$isConst='false'">
 									<xsl:text>Property</xsl:text>
 								</xsl:if>
+								<xsl:text> </xsl:text>
 							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="position() mod 2">
+									<xsl:text>even</xsl:text>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>odd</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:variable>
 						<tr class="{$rowStyle}">
-							<td class="summaryTablePaddingCol">
-								<xsl:value-of select="$nbsp" />
-							</td>
-							<td class="summaryTableInheritanceCol">
+							<!-- <td class="summaryTableInheritanceCol">
 								<xsl:if test="ancestor::asAncestor">
 									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
 								</xsl:if>
 								<xsl:if test="not(ancestor::asAncestor)">
 									<xsl:value-of select="$nbsp" />
 								</xsl:if>
-							</td>
+							</td> -->
 							<td class="summaryTableSignatureCol">
 								<xsl:choose>
 									<xsl:when test="ancestor::asAncestor">
@@ -708,18 +730,18 @@ exclude-result-prefixes="redirect str exslt">
 					</td>
 				</tr>
 			</table>-->
-			<div class="detailSectionHeader">
+			<h3 class="detailSectionHeader">
 				<xsl:if test="$isConst='true'">
 					<xsl:text>Constant detail</xsl:text>
 				</xsl:if>
 				<xsl:if test="not($isConst='true')">
 					<xsl:text>Property detail</xsl:text>
 				</xsl:if>
-			</div>
+			</h3>
 			<xsl:for-each select="field[@isConst=$isConst]">
 				<xsl:sort select="translate(@name,'_','')" order="ascending"/>
 				<a name="{@name}"/>
-				<table class="detailHeader" cellpadding="0" cellspacing="0">
+				<!-- <table class="detailHeader" cellpadding="0" cellspacing="0">
 					<tr>
 						<td class="detailHeaderName">
 							<xsl:value-of select="@name" />
@@ -738,7 +760,7 @@ exclude-result-prefixes="redirect str exslt">
 							</td>
 						</xsl:if>
 					</tr>
-				</table>
+				</table> -->
 <!--				<div class="detailHeader">
 					<xsl:value-of select="@name"/>
 					<xsl:if test="@isConst='true'">
@@ -967,9 +989,9 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:if test="$hasStyles or $hasInherited">
 			<a name="styleSummary" />
 			<div class="summarySection">
-				<div class="summaryTableTitle">
+				<h2 class="summaryTableTitle">
 					<xsl:text>Styles</xsl:text>
-				</div>
+				</h2>
 				<xsl:if test="$hasInherited">
 					<div class="showHideLinks">
 						<div id="hideInheritedStyle" class="hideInheritedStyle">
@@ -987,10 +1009,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:variable>
 				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="summaryTableStyle">
 					<tr>
-						<th>
-							<xsl:value-of select="$nbsp" />
-						</th>
-						<th colspan="2">Style</th>
+						<th>Style</th>
 						<th>Description</th>
 						<th class="summaryTableOwnerCol">
 							<xsl:value-of select="concat('Defined',$nbsp,'by')" />
@@ -1003,23 +1022,32 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
 								<xsl:text>hideInheritedStyle</xsl:text>
+								<xsl:text> </xsl:text>
 							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="position() mod 2">
+									<xsl:text>even</xsl:text>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>odd</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:variable>
 						<tr class="{$rowStyle}">
-							<td class="summaryTablePaddingCol">
+							<!-- <td class="summaryTablePaddingCol">
 								<xsl:if test="not(ancestor::asAncestor)">							
 									<a name="style:{@name}" />
 								</xsl:if>
 								<xsl:value-of select="$nbsp" />
-							</td>
-							<td class="summaryTableInheritanceCol">
+							</td> -->
+							<!-- <td class="summaryTableInheritanceCol">
 								<xsl:if test="ancestor::asAncestor">
 									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
 								</xsl:if>
 								<xsl:if test="not(ancestor::asAncestor)">
 									<xsl:value-of select="$nbsp" />
 								</xsl:if>
-							</td>
+							</td> -->
 							<td class="summaryTableSignatureCol">
 								<div class="summarySignature">
 									<xsl:choose>
@@ -1133,9 +1161,9 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:if test="$hasEffects or $hasInherited">
 			<a name="effectSummary" />
 			<div class="summarySection">
-				<div class="summaryTableTitle">
+				<h2 class="summaryTableTitle">
 					<xsl:text>Effects</xsl:text>
-				</div>
+				</h2>
 				<xsl:if test="$hasInherited">
 					<div class="showHideLinks">
 						<div id="hideInheritedEffect" class="hideInheritedEffect">
@@ -1153,10 +1181,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:variable>
 				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="summaryTableEffect">
 					<tr>
-						<th>
-							<xsl:value-of select="$nbsp" />
-						</th>
-						<th colspan="2">Effect</th>
+						<th>Effect</th>
 						<th>Description</th>
 						<th class="summaryTableOwnerCol">
 							<xsl:value-of select="concat('Defined',$nbsp,'by')" />
@@ -1168,24 +1193,33 @@ exclude-result-prefixes="redirect str exslt">
 
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
-								<xsl:text>hideInheritedEffect</xsl:text>
+								<xsl:text>hideInheritedEffect</xsl:text>					
+								<xsl:text> </xsl:text>
 							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="position() mod 2">
+									<xsl:text>even</xsl:text>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>odd</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:variable>
 						<tr class="{$rowStyle}">
-							<td class="summaryTablePaddingCol">
+							<!-- <td class="summaryTablePaddingCol">
 								<xsl:if test="not(ancestor::asAncestor)">							
 									<a name="effect:{@name}" />
 								</xsl:if>
 								<xsl:value-of select="$nbsp" />
-							</td>
-							<td class="summaryTableInheritanceCol">
+							</td> -->
+							<!-- <td class="summaryTableInheritanceCol">
 								<xsl:if test="ancestor::asAncestor">
 									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
 								</xsl:if>
 								<xsl:if test="not(ancestor::asAncestor)">
 									<xsl:value-of select="$nbsp" />
 								</xsl:if>
-							</td>
+							</td> -->
 							<td class="summaryTableSignatureCol">
 								<div class="summarySignature">
 									<xsl:choose>
@@ -1263,9 +1297,9 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:if test="$hasEvents or $hasInherited">
 			<a name="eventSummary" />
 			<div class="summarySection">
-				<div class="summaryTableTitle">
+				<h2 class="summaryTableTitle">
 					<xsl:text>Events</xsl:text>
-				</div>
+				</h2>
 				<xsl:if test="$hasInherited">
 					<div class="showHideLinks">
 						<div id="hideInheritedEvent" class="hideInheritedEvent">
@@ -1283,10 +1317,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:variable>
 				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="summaryTableEvent">
 					<tr>
-						<th>
-							<xsl:value-of select="$nbsp" />
-						</th>
-						<th colspan="2">Event</th>
+						<th>Event</th>
 						<th>Summary</th>
 						<th class="summaryTableOwnerCol">
 							<xsl:value-of select="concat('Defined',$nbsp,'by')" />
@@ -1299,20 +1330,26 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
 								<xsl:text>hideInheritedEvent</xsl:text>
+								<xsl:text> </xsl:text>
 							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="position() mod 2">
+									<xsl:text>even</xsl:text>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>odd</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:variable>
 						<tr class="{$rowStyle}">
-							<td class="summaryTablePaddingCol">
-								<xsl:value-of select="$nbsp" />
-							</td>
-							<td class="summaryTableInheritanceCol">
+							<!-- <td class="summaryTableInheritanceCol">
 								<xsl:if test="ancestor::asAncestor">
 									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
 								</xsl:if>
 								<xsl:if test="not(ancestor::asAncestor)">
 									<xsl:value-of select="$nbsp" />
 								</xsl:if>
-							</td>
+							</td> -->
 							<td class="summaryTableSignatureCol">
 								<div class="summarySignature">
 									<xsl:choose>
@@ -1372,14 +1409,14 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:param name="classDeprecated" select="'false'"/>
 
 		<xsl:if test="count(event) &gt; 0">
-			<div class="detailSectionHeader">
+			<h3 class="detailSectionHeader">
 				<xsl:text>Event detail</xsl:text>
-			</div>
+			</h3>
 			<xsl:for-each select="event">
 				<xsl:sort select="@name" order="ascending"/>
 
 				<a name="event:{@name}"/>
-				<table class="detailHeader" cellpadding="0" cellspacing="0">
+				<!-- <table class="detailHeader" cellpadding="0" cellspacing="0">
 					<tr>
 						<td class="detailHeaderName">
 							<xsl:value-of select="@name" />
@@ -1399,7 +1436,7 @@ exclude-result-prefixes="redirect str exslt">
 							</td>
 						</xsl:if>
 					</tr>
-				</table>
+				</table> -->
 				<div class="detailBody">
 					<xsl:if test="eventObject">
 						<span class="label">
@@ -1542,7 +1579,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>
 			</xsl:if>
 			<div class="summarySection">
-				<div class="summaryTableTitle">
+				<h2 class="summaryTableTitle">
 					<xsl:choose>
 						<xsl:when test="$isGlobal">
 							<xsl:text>Global </xsl:text>
@@ -1555,7 +1592,7 @@ exclude-result-prefixes="redirect str exslt">
 						</xsl:when>
 					</xsl:choose>
 					<xsl:value-of select="$title" />
-				</div>
+				</h2>
 				<xsl:if test="$hasInherited">
 					<div class="showHideLinks">
 						<xsl:if test="$accessLevel!='protected'">
@@ -1595,9 +1632,6 @@ exclude-result-prefixes="redirect str exslt">
 				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="{$tableId}">
 					<tr>
 						<th>
-							<xsl:value-of select="$nbsp" />
-						</th>
-						<th colspan="2">
 							<xsl:if test="self::asClass">
 								<xsl:text>Method</xsl:text>
 							</xsl:if>
@@ -1630,9 +1664,9 @@ exclude-result-prefixes="redirect str exslt">
 
 		<xsl:if test="count(method) &gt; 0">
 			<a name="methodDetail"/>
-			<div class="detailSectionHeader">
+			<h3 class="detailSectionHeader">
 				<xsl:value-of select="$title"/>
-			</div>
+			</h3>
 
 			<xsl:apply-templates select="method" mode="detail">
 				<xsl:sort select="@name" order="ascending"/>
@@ -1656,20 +1690,26 @@ exclude-result-prefixes="redirect str exslt">
 					<xsl:text>Protected</xsl:text>
 				</xsl:if>
 				<xsl:text>Method</xsl:text>
+				<xsl:text> </xsl:text>
 			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="position() mod 2">
+					<xsl:text>even</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>odd</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
 		<tr class="{$rowStyle}">
-			<td class="summaryTablePaddingCol">
-				<xsl:value-of select="$nbsp" />
-			</td>
-			<td class="summaryTableInheritanceCol">
+			<!-- <td class="summaryTableInheritanceCol">
 				<xsl:if test="ancestor::asAncestor">
 					<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
 				</xsl:if>
 				<xsl:if test="not(ancestor::asAncestor)">
 					<xsl:value-of select="$nbsp" />
 				</xsl:if>
-			</td>
+			</td> -->
 			<td class="summaryTableSignatureCol">
 				<div class="summarySignature">
 					<xsl:choose>
@@ -1900,9 +1940,9 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:if test="$showIncludeExamples = 'true'">
 			<xsl:if test="includeExamples/includeExample/codepart">
 				<a name="includeExamplesSummary" />
-				<div class="detailSectionHeader">
+				<h3 class="detailSectionHeader">
 					<xsl:text>Examples</xsl:text>
-				</div>
+				</h3>
 			
 				<xsl:for-each select="includeExamples/includeExample">
 					<xsl:if test="contains(@examplefilename,'.mxml')">
@@ -1966,11 +2006,11 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:param name="baseRef" />
 
 		<a name="{@name}()"/>
-		<table class="detailHeader" cellpadding="0" cellspacing="0">
+		<!-- <table class="detailHeader" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="detailHeaderName">
 					<xsl:value-of select="@name" />
-<!--				<xsl:value-of select="concat(@name,'()',$nbsp)" />-->
+				<xsl:value-of select="concat(@name,'()',$nbsp)" />
 				</td>
 				<td class="detailHeaderParens">
 					<xsl:text>()</xsl:text>
@@ -1989,7 +2029,7 @@ exclude-result-prefixes="redirect str exslt">
 					</td>
 				</xsl:if>
 			</tr>
-		</table>
+		</table> -->
 		<div class="detailBody">
 			<xsl:if test="(not(@type) or @type='method')">
 				<code>
@@ -2134,7 +2174,7 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:if test="position()=1">
 			<a name="{@name}()"></a>
 		</xsl:if>
-		<table class="detailHeader" cellpadding="0" cellspacing="0">
+		<!-- <table class="detailHeader" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="detailHeaderName">
 					<xsl:value-of select="@name" />
@@ -2151,7 +2191,7 @@ exclude-result-prefixes="redirect str exslt">
 					</td>
 				</xsl:if>
 			</tr>
-		</table>
+		</table> -->
 <!--		<div class="detailHeader">
 			<xsl:value-of select="@name"/><xsl:text> constructor</xsl:text>
 			<xsl:if test="position()>1">
@@ -2603,9 +2643,6 @@ exclude-result-prefixes="redirect str exslt">
 		<a name="{$lowerType}InheritedFrom{$classRef/@name}"/>
 		<table cellspacing="0" cellpadding="3" class="summaryTable">
         	<tr>
-            	<th>
-                   <xsl:value-of select="$nbsp" />
-                </th>
                 <th>
                    <xsl:if test="$isStatic">
                         <xsl:text>Static </xsl:text>
@@ -2621,11 +2658,6 @@ exclude-result-prefixes="redirect str exslt">
                    </a>
                  </th>
             </tr>
-            <tr>
-                <td class="summaryTablePaddingCol">
-                   <xsl:value-of select="$nbsp" />
-                </td>
-			</tr>
 			<tr>
 				<td class="inheritanceList">
 					<code>

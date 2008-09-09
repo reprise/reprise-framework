@@ -1,0 +1,83 @@
+@import url(common.css);
+@import url(common_content.css);
+
+table
+{
+	border: 1px dotted #8c8b8d;
+}
+
+th, td
+{
+	padding: 10px 20px;
+	border-right: 1px dotted #8c8b8d;
+}
+
+th:last-child, td:last-child
+{
+	border-right: none;
+}
+
+th
+{
+	border-bottom: 1px dotted #8c8b8d;
+	background-color: #fcfcfc;
+}
+
+
+h1
+{
+	margin-bottom: 40px;
+}
+
+.classHeaderTable, .classHeaderTable th, .classHeaderTable td
+{
+	border-right-style: solid;
+	border-color: #dff0f7;
+}
+
+.classHeaderTable th:last-child, .classHeaderTable td:last-child
+{
+	border-right: none;
+}
+
+.classHeaderTable
+{
+	border-style: solid;
+}
+
+.classHeaderTable td
+{
+	border-bottom: 1px solid #dff0f7;
+}
+
+td.classHeaderTableLabel
+{
+	background-color: #f2f9fc;
+	font-weight: bold;
+}
+
+.classHeaderTable tr:last-child td
+{
+	border-bottom: none;
+}
+
+hr.headerSeparator
+{
+	margin: 30px 0;
+}
+
+
+.summaryTable
+{
+	margin-bottom: 40px;
+}
+
+.summaryTable tr.odd td
+{
+	background-color: #f2f9fc;
+}
+
+.seeAlsoLabel
+{
+	font-weight: bold;
+}

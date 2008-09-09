@@ -1,0 +1,21 @@
+body
+{
+	font: 11px 'Lucida Grande';
+	margin: 0 0 20px 0;
+}
+
+a
+{
+	color: #082a38;
+	text-decoration: none;
+}
+
+a:hover, #content a
+{
+	text-decoration: underline;
+}
+
+a img
+{
+	border: 0;
+}
