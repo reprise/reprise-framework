@@ -26,6 +26,35 @@ package reprise.media
 	import reprise.utils.MathUtil;
 	
 	
+	/**
+	* Dispatched when the media file could not be loaded.
+	*
+	* @eventType reprise.events.MediaEvent.ERROR
+	*/
+	[Event(name='error', type='reprise.events.MediaEvent')]
+	
+	/**
+	* Dispatched when the end of the media file was reached during playback.
+	*
+	* @eventType reprise.events.CommandEvent.COMPLETE
+	*/
+	[Event(name='complete', type='reprise.events.CommandEvent')]
+	
+	/**
+	* Dispatched before the player state changes.
+	*
+	* @eventType reprise.events.StateChangeEvent.STATE_WILL_CHANGE
+	*/
+	[Event(name='stateWillChange', type='reprise.events.StateChangeEvent')]
+	
+	/**
+	* The AbstractPlayer class is a base class for every type of streaming media.
+	* It aids in calculating buffer times and supports autostart if the buffer is full
+	* as well as pausing the playback if the buffer runs out.
+	* 
+	* @see reprise.media.FLVPlayer
+	* @see reprise.media.MP3Player
+	*/
 	public class AbstractPlayer extends EventDispatcher
 	{
 		
@@ -34,22 +63,90 @@ package reprise.media
 		***************************************************************************/
 		public static var SETTINGS_TIMEOUT_DURATION:uint = 10;
 		
+		/** 
+		* active when the player has really nothing to do
+		*/
 		public static const STATE_IDLE:uint = 0;
+		
+		/**
+		* active when the player gathers information like filesize etc.
+		*/
 		public static const STATE_PREBUFFERING:uint = 1;
+		
+		/**
+		* active when the player is buffering
+		*/
 		public static const STATE_BUFFERING:uint = 2;
+		
+		/**
+		* active when the player is playing
+		*/
 		public static const STATE_PLAYING:uint = 3;
+		
+		/**
+		* active when the player is paused
+		*/
 		public static const STATE_PAUSED:uint = 4;
+		
+		/**
+		* active when the player is stopped, will switch to idle when the media is 
+		* fully loaded
+		*/
 		public static const STATE_STOPPED:uint = 5;
 		
+		/**
+		* set when the duration of the media is known
+		*/
 		public static const STATUS_DURATION_KNOWN:uint = 1 << 0;
+		
+		/**
+		* set when the filesize of the mediafile is known
+		*/
 		public static const STATUS_FILESIZE_KNOWN:uint = 1 << 1;
+		
+		/**
+		* set when the bandwidth of the user is known
+		*/
 		public static const STATUS_BANDWIDTH_KNOWN:uint = 1 << 2;
+		
+		/**
+		* set while the mediafile is loaded
+		*/
 		public static const STATUS_IS_LOADING:uint = 1 << 3;
+		
+		/**
+		* set after the media file was fully loaded
+		*/
 		public static const STATUS_LOAD_FINISHED:uint = 1 << 4;
+		
+		/**
+		* set when the player should start instanly after the buffer was filled
+		* e.g. autoplay is active, or the stream was interrupted due to a buffer underrun
+		*/
 		public static const STATUS_SHOULD_PLAY:uint = 1 << 5;
+		
+		/**
+		* set when the buffer is full enough to play the mediafile with the current bandwidth
+		* of the user, without interrupting
+		*/
 		public static const STATUS_BUFFER_FULL:uint = 1 << 6;
+		
+		/**
+		* set after autoplay was executed. this flag is deleted if the user clicked stop. 
+		* so the user can override that behaviour
+		*/
 		public static const STATUS_DID_AUTOPLAY:uint = 1 << 7;
+		
+		/**
+		* set when the mediafile is paused at the last frame (video). therefore 
+		* OPTIONS_REVERSE_ON_COMPLETE must be turned off
+		*/
 		public static const STATUS_PAUSED_AT_END:uint = 1 << 8;
+		
+		/**
+		* a collection of properties which must be known to determine the required buffer time.
+		* when this is set buffering can happen.
+		*/
 		public static const BUFFERING_RELEVANT_STATUS:uint = 
 			STATUS_DURATION_KNOWN | STATUS_FILESIZE_KNOWN | STATUS_BANDWIDTH_KNOWN;
 		
@@ -64,6 +161,10 @@ package reprise.media
 		
 		protected var m_debug:Boolean = false;
 		
+		/**
+		* Current state of the player
+		* @see #state()
+		*/
 		protected var m_state:uint;
 		protected var m_status:uint;
 		protected var m_options:uint = OPTIONS_REVERSE_ON_COMPLETE;
@@ -451,6 +552,12 @@ package reprise.media
 			}
 		}
 		
+		/**
+		* Generates a string from the current state. This method is used for internal 
+		* debugging purposes
+		* 
+		* @return A string representation of the current state
+		*/
 		protected function stateToString():String
 		{
 			var state:String = 'PLAYING';
