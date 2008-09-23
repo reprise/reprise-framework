@@ -175,3 +175,20 @@ and uses the size of the element in which the background image is drawn.
 ***
 
 ## background-image-preload
+
+***
+
+## background-image-aliasing
+
+### Description
+Specifies if an image used as the background image should be aliased or not. If this property is not 
+set, the DefaultBackgroundRenderer uses `anti-alias`.
+
+### Values
+* `alias`
+* `anti-alias`
+
+### Examples
+
+	background-image: url(foo.gif);
+	background-image-alias: alias;
