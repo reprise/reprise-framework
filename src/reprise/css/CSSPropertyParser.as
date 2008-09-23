@@ -296,6 +296,47 @@ package reprise.css {
 			return prop;	
 		}
 		
+		public static function extractBorderStyleFromString(
+			input : String, file : String = null) : Object
+		{
+			var regexp : RegExp = 
+				/none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/;
+			var result : Object = {borderStyle : 'none'};
+			var match : Array = input.match(regexp);
+			if (match)
+			{
+				result.borderStyle = strToStringProperty(match[0], file);
+				result.filteredString = input.substr(
+					0, match.index) + input.substr(match.index + match[0].length);
+			}
+			else
+			{
+				result.borderStyle = 'none';
+				result.filteredString = input;
+			}
+			return result;
+		}
+		
+		public static function extractBorderWidthFromString(
+			input : String, file : String = null) : Object
+		{
+			var regexp : RegExp = /\d+px|d+%0/;
+			var result : Object = {};
+			var match : Array = input.match(regexp);
+			if (match)
+			{
+				result.borderWidth = strToIntProperty(match[0], file);
+				result.filteredString = input.substr(
+					0, match.index) + input.substr(match.index + match[0].length);
+			}
+			else
+			{
+				result.borderWidth = strToIntProperty('1px', file);
+				result.filteredString = input;
+			}
+			return result;
+		}
+		
 		public static function extractDurationFromString(
 			input : String, file : String = null) : Object
 		{
@@ -320,7 +361,8 @@ package reprise.css {
 			var match : Array = input.match(CSSParsingHelper.propertyNameExpression);
 			if (match)
 			{
-				result.propertyName = match[0];
+				var name : String = match[0];
+				result.propertyName = CSSParsingHelper.camelCaseCSSValueName(name);
 				result.filteredString = input.substr(
 					0, match.index) + input.substr(match.index + match[0].length);
 			}

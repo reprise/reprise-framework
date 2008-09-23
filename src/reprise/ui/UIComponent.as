@@ -11,25 +11,28 @@
 
 package reprise.ui
 {
+	import reprise.controls.Scrollbar;
+	import reprise.core.UIRendererFactory;
+	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingHelper;
+	import reprise.css.CSSProperty;
+	import reprise.css.ComputedStyles;
+	import reprise.css.math.ICSSCalculationContext;
+	import reprise.css.propertyparsers.Filters;
+	import reprise.css.transitions.CSSTransitionsManager;
+	import reprise.ui.layoutmanagers.CSSBoxModelLayoutManager;
+	import reprise.ui.renderers.ICSSRenderer;
+	import reprise.utils.GfxUtil;
+	import reprise.utils.StringUtil;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	
-	import reprise.controls.Scrollbar;
-	import reprise.core.UIRendererFactory;
-	import reprise.css.CSSDeclaration;
-	import reprise.css.CSSProperty;
-	import reprise.css.math.ICSSCalculationContext;
-	import reprise.css.propertyparsers.Filters;
-	import reprise.css.transitions.CSSTransitionsManager;
-	import reprise.ui.renderers.ICSSRenderer;
-	import reprise.utils.GfxUtil;
-	import reprise.utils.StringUtil;
-	
+	import flash.geom.Rectangle;	
+
 	public class UIComponent extends UIObject implements ICSSCalculationContext
 	{
 		/***************************************************************************
@@ -87,45 +90,20 @@ package reprise.ui
 		protected var m_pseudoClassesBackup : String;
 		protected var m_cssId : String = "";
 		protected var m_selectorPath : String;
-		protected var m_currentStyles : Object;
+		protected var m_currentStyles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
 		protected var m_specifiedStyles : CSSDeclaration;
 		protected var m_elementDefaultStyles : CSSDeclaration;
 		protected var m_instanceStyles : CSSDeclaration;
 		protected var m_transitionsManager : CSSTransitionsManager;
-	
-		protected var m_left : Number = 0;
-		protected var m_top : Number = 0;
-		protected var m_right : Number = 0;
-		protected var m_bottom : Number = 0;
-		
-		protected var m_width : Number = 0;
-		protected var m_height : Number = 0;
-		
-		protected var m_positionOffset : Point;
 		
 		protected var m_autoFlags : Object = {};
-		
-		protected var m_paddingTop : Number = 0;
-		protected var m_paddingLeft : Number = 0;
-		protected var m_paddingBottom : Number = 0;
-		protected var m_paddingRight : Number = 0;
-		protected var m_marginTop : Number = 0;
-		protected var m_marginLeft : Number = 0;
-		protected var m_marginBottom : Number = 0;
-		protected var m_marginRight : Number = 0;
-		protected var m_borderTopWidth : Number = 0;
-		protected var m_borderLeftWidth : Number = 0;
-		protected var m_borderBottomWidth : Number = 0;
-		protected var m_borderRightWidth : Number = 0;
-		protected var m_borderBottomRightRadius : Number = 0;
-		protected var m_borderBottomLeftRadius : Number = 0;
-		protected var m_borderTopRightRadius : Number = 0;
-		protected var m_borderTopLeftRadius : Number = 0;
 		
 		protected var m_stylesInvalidated : Boolean;
 		protected var m_skipNextValidation : Boolean;
 		
+		protected var m_contentBoxWidth : Number = 0;
+		protected var m_contentBoxHeight : Number = 0;
 		protected var m_borderBoxHeight : Number = 0;
 		protected var m_borderBoxWidth : Number = 0;
 		protected var m_paddingBoxHeight : Number = 0;
@@ -134,9 +112,12 @@ package reprise.ui
 		protected var m_borderRenderer : ICSSRenderer;
 		protected var m_backgroundRenderer : ICSSRenderer;
 		
+		protected var m_upperContentDisplay : Sprite;
+		protected var m_lowerContentDisplay : Sprite;
 		protected var m_backgroundDisplay : Sprite;
 		protected var m_bordersDisplay : Sprite;
-		protected var m_contentMask : Sprite;
+		protected var m_upperContentMask : Sprite;
+		protected var m_lowerContentMask : Sprite;
 		protected var m_scrollbarsDisplay : Sprite;
 		
 		protected var m_vScrollbar : Scrollbar;
@@ -148,26 +129,25 @@ package reprise.ui
 		
 		protected var m_positionInFlow : int = 1;
 		protected var m_oldInFlowStatus : int = -1;
+		protected var m_positioningType : String;
+		protected var m_positionOffset : Point;
+		protected var m_verticalFlowPosition : Number = 0;
 		protected var m_oldOuterBoxDimension : Point;
 		
 		protected var m_intrinsicWidth : Number = -1;
 		protected var m_intrinsicHeight : Number = -1;
 		
-		protected var m_verticalFlowPosition : Number = 0;
-		
-		protected var m_selectorPathChanged : Boolean;
-		
-		protected var m_positioningType : String;
-		protected var m_float : String;
-		protected var m_displayStack : Array;
-		
 		protected var m_dimensionsChanged : Boolean;
 		protected var m_specifiedDimensionsChanged : Boolean;
 		
+		protected var m_selectorPathChanged : Boolean;
+		
+		protected var m_layoutManager : CSSBoxModelLayoutManager;
+
 		
 		/***************************************************************************
 		*							public methods								   *
-		***************************************************************************/
+		***************************************************************************/ 
 		public function UIComponent()
 		{
 		}
@@ -232,13 +212,19 @@ package reprise.ui
 			m_explicitContainingBlock = containingBlock;
 		}
 		
+		public function get containingBlock() : UIComponent
+		{
+			return m_containingBlock;
+		}
+
+		
 		public override function set width(value : Number) : void
 		{
 			setStyle('width', value + "px");
 		}
 		public override function get width() : Number
 		{
-			return m_width;
+			return m_contentBoxWidth;
 		}
 		
 		public function get outerWidth() : Number
@@ -257,7 +243,7 @@ package reprise.ui
 		}
 		public override function get height() : Number
 		{
-			return m_height;
+			return m_contentBoxHeight;
 		}
 		
 		public function get outerHeight() : Number
@@ -272,12 +258,16 @@ package reprise.ui
 		
 		public override function get top() : Number
 		{
-			if (m_currentStyles.top == null && m_currentStyles.bottom != null)
+			if (!isNaN(m_currentStyles.top))
+			{
+				return m_currentStyles.top;
+			}
+			if (!isNaN(m_currentStyles.bottom))
 			{
 				return m_containingBlock.calculateContentHeight() - 
 					m_currentStyles.bottom - m_borderBoxHeight;
 			}
-			return m_currentStyles.top || 0;
+			return 0;
 		}
 		public override function set top(value:Number) : void
 		{
@@ -290,21 +280,24 @@ package reprise.ui
 			m_autoFlags.top = false;
 			if (!m_positionInFlow)
 			{
-				m_top = value;
 				var absolutePosition:Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.y -= y;
-				y = value + m_marginTop - absolutePosition.y;
+				y = value + m_currentStyles.marginTop - absolutePosition.y;
 			}
 		}
 		public override function get left() : Number
 		{
-			if (m_currentStyles.left == null && m_currentStyles.right != null)
+			if (!isNaN(m_currentStyles.left))
+			{
+				return m_currentStyles.left;
+			}
+			if (!isNaN(m_currentStyles.right))
 			{
 				return m_containingBlock.calculateContentWidth() - 
 					m_currentStyles.right - m_borderBoxWidth;
 			}
-			return m_currentStyles.left || 0;
+			return 0;
 		}
 		public override function set left(value:Number) : void
 		{
@@ -317,21 +310,24 @@ package reprise.ui
 			m_autoFlags.left = false;
 			if (!m_positionInFlow)
 			{
-				m_left = value;
 				var absolutePosition:Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.x -= x;
-				x = value + m_marginLeft - absolutePosition.x;
+				x = value + m_currentStyles.marginLeft - absolutePosition.x;
 			}
 		}
 		
 		public override function get right() : Number
 		{
-			if (m_currentStyles.left == null && m_currentStyles.right != null)
+			if (!isNaN(m_currentStyles.left))
+			{
+				return m_currentStyles.left + m_borderBoxWidth;
+			}
+			if (!isNaN(m_currentStyles.right))
 			{
 				return m_currentStyles.right;
 			}
-			return left + m_borderBoxWidth;
+			return 0 + m_borderBoxWidth;
 		}
 		public function set right(value:Number) : void
 		{
@@ -344,22 +340,25 @@ package reprise.ui
 			m_autoFlags.right = false;
 			if (!m_positionInFlow)
 			{
-				m_right = value;
 				var absolutePosition : Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.x -= x;
 				x = m_containingBlock.calculateContentWidth() - m_borderBoxWidth - 
-					m_right - m_marginRight - absolutePosition.x;
+					m_currentStyles.right - m_currentStyles.marginRight - absolutePosition.x;
 			}
 		}
 		
 		public override function get bottom() : Number
 		{
-			if (m_currentStyles.top == null && m_currentStyles.bottom != null)
+			if (!isNaN(m_currentStyles.top))
+			{
+				return m_currentStyles.top + m_borderBoxHeight;
+			}
+			if (!isNaN(m_currentStyles.bottom))
 			{
 				return m_currentStyles.bottom;
 			}
-			return top + m_borderBoxHeight;
+			return 0 + m_borderBoxHeight;
 		}
 		public function set bottom(value:Number) : void
 		{
@@ -372,30 +371,30 @@ package reprise.ui
 			m_autoFlags.bottom = false;
 			if (!m_positionInFlow)
 			{
-				m_bottom = value;
 				var absolutePosition : Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.y -= y;
 				y = m_containingBlock.calculateContentHeight() - m_borderBoxHeight - 
-					m_bottom - m_marginBottom - absolutePosition.y;
+					m_currentStyles.bottom - m_currentStyles.marginBottom - absolutePosition.y;
 			}
 		}
 		
+		//TODO: check if these should be removed in favor of styles.margin*
 		public function get marginTop() : Number
 		{
-			return m_marginTop;
+			return m_currentStyles.marginTop;
 		}
 		public function get marginRight() : Number
 		{
-			return m_marginRight;
+			return m_currentStyles.marginRight;
 		}
 		public function get marginBottom() : Number
 		{
-			return m_marginBottom;
+			return m_currentStyles.marginBottom;
 		}
 		public function get marginLeft() : Number
 		{
-			return m_marginLeft;
+			return m_currentStyles.marginLeft;
 		}
 		
 		public function get attributes() : Object
@@ -413,39 +412,68 @@ package reprise.ui
 				x, y, m_borderBoxWidth, m_borderBoxHeight);
 		}
 		
-	//	/**
-	//	 * Returns the width that is available to child elements.
-	//	 */
-	//	public function innerWidth() : Number
-	//	{
-	//		return m_width;
-	//		if (/*m_currentStyles.overflow == 'scrollV' || 
-	//			m_currentStyles.overflow == 'scrollV-vertical' || */
-	//			m_vScrollbar.getVisibility())
-	//		{
-	//			return m_width - m_vScrollbar.width;
-	//		}
-	//	}
-	//	
-	//	/**
-	//	 * Returns the height that is available to child elements.
-	//	 */
-	//	public function innerHeight() : Number
-	//	{
-	//		return m_height;
-	//		if (/*m_currentStyles.overflow == 'scrollV' || 
-	//			m_currentStyles.overflow == 'scrollV-horizontal' || */
-	//			m_hScrollbar.getVisibility())
-	//		{
-	//			return m_height - m_hScrollbar.width;
-	//		}
-	//	}
+		public function get contentBoxWidth() : Number
+		{
+			return m_contentBoxWidth;
+		}
+		public function get contentBoxHeight() : Number
+		{
+			return m_contentBoxHeight;
+		}
+		public function get paddingBoxWidth() : Number
+		{
+			return m_paddingBoxWidth;
+		}
+		public function get paddingBoxHeight() : Number
+		{
+			return m_paddingBoxHeight;
+		}
+		public function get borderBoxWidth() : Number
+		{
+			return m_borderBoxWidth;
+		}
+		public function get borderBoxHeight() : Number
+		{
+			return m_borderBoxHeight;
+		}
+
+		/**
+		 * Returns the width that is available to child elements.
+		 */
+		public function innerWidth() : Number
+		{
+			if (m_vScrollbar && m_vScrollbar.getVisibility())
+			{
+				return m_currentStyles.width - m_vScrollbar.outerWidth;
+			}
+			return m_currentStyles.width;
+		}
 		
-		public function get style() : Object
+		/**
+		 * Returns the height that is available to child elements.
+		 */
+		public function innerHeight() : Number
+		{
+			if (m_hScrollbar && m_hScrollbar.getVisibility())
+			{
+				return m_currentStyles.height - m_hScrollbar.outerWidth;
+			}
+			return m_currentStyles.height;
+		}
+		
+		public function get style() : ComputedStyles
 		{
 			return m_currentStyles;
 		}
-		
+		public function get autoFlags() : Object
+		{
+			return m_autoFlags;
+		}
+		public function get positionInFlow() : int
+		{
+			return m_positionInFlow;
+		}
+
 		/**
 		 * sets the CSS id and invalidates styling
 		 */
@@ -515,7 +543,7 @@ package reprise.ui
 		
 		public override function tooltipDelay() : Number
 		{
-			return m_currentStyles.tooltipDelay | 0;
+			return m_currentStyles.tooltipDelay || 0;
 		}
 		public override function setTooltipDelay(delay : Number) : void
 		{
@@ -532,6 +560,18 @@ package reprise.ui
 			// we don't need no invalidation
 			m_instanceStyles.setStyle('tooltipRenderer', renderer);
 			m_currentStyles.tooltipRenderer = renderer;
+		}
+		
+		public override function setFocus(value : Boolean, method : String) : void
+		{
+			if (value)
+			{
+				addPseudoClass('focus');
+			}
+			else
+			{
+				removePseudoClass('focus');
+			}
 		}
 		
 		/**
@@ -598,12 +638,22 @@ package reprise.ui
 		{
 			if (m_pseudoClassesBackup)
 			{
+				if (!StringUtil.delimitedStringContainsSubstring(
+					m_pseudoClassesBackup, ':' + name, ' '))
+				{
+					return;
+				}
 				m_pseudoClassesBackup = 
 					StringUtil.removeSubstringFromDelimitedString(
 					m_pseudoClassesBackup, ':' + name, ' ');
 			}
 			else
 			{
+				if (!StringUtil.delimitedStringContainsSubstring(
+					m_cssPseudoClasses, ':' + name, ' '))
+				{
+					return;
+				}
 				m_cssPseudoClasses = StringUtil.removeSubstringFromDelimitedString(
 					m_cssPseudoClasses, ':' + name, ' ');
 			}
@@ -634,6 +684,11 @@ package reprise.ui
 		 */
 		public function removeCSSClass(name : String) : void
 		{
+			if (!StringUtil.delimitedStringContainsSubstring(
+				m_cssClasses, name, ' '))
+			{
+				return;
+			}
 			m_cssClasses = StringUtil.
 				removeSubstringFromDelimitedString(m_cssClasses, name, ' ');
 			m_stylesInvalidated = true;
@@ -650,6 +705,11 @@ package reprise.ui
 			m_instanceStyles.setStyle('visibility', visibilityProperty);
 			m_currentStyles.visibility = visibilityProperty;
 			super.setVisibility(visible);
+		}
+		
+		public function isDisplayed() : Boolean
+		{
+			return !(m_currentStyles.display && m_currentStyles.display == 'none');
 		}
 		
 		/**
@@ -725,7 +785,7 @@ package reprise.ui
 			for (var i : int = 0; i < len; i++)
 			{
 				var child : DisplayObject = m_children[i];
-				if (!child is UIComponent)
+				if (!(child is UIComponent))
 				{
 					continue;
 				}
@@ -842,12 +902,12 @@ package reprise.ui
 		}
 		
 		public function valueBySelectorProperty(
-			selector : String, property : String) : *
+			selector : String, property : String, ...rest : Array) : *
 		{
 			var target : UIComponent;
 			
 			//If there's no selector, this element is the target
-			if (selector == '' || selector == null)
+			if (!selector)
 			{
 				target = this;
 			}
@@ -869,11 +929,39 @@ package reprise.ui
 				}
 				throw error;
 			}
+			if (targetProperty is Function)
+			{
+				targetProperty = (targetProperty as Function).apply(target, rest);
+			}
 			
 			return targetProperty;
 		}
 		
-		
+		public function setAttributeId(value : String) : void
+		{
+			cssId = value;
+		}
+		public function setAttributeClass(value : String) : void
+		{
+			cssClasses = value;
+		}
+		public function setAttributeStyle(value : String) : void
+		{
+			m_instanceStyles = 
+				CSSParsingHelper.parseDeclarationString(value, applicationURL());
+		}
+		public function setAttributeTooltip(value : String) : void
+		{
+			setTooltipData(value);
+		}
+		public function setAttributeTitle(value : String) : void
+		{
+			if (!m_tooltipData)
+			{
+				setTooltipData(value);
+			}
+		}
+
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
@@ -891,8 +979,9 @@ package reprise.ui
 				m_elementDefaultStyles = m_class.basicStyles;
 			}
 			m_instanceStyles = new CSSDeclaration();
-			m_transitionsManager = new CSSTransitionsManager();
-			m_currentStyles = {};
+			m_transitionsManager = new CSSTransitionsManager(this);
+			m_layoutManager = new CSSBoxModelLayoutManager();
+			m_currentStyles = new ComputedStyles();
 			m_stylesInvalidated = true;
 			super.initialize();
 		}
@@ -903,11 +992,34 @@ package reprise.ui
 		protected override function createDisplayClips() : void
 		{
 			super.createDisplayClips();
+			
+			// create container for elements with z-index < 0
+			m_lowerContentDisplay = new Sprite();
+			m_contentDisplay.addChild(m_lowerContentDisplay);
+			m_lowerContentDisplay.name = 'lower_content_display';
+			
+			// create container for elements with z-index >= 0
+			m_upperContentDisplay = new Sprite();
+			m_contentDisplay.addChild(m_upperContentDisplay);
+			m_upperContentDisplay.name = 'upper_content_display';
+		}
+		
+		protected function resetStyles() : void
+		{
+			m_complexStyles = null;
+			m_specifiedStyles = null;
+			for each (var child : UIComponent in m_children)
+			{
+				child.resetStyles();
+			}
+			m_stylesInvalidated = true;
+			invalidate();
 		}
 		
 		protected override function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
+			m_rootElement.increaseValidatedElementsCount();
 			if (m_skipNextValidation)
 			{
 				m_skipNextValidation = false;
@@ -928,8 +1040,8 @@ package reprise.ui
 		protected override function validateBeforeChildren() : void
 		{
 			m_oldOuterBoxDimension = new Point(
-				m_borderBoxWidth + m_marginLeft + m_marginRight, 
-				m_borderBoxHeight + m_marginTop + m_marginBottom);
+				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
+				m_borderBoxHeight + m_currentStyles.marginTop + m_currentStyles.marginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
 			
 			var oldWidth : Number = m_currentStyles.width;
@@ -942,6 +1054,38 @@ package reprise.ui
 			if (m_stylesInvalidated)
 			{
 				calculateStyles();
+				
+				if (!isDisplayed())
+				{
+					visible = false;
+					return;
+				}
+				visible = m_visible;
+				
+				if (m_currentStyles.overflowY == 'scroll')
+				{
+					if (!m_vScrollbar)
+					{
+						m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+					}
+					else
+					{
+						m_vScrollbar.setVisibility(true);
+					}
+				}
+				
+				if (m_currentStyles.overflowX == 'scroll')
+				{
+					if (!m_hScrollbar)
+					{
+						m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
+					}
+					else
+					{
+						m_hScrollbar.setVisibility(true);
+					}
+				}
+				
 				if (m_stylesInvalidated)
 				{
 					applyStyles();
@@ -963,7 +1107,10 @@ package reprise.ui
 		 */
 		protected override function validateAfterChildren() : void
 		{
-			m_displayStack = [];
+			if (!isDisplayed())
+			{
+				return;
+			}
 			
 			applyInFlowChildPositions();
 			
@@ -980,25 +1127,28 @@ package reprise.ui
 					(m_currentStyles.display == 'inline' ||
 					(!m_positionInFlow && (m_autoFlags.left || m_autoFlags.right))))
 				{
-					m_width = m_intrinsicWidth;
+					m_contentBoxWidth = m_intrinsicWidth;
 				}
 				if (m_intrinsicHeight != -1 && m_autoFlags.height)
 				{
-					m_height = m_intrinsicHeight;
+					m_contentBoxHeight = m_intrinsicHeight;
 				}
 			}
 			
-			m_borderBoxHeight = calculateContentHeight() + 
-				m_borderTopWidth + m_borderBottomWidth + 
-				m_paddingTop + m_paddingBottom;
-			m_borderBoxWidth = calculateContentWidth() + 
-				m_borderLeftWidth + m_borderRightWidth + 
-				m_paddingLeft + m_paddingRight;
+			m_paddingBoxHeight = m_contentBoxHeight + 
+				m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+			m_borderBoxHeight = m_paddingBoxHeight + 
+				m_currentStyles.borderTopWidth + m_currentStyles.borderBottomWidth;
+			m_paddingBoxWidth = m_contentBoxWidth + 
+				m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+			m_borderBoxWidth = m_paddingBoxWidth + 
+				m_currentStyles.borderLeftWidth + m_currentStyles.borderRightWidth;
 			
-			m_dimensionsChanged = 
-				!m_oldOuterBoxDimension.equals(new Point(
-				m_borderBoxWidth + m_marginLeft + m_marginRight, 
-				m_borderBoxHeight + m_marginTop + m_marginBottom));
+			m_dimensionsChanged = !m_oldOuterBoxDimension.equals(new Point(
+				m_borderBoxWidth + 
+				m_currentStyles.marginLeft + m_currentStyles.marginRight, 
+				m_borderBoxHeight + 
+				m_currentStyles.marginTop + m_currentStyles.marginBottom));
 			
 			var parentReflowNeeded:Boolean = false;
 			
@@ -1006,7 +1156,7 @@ package reprise.ui
 			{
 				applyBackgroundAndBorders();
 				applyOverflowProperty();
-				if ((m_float || m_positionInFlow) && m_dimensionsChanged)
+				if ((m_currentStyles.float || m_positionInFlow) && m_dimensionsChanged)
 				{
 					parentReflowNeeded = true;
 	//				trace("f reason for parentReflow: dims of in-flow changed");
@@ -1077,36 +1227,18 @@ package reprise.ui
 		
 		protected function applyDepthSorting() : void
 		{
-			//add to displaystack for later sorting
-			if (m_backgroundDisplay)
-			{
-				m_displayStack.push(
-				{
-					element : m_backgroundDisplay, 
-					index : -20, 
-					zIndex : 0
-				});
-			}
-			//add to displaystack for later sorting
-			if (m_bordersDisplay)
-			{
-				m_displayStack.push(
-				{
-					element : m_bordersDisplay, 
-					index : -10, 
-					zIndex : 1
-				});
-			}
-			//sort children by zIndex and declaration index
-			m_displayStack.sortOn(['zIndex', 'index'], Array.NUMERIC);
-			for (var i : int = 0; i < m_displayStack.length; i++)
-			{
-				var element : DisplayObject = m_displayStack[i].element;
-				m_contentDisplay.setChildIndex(element, i);
-			}
-			m_displayStack = null;
+			m_layoutManager.applyDepthSorting(
+				m_lowerContentDisplay, m_upperContentDisplay);
 		}
-		
+
+		protected override function validateChildren() : void
+		{
+			if (!isDisplayed())
+			{
+				return;
+			}
+			super.validateChildren();
+		}
 		protected override function validateChild(child:UIObject) : void
 		{
 			if (child is UIComponent)
@@ -1229,12 +1361,9 @@ package reprise.ui
 			m_positionOffset = new Point(0, 0);
 			if (m_positioningType == 'relative')
 			{
-				m_positionOffset.x = m_left;
-				m_positionOffset.y = m_top;
+				m_positionOffset.x = m_currentStyles.left;
+				m_positionOffset.y = m_currentStyles.top;
 			}
-			
-			m_paddingBoxWidth = m_paddingLeft + m_width + m_paddingRight;
-			m_paddingBoxHeight = m_paddingTop + m_height + m_paddingBottom;
 			
 			
 			if (m_currentStyles.tabIndex != null)
@@ -1294,19 +1423,16 @@ package reprise.ui
 		
 		protected function resolvePositioningProperties() : void
 		{
-			if (m_currentStyles.float && m_currentStyles.float != 'none')
+			if (!m_currentStyles.float || m_currentStyles.float == 'none')
 			{
-				m_float = m_currentStyles.float;
-			}
-			else
-			{
-				m_float = null;
+				m_currentStyles.float = null;
 			}
 			
 			var positioning:String = m_positioningType = 
 				m_currentStyles.position || 'static';
 			
-			if (!m_float && (positioning == 'static' || positioning == 'relative'))
+			if (!m_currentStyles.float && 
+				(positioning == 'static' || positioning == 'relative'))
 			{
 				m_positionInFlow = 1;
 			}
@@ -1359,13 +1485,20 @@ package reprise.ui
 			}
 		}
 		
-		protected function resolveRelativeStyles(styles:CSSDeclaration) : void
+		protected function resolveRelativeStyles(styles:CSSDeclaration, 
+			parentW:Number = -1, parentH:Number = -1) : void
 		{
 			var borderBoxSizing : Boolean = 
 				m_currentStyles.boxSizing && m_currentStyles.boxSizing == 'border-box';
 			
-			var parentW:Number = m_containingBlock.m_currentStyles.width;
-			var parentH:Number = m_containingBlock.m_currentStyles.height;
+			if (parentW == -1)
+			{
+				parentW = m_containingBlock.innerWidth();
+			}
+			if (parentH == -1)
+			{
+				parentH = m_containingBlock.innerHeight();
+			}
 			
 			resolvePropsToValue(styles, WIDTH_RELATIVE_PROPERTIES, parentW);
 			
@@ -1378,12 +1511,11 @@ package reprise.ui
 				var width : Number;
 				if (style == 'none')
 				{
-					this['m_border' + borderName + 'Width'] = 0;
+					m_currentStyles['border' + borderName + 'Width'] = 0;
 				}
 				else
 				{
-					this['m_border' + borderName + 'Width'] = 
-						m_currentStyles['border' + borderName + 'Width'] || 0;
+					m_currentStyles['border' + borderName + 'Width'] ||= 0;
 				}
 			}
 			
@@ -1394,18 +1526,18 @@ package reprise.ui
 				m_autoFlags.width = true;
 				if (!m_positionInFlow)
 				{
-					m_width = m_currentStyles.width = parentW - 
-						m_left - m_right - 
-						m_marginLeft - m_marginRight - 
-						m_paddingLeft - m_paddingRight - 
-						m_borderLeftWidth - m_borderRightWidth;
+					m_contentBoxWidth = m_currentStyles.width = parentW - 
+						m_currentStyles.left - m_currentStyles.right - 
+						m_currentStyles.marginLeft - m_currentStyles.marginRight - 
+						m_currentStyles.paddingLeft - m_currentStyles.paddingRight - 
+						m_currentStyles.borderLeftWidth - m_currentStyles.borderRightWidth;
 				}
 				else
 				{
-					m_width = m_currentStyles.width = parentW - 
-						m_marginLeft - m_marginRight - 
-						m_paddingLeft - m_paddingRight - 
-						m_borderLeftWidth - m_borderRightWidth;
+					m_contentBoxWidth = m_currentStyles.width = parentW - 
+						m_currentStyles.marginLeft - m_currentStyles.marginRight - 
+						m_currentStyles.paddingLeft - m_currentStyles.paddingRight - 
+						m_currentStyles.borderLeftWidth - m_currentStyles.borderRightWidth;
 				}
 			}
 			else
@@ -1417,8 +1549,8 @@ package reprise.ui
 					if (m_positioningType == 'absolute')
 					{
 						relevantWidth += 
-							m_containingBlock.m_paddingLeft + 
-							m_containingBlock.m_paddingRight;
+							m_containingBlock.m_currentStyles.paddingLeft + 
+							m_containingBlock.m_currentStyles.paddingRight;
 					}
 					m_currentStyles.width = 
 						wProp.resolveRelativeValueTo(relevantWidth, this);
@@ -1426,32 +1558,33 @@ package reprise.ui
 				if (borderBoxSizing)
 				{
 					m_currentStyles.width -= 
-						m_borderLeftWidth + m_paddingLeft + 
-						m_borderRightWidth + m_paddingRight;
+						m_currentStyles.borderLeftWidth + m_currentStyles.paddingLeft + 
+						m_currentStyles.borderRightWidth + m_currentStyles.paddingRight;
 					if (m_currentStyles.width < 0)
 					{
-						m_currentStyles = 0;
+						m_currentStyles.width = 0;
 					}
 				}
-				m_width = m_currentStyles.width || 0;
+				m_contentBoxWidth = m_currentStyles.width || 0;
 			}
 			
 			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
+			m_contentBoxHeight = m_currentStyles.height;
 			
 			if (borderBoxSizing && !m_autoFlags.height)
 			{
-				m_height -= 
-					m_borderTopWidth + m_paddingTop + 
-					m_borderBottomWidth + m_paddingBottom;
-				if (m_height < 0)
+				m_contentBoxHeight -= 
+					m_currentStyles.borderTopWidth + m_currentStyles.paddingTop + 
+					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom;
+				if (m_contentBoxHeight < 0)
 				{
-					m_height = 0;
+					m_contentBoxHeight = 0;
 				}
-				m_currentStyles.height = m_height;
+				m_currentStyles.height = m_contentBoxHeight;
 			}
 			//TODO: verify that we should really resolve the border-radii this way
 			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
-				m_width + m_borderTopWidth);
+				m_contentBoxWidth + m_currentStyles.borderTopWidth);
 		}
 		
 		protected function resolvePropsToValue(styles : CSSDeclaration, 
@@ -1465,16 +1598,15 @@ package reprise.ui
 				{
 					if (cssProperty.isRelativeValue())
 					{
-						m_currentStyles[propName] = this["m_"+propName] = Math.round(
+						m_currentStyles[propName] = Math.round(
 							cssProperty.resolveRelativeValueTo(baseValue, this));
 					}
 					m_autoFlags[propName] = cssProperty.isAuto();
-					this["m_"+propName] = m_currentStyles[propName];
 				}
 				else 
 				{
 					m_autoFlags[propName] = props[i][1];
-					m_currentStyles[propName] = this["m_"+propName] = 0;
+					m_currentStyles[propName] = 0;
 				}
 			}
 		}
@@ -1484,7 +1616,7 @@ package reprise.ui
 		 */
 		protected function calculateContentHeight() : Number
 		{
-			return m_height;
+			return m_contentBoxHeight;
 		}
 	
 		/**
@@ -1492,7 +1624,7 @@ package reprise.ui
 		 */
 		protected function calculateContentWidth() : Number
 		{
-			return m_width;
+			return m_contentBoxWidth;
 		}
 		
 		/**
@@ -1503,291 +1635,43 @@ package reprise.ui
 		{
 			//apply final relative position/paddings/borderWidths to displays
 			m_contentDisplay.y = m_positionOffset.y + 
-				m_borderTopWidth;
+				m_currentStyles.borderTopWidth;
 			m_contentDisplay.x = m_positionOffset.x + 
-				m_borderLeftWidth;
+				m_currentStyles.borderLeftWidth;
 		}
 	
 		protected function applyInFlowChildPositions() : void
 		{
-			var childCount : int = m_children.length;
-			if (!childCount)
-			{
-				return;
-			}
-			
-			var widestChildWidth:Number = 0;
-			var collapsibleMargin:Number = 0;
-			var topMarginCollapsible:Boolean = 
-				!m_borderTopWidth && !m_paddingTop && m_positionInFlow;
-			if (topMarginCollapsible)
-			{
-				collapsibleMargin = m_marginTop;
-			}
-			var totalAvailableWidth:Number = calculateContentWidth();
-			var currentLineBoxTop:Number = m_paddingTop;
-			var currentLineBoxHeight:Number = 0;
-			var currentLineBoxLeftBoundary:Number = 0;
-			var currentLineBoxRightBoundary:Number = totalAvailableWidth;
-			var currentLineBoxChildren : Array = [];
-			
-			var i : int;
-			for (i = 0; i < childCount; i++)
-			{
-				var child:UIComponent = m_children[i] as UIComponent;
-				//only deal with children that derive from UIComponent
-				if (!child)
-				{
-					continue;
-				}
-				
-				//apply horizontal position
-				if (child.m_float)
-				{
-					var childWidth:Number = child.m_borderBoxWidth + 
-						child.m_marginLeft + child.m_marginRight;
-					if (childWidth > currentLineBoxRightBoundary - 
-						currentLineBoxLeftBoundary)
-					{
-						if (currentLineBoxChildren.length)
-						{
-							applyVerticalPositionsInLineBox(
-								currentLineBoxTop, currentLineBoxHeight, 
-								currentLineBoxChildren);
-						}
-						currentLineBoxTop += 
-							currentLineBoxHeight + collapsibleMargin;
-						collapsibleMargin = 0;
-						currentLineBoxHeight = 0;
-						currentLineBoxLeftBoundary = 0;
-						currentLineBoxRightBoundary = totalAvailableWidth;
-						currentLineBoxChildren = [];
-					}
-					if (child.m_float == 'left')
-					{
-						child.x = 
-							currentLineBoxLeftBoundary + child.m_marginLeft;
-						currentLineBoxLeftBoundary = child.x + 
-							child.m_borderBoxWidth + child.m_marginRight;
-					}
-					else if (child.m_float == 'right')
-					{
-						child.x = currentLineBoxRightBoundary - 
-							child.m_borderBoxWidth - child.m_marginRight;
-						currentLineBoxRightBoundary = 
-							child.x - child.m_marginLeft;
-					}
-					currentLineBoxHeight = Math.max(currentLineBoxHeight, 
-						child.m_borderBoxHeight + 
-						child.m_marginTop + child.m_marginBottom);
-					var childVAlign : String = 
-						child.m_currentStyles.verticalAlign || 'top';
-					if (childVAlign != 'top')
-					{
-						currentLineBoxChildren.push(child);
-					}
-				}
-				else if (child.m_positionInFlow || 
-					(child.m_autoFlags.left && child.m_autoFlags.right))
-				{
-					if (child.m_autoFlags.marginLeft)
-					{
-						if (child.m_autoFlags.marginRight)
-						{
-							//center horizontally
-							child.x = Math.round(totalAvailableWidth / 2 - 
-								child.m_borderBoxWidth / 2);
-						}
-						else
-						{
-							//align right
-							child.x = totalAvailableWidth - child.m_borderBoxWidth - 
-								child.m_marginRight - m_paddingRight;
-						}
-					}
-					else
-					{
-						//align left
-						child.x = child.m_marginLeft + m_paddingLeft;
-					}
-				}
-				widestChildWidth = Math.max(child.x + 
-					child.m_borderBoxWidth + child.m_marginRight, 
-					widestChildWidth);
-				
-				//apply vertical position including margin collapsing
-				if (child.m_positionInFlow)
-				{
-					var childMarginTop:Number = child.m_marginTop;
-					var collapsedMargin:Number;
-					if (collapsibleMargin >= 0 && childMarginTop >= 0)
-					{
-						collapsedMargin = 
-							Math.max(collapsibleMargin, childMarginTop);
-					}
-					else if (collapsibleMargin >= 0 && childMarginTop < 0)
-					{
-						collapsedMargin = collapsibleMargin + childMarginTop;
-					}
-					else if (collapsibleMargin < 0 && childMarginTop >= 0)
-					{
-						collapsedMargin = collapsibleMargin + childMarginTop;
-					}
-					else
-					{
-						collapsedMargin = 
-							Math.min(collapsibleMargin, childMarginTop);
-					}
-					
-					if (topMarginCollapsible)
-					{
-						m_marginTop = collapsedMargin;
-						collapsedMargin = 0;
-						topMarginCollapsible = false;
-					}
-					child.y = currentLineBoxTop + collapsedMargin;
-					
-					//collapse margins through empty elements 
-					if (!child.m_borderBoxHeight)
-					{
-						collapsibleMargin = 
-							Math.max(collapsedMargin, child.m_marginBottom);
-					}
-					else
-					{
-						collapsibleMargin = child.m_marginBottom;
-						topMarginCollapsible = false;
-					}
-					currentLineBoxTop = child.y + child.m_borderBoxHeight;
-				}
-				else
-				{
-					if (child.m_float || 
-						(child.m_autoFlags.top && child.m_autoFlags.bottom))
-					{
-						child.y = currentLineBoxTop + child.m_marginTop;
-					}
-				}
-				//add to displaystack for later sorting
-				var depthStackEntry : Object = 
-				{
-					element : child, 
-					index : i, 
-					zIndex : child.m_currentStyles.zIndex || 0
-				};
-				depthStackEntry.zIndex > 0 && depthStackEntry.zIndex++;
-				m_displayStack.push(depthStackEntry);
-			}
-			
-			if (currentLineBoxChildren.length)
-			{
-				applyVerticalPositionsInLineBox(
-					currentLineBoxTop, currentLineBoxHeight, currentLineBoxChildren);
-			}
-			m_intrinsicHeight = 
-				currentLineBoxTop + currentLineBoxHeight + collapsibleMargin;
-			m_intrinsicWidth = widestChildWidth;
-		}
-		
-		protected function applyVerticalPositionsInLineBox(
-			lineBoxTop : Number, lineBoxHeight : Number, lineBoxChildren : Array) : void
-		{
-			var i : Number = lineBoxChildren.length;
-			while (i--)
-			{
-				var child : UIComponent = lineBoxChildren[i];
-				switch (child.m_currentStyles.verticalAlign)
-				{
-					case 'middle':
-					{
-						child.y = lineBoxTop + Math.round(
-							lineBoxHeight / 2 - (child.m_borderBoxHeight + 
-							child.m_marginTop + child.m_marginBottom) / 2);
-						break;
-					}
-					case 'bottom':
-					case 'baseline':
-					{
-						child.y = lineBoxTop + Math.round(
-							lineBoxHeight - (child.m_borderBoxHeight + 
-							child.m_marginTop + child.m_marginBottom));
-						break;
-					}
-					default:
-				}
-			}
+			m_layoutManager.applyFlowPositions(this, m_children);
+			m_intrinsicWidth = m_currentStyles.intrinsicWidth;
+			m_intrinsicHeight = m_currentStyles.intrinsicHeight;
 		}
 		
 		protected function applyOutOfFlowChildPositions() : void
 		{
-			var childCount : int = m_children.length;
-			for (var i:Number = 0; i < childCount; i++)
+			m_layoutManager.applyAbsolutePositions(this, m_children);
+			for each (var child : UIComponent in m_children)
 			{
-				var child:UIComponent = m_children[i] as UIComponent;
-				if (!child)
+				if (!child || !child.isDisplayed())
 				{
 					//only deal with children that derive from UIComponent
 					continue;
 				}
-				if (!child.m_positionInFlow && !child.m_float)
-				{
-					var absolutePosition:Point = 
-						child.getPositionRelativeToContext(child.m_containingBlock);
-					absolutePosition.x -= child.x;
-					absolutePosition.y -= child.y;
-					
-					if (!child.m_autoFlags.left)
-					{
-						if (!child.m_autoFlags.right && 
-							child.m_autoFlags.marginLeft && child.m_autoFlags.marginRight)
-						{
-							//center horizontally if margin-left and margin-right 
-							//are both auto and left and right have values.
-							child.x = child.m_left + Math.round((
-								child.m_containingBlock.m_paddingBoxWidth - 
-								child.m_right - child.m_left) / 2 - 
-								child.m_borderBoxWidth /2);
-						}
-						else
-						{
-							child.x = child.m_left + 
-								child.m_marginLeft - absolutePosition.x;
-						}
-					}
-					else if (!child.m_autoFlags.right)
-					{
-						child.x = child.m_containingBlock.m_paddingBoxWidth - 
-							child.m_paddingBoxWidth - child.m_borderRightWidth - 
-							child.m_right - child.m_marginRight - absolutePosition.x;
-					}
-					
-					if (!child.m_autoFlags.top)
-					{
-						if (!child.m_autoFlags.bottom && 
-							child.m_autoFlags.marginTop && child.m_autoFlags.marginBottom)
-						{
-							//center vertically if margin-top and margin-bottom 
-							//are both auto and top and bottom have values.
-							child.y = child.m_top + Math.round((
-								child.m_containingBlock.calculateContentHeight() - 
-								child.m_bottom - child.m_top) / 2 - 
-								child.m_borderBoxHeight /2);
-						}
-						else
-						{
-							child.y = child.m_top + 
-								child.m_marginTop - absolutePosition.y;
-						}
-					}
-					else if (!child.m_autoFlags.bottom)
-					{
-						child.y = child.m_containingBlock.m_paddingBoxHeight - 
-							child.m_paddingBoxHeight - child.m_borderBottomWidth - 
-							child.m_bottom - child.m_marginBottom - absolutePosition.y;
-					}
-				}
 				child.applyOutOfFlowChildPositions();
 			}
+			super.calculateKeyLoop();
+		}
+		
+		/**
+		 * this override prevents key loop calculation from happening before all 
+		 * relevant data is gathered. Specifically, element positions aren't finalized 
+		 * before applyOutOfFlowChildPositions is invoked recursively from the outermost 
+		 * invalid element. Because of this relationship, we invoke the super 
+		 * implementation from applyOutOfFlowChildPositions.
+		 */
+		protected override function calculateKeyLoop() : void
+		{
+			
 		}
 	
 	
@@ -1822,19 +1706,71 @@ package reprise.ui
 				{
 					if (attribute.nodeKind() != 'text')
 					{
-						attributes[attribute.localName()] = attribute.toString();
+						var attributeName : String = attribute.localName();
+						var attributeValue : String = attribute.toString();
+						attributes[attributeName] = attributeValue;
+						assignValueFromAttribute(attributeName, attributeValue);
 					}
 				}
 				m_nodeAttributes = attributes;
-				m_cssClasses = attributes['class'] || '';
-				if (attributes.id)
-				{
-					cssId = attributes.id;
-				}
 				m_elementType = node.localName();
-				
-				setTooltipData(attributes.tooltip || attributes.title);
 			}
+		}
+		
+		/**
+		 * Tries invoking a setter named after the schema 'setAttribute[attribute name]'. 
+		 * If that fails, the method invokes setValueForKey to try to assign the value 
+		 * by other means.
+		 */
+		protected function assignValueFromAttribute(
+			attribute : String, value : String) : void
+		{
+			var usedValue : * = resolveBindings(value);
+			try
+			{
+				var attributeSetterName : String = 'setAttribute' + 
+					attribute.charAt(0).toUpperCase() + attribute.substr(1);
+				this[attributeSetterName](usedValue);
+			}
+			catch (error: Error)
+			{
+				try
+				{
+					setValueForKey(attribute, usedValue);
+				}
+				catch (error : Error)
+				{
+				}
+			}
+		}
+		protected function resolveBindings(text : String) : *
+		{
+			var result : * = text;
+			var valueParts : Array = text.split(/(?<!\\){|(?<!\\)}/);
+			if (valueParts.length > 1)
+			{
+				for (var i : int = 1; i < valueParts.length; i += 2)
+				{
+					var bindingParts : Array = valueParts[i].split(/\s*,\s*/);
+					var selectorPath : String = '';
+					if (bindingParts.length == 2)
+					{
+						selectorPath = bindingParts.shift();
+					}
+					var propertyParts : Array = bindingParts[0].split(/\s*:\s*/);
+					valueParts[i] = valueBySelectorProperty.
+						apply(this, [selectorPath].concat(propertyParts));
+				}
+				if (valueParts.length > 3 || valueParts[0] != '' || valueParts[2] != '')
+				{
+					result = valueParts.join('');
+				}
+				else
+				{
+					result = valueParts[1];
+				}
+			}
+			return result;
 		}
 	
 		/**
@@ -1896,108 +1832,155 @@ package reprise.ui
 		 */
 		protected function applyBackgroundAndBorders() : void
 		{
-			var backgroundRendererId:String = 
-				m_currentStyles.backgroundRenderer || "";
-			if (!m_backgroundRenderer || 
-				m_backgroundRenderer.id() != backgroundRendererId)
+			if (m_currentStyles.backgroundColor || m_currentStyles.backgroundImage || 
+				(m_currentStyles.backgroundGradientColors && 
+				m_currentStyles.backgroundGradientType))
+			{
+				var backgroundRendererId:String = 
+					m_currentStyles.backgroundRenderer || "";
+				if (!m_backgroundRenderer || 
+					m_backgroundRenderer.id() != backgroundRendererId)
+				{
+					if (m_backgroundDisplay)
+					{
+						m_backgroundRenderer.destroy();
+						removeChild(m_backgroundDisplay);
+					}
+					m_backgroundDisplay = new Sprite();
+					m_backgroundDisplay.name = "background_" + backgroundRendererId;
+					m_contentDisplay.addChildAt(m_backgroundDisplay, 0);
+					m_backgroundRenderer = m_rootElement.uiRendererFactory().
+						backgroundRendererById(backgroundRendererId);
+					m_backgroundRenderer.setDisplay(m_backgroundDisplay);
+				}
+				m_backgroundDisplay.visible = true;
+				
+				m_backgroundDisplay.x = 0 - m_currentStyles.borderLeftWidth;
+				m_backgroundDisplay.y = 0 - m_currentStyles.borderTopWidth;
+				m_backgroundRenderer.setSize(m_borderBoxWidth, m_borderBoxHeight);
+				m_backgroundRenderer.setStyles(m_currentStyles);
+				m_backgroundRenderer.setComplexStyles(m_complexStyles);
+				m_backgroundRenderer.draw();
+				//TODO: move into renderer
+				m_backgroundDisplay.blendMode = 
+					m_currentStyles.backgroundBlendMode || 'normal';
+			}
+			else
 			{
 				if (m_backgroundDisplay)
 				{
-					m_backgroundRenderer.destroy();
-					removeChild(m_backgroundDisplay);
+					m_backgroundDisplay.visible = false;
 				}
-				m_backgroundDisplay = new Sprite();
-				m_backgroundDisplay.name = "background_" + backgroundRendererId;
-				m_contentDisplay.addChild(m_backgroundDisplay);
-				m_backgroundRenderer = m_rootElement.uiRendererFactory().
-					backgroundRendererById(backgroundRendererId);
-				m_backgroundRenderer.setDisplay(m_backgroundDisplay);
 			}
 			
-			var borderRendererId:String = m_currentStyles.borderRenderer || "";
-			if (!m_borderRenderer || m_borderRenderer.id() != borderRendererId)
+			if (m_currentStyles.borderTopStyle || m_currentStyles.borderRightStyle || 
+				m_currentStyles.borderBottomStyle || m_currentStyles.borderLeftStyle)
+			{
+				var borderRendererId:String = m_currentStyles.borderRenderer || "";
+				if (!m_borderRenderer || m_borderRenderer.id() != borderRendererId)
+				{
+					if (m_bordersDisplay)
+					{
+						m_borderRenderer.destroy();
+						removeChild(m_bordersDisplay);
+					}
+					m_bordersDisplay = new Sprite();
+					m_bordersDisplay.name = "border_" + borderRendererId;
+					m_contentDisplay.addChildAt(m_bordersDisplay, 
+						m_contentDisplay.getChildIndex(m_upperContentDisplay));
+					m_borderRenderer = m_rootElement.uiRendererFactory().
+						borderRendererById(borderRendererId);
+					m_borderRenderer.setDisplay(m_bordersDisplay);
+				}
+				m_bordersDisplay.visible = true;
+				
+				m_bordersDisplay.x = 0 - m_currentStyles.borderLeftWidth;
+				m_bordersDisplay.y = 0 - m_currentStyles.borderTopWidth;
+				
+				m_borderRenderer.setSize(m_borderBoxWidth, m_borderBoxHeight);
+				m_borderRenderer.setStyles(m_currentStyles);
+				m_borderRenderer.setComplexStyles(m_complexStyles);
+				m_borderRenderer.draw();
+			}
+			else
 			{
 				if (m_bordersDisplay)
 				{
-					m_borderRenderer.destroy();
-					removeChild(m_bordersDisplay);
+					m_bordersDisplay.visible = false;
 				}
-				m_bordersDisplay = new Sprite();
-				m_bordersDisplay.name = "border_" + borderRendererId;
-				m_contentDisplay.addChild(m_bordersDisplay);
-				m_borderRenderer = m_rootElement.uiRendererFactory().
-					borderRendererById(borderRendererId);
-				m_borderRenderer.setDisplay(m_bordersDisplay);
 			}
-			
-			m_backgroundDisplay.x = m_bordersDisplay.x = 0 - m_borderLeftWidth;
-			m_backgroundDisplay.y = m_bordersDisplay.y = 0 - m_borderTopWidth;
-			
-			m_backgroundRenderer.setSize(m_borderBoxWidth, m_borderBoxHeight);
-			m_backgroundRenderer.setStyles(m_currentStyles);
-			m_backgroundRenderer.setComplexStyles(m_complexStyles);
-			m_backgroundRenderer.draw();
-			
-			m_borderRenderer.setSize(m_borderBoxWidth, m_borderBoxHeight);
-			m_borderRenderer.setStyles(m_currentStyles);
-			m_borderRenderer.setComplexStyles(m_complexStyles);
-			m_borderRenderer.draw();
-			
-			//TODO: move into renderer
-			m_backgroundDisplay.blendMode = 
-				m_currentStyles.backgroundBlendMode || 'normal';
 		}
 		protected function applyOverflowProperty() : void
 		{
-			switch (m_currentStyles.overflow)
+			var maskNeeded:Boolean = false;
+			var scrollersNeeded:Boolean = false;
+			
+			var ofx:* = m_currentStyles.overflowX;
+			var ofy:* = m_currentStyles.overflowY;
+			
+			if (ofx == 'visible' || ofx == null || ofx == 'hidden')
 			{
-				case 'hidden':
-				{
-					applyMask();
-					break;
-				}
-				case 'scrollV':
-				case 'scrollV-vertical':
-				case 'scrollV-horizontal':
-				case 0:
-				{
-					applyScrollbars();
-					applyMask();
-					break;
-				}
-				case 'visible':
-				case undefined:
-				{
-					m_contentDisplay.mask = null;
-					if (m_vScrollbar)
-					{
-						m_vScrollbar.setVisibility(false);
-					}
-					if (m_hScrollbar)
-					{
-						m_hScrollbar.setVisibility(false);
-					}
-					break;
-				}
-				default:
-				{
-					trace("w style not supported: overflow: " + 
-						m_currentStyles.overflow + 
-						"in element with selectorPath '" +
-						m_selectorPath.split('@').join('') + "'");
-					m_contentDisplay.mask = null;
-				}
+				if (m_hScrollbar) m_hScrollbar.setVisibility(false);
+				if (ofx == 'hidden') maskNeeded = true;
+			}
+			else
+			{
+				maskNeeded = scrollersNeeded = true;
+			}
+			
+			if (ofy == 'visible' || ofy == null || ofy == 'hidden')
+			{
+				if (m_vScrollbar) m_vScrollbar.setVisibility(false);
+				if (ofy == 'hidden') maskNeeded = true;
+			}
+			else
+			{
+				maskNeeded = scrollersNeeded = true;
+			}
+			
+			if (scrollersNeeded) 
+			{
+				applyScrollbars();
+			}
+			
+			if (maskNeeded)
+			{
+				applyMask();
+			}
+			else
+			{
+				m_upperContentDisplay.mask = null;
+				m_lowerContentDisplay.mask = null;
 			}
 		}
+		
 		protected function applyMask() : void
 		{
-			if (!m_contentMask)
+			var maskW:Number = (m_currentStyles.overflowX == 'visible' || 
+				m_currentStyles.overflowX == null) 
+				? m_borderBoxWidth
+				: innerWidth() + m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+			var maskH:Number = (m_currentStyles.overflowY == 'visible' || 
+				m_currentStyles.overflowY == null)
+				? m_borderBoxHeight
+				: innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+			
+			if (!m_lowerContentMask)
 			{
-				m_contentMask = new Sprite();
-				m_contentMask.name = 'mask';
-				addChild(m_contentMask);
-				m_contentMask.visible = false;
+				m_upperContentMask = new Sprite();
+				m_lowerContentMask = new Sprite();
+				m_upperContentMask.name = 'upperMask';
+				m_lowerContentMask.name = 'lowerMask';
+				addChild(m_upperContentMask);
+				addChild(m_lowerContentMask);
+				m_upperContentMask.visible = false;
+				m_lowerContentMask.visible = false;
 			}
+			
+			m_upperContentMask.x = m_lowerContentMask.x = 
+				m_currentStyles.borderLeftWidth;
+			m_upperContentMask.y = m_lowerContentMask.y = 
+				m_currentStyles.borderTopWidth;
 			var radii : Array = [];
 			var order : Array = 
 				['borderTopLeftRadius', 'borderTopRightRadius', 
@@ -2009,121 +1992,132 @@ package reprise.ui
 			{
 				radii.push(m_currentStyles[order[i]] || 0);
 			}
-			m_contentMask.graphics.clear();
-			m_contentMask.graphics.beginFill(0x00ff00, 50);
-			GfxUtil.drawRoundRect(m_contentMask, 0, 0, 
-				m_borderBoxWidth, m_borderBoxHeight, radii);
-			m_contentDisplay.mask = m_contentMask;
+			m_upperContentMask.graphics.clear();
+			m_lowerContentMask.graphics.clear();
+			m_upperContentMask.graphics.beginFill(0x00ff00, 50);
+			m_lowerContentMask.graphics.beginFill(0x00ff00, 50);
+			GfxUtil.drawRoundRect(m_upperContentMask, 0, 0, 
+				maskW, maskH, radii);
+			GfxUtil.drawRoundRect(m_lowerContentMask, 0, 0, 
+				maskW, maskH, radii);
+			m_upperContentDisplay.mask = m_upperContentMask;
+			m_lowerContentDisplay.mask = m_lowerContentMask;
 		}
 		
 		protected function applyScrollbars() : void
 		{
-			var availableWidth:Number = calculateContentWidth();
-			var availableHeight:Number = calculateContentHeight();
-			
-			if (m_currentStyles.overflow == 'scrollV-vertical')
+			//TODO: ask Marc 'say what???'
+			function childWidth():Number
 			{
-				if (!m_vScrollbar)
+				var widestChildWidth:Number = 0;
+				var childCount:Number = m_children.length;
+				while (childCount--)
 				{
-					m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+					var child:UIComponent = m_children[childCount] as UIComponent;
+					var childX:Number = child.m_currentStyles.position == 'absolute' ? 
+						child.x : 0;
+					widestChildWidth = Math.max(childX + child.m_borderBoxWidth + 
+						child.m_currentStyles.marginRight - m_currentStyles.paddingLeft, 
+						widestChildWidth);
 				}
-				availableWidth -= m_vScrollbar.outerWidth;
-				m_vScrollbar.setVisibility(true);
-				m_hScrollbar.setVisibility(false);
+				return widestChildWidth;
 			}
-			else if (m_currentStyles.overflow == 'scrollV')
+			
+			var vScrollerNeeded:Boolean, hScrollerNeeded:Boolean = false;
+			
+			if (m_currentStyles.overflowY == 0 && 
+				m_intrinsicHeight > m_currentStyles.height)
 			{
 				if (!m_vScrollbar)
 				{
 					m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+					addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel_turn);
 				}
+				m_vScrollbar.setVisibility(true);
+				if (m_currentStyles.overflowX == 'scroll' || 
+					m_currentStyles.overflowX == 0)
+				{
+					validateChildren();
+					applyInFlowChildPositions();
+					m_intrinsicWidth = childWidth();
+				}
+				vScrollerNeeded = true;
+			}
+			
+			if (m_currentStyles.overflowY == 'scroll')
+			{
+				vScrollerNeeded == true;
+			}
+			
+			if (m_currentStyles.overflowX == 0 && 
+				m_intrinsicWidth > m_currentStyles.width)
+			{
 				if (!m_hScrollbar)
 				{
-					m_hScrollbar = 
-						createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
+					m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
 				}
-				availableWidth -= m_vScrollbar.outerWidth;
-				m_vScrollbar.setVisibility(true);
-				availableHeight -= m_hScrollbar.outerWidth;
 				m_hScrollbar.setVisibility(true);
+				if (vScrollerNeeded)
+				{
+					var oldIntrinsicWidth:Number = m_intrinsicWidth;
+					validateChildren();
+					applyInFlowChildPositions();
+					applyOutOfFlowChildPositions();
+					m_intrinsicWidth = oldIntrinsicWidth;
+				}
+				hScrollerNeeded = true;
 			}
-	//		else if (m_currentStyles.overflow == 0) //'auto' gets resolved to '0'
-	//		{
-	//			if (m_labelDisplay.textHeight > availableHeight)
-	//			{
-	//				if (!m_vScrollbar)
-	//				{
-	//					m_vScrollbar = 
-	//						createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
-	//				}
-	//				availableWidth -= m_vScrollbar.width;
-	//				m_labelDisplay.width = availableWidth + 3;
-	//				m_vScrollbar.setVisibility(true);
-	//			}
-	//			else
-	//			{
-	//				m_vScrollbar.setVisibility(false);
-	//			}
-	//			
-	//			if (m_labelDisplay.textWidth > availableWidth)
-	//			{
-	//				if (!m_hScrollbar)
-	//				{
-	//					m_hScrollbar = 
-	//						createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
-	//				}
-	//				availableHeight -= m_hScrollbar.width;
-	//				m_hScrollbar.setVisibility(true);
-	//				
-	//				if (!m_vScrollbar.getVisibility() && 
-	//					m_labelDisplay.textHeight > availableHeight)
-	//				{
-	//					if (!m_vScrollbar)
-	//					{
-	//						m_vScrollbar = 
-	//							createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
-	//					}
-	//					availableWidth -= m_vScrollbar.width;
-	//					m_vScrollbar.setVisibility(true);
-	//				}
-	//			}
-	//			else
-	//			{
-	//				m_hScrollbar.setVisibility(false);
-	//			}
-	//		}
+
+			if (m_currentStyles.overflowX == 'scroll')
+			{
+				hScrollerNeeded == true;
+			}
+
+			if (vScrollerNeeded)
+			{
+				m_vScrollbar.setScrollProperties(innerHeight(), 0, 
+					m_intrinsicHeight - innerHeight());
+				m_vScrollbar.top = 0;
+				m_vScrollbar.height = innerHeight() + 
+					m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+				m_vScrollbar.left = m_currentStyles.width - m_vScrollbar.outerWidth + 
+					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+				m_vScrollbar.validateElement(true, true);
+			}
 			else
 			{
-				return;
+				if (m_vScrollbar)
+				{
+					m_vScrollbar.setVisibility(false);
+				}
 			}
 			
-			if (availableWidth != calculateContentWidth())
+			if (hScrollerNeeded)
 			{
-				m_stylesInvalidated = true;
-				validateElement(true, true);
+				m_hScrollbar.setScrollProperties(innerWidth(), 0, 
+					m_intrinsicWidth - innerWidth());
+				m_hScrollbar.top = m_currentStyles.height + 
+					m_currentStyles.paddingTop + m_currentStyles.paddingRight;
+				m_hScrollbar.height = innerWidth() + 
+					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+				m_hScrollbar.validateElement(true, true);
 			}
-			
-			m_vScrollbar.setScrollProperties(
-				availableHeight, 0, m_intrinsicHeight - availableHeight);
-			
-			availableHeight += m_paddingTop + m_paddingBottom;
-			availableWidth += m_paddingLeft + m_paddingRight;
-			
-			m_vScrollbar.top = m_borderTopWidth;
-			m_vScrollbar.height = availableHeight;
-			m_vScrollbar.left = availableWidth + m_borderLeftWidth;
-			m_vScrollbar.forceRedraw();
-			
-			m_hScrollbar.top = availableHeight + m_hScrollbar.outerWidth;
-			m_hScrollbar.height = availableWidth;
+			else
+			{
+				if (m_hScrollbar)
+				{
+					m_hScrollbar.setVisibility(false);
+				}
+			}
 		}
-	
+		
 		protected function createScrollbar(
 			orientation:String, skipListenerRegistration : Boolean = false) : Scrollbar
 		{
 			if (!m_scrollbarsDisplay)
 			{
 				m_scrollbarsDisplay = new Sprite();
+				m_scrollbarsDisplay.name = 'scrollbars_display';
 				addChild(m_scrollbarsDisplay);
 			}
 			var scrollbar:Scrollbar = new Scrollbar();
@@ -2145,6 +2139,7 @@ package reprise.ui
 					this[orientation + 'Scrollbar_change']);
 			}
 			scrollbar.addEventListener(MouseEvent.CLICK, scrollbar_event);
+			scrollbar.validateElement(true, true);
 			return scrollbar;
 		}
 		
@@ -2156,14 +2151,29 @@ package reprise.ui
 		
 		protected function verticalScrollbar_change(event : Event) : void
 		{
-			m_contentDisplay.y = m_positionOffset.y + 
-				m_borderTopWidth + m_paddingTop - m_vScrollbar.scrollPosition;
+			m_upperContentDisplay.y = m_lowerContentDisplay.y = 
+				-m_vScrollbar.scrollPosition;
 		}
 		
 		protected function horizontalScrollbar_change(event : Event) : void
 		{
-			m_contentDisplay.x = m_positionOffset.x + 
-				m_borderLeftWidth + m_paddingLeft - m_hScrollbar.scrollPosition;
+			m_upperContentDisplay.x = m_lowerContentDisplay.x = 
+				-m_hScrollbar.scrollPosition;
+		}
+		
+		protected function mouseWheel_turn(event : MouseEvent) : void
+		{
+			if (event.shiftKey && m_hScrollbar)
+			{
+				m_hScrollbar.scrollPosition -= m_hScrollbar.lineScrollSize * event.delta;
+				m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
+			}
+			else if ((!event.shiftKey && m_vScrollbar) || 
+				(event.shiftKey && (!m_hScrollbar || !m_hScrollbar.getVisibility())))
+			{
+				m_vScrollbar.scrollPosition -= m_vScrollbar.lineScrollSize * event.delta;
+				m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
+			}
 		}
 		
 		protected function i18n(key : String) : String
@@ -2196,11 +2206,12 @@ package reprise.ui
 		
 		protected override function unregisterChildView(child:UIObject) : void
 		{
+			log(child, child.parent);
 			if (child is UIComponent)
 			{
-				if (child.parent == m_contentDisplay)
+				if (m_children.indexOf(child) != -1)
 				{
-					m_contentDisplay.removeChild(child);
+					child.parent.removeChild(child);
 					m_children.splice(m_children.indexOf(child), 1);
 					invalidate();
 				}
@@ -2217,7 +2228,18 @@ package reprise.ui
 		}
 		internal function setValueForKey(key : String, value : *) : void
 		{
-			this[key] = value;
+			//try to assign to a setter method by prepending 'set'
+			try
+			{
+				var setterName : String = 
+					'set' + key.charAt(0).toUpperCase() + key.substr(1);
+				this[setterName](value);
+			}
+			catch (error : Error)
+			{
+				//failed, try to assign to a property
+				this[key] = value;
+			}
 		}
 	}
 }

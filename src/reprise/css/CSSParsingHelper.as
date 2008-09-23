@@ -158,7 +158,7 @@ package reprise.css
 		{
 			var declaration : CSSDeclaration = new CSSDeclaration();
 			
-			var splitter : RegExp = /([\w\-]+)\s*[:]\s*(.+)[;]/g;
+			var splitter : RegExp = /([\w\-]+?)\s*[:]\s*(.+?)[;]/g;
 			while (true)
 			{
 				var result : Array = splitter.exec(declarationString);

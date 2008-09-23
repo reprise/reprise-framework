@@ -35,17 +35,36 @@ package reprise.commands
 		protected var m_frameDelay : Number = 1;
 		protected var m_frameDelayCount : Number = 0;
 		protected var m_frameRange : Range;
+		protected var m_resetOnExecute : Boolean = false;
 		
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function MovieClipController() {}
+		public function MovieClipController(target:MovieClip) 
+		{
+			setTarget(target);
+		}
 		
 		
 		public override function execute(...args) : void
 		{
 			super.execute();
+			if (m_resetOnExecute)
+			{
+				if (m_direction == DIRECTION_FORWARDS)
+				{
+					gotoAndStop(m_frameRange.location);
+				}
+				else
+				{
+					gotoAndStop(m_frameRange.location + m_frameRange.length - 1);
+				}
+			}
+			else
+			{
+				applyFrameRange();
+			}
 			m_target.addEventListener(Event.ENTER_FRAME, enterFrame);
 		}
 		
@@ -82,9 +101,6 @@ package reprise.commands
 		public function gotoAndPlay(frame:Number) : void
 		{
 			frame = normalizedFrame(frame);
-			
-			trace('normalizedFrame: ' + frame);
-			
 			m_target.gotoAndStop(frame);
 			execute();
 		}
@@ -105,7 +121,47 @@ package reprise.commands
 			m_frameRange = range.clone();
 			m_frameRange.location = Math.max(1, m_frameRange.location);
 			m_frameRange.length = Math.min(totalFrames(), 
-				m_frameRange.location + m_frameRange.length - 1);
+				m_frameRange.location + m_frameRange.length - 1) - m_frameRange.location + 1;
+			if (isExecuting())
+			{
+				applyFrameRange();
+			}
+		}
+		
+		public function frameRange() : Range
+		{
+			return m_frameRange.clone();
+		}
+		
+		public function setResetsOnExecute(bFlag:Boolean):void
+		{
+			m_resetOnExecute = bFlag;
+		}
+		
+		public function resetsOnExecute():Boolean
+		{
+			return m_resetOnExecute;
+		}
+		
+		
+		/***************************************************************************
+		*							protected methods								   *
+		***************************************************************************/
+		protected override function notifyComplete(success:Boolean) : void
+		{
+			m_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
+			super.notifyComplete(success);
+		}
+		
+		protected function normalizedFrame(frame:Number) : Number
+		{
+			frame = Math.max(frame, m_frameRange.location);
+			frame = Math.min(frame, m_frameRange.location + m_frameRange.length - 1);
+			return frame;
+		}
+		
+		protected function applyFrameRange():void
+		{
 			if (currentFrame() < m_frameRange.location)
 			{
 				this.gotoAndStop(m_frameRange.location);
@@ -118,33 +174,15 @@ package reprise.commands
 		
 		
 		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
-		protected override function notifyComplete(success:Boolean) : void
-		{
-			m_target.removeFrameListener(Event.ENTER_FRAME, enterFrame);
-			super.notifyComplete(success);
-		}
-		
-		protected function normalizedFrame(frame:Number) : Number
-		{
-			frame = Math.max(frame, m_frameRange.location);
-			frame = Math.min(frame, m_frameRange.location + m_frameRange.length - 1);
-			return frame;
-		}
-		
-		
-		/***************************************************************************
 		*						FrameEventListener interface					   *
 		***************************************************************************/
-		public function enterFrame() : void
+		public function enterFrame(e:Event) : void
 		{
 			if (++m_frameDelayCount < m_frameDelay)
 			{
 				return;
 			}
 			m_frameDelayCount = 0;
-			
 			if (m_direction == DIRECTION_FORWARDS)
 			{
 				if (currentFrame() < m_frameRange.location + m_frameRange.length - 1)

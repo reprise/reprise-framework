@@ -166,7 +166,7 @@ package reprise.css.propertyparsers {
 		
 		public static function parseLetterSpacing(val:String, file:String) : CSSProperty
 		{
-			return strToIntProperty(val, file);
+			return strToFloatProperty(val, file);
 		}
 		
 		public static function parseLeading(val:String, file:String) : CSSProperty

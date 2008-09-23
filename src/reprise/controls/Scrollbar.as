@@ -518,7 +518,7 @@ package reprise.controls {
 		 * 
 		 * updates the scrollPosition
 		 */
-		protected function mouseWheel_turn(event : MouseEvent) : void
+		protected override function mouseWheel_turn(event : MouseEvent) : void
 		{
 			var xMouse:Number = parent.mouseX;
 			var yMouse:Number = parent.mouseY;

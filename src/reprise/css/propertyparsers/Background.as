@@ -56,6 +56,23 @@ package reprise.css.propertyparsers {
 			backgroundGradientColors : ColorListTransitionVO
 		};
 		
+		public static var TRANSITION_SHORTCUTS : Object	=
+		{
+			backgroundScale9Rect :
+			[
+				'backgroundScale9RectTop',
+				'backgroundScale9RectRight',
+				'backgroundScale9RectBottom',
+				'backgroundScale9RectLeft'
+			],
+			backgroundGradient : 
+			[
+				'backgroundGradientColors',
+				'backgroundGradientRatios',
+				'backgroundGradientRotation'
+			]
+		};
+		
 		public static var REPEAT_REPEAT_XY	: String	= 'repeat';	/* default */
 		public static var REPEAT_REPEAT_X	: String	= 'repeat-x';
 		public static var REPEAT_REPEAT_Y	: String	= 'repeat-y';

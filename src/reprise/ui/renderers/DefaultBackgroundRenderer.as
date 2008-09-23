@@ -88,7 +88,6 @@ package reprise.ui.renderers
 					grad.setRotation(m_styles.backgroundGradientRotation);
 				}
 				
-				m_display.graphics.clear();
 				grad.beginGradientFill(m_display.graphics, m_width, m_height);
 				GfxUtil.drawRect(m_display, 0, 0, m_width, m_height);
 				m_display.graphics.endFill();

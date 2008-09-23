@@ -10,14 +10,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.tweens { 
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.utils.getTimer;
+	
 	import reprise.commands.IAsynchronousCommand;
 	import reprise.core.GlobalMCManager;
 	import reprise.events.CommandEvent;
 	import reprise.events.TweenEvent;
-	
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;
 	public class SimpleTween extends EventDispatcher
 		implements IAsynchronousCommand
 	{
@@ -285,6 +285,20 @@ package reprise.tweens {
 		public override function toString() : String
 		{
 			return "reprise.tweens.SimpleTween";
+		}
+		
+		public function didSucceed() : Boolean
+		{
+			return true;
+		}
+		
+		public function isExecuting() : Boolean
+		{
+			return isRunning();
+		}
+		public function reset() : void
+		{
+			resetTween();
 		}
 		
 		

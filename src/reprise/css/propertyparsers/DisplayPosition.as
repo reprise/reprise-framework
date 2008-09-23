@@ -10,8 +10,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css.propertyparsers { 
+	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
+	import reprise.css.transitions.VisibilityTransitionVO;
 	
 	
 	
@@ -23,6 +25,8 @@ package reprise.css.propertyparsers {
 			'display',
 			'position',
 			'overflow',
+			'overflowX',
+			'overflowY',
 			'left',
 			'right',
 			'top',
@@ -51,6 +55,11 @@ package reprise.css.propertyparsers {
 		public static var INHERITABLE_PROPERTIES	: Object	=
 		{
 			cursor:true
+		};
+		
+		public static var PROPERTY_TRANSITIONS	: Object	=
+		{
+			visibility : VisibilityTransitionVO
 		};
 		
 		
@@ -98,7 +107,23 @@ package reprise.css.propertyparsers {
 			return strToStringProperty(val, file);
 		}
 		
-		public static function parseOverflow(val:String, file:String):CSSProperty
+		public static function parseOverflow(val:String, file:String):CSSParsingResult
+		{
+			var values:Array = val.split(' ');
+			var overflowX:CSSProperty = parseOverflowX(values[0] as String, file);
+			var overflowY:CSSProperty = values.length > 1 
+				? parseOverflowY(values[1] as String, file) 
+				: parseOverflowY(values[0] as String, file);
+			return CSSParsingResult.ResultWithPropertiesAndKeys(
+				overflowX, 'overflowX', overflowY, 'overflowY');
+		}
+		
+		public static function parseOverflowY(val:String, file:String):CSSProperty
+		{
+			return strToStringProperty(val, file);
+		}
+		
+		public static function parseOverflowX(val:String, file:String):CSSProperty
 		{
 			return strToStringProperty(val, file);
 		}

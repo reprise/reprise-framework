@@ -15,7 +15,7 @@ package reprise.ui {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Point;
-	import flash.utils.getDefinitionByName;
+	import flash.geom.Rectangle;
 	import flash.utils.getQualifiedClassName;
 	
 	import reprise.events.DisplayEvent;
@@ -52,6 +52,7 @@ package reprise.ui {
 		protected var m_contentDisplay : DisplayObjectContainer;
 		protected var m_filters : Array;
 		
+		protected var m_canBecomeKeyView : Boolean;
 		protected var m_nextKeyView : UIObject;
 		protected var m_previousKeyView : UIObject;
 		protected var m_firstKeyChild : UIObject;
@@ -70,11 +71,16 @@ package reprise.ui {
 		***************************************************************************/
 		public function UIObject()
 		{
-//			m_class = Class(getDefinitionByName(getQualifiedClassName(this)));
-//			m_elementType = m_class.className;
-			var name : String = getQualifiedClassName(this);
-			m_class = Class(getDefinitionByName(name));
-			m_elementType = m_class.className || name.substr(name.indexOf('::') + 2);
+			m_class = Class(Object(this).constructor);
+			if (m_class['className'])
+			{
+				m_elementType = m_class['className'];
+			}
+			else
+			{
+				var className : String = getQualifiedClassName(this);
+				m_elementType =  className.substr(className.indexOf('::') + 2);
+			}
 		}
 		
 		/**
@@ -108,6 +114,8 @@ package reprise.ui {
 			m_rootElement = parent.m_rootElement;
 			
 			initialize();
+			
+			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
 			
 			return this;
 		}
@@ -264,7 +272,7 @@ package reprise.ui {
 		{
 			if (m_children.length)
 			{
-				return UIObject(m_firstKeyChild);
+				return m_firstKeyChild;
 			}
 			return m_nextKeyView;
 		}
@@ -292,7 +300,15 @@ package reprise.ui {
 		 */
 		public function nextValidKeyView() : UIObject
 		{
-			var nextValidKey : UIObject = nextKeyView();
+			var nextValidKey : UIObject;
+			if (getVisibility())
+			{
+				nextValidKey = nextKeyView();
+			}
+			else
+			{
+				nextValidKey = m_nextKeyView;
+			}
 			while (true)
 			{
 				if (nextValidKey == null || nextValidKey == this || 
@@ -342,7 +358,11 @@ package reprise.ui {
 		 */
 		public function canBecomeKeyView() : Boolean
 		{
-			return false;
+			return m_canBecomeKeyView && !isOffScreen();
+		}
+		
+		public function setFocus(value : Boolean, method : String) : void
+		{
 		}
 		
 		/**
@@ -630,6 +650,45 @@ package reprise.ui {
 			return m_visible;
 		}
 		
+		public function isHidden() : Boolean
+		{
+			return !getVisibility();
+		}
+		public function hasHiddenAncestors() : Boolean
+		{
+			if (!stage)
+			{
+				return true;
+			}
+			var ancestor : UIObject = this;
+			while (ancestor.m_parentElement != ancestor)
+			{
+				ancestor = ancestor.m_parentElement;
+				if (!ancestor.getVisibility())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public function isOffScreen() : Boolean
+		{
+			if (!stage)
+			{
+				return true;
+			}
+			var isVisible : Boolean = getVisibility() && !hasHiddenAncestors();
+			if (!isVisible)
+			{
+				return true;
+			}
+			
+			var bounds : Rectangle = getBounds(stage);
+			return !(bounds.right > 0 || bounds.left < stage.stageWidth || 
+				bounds.bottom > 0 || bounds.top < stage.stageHeight);
+		}
+		
 		public function invalidate() : void
 		{
 			//TODO: check if we need this:
@@ -707,7 +766,7 @@ package reprise.ui {
 	
 		public override function toString() : String
 		{
-			if (this == m_rootElement)
+			if (!root || this == m_rootElement)
 			{
 				return name;
 			}
@@ -793,6 +852,8 @@ package reprise.ui {
 			if (child.parent == this)
 			{
 				removeChild(child);
+				child.dispatchEvent(
+					new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
 				invalidate();
 			}
 		}
@@ -816,13 +877,8 @@ package reprise.ui {
 			}
 			var len : int = m_children.length;
 			var i : int;
-			var keyOrder : Array = [];
-			
-			for (i = 0; i < len; i++)
-			{
-				keyOrder.push(m_children[i]);
-			}
-			keyOrder.sortOn(["tabIndex", "top", "left"], Array.NUMERIC);
+			var keyOrder : Array = m_children.concat();
+			keyOrder.sortOn(["tabIndex", "y", "x"], Array.NUMERIC);
 			
 			var currKey : UIObject;
 			var nextKey : UIObject;
@@ -837,7 +893,7 @@ package reprise.ui {
 				}
 				else
 				{
-					nextKey = m_parentElement == null ? this : m_nextKeyView;
+					nextKey = m_parentElement == this ? this : m_nextKeyView;
 				}
 				currKey.setNextKeyView(nextKey);
 			}

@@ -9,36 +9,30 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.commands { 
+package reprise.commands 
+{
+	
 	import reprise.events.CommandEvent;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	public class AbstractAsynchronousCommand extends EventDispatcher
+	public class AbstractAsynchronousCommand extends AbstractCommand
 		implements IAsynchronousCommand
 	{
-		/***************************************************************************
-		*							publc properties							   *
-		***************************************************************************/
-		//TODO: probably rename this to 'id' as it has to be public to use Array.sortOn
-		public var m_id : Number;
-		
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_inited : Boolean;
 		protected var m_isExecuting : Boolean;
 		protected var m_isCancelled : Boolean;
 		
-		public var m_priority : Number = 0;
 		
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function execute(...args) : void
+		public override function execute(...args) : void
 		{
 			if (m_isExecuting)
 			{
@@ -65,21 +59,9 @@ package reprise.commands {
 			return m_isCancelled;
 		}
 		
-		public function setPriority(value : Number) : void
+		public function reset():void
 		{
-			m_priority = value;
-		}
-		public function priority() : Number
-		{
-			return m_priority;
-		}
-		public function setId(value : Number) : void
-		{
-			m_id = value;
-		}
-		public function id() : Number
-		{
-			return m_id;
+			m_isCancelled = false;
 		}
 		
 		
@@ -94,6 +76,7 @@ package reprise.commands {
 		protected function notifyComplete(success:Boolean) : void
 		{
 			m_isExecuting = false;
+			m_didSucceed = success;
 			dispatchEvent(new CommandEvent(Event.COMPLETE, success));
 		}	
 	}

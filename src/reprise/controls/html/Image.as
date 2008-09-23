@@ -10,17 +10,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls.html
-{ 
-	import reprise.events.DisplayEvent;
-	import reprise.events.ResourceEvent;
-	import reprise.external.BitmapResource;
-	import reprise.ui.UIComponent;
-	
+{
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
-	import flash.xml.XMLNode;
 	
+	import reprise.events.DisplayEvent;
+	import reprise.events.ResourceEvent;
+	import reprise.external.BitmapResource;
+	import reprise.ui.UIComponent; 
+
 	public class Image extends UIComponent
 	{
 		/***************************************************************************
@@ -41,7 +40,8 @@ package reprise.controls.html
 		protected var m_smoothing : Boolean = true;
 		
 		protected var m_priority : Number = 0;
-		
+		protected var m_checkPolicyFile : Boolean;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -59,10 +59,20 @@ package reprise.controls.html
 			}
 			m_loaded = false;
 			m_imageLoader = new BitmapResource();
+			m_imageLoader.setCheckPolicyFile(m_checkPolicyFile);
 			m_imageLoader.setPriority(m_priority);
 			m_imageLoader.setURL(src);
 			m_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);
 			m_imageLoader.execute();
+		}
+		
+		public function setCheckPolicyFile(checkPolicyFile : Boolean) : void
+		{
+			m_checkPolicyFile = checkPolicyFile;
+		}
+		public function checkPolicyFile() : Boolean
+		{
+			return m_checkPolicyFile;
 		}
 		
 		public function setPriority(value : Number) : void
@@ -88,15 +98,6 @@ package reprise.controls.html
 		{
 			m_elementDefaultStyles.setStyle('display', 'inline');
 		}
-		protected override function parseXMLDefinition(xmlDefinition:XML) : void
-		{
-			super.parseXMLDefinition(xmlDefinition);
-			if (m_nodeAttributes.src == null)
-			{
-				return;
-			}
-			setSrc(m_nodeAttributes.src);
-		}
 		
 		protected function imageLoaded(e:ResourceEvent):void
 		{
@@ -109,21 +110,21 @@ package reprise.controls.html
 			if (!m_firstDraw)
 			{
 				m_imageDisplayed = false;
-				m_contentDisplay.visible = false;
+				m_lowerContentDisplay.visible = false;
 			}
 			if (m_image)
 			{
-				m_contentDisplay.removeChild(m_image);
+				m_lowerContentDisplay.removeChild(m_image);
 			}
 			m_image = new Bitmap(BitmapData(m_imageLoader.content()));
-			m_contentDisplay.addChild(m_image);
+			m_lowerContentDisplay.addChild(m_image);
 			invalidate();
 			dispatchEvent(new DisplayEvent(DisplayEvent.LOAD_COMPLETE));
 		}
 		
 		protected override function measure() : void
 		{
-			if (!m_imageLoader.didFinishLoading())
+			if (!(m_imageLoader && m_imageLoader.didFinishLoading()))
 			{
 				m_intrinsicWidth = 0;
 				m_intrinsicHeight = 0;
@@ -131,14 +132,16 @@ package reprise.controls.html
 			}
 			m_intrinsicWidth = m_image.width;
 			m_intrinsicHeight = m_image.height;
-		}	
-		
+		}
+
 		protected override function draw() : void
 		{
 			if (m_loaded && !m_imageDisplayed)
 			{
+				m_image.x = m_currentStyles.paddingLeft || 0;
+				m_image.y = m_currentStyles.paddingTop || 0;
 				m_imageDisplayed = true;
-				m_contentDisplay.visible = true;
+				m_lowerContentDisplay.visible = true;
 			}
 		}
 	}

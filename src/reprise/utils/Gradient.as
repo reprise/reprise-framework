@@ -90,7 +90,6 @@ package reprise.utils {
 				matrix.createGradientBox(width, height, (m_rotation / 180) * Math.PI,
 					m_origin.x, m_origin.y);
 			}
-			
 			target.beginGradientFill(m_fillType, m_colors, m_alphas, m_ratios, 
 				matrix, m_spreadMethod, m_interpolationMethod, m_focalPointRatio);
 		}
@@ -145,7 +144,7 @@ package reprise.utils {
 				if (color is AdvancedColor)
 				{
 					m_colors.push(color.rgb());
-					m_alphas.push(color.alpha());
+					m_alphas.push(color.opacity());
 				}
 				else
 				{

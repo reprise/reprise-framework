@@ -20,5 +20,6 @@ package reprise.commands
 		function id() : Number;
 		function setPriority(value : Number) : void;
 		function priority() : Number;
+		function didSucceed():Boolean;
 	}
 }

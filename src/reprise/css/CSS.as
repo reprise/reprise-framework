@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css
-{	
+{
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.getTimer;
@@ -19,12 +19,13 @@ package reprise.css
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
 	import reprise.events.ResourceEvent;
+	import reprise.external.AbstractResource;
 	import reprise.external.BitmapResource;
-	import reprise.external.IResource;
+	import reprise.external.FileResource;
 	import reprise.external.ResourceLoader;
-	import reprise.utils.StringUtil;
-	
-	public class CSS extends EventDispatcher implements IResource
+	import reprise.utils.StringUtil;		
+
+	public class CSS extends AbstractResource
 	{
 		/***************************************************************************
 		*							public properties							   *
@@ -43,32 +44,23 @@ package reprise.css
 		protected var g_idSource : Number;
 		
 		
-		public var m_id : Number;
-		public var m_priority : Number = 0;
-		
 		protected var m_cssFile : CSSImport;
 		protected var m_loader : ResourceLoader;
 		protected var m_imagePreloadingResource : ResourceLoader;
 		protected var m_importQueue : Array;
 		protected var m_cssSegments : IndexedArray;
-		protected	var m_declarationList : CSSDeclarationList;
+		protected var m_declarationList : CSSDeclarationList;
 		protected var m_cssVariables : Object;
 		
 		protected var m_baseURL : String;
-		protected var m_url : String;
-		protected	var m_timeout : Number = 5000;
-		protected var m_retryTimes : Number = 3;
-		protected var m_failedTimes : Number;
-		protected var m_forceReload : Boolean;
-		protected var m_isCancelled : Boolean;
-		protected var m_didFinishLoading : Boolean;
 		protected var m_runtimeParserRegistered : Boolean;
 		
 		protected var m_cleanupTime : Number;
 		protected var m_parseTime : Number;
 		protected var m_importsLoaded : Number;
 		protected var m_importsTotal : Number;
-		
+		private var m_stylesheetURLs : Array;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -77,25 +69,22 @@ package reprise.css
 		{
 			m_id = g_idSource++;
 			
-			m_cssSegments = new IndexedArray();
 			m_loader = new ResourceLoader();
-			m_declarationList = new CSSDeclarationList();
-			m_importQueue = [];
 			m_cssVariables = {};
 			
 			if (url)
 			{
-				setURL(url);
+				m_url = url;
 			}
 			m_loader.addEventListener(Event.COMPLETE, loader_complete);
 		}
 		
-		public function execute(...rest) : void
+		public override function execute(...rest) : void
 		{
 			if (m_url == null)
 			{
 				throw new Error('You didn\'t specify an URL for your ' + 
-					'resource! Make sure you do this before calling execute!');
+					'CSS resource! Make sure you do this before calling execute!');
 				return;
 			}
 			
@@ -111,39 +100,34 @@ package reprise.css
 			m_cleanupTime = 0;
 			m_importsLoaded = 0;
 			m_importsTotal = 1;
-			m_cssFile.setURL(CSSParsingHelper.resolvePathAgainstPath(
-				url(), baseURL()));
+			m_declarationList = new CSSDeclarationList();
+			m_stylesheetURLs = [];
+			m_importQueue = [];
+			m_cssSegments = new IndexedArray();
+			setURL(m_url);
+			m_cssFile.setURL(CSSParsingHelper.resolvePathAgainstPath(url(), baseURL()));
+			m_stylesheetURLs.push(m_cssFile.url());
 			m_loader.execute();
 		}
 		
-		public function setPriority(value : Number) : void
+		public override function didSucceed():Boolean
 		{
-			m_priority = value;
-		}
-		public function priority() : Number
-		{
-			return m_priority;
-		}
-		public function setId(value : Number) : void
-		{
-			m_id = value;
-		}
-		public function id() : Number
-		{
-			return m_id;
-		}
-	
-		public function load(theURL : String = null) : void
-		{
-			setURL(theURL);
-			execute();
+			// provisionally
+			//TODO: return sane value
+			return true;
 		}
 		
-		public function cancel() : void
+		public override function cancel() : void
 		{
-			trace('cancel for CSS is not implemented yet!');
+			log('w cancel for CSS is not implemented yet!');
 			m_isCancelled = true;
 			dispatchEvent(new ResourceEvent(Event.CANCEL));
+		}
+		
+		public override function isExecuting():Boolean
+		{
+			// @FIXME
+			return false;
 		}
 		
 		public function getStyleForSelectorPath(sp : String) : CSSDeclaration
@@ -155,6 +139,11 @@ package reprise.css
 			return m_declarationList.getStyleForSelectorsPath(sp);
 		}
 		
+		public function stylesheetURLs() : Array
+		{
+			return m_stylesheetURLs;
+		}
+
 		/**
 		 * Escapes a selectorPath and thus prepares it for being processed by the 
 		 * css implementation.
@@ -211,69 +200,26 @@ package reprise.css
 		/**
 		* FileResource facade
 		**/
-		public function setURL(src : String) : void
+		public override function setURL(src : String) : void
 		{
 			m_url = src;
 			m_cssFile = cssImportWithURL(src);
 			m_cssSegments[0] = m_cssFile;
 			m_loader.addResource(m_cssFile);
 		}	
-		public function url() : String
-		{
-			return m_url;
-		}
-		public function content() : *
+		public override function content() : *
 		{
 			return m_declarationList;
 		}
-		public function setTimeout(timeout : Number) : void
+		public override function getBytesLoaded() : Number
 		{
-			m_timeout = timeout;
-		}
-		public function timeout() : Number
-		{
-			return m_timeout;
-		}
-		public function setForceReload(bFlag : Boolean) : void
-		{
-			m_forceReload = bFlag;
-		}
-		public function forceReload() : Boolean
-		{
-			return m_forceReload;
-		}
-		public function setRetryTimes(times : Number) : void
-		{
-			m_retryTimes = times;
-		}
-		public function retryTimes() : Number
-		{
-			return m_retryTimes;
-		}
-		public function getBytesLoaded() : Number
-		{
+			//TODO: Check if we shouldn't return a better status here
 			return m_importsLoaded;
 		}
-		public function getBytesTotal() : Number
+		public override function getBytesTotal() : Number
 		{
+			//TODO: Check if we shouldn't return a better status here
 			return m_importsTotal;
-		}
-		public function getProgress() : Number
-		{
-			var progress : Number = Math.round(getBytesLoaded() / (getBytesTotal() / 100));
-			if (isNaN(progress))
-			{
-				progress = 0;
-			}
-			return progress;		
-		}
-		public function isCancelled() : Boolean
-		{
-			return m_isCancelled;
-		}
-		public function didFinishLoading() : Boolean
-		{
-			return m_didFinishLoading;
 		}
 		
 		public function resolveImport(cssImport:CSSImport) : void
@@ -307,7 +253,7 @@ package reprise.css
 			var result : Boolean = parseCSSSegment(m_cssSegments[0]);
 			if (!result)
 			{
-				trace('Error! Couldn\'t parse css string!');
+				log('e Error! Couldn\'t parse css string!');
 			}
 		}
 		
@@ -315,7 +261,7 @@ package reprise.css
 		{
 			if (m_cssVariables[name] != null)
 			{
-				trace('w Warning! CSS Variable with name ' + name + ' is already defined! (' +
+				log('w Warning! CSS Variable with name ' + name + ' is already defined! (' +
 					m_cssVariables[name] + ' -> ' + val + ')');			
 				return;
 			}
@@ -414,6 +360,7 @@ package reprise.css
 				pos = segment.indexOf(';');
 				
 				url = CSSParsingHelper.parseURL(segment.substring(0, pos), baseURL);
+				m_stylesheetURLs.push(url);
 				cssImport = cssImportWithURL(url);
 				m_importQueue.push(cssImport);
 				m_importsTotal++;
@@ -457,12 +404,8 @@ package reprise.css
 			return cssImport;
 		}
 		
-		protected function notifyComplete(success:Boolean, reason:String) : void
+		protected override function notifyComplete(success:Boolean) : void
 		{
-			if (!success)
-			{
-				trace('e ' + reason);
-			}
 			m_didFinishLoading = true;
 			dispatchEvent(new CommandEvent(Event.COMPLETE, success));
 		}
@@ -471,7 +414,7 @@ package reprise.css
 		{
 			if (!event.success)
 			{
-				notifyComplete(false, 'CSS "' + url() + '" could not be loaded');
+				log('e CSS "' + url() + '" could not be loaded');
 				return;
 			}
 			
@@ -499,7 +442,7 @@ package reprise.css
 				success = parseCSSSegment(segment);
 				if (!success)
 				{			
-					trace('f Error parsing css file "' + segment.url() + 
+					log('f Error parsing css file "' + segment.url() + 
 						'". Make sure that all ' +
 						'your used variables are defined (if any).');
 					break;
@@ -511,7 +454,7 @@ package reprise.css
 				' time spent cleaning up strings: ' + m_cleanupTime + ' ms\n' +
 				' time spent parsing: ' + m_parseTime + ' ms\n' +
 				'---------------------------------------------';
-			trace('d ' + stats);
+			log('d ' + stats);
 			
 			if (!m_imagePreloadingResource)
 			{
@@ -526,7 +469,7 @@ package reprise.css
 		}
 		protected function imagePreloader_complete(event : CommandEvent) : void
 		{
-			trace("preloading complete");
+			log("i preloading complete");
 			dispatchEvent(new CommandEvent(Event.COMPLETE, event.success));
 		}
 		

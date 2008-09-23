@@ -11,14 +11,13 @@
 
 package reprise.external 
 {
+	import flash.system.LoaderContext;	
 	import flash.display.BitmapData;
 	import flash.display.Loader;
-	import flash.display.MovieClip;
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
-	import flash.events.IOErrorEvent;
-	
+	import flash.events.IOErrorEvent;	
+
 	public class ImageResource extends AbstractResource
 	{
 		
@@ -79,7 +78,8 @@ package reprise.external
 				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
 			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			m_loader.load(m_request);
+			var context : LoaderContext = new LoaderContext(m_checkPolicyFile);
+			m_loader.load(m_request, context);
 			
 			//TODO: find a way to support attaching assets here
 //			if (m_url.indexOf('attach://') == 0)

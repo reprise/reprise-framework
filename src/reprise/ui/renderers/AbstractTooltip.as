@@ -86,10 +86,10 @@ package reprise.ui.renderers
 		{
 			var newPos : Point = new Point(xValue, yValue);
 			newPos = stage.localToGlobal(newPos);
-			newPos.y = Math.max(-m_marginTop, newPos.y + m_marginTop);
-			newPos.y = Math.min(stage.stageHeight - outerHeight - m_marginTop, newPos.y);
-			newPos.x = Math.max(-m_marginLeft, newPos.x + m_marginLeft);
-			newPos.x = Math.min(stage.stageWidth - outerWidth - m_marginLeft, newPos.x);
+			newPos.y = Math.max(-m_currentStyles.marginTop, newPos.y + m_currentStyles.marginTop);
+			newPos.y = Math.min(stage.stageHeight - outerHeight - m_currentStyles.marginTop, newPos.y);
+			newPos.x = Math.max(-m_currentStyles.marginLeft, newPos.x + m_currentStyles.marginLeft);
+			newPos.x = Math.min(stage.stageWidth - outerWidth - m_currentStyles.marginLeft, newPos.x);
 			newPos = parent.globalToLocal(newPos);
 			x = newPos.x;
 			y = newPos.y;

@@ -10,10 +10,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css.propertyparsers { 
-	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyParser;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
+	import reprise.css.CSSProperty;
+	import reprise.css.CSSPropertyParser;
+	import reprise.css.transitions.ColorTransitionVO;
+	import reprise.utils.StringUtil;
 	
 	
 	
@@ -50,6 +52,70 @@ package reprise.css.propertyparsers {
 			'borderBottomRightRadius',
 			'borderBottomLeftRadius'
 		];
+		
+		public static var PROPERTY_TRANSITIONS : Object	=
+		{
+			borderTopColor : ColorTransitionVO,
+			borderRightColor : ColorTransitionVO,
+			borderBottomColor : ColorTransitionVO,
+			borderLeftColor : ColorTransitionVO
+		};
+		
+		public static var TRANSITION_SHORTCUTS : Object	=
+		{
+			border : 
+			[
+				'borderTopWidth',
+				'borderRightWidth',
+				'borderBottomWidth',
+				'borderLeftWidth',
+				'borderTopColor',
+				'borderRightColor',
+				'borderBottomColor',
+				'borderLeftColor'
+			],
+			borderWidth : 
+			[
+				'borderTopWidth',
+				'borderRightWidth',
+				'borderBottomWidth',
+				'borderLeftWidth'
+			],
+			borderColor : 
+			[
+				'borderTopColor',
+				'borderRightColor',
+				'borderBottomColor',
+				'borderLeftColor'
+			],
+			borderTop : 
+			[
+				'borderTopWidth',
+				'borderTopColor'
+			],
+			borderRight : 
+			[
+				'borderRightWidth',
+				'borderRightColor'
+			],
+			borderBottom : 
+			[
+				'borderBottomWidth',
+				'borderBottomColor'
+			],
+			borderLeft : 
+			[
+				'borderLeftWidth',
+				'borderLeftColor'
+			],
+			borderRadius : 
+			[
+				'borderTopLeftRadius',
+				'borderTopRightRadius',
+				'borderBottomRightRadius',
+				'borderBottomLeftRadius'
+			]
+		};
 		
 		
 		public static var BORDER_STYLE_NONE 	: String = "none";	/* default */
@@ -102,25 +168,40 @@ package reprise.css.propertyparsers {
 			var important : String = obj.important ? CSSProperty.IMPORTANT_FLAG : '';
 			val = obj.result;
 			
+			//extract border style value
+			var extractionResult : Object = extractBorderStyleFromString(val, file);
+			var borderStyle : CSSProperty = extractionResult.borderStyle;
+			val = extractionResult.filteredString;
+			if (side == '')
+			{
+				res.addPropertyForKey(borderStyle, 'borderTopStyle');
+				res.addPropertyForKey(borderStyle, 'borderRightStyle');
+				res.addPropertyForKey(borderStyle, 'borderBottomStyle');
+				res.addPropertyForKey(borderStyle, 'borderLeftStyle');
+			}
+			else
+			{
+				res.addPropertyForKey(borderStyle, 'border' + side + 'Style');
+			}
+			//extract border width value
+			extractionResult = extractBorderWidthFromString(val, file);
+			var borderWidth : CSSProperty = extractionResult.borderWidth;
+			val = StringUtil.lTrim(extractionResult.filteredString);
+			if (side == '')
+			{
+				res.addPropertyForKey(borderWidth, 'borderTopWidth');
+				res.addPropertyForKey(borderWidth, 'borderRightWidth');
+				res.addPropertyForKey(borderWidth, 'borderBottomWidth');
+				res.addPropertyForKey(borderWidth, 'borderLeftWidth');
+			}
+			else
+			{
+				res.addPropertyForKey(borderWidth, 'border' + side + 'Width');
+			}
+			
 			var parts : Array = val.split(" ");
 			var returnValue : Object;
 			
-			// again: highly dynamic code results in uglyness
-			returnValue = Border["parseBorder" + side + "Width"](String(parts.shift()) + important, file);
-			if (side == '')
-				res.addEntriesFromResult(CSSParsingResult(returnValue));
-			else
-				res.addPropertyForKey(CSSProperty(returnValue), 'border' + side + 'Width');
-				
-			if (parts.length)
-			{
-				returnValue = Border["parseBorder" + side + "Style"](String(parts.shift()) + important, file);
-				if (side == '')
-					res.addEntriesFromResult(CSSParsingResult(returnValue));
-				else
-					res.addPropertyForKey(CSSProperty(returnValue), 'border' + side + 'Style');
-			}	
-				
 			if (parts.length)
 			{
 				returnValue = Border["parseBorder" + side + "Color"](String(parts.shift()) + important, file);

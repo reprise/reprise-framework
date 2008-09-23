@@ -13,6 +13,7 @@ package reprise.css.math
 {
 	public interface ICSSCalculationContext
 	{
-		function valueBySelectorProperty(selector : String, property : String) : *;
+		function valueBySelectorProperty(
+			selector : String, property : String, ...rest : Array) : *;
 	}
 }

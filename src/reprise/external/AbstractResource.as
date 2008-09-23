@@ -39,7 +39,8 @@ package reprise.external
 		protected var m_httpStatus : HTTPStatus;
 		protected var m_didFinishLoading : Boolean = false;		
 		private var m_failureReason : Number;
-		
+		protected var m_checkPolicyFile : Boolean;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -110,6 +111,15 @@ package reprise.external
 		public function setForceReload(bFlag : Boolean) : void
 		{
 			m_forceReload = bFlag;
+		}
+		
+		public function setCheckPolicyFile(checkPolicyFile : Boolean) : void
+		{
+			m_checkPolicyFile = checkPolicyFile;
+		}
+		public function checkPolicyFile() : Boolean
+		{
+			return m_checkPolicyFile;
 		}
 		
 		public function content() : *

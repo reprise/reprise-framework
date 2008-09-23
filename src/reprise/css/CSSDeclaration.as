@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css
-{ 
+{
 	import flash.text.StyleSheet;
 	
 	import reprise.controls.csspropertyparsers.ScrollbarProperties;
@@ -23,8 +23,10 @@ package reprise.css
 	import reprise.css.propertyparsers.Margin;
 	import reprise.css.propertyparsers.Padding;
 	import reprise.css.propertyparsers.Transition;
+	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.css.transitions.TransitionVOFactory;
-	import reprise.utils.StringUtil;
+	import reprise.utils.StringUtil;	 
+
 	public class CSSDeclaration
 	{
 		/***************************************************************************
@@ -105,6 +107,7 @@ package reprise.css
 			var properties : Array = collection.KNOWN_PROPERTIES;
 			var inheritableProperties : Object = collection.INHERITABLE_PROPERTIES || {};
 			var transitions : Object = collection.PROPERTY_TRANSITIONS || {};
+			var shortcuts : Object = collection.TRANSITION_SHORTCUTS || {};
 			
 			var i : int = properties.length;
 			while (i--)
@@ -119,6 +122,11 @@ package reprise.css
 				if (transitions[prop])
 				{
 					TransitionVOFactory.registerProperty(prop, transitions[prop]);
+				}
+				if (shortcuts[prop])
+				{
+					CSSTransitionsManager.registerTransitionShortcut(
+						prop, shortcuts[prop]);
 				}
 			}
 			
@@ -195,32 +203,22 @@ package reprise.css
 			
 			for (key in props)
 			{
-				otherProp = props[key];
-				
-				// the other side has no property defined for the given key,
-				// so we keep our own
-				if (!otherProp)
-					continue;
-				
 				ourProp = m_properties[key];
 				
 				// well, inheritable styles only is the deal
-				if (inheritableStylesOnly == true && !m_inheritableProperties[key] && 
+				if (inheritableStylesOnly && !m_inheritableProperties[key] && 
 					!(ourProp && ourProp.inheritsValue()))
-					continue;
-				
-				// we have no property defined for the given key,
-				// so we use the other ones'
-				if (!ourProp)
 				{
-					m_properties[key] = otherProp;
 					continue;
 				}
+				
+				otherProp = props[key];
 							
 				// now we have two properties. so here goes the real merging
-				if (ourProp.important() && !otherProp.important())// || 
-	//				(!ourProp.inheritsValue() && inheritableStylesOnly))
+				if (ourProp && ourProp.important() && !otherProp.important())
+				{
 					continue;
+				}
 				
 				m_properties[key] = otherProp;
 			}
@@ -288,14 +286,12 @@ package reprise.css
 			return decl;
 		}
 		
-		public function toObject() : Object
+		public function toObject() : ComputedStyles
 		{
-			var obj : Object = {};
-			
+			var obj : ComputedStyles = new ComputedStyles();
 			for (var key:String in m_properties)
 			{
-				var value:Object = CSSProperty(m_properties[key]).valueOf();
-				obj[key] = value;
+				obj[key] = CSSProperty(m_properties[key]).valueOf();
 			}
 			
 			return obj;
@@ -360,7 +356,8 @@ package reprise.css
 			for (var key:String in m_properties)
 			{
 				str += "\t" + key + " : " + 
-					CSSProperty(m_properties[key]).specifiedValue() + ";\n";
+					CSSProperty(m_properties[key]).specifiedValue() + 
+					(CSSProperty(m_properties[key]).unit() || '') + ";\n";
 			}
 				
 			return str + '}';

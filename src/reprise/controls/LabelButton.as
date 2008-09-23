@@ -10,7 +10,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls
-{ 
+{
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.text.TextField;
+	 
 	/**
 	 * @author Marco
 	 */
@@ -19,7 +23,6 @@ package reprise.controls
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "LabelButton";
 		
 		
 		/***************************************************************************
@@ -44,9 +47,9 @@ package reprise.controls
 		 */
 		public function setLabel(label:String) : void
 		{
+			m_label = label;
 			if (!m_labelDisplay)
 			{
-				m_label = label;
 				return;
 			}
 			m_labelDisplay.setLabel(label);
@@ -72,12 +75,8 @@ package reprise.controls
 		{
 			m_labelDisplay = Label(addComponent('label', null, Label));
 			m_labelDisplay.label = m_label;
-			m_label = '';
 		}
-		protected override function createButtonDisplay() : void
-		{
-			m_buttonDisplay = this;
-		}
+		
 		/**
 		 * calculates the horizontal space taken by this elements' content
 		 */
@@ -96,13 +95,38 @@ package reprise.controls
 			var oldStyles : Object = m_lastStyles || {};
 			if (m_currentStyles.selectable != oldStyles.selectable)
 			{
-				m_labelDisplay.setStyle('selectable', m_currentStyles.selectable);
+				m_labelDisplay.setStyle('selectable', String(m_currentStyles.selectable));
 			}
 			if (m_currentStyles.cursor != oldStyles.cursor)
 			{
 				m_labelDisplay.setStyle('cursor', m_currentStyles.cursor);
 			}
 			m_lastStyles = m_currentStyles;
+		}
+		
+		/**
+		 * Just pass the content on to the labelDisplay
+		 */
+		protected override function parseXMLContent(node : XML) : void
+		{
+			if (node.children().length())
+			{
+				m_labelDisplay.setLabel(node.children().toXMLString());
+			}
+		}
+		
+		protected override function buttonDisplay_click(event : MouseEvent) : void
+		{
+			var objects : Array = 
+				stage.getObjectsUnderPoint(new Point(event.stageX, event.stageY));
+			if (objects[objects.length - 1] is TextField)
+			{
+				if (m_labelDisplay.handleTextClick(event))
+				{
+					return;
+				}
+			}
+			super.buttonDisplay_click(event);
 		}
 	}
 }

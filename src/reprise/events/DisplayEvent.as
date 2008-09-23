@@ -21,6 +21,9 @@ package reprise.events
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
+		public static const ADDED_TO_DOCUMENT : String = 'addedToDocument';
+		public static const REMOVED_FROM_DOCUMENT : String = 'removedFromDocument';
+		
 		public static const SHOW_COMPLETE : String = "showComplete";
 		public static const HIDE_COMPLETE : String = "hideComplete";
 		public static const VISIBLE_CHANGED : String = "visibleChanged";
@@ -35,9 +38,10 @@ package reprise.events
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function DisplayEvent(type:String)
+		public function DisplayEvent(type:String, 
+			bubbles : Boolean = false, cancelable : Boolean = false)
 		{
-			super(type);
+			super(type, bubbles, cancelable);
 		}
 	}
 }

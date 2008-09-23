@@ -10,26 +10,27 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls
-{ 
-	import reprise.ui.UIComponent;
-	
+{
 	import flash.display.DisplayObject;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import reprise.events.MouseEventConstants;
+	import flash.ui.Keyboard;
 	
-	public class AbstractButton extends UIComponent
+	import reprise.events.MouseEventConstants;
+	import reprise.ui.AbstractInput;
+	import reprise.ui.DocumentView;
+	import reprise.ui.UIComponent; 
+
+	public class AbstractButton extends AbstractInput
 	{
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "AbstractButton";
 		
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_buttonDisplay : UIComponent;
-		
 		protected var m_isToggleButton : Boolean = false;
 		protected var m_currentState : String;
 	
@@ -63,6 +64,10 @@ package reprise.controls
 		 */
 		public function set selected(value:Boolean) : void
 		{
+			if (value == m_selected)
+			{
+				return;
+			}
 			if (value)
 			{
 				activate();
@@ -113,6 +118,16 @@ package reprise.controls
 			return m_enabled;
 		}
 		
+		public override function value():*
+		{
+			return selected;
+		}
+		
+		public override function setValue(value:*):void
+		{
+			selected = Boolean(value);
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
@@ -121,17 +136,13 @@ package reprise.controls
 		{
 		}
 		
-		protected override function initialize () : void
+		protected override function initialize() : void
 		{
 			super.initialize();
 			
-			createButtonDisplay();
+			m_canBecomeKeyView = true;
+			
 			initializeButtonHandlers();
-		}
-		protected function createButtonDisplay () : void
-		{
-			throw new Error("abstract method AbstractButton::createButtonDisplay " +
-				"has to be overriden by implementing class in instance " + this);
 		}
 		protected function initializeButtonHandlers() : void
 		{
@@ -143,18 +154,35 @@ package reprise.controls
 		
 		protected function activate() : void
 		{
-			addPseudoClass("focus");
+			addPseudoClass("checked");
 			m_selected = true;
 		}
 		
 		protected function deactivate() : void
 		{
-			removePseudoClass("focus");
+			removePseudoClass("checked");
 			m_selected = false;
+		}
+		
+		protected override function handleKeyEvent(event : KeyboardEvent) : Boolean
+		{
+			switch(event.keyCode)
+			{
+				case Keyboard.SPACE:
+				{
+					dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+					return true;
+				}
+				default:
+				{
+					return false;
+				}
+			}
 		}
 		
 		protected function buttonDisplay_over(event : MouseEvent) : void
 		{
+			log('button: ' + this);
 			if (m_enabled)
 			{
 				addPseudoClass("hover");
@@ -186,17 +214,21 @@ package reprise.controls
 			{
 				removeErrorMark();
 			}
-		
+			if (m_canBecomeKeyView)
+			{
+				m_rootElement.setFocusedElement(this, DocumentView.FOCUS_METHOD_MOUSE);
+			}
+			
 			if(isToggleButton)
 			{
 				if(selected)
 				{
-					selected = false;	
+					selected = false;
 				}
 				else
 				{
 					selected = true;	
-				}	
+				}
 			}
 		}
 	}

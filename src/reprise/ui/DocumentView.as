@@ -10,31 +10,39 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.ui
-{ 
+{
+	import reprise.core.UIRendererFactory;
+	import reprise.css.CSS;
+	import reprise.css.CSSDeclaration;
+	import reprise.data.collection.HashMap;
+	import reprise.events.DebugEvent;
+	import reprise.i18n.II18NService;
+	import reprise.services.tracking.ITrackingService;
+	
+	import com.nesium.events.FileMonitorEvent;
+	import com.nesium.logging.FileMonitor;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
-	
-	import reprise.core.UIRendererFactory;
-	import reprise.css.CSS;
-	import reprise.css.CSSDeclaration;
-	import reprise.css.CSSProperty;
-	import reprise.data.collection.HashMap;
-	import reprise.i18n.II18NService;
-	import reprise.services.tracking.ITrackingService;
-	
+	import flash.utils.setTimeout;		
+
 	public class DocumentView extends UIComponent
 	{
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
+		public static const FOCUS_METHOD_KEYBOARD : String = 'keyboard';
+		public static const FOCUS_METHOD_MOUSE : String = 'mouse';
+		
 		public static var className : String = "body";
 		
 		public var stageDimensionsChanged : Boolean;
@@ -60,8 +68,11 @@ package reprise.ui
 		
 		protected var m_stageInvalidationTimeout : int;
 		
+		protected var m_focus:UIObject;
+		
 		protected var m_debuggingMode : Boolean;
 		protected var m_debugInterface : Sprite;
+		protected var m_validatedElementsCount : int;
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -125,7 +136,7 @@ package reprise.ui
 		{
 			m_styleSheet = stylesheet;
 			m_stylesInvalidated = true;
-//			initialize();
+			startWatchingStylesheets();
 			invalidate();
 		}
 		/**
@@ -206,6 +217,10 @@ package reprise.ui
 		{
 			m_trackingService.track(trackingId);
 		}
+		public override function hasHiddenAncestors() : Boolean
+		{
+			return false;
+		}
 		
 		public function markChildAsInvalid(child : UIObject) : void
 		{
@@ -227,6 +242,30 @@ package reprise.ui
 			}
 		}
 		
+		public function setFocusedElement(element : UIObject, method : String) : Boolean
+		{
+			if (m_focus && m_focus == element)
+			{
+				return false;
+			}
+			if (m_focus)
+			{
+				m_focus.setFocus(false, method);
+			}
+			m_focus = element;
+			stage.focus = element;
+			if (element)
+			{
+				element.setFocus(true, method);
+			}
+			return true;
+		}
+		
+		internal function increaseValidatedElementsCount() : void
+		{
+			m_validatedElementsCount++;
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
@@ -239,13 +278,16 @@ package reprise.ui
 			m_invalidChildren = [];
 			stage.addEventListener(Event.RESIZE, stage_resize);
 			super.initialize();
+			stage.stageFocusRect = false;
 			stage.addEventListener(Event.RENDER, stage_render);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, key_down);
+			stage.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, stage_keyFocusChange);
+			stage.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, stage_mouseFocusChange);
+			stage.focus = this;
 		}
 		
 		protected override function initDefaultStyles() : void
 		{
-			m_elementDefaultStyles.setStyle('frameRate', '24');
 			m_elementDefaultStyles.setStyle('width', '100%');
 			m_elementDefaultStyles.setStyle('height', '100%');
 			m_elementDefaultStyles.setStyle('padding', '0');
@@ -264,40 +306,20 @@ package reprise.ui
 		{
 			super.applyStyles();
 			stage.frameRate = m_currentStyles.frameRate;
+			m_heightIsRelative = m_complexStyles.getStyle('height').isRelativeValue();
+			m_widthIsRelative = m_complexStyles.getStyle('width').isRelativeValue();
 		}
-		protected override function resolveRelativeStyles(styles:CSSDeclaration) : void
+		protected override function resolveRelativeStyles(styles:CSSDeclaration, 
+			parentW:Number = -1, parentH:Number = -1) : void
 		{
-			var widthStyle : CSSProperty = m_complexStyles.getStyle('width');
-			var heightStyle : CSSProperty = m_complexStyles.getStyle('height');
-			if (widthStyle.isRelativeValue())
-			{
-				m_widthIsRelative = true;
-				m_width = m_currentStyles.width = 
-					Math.round(widthStyle.resolveRelativeValueTo(stage.stageWidth));
-			}
-			else
-			{
-				m_widthIsRelative = false;
-				m_width = Number(widthStyle.valueOf());
-			}
-			if (heightStyle.isRelativeValue())
-			{
-				m_heightIsRelative = true;
-				m_height = m_currentStyles.height = 
-					Math.round(heightStyle.resolveRelativeValueTo(stage.stageHeight));
-			}
-			else
-			{
-				m_heightIsRelative = false;
-				m_height = Number(heightStyle.valueOf());
-			}
+			super.resolveRelativeStyles(styles, stage.stageWidth, stage.stageHeight);
 		}
 		
 		protected override function applyOutOfFlowChildPositions() : void
 		{
 			super.applyOutOfFlowChildPositions();
-			y = m_marginTop;
-			x = m_marginLeft;
+			y = m_currentStyles.marginTop;
+			x = m_currentStyles.marginLeft;
 		}
 		
 		protected override function refreshSelectorPath() : void
@@ -315,6 +337,7 @@ package reprise.ui
 		{
 			//TODO: verify this validation scheme
 			var t1 : int = getTimer();
+			m_validatedElementsCount = 0;
 			if (m_invalidChildren.length == 0)
 			{
 				return;
@@ -336,7 +359,8 @@ package reprise.ui
 				var element : UIObject = UIObject(sortedElements[i].element);
 				element.validation_execute();
 			}
-//			trace('validation took ' + (getTimer() - t1) + 'ms');
+			log('d validation of ' + m_validatedElementsCount + 
+				' elements took ' + (getTimer() - t1) + 'ms');
 			//validate elements that have been marked as invalid during validation
 			if (m_invalidChildren.length)
 			{
@@ -399,36 +423,36 @@ package reprise.ui
 			m_debugInterface.graphics.clear();
 			m_debugInterface.graphics.lineStyle(1, 0xffff);
 			
-			var boxWidth : Number = element.valueForKey('m_borderBoxWidth');
-			var boxHeight : Number = element.valueForKey('m_borderBoxHeight');
+			var boxWidth : Number = element.borderBoxWidth;
+			var boxHeight : Number = element.borderBoxHeight;
 			output += 'Border Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.drawRect(-element.valueForKey('m_borderLeftWidth'), 
-				-element.valueForKey('m_borderTopWidth'), boxWidth, boxHeight);
+			m_debugInterface.graphics.drawRect(-element.style.borderLeftWidth, 
+				-element.style.borderTopWidth, boxWidth, boxHeight);
 			
-			boxWidth -= element.valueForKey('m_borderLeftWidth');
-			boxWidth -= element.valueForKey('m_borderRightWidth');
-			boxHeight -= element.valueForKey('m_borderTopWidth');
-			boxHeight -= element.valueForKey('m_borderBottomWidth');
+			boxWidth -= element.style.borderLeftWidth;
+			boxWidth -= element.style.borderRightWidth;
+			boxHeight -= element.style.borderTopWidth;
+			boxHeight -= element.style.borderBottomWidth;
 			output += 'Padding Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
 			m_debugInterface.graphics.endFill();
 			m_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
 			
-			boxWidth -= element.valueForKey('m_paddingLeft');
-			boxWidth -= element.valueForKey('m_paddingRight');
-			boxHeight -= element.valueForKey('m_paddingTop');
-			boxHeight -= element.valueForKey('m_paddingBottom');
+			boxWidth -= element.style.paddingLeft;
+			boxWidth -= element.style.paddingRight;
+			boxHeight -= element.style.paddingTop;
+			boxHeight -= element.style.paddingBottom;
 			output += 'Content Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
 			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(element.valueForKey('m_paddingLeft'), 
-				element.valueForKey('m_paddingTop'), boxWidth, boxHeight);
+			m_debugInterface.graphics.drawRect(element.style.paddingLeft, 
+				element.style.paddingTop, boxWidth, boxHeight);
 			
-//			log(output);
+			log(output);
 		}
 		
 		protected function stage_resize(event : Event) : void
 		{
-			if ((m_widthIsRelative && m_width != stage.stageWidth) || 
-				(m_heightIsRelative && m_height != stage.stageHeight))
+			if ((m_widthIsRelative && m_contentBoxWidth != stage.stageWidth) || 
+				(m_heightIsRelative && m_contentBoxHeight != stage.stageHeight))
 			{
 				stageDimensionsChanged = true;
 				m_stylesInvalidated = true;
@@ -441,13 +465,107 @@ package reprise.ui
 			validateElements();
 		}
 		
-		protected function key_down(event : KeyboardEvent) : void
+		protected function stage_keyFocusChange(e:FocusEvent):void
 		{
-			if (event.shiftKey && event.ctrlKey && event.keyCode == 4)
+	        if (e.keyCode == Keyboard.TAB && !e.isDefaultPrevented())
+	        {
+				var focusView:UIObject;
+				if (e.shiftKey)
+				{
+					focusView = m_focus != null 
+						? m_focus.previousValidKeyView() 
+						: previousValidKeyView();
+				}
+				else
+				{
+					focusView = m_focus != null 
+						? m_focus.nextValidKeyView() 
+						: nextValidKeyView();
+				}
+				if (setFocusedElement(focusView, FOCUS_METHOD_KEYBOARD))
+				{
+		            e.preventDefault();
+				}
+	        }
+		}
+		protected function stage_mouseFocusChange(event : FocusEvent) : void
+		{
+			var element : DisplayObject = DisplayObject(event.relatedObject);
+			while (element && !(element is UIObject))
 			{
-				toggleDebuggingMode();
+				element = element.parent;
+			}
+			if (setFocusedElement(element as UIObject, FOCUS_METHOD_MOUSE))
+			{
+				event.preventDefault();
 			}
 		}
+		
+		protected function key_down(event : KeyboardEvent) : void
+		{
+			if (event.shiftKey && event.ctrlKey)
+			{
+				if (event.keyCode == 4) //'d'
+				{
+					toggleDebuggingMode();
+					return;
+				}
+				if (event.keyCode == 18) //'r'
+				{
+					reloadStyles();
+					return;
+				}
+				if (event.keyCode == 23) //'w'
+				{
+					startWatchingStylesheets();
+					return;
+				}
+			}
+		}
+		
+		protected function startWatchingStylesheets() : void
+		{
+			FileMonitor.instance().removeEventListener(
+				FileMonitorEvent.FILE_CHANGED, file_changed);
+			var stylesheets : Array = m_styleSheet.stylesheetURLs();
+			var containsLocalFiles : Boolean;
+			for each (var url : String in stylesheets)
+			{
+				if (url.indexOf('file://') == 0)
+				{
+					FileMonitor.instance().startMonitoringFile(url.substr(7));
+					containsLocalFiles = true;
+				}
+			}
+			if (containsLocalFiles)
+			{
+				log('d start watching stylesheets');
+				FileMonitor.instance().addEventListener(
+					FileMonitorEvent.FILE_CHANGED, file_changed);
+			}
+		}
+
+		protected function file_changed(event : FileMonitorEvent):void
+		{
+			reloadStyles();
+		}
+		
+		protected function reloadStyles() : void
+		{
+			//TODO: make sure that CSS variables are treated correctly when reloading
+			m_styleSheet.addEventListener(Event.COMPLETE, styleSheet_complete);
+			m_styleSheet.reset();
+			m_styleSheet.execute();
+		}
+		
+		protected function styleSheet_complete(event : Event) : void
+		{
+			m_styleSheet.removeEventListener(Event.COMPLETE, styleSheet_complete);
+			dispatchEvent(new DebugEvent(DebugEvent.WILL_RESET_STYLES));
+			resetStyles();
+			dispatchEvent(new DebugEvent(DebugEvent.DID_RESET_STYLES));
+		}
+
 		protected function debugging_mouseOver(event : MouseEvent) : void
 		{
 			var parent : DisplayObject = DisplayObject(event.target);

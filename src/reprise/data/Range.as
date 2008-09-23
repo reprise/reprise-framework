@@ -28,5 +28,15 @@ package reprise.data
 		{
 			return new Range(location, length);
 		}
+		
+		public function containsLocation(loc : int) : Boolean
+		{
+			return loc >= location && loc < location + length;
+		}
+		
+		public function toString():String
+		{
+			return '[Range] location: ' + location + ', length: ' + length;
+		}
 	}
 }

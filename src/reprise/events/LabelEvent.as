@@ -34,9 +34,10 @@ package reprise.events
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function LabelEvent(type:String, target:Object)
+		public function LabelEvent(type : String, 
+			bubbles : Boolean = false, cancelable : Boolean = true)
 		{
-			super(type, target);
+			super(type, bubbles, cancelable);
 		}
 		
 		

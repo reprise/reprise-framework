@@ -21,6 +21,7 @@ package reprise.css.transitions
 		*							public properties							   *
 		***************************************************************************/
 		public var property : String;
+		public var shortcut : String;
 		public var duration : CSSProperty;
 		public var delay : CSSProperty;
 		public var easing : Function;
@@ -44,9 +45,10 @@ package reprise.css.transitions
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function CSSPropertyTransition(name : String)
+		public function CSSPropertyTransition(name : String, shortcut : String = null)
 		{
 			property = name;
+			this.shortcut = shortcut;
 			m_propertyTransition = TransitionVOFactory.transitionForPropertyName(name);
 		}
 		

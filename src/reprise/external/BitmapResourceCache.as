@@ -133,6 +133,7 @@ package reprise.external
 			imageResource.setPriority(bmpResource.priority());
 			imageResource.setTimeout(bmpResource.timeout());
 			imageResource.setForceReload(bmpResource.forceReload());
+			imageResource.setCheckPolicyFile(bmpResource.checkPolicyFile());
 			imageResource.setRetryTimes(bmpResource.retryTimes());
 			//TODO: implement a cleaner way to propagate priority changes
 			bmpResource.setContainingImageResource(imageResource);

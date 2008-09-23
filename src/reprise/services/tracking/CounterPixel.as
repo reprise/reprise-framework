@@ -34,10 +34,12 @@ package reprise.services.tracking
 	 * If you enable debugging with {@link CounterPixel#setDebug}, the 
 	 * CounterPixels are traced as well.
 	 */
-	import reprise.core.ApplicationRegistry;
-	
-	import flash.system.System;
-	import flash.system.Security;
+	import flash.display.Stage;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.system.Security;		
 	public class CounterPixel implements ITrackingService
 	{
 		/***************************************************************************
@@ -54,10 +56,12 @@ package reprise.services.tracking
 		
 		protected var m_brand : String = "nivea";
 		protected var m_domain : String;
+		protected var m_TLD : String;
 		protected var m_debug : Boolean = false;
 	
 		protected var m_basePath : String = "";
-		
+		protected var m_stage : Stage;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -76,6 +80,10 @@ package reprise.services.tracking
 		
 		public function CounterPixel()
 		{
+		}
+		public function setStage(stage : Stage) : void
+		{
+			m_stage = stage;
 			init();
 		}
 		
@@ -89,6 +97,11 @@ package reprise.services.tracking
 		 */
 		public function callPixel(pixel:String) : void
 		{
+			if (!m_stage)
+			{
+				throw new Error('you need to give the CounterPixel ' + 
+					'a Stage reference before invoking callPixel');
+			}
 			pixel = m_basePath + pixel;
 			pixel = removeSlash(pixel);
 			pixel = removeSpaces(pixel);
@@ -105,22 +118,25 @@ package reprise.services.tracking
 				trace("\n******************************************************************************************************\nWARNING!\nThis Counterpixel semms to be wrong. Please make sure that \"Brand\" is not a part of \"Pixel\"!\n******************************************************************************************************\n:" + pixel);
 			}
 			
-			var pixel1:String = "http://" + getHost(0) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
-			var pixel2:String = "http://" + getHost(1) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
+			var pixel1:String = getHost(0) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
+			var pixel2:String = getHost(1) + COUNTER_SCRIPT_PATH + "/" + m_brand + "/" + m_domain + "/" + pixel;
 
-			//@FIXME
-			/*if(_root._url.substr(0,7).toLowerCase() != "file://")
+			if(m_stage.loaderInfo.loaderURL.substr(0,7).toLowerCase() != "file://")
 			{
-				var loadVars1:LoadVars = new LoadVars();
-				loadVars1.sendAndLoad(pixel1, loadVars1);
-				var loadVars2:LoadVars = new LoadVars();
-				loadVars2.sendAndLoad(pixel2, loadVars2);
-			}*/
+				var loader : URLLoader = new URLLoader();
+				loader.addEventListener(Event.COMPLETE, pixelLoader_complete);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, pixelLoader_ioError);
+				loader.load(new URLRequest(pixel1));
+				loader = new URLLoader();
+				loader.addEventListener(Event.COMPLETE, pixelLoader_complete);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, pixelLoader_ioError);
+				loader.load(new URLRequest(pixel2));
+			}
 			
 			if(m_debug)
 			{
-				trace("COUNTERPIXEL 1: " + pixel1);
-				trace("COUNTERPIXEL 2: " + pixel2);
+				log("d COUNTERPIXEL 1: " + pixel1);
+				log("d COUNTERPIXEL 2: " + pixel2);
 			}
 		}
 		
@@ -170,6 +186,21 @@ package reprise.services.tracking
 		}
 		
 		/**
+		 * sets the TLD to use for the counterpixels
+		 */
+		public function setTLD(tld:String) : void
+		{
+			m_TLD = tld;
+		}
+		/**
+		 * @return the TLD used for the counterpixels
+		 */
+		public function getTLD() : String
+		{
+			return m_TLD;
+		}
+		
+		/**
 		* setter for the basePath property
 		*/
 		public function setBasePath (value:String) : void
@@ -193,26 +224,49 @@ package reprise.services.tracking
 			Security.allowDomain(getHost(0));
 			Security.allowDomain(getHost(1));
 			
-			var parameters : Object = ApplicationRegistry.instance().
-				applicationForURL().stage.loaderInfo.parameters;
+			var parameters : Object = m_stage.loaderInfo.parameters;
 			
-			if (parameters.tld)
+			if (!m_domain)
 			{
-				m_domain = parameters.tld;
-			}
-			else if (parameters.language_short_id)
-			{
-				m_domain = parameters.language_short_id;
-			}
-			else if (parameters.hostname && parameters.hostname.indexOf('nivea.') != -1)
-			{
-				m_domain = parameters.hostname.split('nivea.').pop();
+				if (m_TLD)
+				{
+					m_domain = m_TLD;
+				}
+				else if (parameters.tld)
+				{
+					m_domain = parameters.tld;
+				}
+				else if (parameters.language_short_id)
+				{
+					m_domain = parameters.language_short_id;
+				}
+				else if (parameters.hostname && parameters.hostname.indexOf('nivea.') != -1)
+				{
+					m_domain = parameters.hostname.split('nivea.').pop();
+				}
+				
+				if(!m_domain || !m_domain.length)
+				{
+					m_domain = 'com';
+				}
 			}
 			
-			if(!m_domain.length)
+			if (!m_TLD)
 			{
-				m_domain = 'com';
+				m_TLD = m_domain;
 			}
+		}
+		
+		protected function pixelLoader_complete(e:Event):void
+		{
+			URLLoader(e.target).removeEventListener(Event.COMPLETE, pixelLoader_complete);
+			URLLoader(e.target).removeEventListener(
+				IOErrorEvent.IO_ERROR, pixelLoader_ioError);
+		}
+		
+		protected function pixelLoader_ioError(e:IOErrorEvent):void
+		{
+			log('e woops. something went wrong while loading counterpixel');
 		}
 		
 		
@@ -258,24 +312,12 @@ package reprise.services.tracking
 		}
 		protected function getHost(pixelNumber: Number) : String
 		{
-			//@FIXME
-			var host:String;// = _root.hostname.toLowerCase();
-			if(!host)
+			var pixelStr:String = 'counterpixel';
+			if( pixelNumber > 0 )
 			{
-				host = 'http://www.nivea.com';
+				pixelStr += pixelNumber.toString();
 			}
-			
-			if(host.indexOf(".") != -1)
-			{
-				var pixelStr:String = 'counterpixel';
-				if( pixelNumber > 0 )
-				{
-					pixelStr += pixelNumber.toString();
-				}
-				host = 'http://' + pixelStr + host.substr(host.indexOf('.'));
-			}
-			
-			return host;
+			return 'http://' + pixelStr + '.nivea.' + m_TLD;
 		}
 	}
 }

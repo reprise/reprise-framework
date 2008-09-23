@@ -11,11 +11,16 @@
 
 package reprise.css.transitions
 {
+	import reprise.events.TransitionEvent;	
+	
+	import flash.events.EventDispatcher;	
+	
 	import com.robertpenner.easing.Linear;
 	
 	import flash.utils.getTimer;
 	
 	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyCache;
 	
@@ -24,14 +29,18 @@ package reprise.css.transitions
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_activeTransitions : Object;
+		protected static var g_transitionShortcuts : Object = {};
 		
+		protected var m_activeTransitions : Object;
+		protected var m_target : EventDispatcher;
+
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function CSSTransitionsManager()
+		public function CSSTransitionsManager(target : EventDispatcher)
 		{
+			m_target = target;
 		}
 		
 		public function isActive() : Boolean
@@ -65,7 +74,19 @@ package reprise.css.transitions
 					{
 						if (transitionProperties.indexOf(transitionPropName) == -1)
 						{
-							delete m_activeTransitions[transitionPropName];
+							transition = m_activeTransitions[transitionPropName];
+							var shortcut : String = transition.shortcut;
+							if (!shortcut || transitionProperties.indexOf(shortcut) == -1)
+							{
+								delete m_activeTransitions[transitionPropName];
+								var cancelEvent : TransitionEvent = new TransitionEvent(
+									TransitionEvent.TRANSITION_CANCEL);
+								cancelEvent.propertyName = transitionPropName;
+								cancelEvent.elapsedTime = startTime - 
+									transition.startTime - 
+									transition.delay.specifiedValue();
+								m_target.dispatchEvent(cancelEvent);
+							}
 						}
 					}
 				}
@@ -74,21 +95,27 @@ package reprise.css.transitions
 					m_activeTransitions = {};
 				}
 				
-				//add all new properties and update already active ones
-				for (var i : int = transitionProperties.length; i--;)
+				function processProperty(transitionPropName : String, 
+					shortcut : String = null, defaultValue : CSSProperty = null) : void
 				{
-					transitionPropName = transitionProperties[i];
 					var oldValue : CSSProperty = (oldStyles && 
 						oldStyles.getStyle(transitionPropName)) as CSSProperty;
 					var targetValue : CSSProperty = 
 						newStyles.getStyle(transitionPropName);
 					
-					//check for default value if we have a target value but no old value
-					if (targetValue && !oldValue && 
-						defaultValues[i] && defaultValues[i] != 'none')
+					//apply default values
+					if (defaultValue && defaultValue.specifiedValue() != 'none')
 					{
-						oldValue = CSSProperty(CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, defaultValues[i], null));
+						//use default value if we have a target value but no old value
+						if (targetValue && !oldValue)
+						{
+							oldValue = defaultValue;
+						}
+						//use default value if we have an old value but no target value
+						else if (oldValue && !targetValue)
+						{
+							targetValue = defaultValue;
+						}
 					}
 					
 					//exception for intrinsic dimensions
@@ -111,7 +138,7 @@ package reprise.css.transitions
 					if (!oldValue || !targetValue || 
 						oldValue.specifiedValue() == targetValue.specifiedValue())
 					{
-						continue;
+						return;
 					}
 					if (transitionEasings[i])
 					{ 
@@ -124,7 +151,8 @@ package reprise.css.transitions
 					transition = m_activeTransitions[transitionPropName];
 					if (!transition)
 					{
-						transition = new CSSPropertyTransition(transitionPropName);
+						transition = new CSSPropertyTransition(
+							transitionPropName, shortcut);
 						transition.duration = transitionDurations[i];
 						transition.delay = transitionDelays[i];
 						transition.easing = easing;
@@ -138,6 +166,46 @@ package reprise.css.transitions
 						transition.easing = easing;
 						transition.updateValues(targetValue, transitionDurations[i], 
 							transitionDelays[i], startTime, this);
+					}
+				}
+				
+				//add all new properties and update already active ones
+				for (var i : int = transitionProperties.length; i--;)
+				{
+					transitionPropName = transitionProperties[i];
+					var defaultValue : *;
+					if (defaultValues[i] && defaultValues[i] != 'none')
+					{
+						defaultValue = CSSPropertyCache.propertyForKeyValue(
+							transitionPropName, defaultValues[i], null);
+					}
+					if (g_transitionShortcuts[transitionPropName])
+					{
+						var expansions : Array = 
+							g_transitionShortcuts[transitionPropName];
+						if (defaultValue)
+						{
+							var defaultValuesForExpansions : CSSParsingResult = 
+								CSSParsingResult(defaultValue);
+							var name : String;
+							for each (name in expansions)
+							{
+								processProperty(name, transitionPropName, 
+									defaultValuesForExpansions.propertyForKey(name));
+							}
+						}
+						else
+						{
+							for each (name in expansions)
+							{
+								processProperty(name, transitionPropName);
+							}
+						}
+					}
+					else
+					{
+						processProperty(transitionPropName, 
+							null, CSSProperty(defaultValue));
 					}
 				}
 			}
@@ -157,6 +225,13 @@ package reprise.css.transitions
 				if (transition.hasCompleted)
 				{
 					delete m_activeTransitions[transitionPropName];
+					var completeEvent : TransitionEvent = 
+						new TransitionEvent(TransitionEvent.TRANSITION_COMPLETE);
+					completeEvent.propertyName = transitionPropName;
+					completeEvent.elapsedTime = startTime - 
+						transition.startTime - 
+						(transition.delay ? transition.delay.specifiedValue() : 0);
+					m_target.dispatchEvent(completeEvent);
 				}
 				else
 				{
@@ -167,9 +242,18 @@ package reprise.css.transitions
 			if (!activeTransitionsCount)
 			{
 				m_activeTransitions = null;
+				var allCompleteEvent : TransitionEvent = 
+					new TransitionEvent(TransitionEvent.ALL_TRANSITIONS_COMPLETE);
+				m_target.dispatchEvent(allCompleteEvent);
 			}
 			
 			return styles;
+		}
+		
+		public static function registerTransitionShortcut(
+			name : String, properties : Array) : void
+		{
+			g_transitionShortcuts[name] = properties;
 		}
 	}
 }

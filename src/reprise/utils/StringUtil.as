@@ -88,6 +88,51 @@ package reprise.utils
 			return input.charAt(0).toUpperCase() + input.substr(1);
 		}
 		
+		/**
+		* transforms the first character of a each new word in a string to uppercase
+		* 
+		* Adapted from David Gouchs JS version, which itself is a port of John Grubers 
+		* original Perl version:
+		* http://individed.com/code/to-title-case/
+		* http://daringfireball.net/2008/08/title_case_update
+		* 
+		* Copyright (c) 2008, John Gruber, Aristotle Pagaltzis, David Gouch, Till Schneidereit
+		* 
+		* Permission is hereby granted, free of charge, to any person obtaining a copy
+		* of this software and associated documentation files (the "Software"), to deal
+		* in the Software without restriction, including without limitation the rights
+		* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		* copies of the Software, and to permit persons to whom the Software is
+		* furnished to do so, subject to the following conditions:
+		* 
+		* The above copyright notice and this permission notice shall be included in
+		* all copies or substantial portions of the Software.
+		**/
+		public static function toTitleCase(input : String) : String
+		{
+			var replacer : Function = function(
+				match : String, p1 : int, index : int, title : String) : String
+			{
+				if (index > 0 && title.charAt(index - 2) != ":" && 
+				match.search(/^(a(nd?|s|t)?|b(ut|y)|en|for|i[fn]|o[fnr]|t(he|o)|vs?\.?|via)[ -]/i) > -1)
+				{
+					return match.toLowerCase();
+				}
+				if (title.substring(index - 1, index + 1).search(/['"_{([]/) > -1)
+				{
+					return match.charAt(0) + 
+						match.charAt(1).toUpperCase() + match.substr(2);
+				}
+				if (match.substr(1).search(/[A-Z]+|&|[\w]+[._][\w]+/) > -1 ||
+					title.substring(index - 1, index + 1).search(/[\])}]/) > -1)
+				{
+					return match;
+				}
+				return match.charAt(0).toUpperCase() + match.substr(1);
+			};
+			return input.replace(/([\w&`'‘’"“.@:\/\{\(\[<>_]+-? *)/g, replacer);
+		}
+		
 		public static function stringByDeletingCharactersInRange(
 			input : String, range : Range) : String
 		{

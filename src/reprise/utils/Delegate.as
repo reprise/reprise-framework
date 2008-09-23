@@ -75,5 +75,10 @@ package reprise.utils
 		{
 			return m_id;
 		}
+		
+		public function didSucceed():Boolean
+		{
+			return true;
+		}
 	}
 }

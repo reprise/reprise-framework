@@ -13,8 +13,8 @@ package reprise.controls {
 	/**
 	 * @author Till Schneidereit
 	 */
-	import flash.display.MovieClip;
-	import flash.events.Event;
+
+	
 	public class SimpleButton extends AbstractButton
 	{
 		/***************************************************************************
@@ -39,9 +39,5 @@ package reprise.controls {
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected override function createButtonDisplay() : void
-		{
-			m_buttonDisplay = this;
-		}
 	}
 }

@@ -17,5 +17,7 @@ package reprise.commands
 	{
 		function cancel() : void;
 		function isCancelled() : Boolean;
+		function isExecuting() : Boolean;
+		function reset() : void;
 	}
 }

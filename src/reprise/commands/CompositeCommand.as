@@ -25,13 +25,14 @@ package reprise.commands {
 		protected static var g_id : Number = 0;
 		
 		//TODO: check if this should be uint
-		protected   var m_maxParallelExecutionCount : Number = 1; //default value
-		protected	var m_pendingCommands : IndexedArray;
-		protected	var m_finishedCommands : IndexedArray;
-		protected	var m_currentCommands : IndexedArray;
-		protected	var m_isExecutingAsynchronously	: Boolean = false;
-		protected	var m_abortOnFailure:Boolean = true;
-		protected var m_failedCommands:Array;
+		protected var m_maxParallelExecutionCount : Number = 1; //default value
+		protected var m_pendingCommands : IndexedArray;
+		protected var m_finishedCommands : IndexedArray;
+		protected var m_currentCommands : IndexedArray;
+		protected var m_isExecutingAsynchronously : Boolean = false;
+		protected var m_abortOnFailure : Boolean = true;
+		protected var m_failureOccured : Boolean = false;
+		protected var m_failedCommands : Array;
 		
 		
 		
@@ -51,7 +52,7 @@ package reprise.commands {
 				return;
 			}
 			super.execute();
-			m_isExecutingAsynchronously = containsAsynchronousCommands();
+			m_isExecutingAsynchronously = executesAsynchronously();
 			executeNext();
 		}
 		
@@ -126,6 +127,12 @@ package reprise.commands {
 			super.cancel();
 		}
 		
+		public function executesAsynchronously() : Boolean
+		{
+			return m_pendingCommands.some(commandExecutesAsynchronously) ||
+				m_finishedCommands.some(commandExecutesAsynchronously);
+		}
+		
 		
 		
 		/***************************************************************************
@@ -170,9 +177,15 @@ package reprise.commands {
 		{
 			if (m_pendingCommands.length == 0)
 			{
-				if (m_isExecutingAsynchronously && m_currentCommands.length == 0)
+				if (m_isExecutingAsynchronously && m_currentCommands.length == 0 && 
+					!m_failureOccured)
 				{
 					notifyComplete(m_failedCommands.length == 0);
+				}
+				else
+				{
+					m_didSucceed = m_failedCommands.length == 0;
+					m_isExecuting = false;
 				}
 				return;
 			}
@@ -181,7 +194,8 @@ package reprise.commands {
 				!m_maxParallelExecutionCount) && m_pendingCommands.length)
 			{
 				var currentCommand : ICommand = ICommand(m_pendingCommands.shift());
-				if (currentCommand is IAsynchronousCommand)
+				
+				if (commandExecutesAsynchronously(currentCommand))
 				{
 					if (IAsynchronousCommand(currentCommand).isCancelled())
 					{
@@ -197,6 +211,16 @@ package reprise.commands {
 				else
 				{
 					currentCommand.execute();
+					if (!currentCommand.didSucceed())
+					{
+						if (m_abortOnFailure)
+						{
+							m_failureOccured = true;
+							notifyComplete(false);
+							return;
+						}
+						m_failedCommands.push(currentCommand);
+					}
 					m_finishedCommands.push(currentCommand);
 					executeNext();
 				}
@@ -217,25 +241,17 @@ package reprise.commands {
 			cmd.removeEventListener(Event.CANCEL, command_cancel);
 		}
 		
-		protected function containsAsynchronousCommands():Boolean
+		protected function commandExecutesAsynchronously(cmd:ICommand, ...rest) : Boolean
 		{
-			var i:Number = m_pendingCommands.length;
-			while (i--)
+			var executesAsynchronously : Boolean = cmd is IAsynchronousCommand;
+			if ((cmd as Object).hasOwnProperty('executesAsynchronously'))
 			{
-				if (m_pendingCommands[i] is IAsynchronousCommand)
-				{
-					return true;
-				}
+				executesAsynchronously = 
+					cmd['executesAsynchronously'] is Function 
+					? cmd['executesAsynchronously']()
+					: cmd['executesAsynchronously'];
 			}
-			i = m_finishedCommands.length;
-			while (i--)
-			{
-				if (m_finishedCommands[i] is IAsynchronousCommand)
-				{
-					return true;
-				}
-			}
-			return false;
+			return executesAsynchronously;
 		}
 	}
 }

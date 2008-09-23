@@ -11,38 +11,25 @@
 
 package reprise.controls
 {
-	import reprise.controls.Label;
-	import reprise.controls.LabelButton;
-	import reprise.data.validators.IDataValidator;
-	import flash.events.MouseEvent;
-	
 	/**
 	 * @author marco
 	 */
-	public class Checkbox extends LabelButton
+	public class CheckBox extends LabelButton
 	{
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "Checkbox";
-		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
-		protected var m_required : Boolean;
-		protected var m_validator : IDataValidator;
 	
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function Checkbox()
-		{
-		}
+		public function CheckBox() {}
+		
+		
 		public function get checked() : Boolean
 		{
-			return selected;	
+			return selected;
 		}
 		
 		public function getLabelDisplay() : Label
@@ -50,51 +37,25 @@ package reprise.controls
 			return m_labelDisplay;
 		}
 		
-			
-		public function getValue() : Object
+		public function setAttributeChecked(value : String) : void
 		{
-			return {checked:selected};
-		}
-		
-		public function isValid() : Boolean
-		{
-			if(m_required && !selected)
-			{
-				return false;
-			}
-			return true;
-		}
-		
-		public function setRequired(required : Boolean) : void
-		{
-			m_required = required;
-		}
-	
-		public function required() : Boolean
-		{
-			return m_required;
+			selected = (value == '1' || value == 'true');
 		}
 
-		//@FIXME
-		/*public function setValidator(validator : IDataValidator) : void
-		{
-			m_validator = validator;
-		}*/
-		
+
+
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
 		protected override function initialize() : void
 		{
 			super.initialize();
-			isToggleButton = true;
+			m_isToggleButton = true;
+		}
+		protected override function createChildren() : void
+		{
+			super.createChildren();
 			m_labelDisplay.html = true;
 		}
-
-		//@FIXME
-		/*public function validator() : IDataValidator
-		{
-			return m_validator;	
-		}*/
 	}
 }

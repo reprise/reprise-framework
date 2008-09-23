@@ -22,8 +22,8 @@ package reprise.external
 		*							protected properties						   *
 		***************************************************************************/
 		protected var m_loader : URLLoader;
+		protected var m_requestContentType : String;
 		protected var m_data : String;
-		
 		
 		
 		/***************************************************************************
@@ -32,6 +32,11 @@ package reprise.external
 		public function FileResource(url:String = null)
 		{
 			super(url);
+		}
+		
+		public function setRequestContentType(contentType : String) : void
+		{
+			m_requestContentType = contentType;
 		}
 		
 		public function data() : String
@@ -65,8 +70,17 @@ package reprise.external
 			m_loader.addEventListener(
 				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
 			m_loader.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.load(new URLRequest(urlByAppendingTimestamp()));
+			m_loader.load(createRequest());
 			//TODO: add error handling
+		}
+		protected function createRequest() : URLRequest
+		{
+			var request : URLRequest = new URLRequest(urlByAppendingTimestamp());
+			if (m_requestContentType)
+			{
+				request.contentType = 'text/xml; charset=utf-8';
+			}
+			return request;
 		}
 		
 		protected override function doCancel() : void

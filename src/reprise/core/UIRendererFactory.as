@@ -32,6 +32,7 @@ package reprise.core
 		protected var m_idHandlers : Object;
 		protected var m_classHandlers : Object;
 		protected var m_tagHandlers : Object;
+		protected var m_inputTypeHandlers : Object;
 		
 		protected var m_borderRenderers : Object;
 		protected var m_backgroundRenderers : Object;
@@ -39,7 +40,7 @@ package reprise.core
 		protected var m_defaultBorderRenderer : Class;
 		protected var m_defaultBackgroundRenderer : Class;
 		protected var m_defaultTooltipRenderer : Class;
-		
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -49,6 +50,7 @@ package reprise.core
 			m_idHandlers = {};
 			m_classHandlers = {};
 			m_tagHandlers = {};
+			m_inputTypeHandlers = {};
 			m_borderRenderers = {};
 			m_backgroundRenderers = {};
 			m_tooltipRenderers = {};
@@ -80,6 +82,18 @@ package reprise.core
 			tagName : String, handler : Class) : void
 		{
 			m_tagHandlers[tagName.toLowerCase()] = handler;
+		}
+		/**
+		 * registers an input type handler.
+		 * 
+		 * These handlers are used for rendering input elements, for example, you can 
+		 * register a TextInput control for rendering elements like 
+		 * &lt;input type='text'/&gt;
+		 */
+		public function registerInputTypeRenderer(
+			type : String, handler : Class) : void
+		{
+			m_inputTypeHandlers[type.toLowerCase()] = handler;
 		}
 		
 		/**
@@ -169,9 +183,21 @@ package reprise.core
 				}
 			}
 			
+			var tag : String = node.localName() as String;
+			
+			//check for an input type renderer if we're dealing with an input node
+			if (tag == 'input')
+			{
+				renderer = rendererByInputType(node.@type[0]);
+				if (renderer)
+				{
+					return renderer;
+				}
+			}
+			
 			//check for a renderer for the nodes' tag.
 			//Return an instance of the renderer if one is found.
-			renderer = rendererByTag(node.localName());
+			renderer = rendererByTag(tag);
 			return renderer;
 		}
 		
@@ -214,6 +240,19 @@ package reprise.core
 				return null;
 			}
 			return UIComponent(new tagHandler());
+		}
+		/**
+		 * returns the Function that's been registered 
+		 * as the handler for the given tag
+		 */
+		public function rendererByInputType(type : String) : UIComponent
+		{
+			var inputTypeHandler : Class = m_inputTypeHandlers[type.toLowerCase()];
+			if (!inputTypeHandler)
+			{
+				return null;
+			}
+			return UIComponent(new inputTypeHandler());
 		}
 		
 		/**

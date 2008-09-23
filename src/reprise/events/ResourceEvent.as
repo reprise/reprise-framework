@@ -41,7 +41,7 @@ package reprise.events
 			super(type);
 			if (type == COMPLETE && !didSucceed && reason == -1)
 			{
-				trace("ResourceEvent with negative success called " + 
+				log("ResourceEvent with negative success called " + 
 					"without specifying a reason!");
 			}
 			success = didSucceed;

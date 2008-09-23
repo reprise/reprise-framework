@@ -11,12 +11,6 @@
 
 package reprise.core
 {
-	import flash.display.Sprite;
-	import flash.display.StageAlign;
-	import flash.display.StageScaleMode;
-	import flash.events.Event;
-	import flash.utils.Timer;
-	
 	import reprise.core.TooltipManager;
 	import reprise.css.CSS;
 	import reprise.events.DisplayEvent;
@@ -26,6 +20,13 @@ package reprise.core
 	import reprise.ui.UIObject;
 	import reprise.utils.PathUtil;
 	
+	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
+	import flash.events.Event;
+	import flash.external.ExternalInterface;
+	import flash.utils.Timer;	
+
 	public class Application extends Sprite
 	{
 		/***************************************************************************
@@ -55,6 +56,23 @@ package reprise.core
 		{
 			return loaderInfo.url;
 		}
+		public function browserLocation() : String
+		{
+			if (ExternalInterface.available)
+			{
+				ExternalInterface.marshallExceptions = true;
+				try
+				{
+					return ExternalInterface.call(
+						'function getLocation(){return window.location.href}');
+				}
+				catch(error: Error)
+				{
+					log(error);
+				}
+			}
+			return '';
+		}
 		
 		public function rootElement() : DocumentView
 		{
@@ -72,7 +90,6 @@ package reprise.core
 		***************************************************************************/
 		public function Application()
 		{
-			ApplicationRegistry.instance().registerApplication(this);
 			if (stage)
 			{
 				initialize();
@@ -90,6 +107,7 @@ package reprise.core
 		
 		protected function initialize() : void
 		{
+			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			initResourceLoading();
@@ -116,7 +134,7 @@ package reprise.core
 			{
 				return;
 			}
-			var cssURL:String = 'flash/styles.css';
+			var cssURL:String = 'flash.css';
 			if (hasOwnProperty('cssURL'))
 			{
 				cssURL = this['cssURL'];

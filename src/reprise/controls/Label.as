@@ -10,25 +10,27 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls
-{ 
-	import reprise.css.CSS;
-	import reprise.css.CSSDeclaration;
-	import reprise.css.CSSProperty;
-	import reprise.events.LabelEvent;
-	import reprise.ui.UIComponent;
-	
+{
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.events.TextEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.text.AntiAliasType;
 	import flash.text.GridFitType;
-	import flash.text.StyleSheet;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	public class Label extends UIComponent
+	import reprise.css.CSS;
+	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingHelper;
+	import reprise.css.CSSProperty;
+	import reprise.events.LabelEvent;
+	import reprise.ui.AbstractInput;	 
+
+	public class Label extends AbstractInput
 	{
 		/***************************************************************************
 		*							public properties							   *
@@ -39,8 +41,7 @@ package reprise.controls
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var AS_LINK_PREFIX : String = 
-			"asfunction:parent.UIComponent.textLink_click,";
+		protected static var AS_LINK_PREFIX : String = "event:";
 		
 		protected var m_labelDisplay : TextField;
 		protected var m_textSetExternally : Boolean;
@@ -59,7 +60,8 @@ package reprise.controls
 		protected var m_overflowIsInvalid : Boolean;
 		
 		protected var m_bitmapCache : Bitmap;
-		
+		private var m_cacheInvalid : Boolean;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -73,13 +75,13 @@ package reprise.controls
 		 */
 		public function setLabel(label:String) : void
 		{
-			m_xmlDefinition = new XML('<p>' + label + '</p>');
+			m_labelXML = new XML('<p>' + label + '</p>');
 			m_textSetExternally = true;
 			invalidate();
 		}
 		public function getLabel() : String
 		{
-			var labelStr:String = m_xmlDefinition.toXMLString();
+			var labelStr:String = m_labelXML.toXMLString();
 			return labelStr;
 			return labelStr.substring(
 				labelStr.indexOf(">") + 1, labelStr.lastIndexOf("<"));
@@ -93,6 +95,16 @@ package reprise.controls
 		public function set label(txt:String) : void
 		{
 			setLabel(txt);
+		}
+		
+		public override function value():*
+		{
+			return label;
+		}
+		
+		public override function setValue(value:*):void
+		{
+			label = value.toString();
 		}
 		
 		/**
@@ -161,6 +173,11 @@ package reprise.controls
 			}
 		}
 		
+		public function handleTextClick(event : MouseEvent) : Boolean
+		{
+			return labelDisplay_click(event);
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
@@ -169,7 +186,7 @@ package reprise.controls
 		{
 			super.initialize();
 			
-			m_xmlDefinition = new XML('<p/>');
+			m_labelXML = <p/>;
 			m_textLinkHrefs = [];
 		}
 		protected override function createChildren() : void
@@ -177,9 +194,10 @@ package reprise.controls
 			m_labelDisplay = new TextField();
 			m_labelDisplay = m_contentDisplay.addChild(m_labelDisplay) as TextField;
 			m_labelDisplay.name = 'labelDisplay';
-			m_labelDisplay.width = 20;
-			m_labelDisplay.height = 20;
+			m_labelDisplay.condenseWhite = true;
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
+			m_labelDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
+			m_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
 		}
 		protected override function initDefaultStyles() : void
 		{
@@ -193,7 +211,6 @@ package reprise.controls
 		{
 			super.applyStyles();
 			m_selectable = m_currentStyles.selectable;
-			m_contentDisplay.mouseChildren = m_selectable;
 			
 			var fmt : TextFormat = new TextFormat();
 			if (m_currentStyles.tabStops)
@@ -213,18 +230,31 @@ package reprise.controls
 		 */
 		protected override function parseXMLContent(node : XML) : void
 		{
+			m_xmlDefinition = node;
 			if (node.localName() != 'p')
 			{
-				m_xmlDefinition = <p/>;
-				m_xmlDefinition.setChildren(node);
+				m_labelXML = <p/>;
+				m_labelXML.setChildren(node);
+			}
+			else
+			{
+				m_labelXML = node;
 			}
 		}
 		
 		protected override function measure() : void
 		{
-			//TODO: find a way to make measuring work if the TextField contains IMGs
-			m_intrinsicWidth = Math.ceil(m_labelDisplay.textWidth);
-			m_intrinsicHeight = Math.ceil(m_labelDisplay.height - 4);
+			if (m_labelDisplay.text == '')
+			{
+				m_intrinsicWidth = 0;
+				m_intrinsicHeight = 0;
+			}
+			else
+			{
+				//TODO: find a way to make measuring work if the TextField contains IMGs
+				m_intrinsicWidth = Math.ceil(m_labelDisplay.textWidth);
+				m_intrinsicHeight = Math.ceil(m_labelDisplay.height - 4);
+			}
 		}
 		
 		protected function renderLabel() : void
@@ -251,8 +281,8 @@ package reprise.controls
 			}
 			if (m_stylesInvalidated || m_textSetExternally)
 			{
-				m_labelDisplay.x = m_paddingLeft - 2;
-				m_labelDisplay.y = m_paddingTop - 2;
+				m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
+				m_labelDisplay.y = m_currentStyles.paddingTop - 2;
 				if (m_currentStyles.width)
 				{
 					m_labelDisplay.width = m_currentStyles.width + 6;
@@ -265,21 +295,21 @@ package reprise.controls
 				m_internalStyleIndex = 0;
 				m_textAlignment = null;
 				m_containsImages = false;
-				m_labelXML = m_xmlDefinition.copy();
-				m_labelXML.normalize();
-				cleanNode(m_labelXML, m_selectorPath, m_rootElement.styleSheet);
+				
+				var labelString : String = m_labelXML.toXMLString();
+				labelString = resolveBindings(labelString);
+				var labelXML : XML = new XML(labelString);
+				labelXML.normalize();
+				cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
 				//TODO: check if condenseWhite = true is ok to use!
-//				var originalPrettyPrinting : Boolean = XML.prettyPrinting;
-//				XML.prettyPrinting = false;
-				m_labelDisplay.condenseWhite = true;
-				var text:String = m_labelXML.toXMLString();
-//				XML.prettyPrinting = originalPrettyPrinting;
-				//TODO: check if fixLineEndings is still needed
-//				if (m_currentStyles.fixLineEndings)
-//				{
-//					text = text.split('\r\n').join('\n').split('\r').join('\n');
-//				}
-				m_labelDisplay.htmlText = text.substr(0, text.length - 3);
+				
+				var text : String = labelXML.toXMLString();
+				if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
+				{
+					m_labelDisplay.htmlText = text.substr(0, text.length - 3);
+					m_cacheInvalid = true;
+				}
+				
 				if (m_labelDisplay.wordWrap)
 				{
 					m_labelDisplay.autoSize = 'left';
@@ -299,12 +329,12 @@ package reprise.controls
 						m_labelDisplay.width = m_labelDisplay.textWidth + 10;
 						if (m_textAlignment == 'right')
 						{
-							m_labelDisplay.x = m_paddingLeft + m_currentStyles.width - 
-								m_labelDisplay.width + 2;
+							m_labelDisplay.x = m_currentStyles.paddingLeft + 
+								m_currentStyles.width - m_labelDisplay.width + 2;
 						}
 						else if (m_textAlignment == 'center')
 						{
-							m_labelDisplay.x = m_paddingLeft + Math.round(
+							m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
 								m_currentStyles.width / 2 - 
 								m_labelDisplay.width / 2);
 						}
@@ -338,12 +368,13 @@ package reprise.controls
 			{
 				if (transform)
 				{
-					node.setChildren(transformText(node.text(), transform));
+					node.parent().children()[node.childIndex()] = 
+						transformText(node.toString(), transform);
 				}
 				//nothing else to clean in text nodes
 				return;
 			}
-			if (node.localName() == "br")
+			if (node.localName() == 'br' || node.hasOwnProperty('ignore'))
 			{
 				//nothing to clean in <br>-nodes
 				return;
@@ -351,7 +382,7 @@ package reprise.controls
 			
 			//bring all style definitions into a form the player can understand
 			var nodeStyle : CSSDeclaration;
-			if (node == m_labelXML)
+			if (!node.parent())
 			{
 				nodeStyle = m_complexStyles.clone();
 				var transformStyle : CSSProperty = nodeStyle.getStyle('textTransform');
@@ -370,7 +401,7 @@ package reprise.controls
 					id = "@#" + id + "@";
 					delete node.@id;
 				}
-				selectorPath += " @" + node.nodeName + "@" + classesStr + id;
+				selectorPath += " @" + node.localName() + "@" + classesStr + id;
 				nodeStyle = stylesheet.getStyleForEscapedSelectorPath(selectorPath);
 			}
 			//the player doesn't understand the "style" attribute, so we need to
@@ -378,11 +409,8 @@ package reprise.controls
 			var stylesStr:String = node.@style.toString();
 			if (stylesStr.length)
 			{
-				var styleParser:StyleSheet = new StyleSheet();
-				styleParser.parseCSS("stylesClass {" + stylesStr + "}");
-				var stylesStyle : Object = styleParser.getStyle("stylesClass");
 				nodeStyle.mergeCSSDeclaration(
-					CSSDeclaration.CSSDeclarationFromObject(stylesStyle));
+					CSSParsingHelper.parseDeclarationString(stylesStr, null));
 				delete node.@style;
 			}
 			
@@ -464,7 +492,32 @@ package reprise.controls
 					break;
 				}
 				case "p":
+				{
+					if (!node.parent())
+					{
+						break;
+					}
+					/*
+					 * TODO: Find a way to simulate correct margins instead of just 
+					 * adding a line break.
+					 */ 
+					if (nodeStyle.hasStyle('marginBottom'))
+					{
+						var leading : Number = ((nodeStyle.getStyle(
+							'marginBottom').valueOf() as Number) - 2);
+						stylesStr = 'leading: ' + leading + '; font-size: 1;';
+						var leadingStyle : CSSDeclaration = 
+							CSSParsingHelper.parseDeclarationString(stylesStr, null);
+						styleName = 
+							leadingStyle.textStyleName(m_internalStyleIndex++ == 0);
+						node.parent().insertChildAfter(node, new XML(
+							'<p ignore="1" class="' + styleName + '">&nbsp;</p>'));
+					}
+					break;
+				}
 				case "span":
+				case "ul":
+				case "li":
 				{
 					//do nothing these tags are fine
 					break;
@@ -496,24 +549,48 @@ package reprise.controls
 		 * event handler, invoked on click of one of 
 		 * the links inside of the displayed text
 		 */
-		protected function textLink_click(linkIndexStr:String) : void
+		protected function labelDisplay_click(event : MouseEvent) : Boolean
 		{
-			var linkIndex:Number = parseInt(linkIndexStr);
+			var clickedChar : int = m_labelDisplay.getCharIndexAtPoint(
+				m_labelDisplay.mouseX, m_labelDisplay.mouseY);
+			if (!m_labelDisplay.length || clickedChar == -1)
+			{
+				return false;
+			}
+			var clickedFormat : TextFormat = 
+				m_labelDisplay.getTextFormat(clickedChar, clickedChar + 1);
+			
+			if (!clickedFormat.url)
+			{
+				return false;
+			}
+			var linkIndex:Number = parseInt(clickedFormat.url.substring(AS_LINK_PREFIX.length));
 			var hrefArr:Array = String(m_textLinkHrefs[linkIndex]).split("|");
 			var href:String = hrefArr[0];
 			var target:String = hrefArr[1];
 			
-			var event : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, this);
-			event.url = href;
-			event.linkTarget = target;
-			dispatchEvent(event);
-			if (!event.isDefaultPrevented())
+			var labelEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, true);
+			labelEvent.url = href;
+			labelEvent.linkTarget = target;
+			dispatchEvent(labelEvent);
+			if (!labelEvent.isDefaultPrevented())
 			{
-				var request:URLRequest = new URLRequest(event.url);
-				navigateToURL(request, event.linkTarget || '_self');
-				
+				var request:URLRequest = new URLRequest(labelEvent.url);
+				navigateToURL(request, labelEvent.linkTarget || '_self');
 			}
+			event.stopImmediatePropagation();
+			event.stopPropagation();
+			
+			return true;
 		}
+		
+		protected function labelDisplay_link(e:TextEvent):void
+		{
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			e.stopPropagation();			
+		}
+		
 		protected function transformText(text:String, transform:String) : String
 		{
 			switch (transform)
@@ -539,10 +616,13 @@ package reprise.controls
 				return;
 			}
 			m_overflowIsInvalid = false;
-			var overflow : * = m_currentStyles.overflow;
+			var overflowX : * = m_currentStyles.overflowX;
+			var overflowY : * = m_currentStyles.overflowY;
 			
-			if (m_currentStyles.overflow == null || 
-				overflow == 'visible' || overflow == 'hidden')
+			if ((m_currentStyles.overflowX == null || 
+				overflowX == 'visible' || overflowX == 'hidden') && 
+				(m_currentStyles.overflowY == null || overflowY == 'visible' || 
+				overflowY == 'hidden'))
 			{
 				super.applyOverflowProperty();
 				return;
@@ -554,7 +634,7 @@ package reprise.controls
 			var scrollbarWidth : Number = 
 				m_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH;
 			
-			if (overflow == 'scroll' || overflow == 'scroll-vertical')
+			if (overflowY == 'scroll')
 			{
 				if (!m_vScrollbar)
 				{
@@ -563,7 +643,7 @@ package reprise.controls
 				availableWidth -= scrollbarWidth;
 				m_vScrollbar.setVisibility(true);
 			}
-			if (overflow == 'scroll' || overflow == 'scroll-horizontal')
+			if (overflowX == 'scroll')
 			{
 				if (!m_hScrollbar)
 				{
@@ -572,7 +652,7 @@ package reprise.controls
 				availableHeight -= scrollbarWidth;
 				m_hScrollbar.setVisibility(true);
 			}
-			if (overflow == 0) //'auto' gets resolved to '0'
+			if (overflowY == 0) //'auto' gets resolved to '0'
 			{
 				m_labelDisplay.height = availableHeight + 4;
 				m_labelDisplay.width = availableWidth + 4;
@@ -594,7 +674,9 @@ package reprise.controls
 				{
 					m_vScrollbar.setVisibility(false);
 				}
-				
+			}
+			if (overflowX == 0)
+			{
 				if (!m_labelDisplay.wordWrap && maxScrollH > 0)
 				{
 					if (!m_hScrollbar)
@@ -627,17 +709,26 @@ package reprise.controls
 				return;
 			}
 			
+			if (m_hScrollbar && overflowX == 'hidden')
+			{
+				m_hScrollbar.setVisibility(false);
+			}
+			if (m_vScrollbar && overflowY == 'hidden')
+			{
+				m_vScrollbar.setVisibility(false);
+			}
+			
 			m_labelDisplay.width = availableWidth + 6;
 			m_labelDisplay.height = availableHeight + 6;
 			
-			availableHeight += m_paddingTop + m_paddingBottom;
-			availableWidth += m_paddingLeft + m_paddingRight;
+			availableHeight += m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+			availableWidth += m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
 			
 			if (m_vScrollbar)
 			{
 				m_vScrollbar.height = availableHeight;
-				m_vScrollbar.top = m_borderTopWidth;
-				m_vScrollbar.left = availableWidth + m_borderLeftWidth;
+				m_vScrollbar.top = m_currentStyles.borderTopWidth;
+				m_vScrollbar.left = availableWidth + m_currentStyles.borderLeftWidth;
 				m_vScrollbar.delayValidation();
 			}
 			
@@ -645,7 +736,7 @@ package reprise.controls
 			{
 				m_hScrollbar.height = availableWidth;
 				m_hScrollbar.top = availableHeight + scrollbarWidth;
-				m_hScrollbar.left = m_borderLeftWidth;
+				m_hScrollbar.left = m_currentStyles.borderLeftWidth;
 				m_hScrollbar.delayValidation();
 			}
 		}
@@ -661,13 +752,17 @@ package reprise.controls
 	
 		protected override function draw() : void
 		{
+			if (!m_cacheInvalid && !m_dimensionsChanged)
+			{
+				return;
+			}
+			m_cacheInvalid = false;
 			if (m_bitmapCache)
 			{
 				m_contentDisplay.removeChild(m_bitmapCache);
 			}
-			//TODO: check if caching should only ever happen for device fonts
-			if ((m_currentStyles.opacity < 1 && !m_currentStyles.embedFonts) || 
-				m_currentStyles.rasterizeDeviceFonts)
+			if (!m_currentStyles.embedFonts && 
+				(m_currentStyles.opacity < 1 || m_currentStyles.rasterizeDeviceFonts))
 			{
 				m_labelDisplay.visible = false;
 				if (m_currentStyles.opacity == 0)
