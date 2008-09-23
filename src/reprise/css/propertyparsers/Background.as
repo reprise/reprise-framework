@@ -46,7 +46,8 @@ package reprise.css.propertyparsers {
 			'backgroundScale9RectBottom',
 			'backgroundScale9RectLeft',
 			'backgroundImageType',
-			'backgroundImagePreload'
+			'backgroundImagePreload',
+			'backgroundImageAliasing'
 		];
 		
 		public static var PROPERTY_TRANSITIONS	: Object	=
@@ -97,6 +98,9 @@ package reprise.css.propertyparsers {
 		public static var IMAGE_TYPE_IMAGE : String = 'image';
 		public static var IMAGE_TYPE_ANIMATION : String = 'animation';
 		public static var IMAGE_NONE : String = 'none';
+		
+		public static var IMAGE_ALIASING_ALIAS : String = 'alias';
+		public static var IMAGE_ALIASING_ANTIALIAS : String = 'anti-alias';
 		
 		
 		protected static var g_backgroundExpression : RegExp;
@@ -428,9 +432,15 @@ package reprise.css.propertyparsers {
 		{
 			return strToStringProperty(val.toLowerCase(), file);
 		}
+		
 		public static function parseBackgroundImagePreload(val:String, file:String) : CSSProperty
 		{		
 			return strToBoolProperty(val, ['preload'], file);
+		}
+		
+		public static function parseBackgroundImageAliasing(val:String, file:String) : CSSProperty
+		{
+			return strToStringProperty(val.toLowerCase(), file);
 		}
 	}
 }

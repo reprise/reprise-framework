@@ -155,6 +155,7 @@ package reprise.ui.renderers
 				m_backgroundImage = null;
 			}
 		}
+		
 		protected function loadBackgroundImage() : void
 		{
 			if (!m_styles.backgroundImageType || 
@@ -402,9 +403,11 @@ package reprise.ui.renderers
 			rect.left = Math.max(0, rect.left);
 			rect.right = Math.min(m_width, rect.right);
 			rect.bottom = Math.min(m_height, rect.bottom);
-	
+			
+			var smooth:Boolean = m_styles.backgroundImageAliasing != 
+				Background.IMAGE_ALIASING_ALIAS;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				newBackgroundImage, offset, true, true);
+				newBackgroundImage, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, 
 				rect.left, rect.top, rect.width, rect.height);
 			m_backgroundImageContainer.graphics.endFill();
@@ -419,67 +422,69 @@ package reprise.ui.renderers
 			var bitmaps : Object = GfxUtil.segmentedBitmapsOfScale9RectInRectWithSize(
 				sourceImage, scale9Rect);
 			var offset : Matrix = new Matrix();
+			var smooth:Boolean = m_styles.backgroundImageAliasing != 
+				Background.IMAGE_ALIASING_ALIAS;
 			
 			// TL
 			offset.translate(0, 0);
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.tl, offset, false, true);
+				bitmaps.tl, offset, false, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, 
 				offset.tx, offset.ty, bitmaps.tl.width, bitmaps.tl.height);
 			// T
 			offset.tx = bitmaps.tl.width;
 			offset.ty = 0;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.t, offset, true, true);
+				bitmaps.t, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				m_width - bitmaps.tl.width - bitmaps.tr.width, bitmaps.t.height);
 			// TR
 			offset.tx = m_width - bitmaps.tr.width;
 			offset.ty = 0;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.tr, offset, false, true);
+				bitmaps.tr, offset, false, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				bitmaps.tr.width, bitmaps.tr.height);
 			// R
 			offset.tx = m_width - bitmaps.r.width;
 			offset.ty = bitmaps.tr.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.r, offset, true, true);
+				bitmaps.r, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				bitmaps.r.width, m_height - bitmaps.tr.height - bitmaps.br.height);
 			// BR
 			offset.tx = m_width - bitmaps.br.width;
 			offset.ty = m_height - bitmaps.br.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.br, offset, false, true);
+				bitmaps.br, offset, false, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				bitmaps.br.width, bitmaps.br.height);
 			// B
 			offset.tx = bitmaps.bl.width;
 			offset.ty = m_height - bitmaps.b.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.b, offset, true, true);
+				bitmaps.b, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				m_width - bitmaps.bl.width - bitmaps.br.width, bitmaps.b.height);
 			// BL
 			offset.tx = 0;
 			offset.ty = m_height - bitmaps.bl.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.bl, offset, false, true);
+				bitmaps.bl, offset, false, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				bitmaps.bl.width, bitmaps.bl.height);
 			// L
 			offset.tx = 0;
 			offset.ty = bitmaps.tl.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.l, offset, true, true);
+				bitmaps.l, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				bitmaps.l.width, m_height - bitmaps.tl.height - bitmaps.bl.height);
 			// C
 			offset.tx = bitmaps.tl.width;
 			offset.ty = bitmaps.tl.height;
 			m_backgroundImageContainer.graphics.beginBitmapFill(
-				bitmaps.c, offset, true, true);
+				bitmaps.c, offset, true, smooth);
 			GfxUtil.drawRect(m_backgroundImageContainer, offset.tx, offset.ty, 
 				m_width - bitmaps.l.width - bitmaps.r.width, 
 				m_height - bitmaps.t.height - bitmaps.b.height);
