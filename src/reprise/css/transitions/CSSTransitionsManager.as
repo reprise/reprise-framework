@@ -50,7 +50,7 @@ package reprise.css.transitions
 		
 		public function hasActiveTransitionForStyle(style : String) : Boolean
 		{
-			return m_activeTransitions[style] != null;
+			return m_activeTransitions && m_activeTransitions[style] != null;
 		}
 
 		public function processTransitions(
