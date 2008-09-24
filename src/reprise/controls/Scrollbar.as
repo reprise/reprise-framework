@@ -9,23 +9,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.controls { 
+package reprise.controls 
+{
+	import reprise.events.DisplayEvent;
+	import reprise.events.MouseEventConstants;
+	import reprise.ui.UIComponent;
+	import reprise.utils.ProxyFunction;
+	
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
-	import flash.utils.setTimeout;
-	
-	import reprise.core.ccInternal;
-	import reprise.events.DisplayEvent;
-	import reprise.events.MouseEventConstants;
-	import reprise.ui.UIComponent;
-	import reprise.utils.ProxyFunction;
-	
-	use namespace ccInternal;
-	
+	import flash.utils.setTimeout;	
+
 	public class Scrollbar extends UIComponent
 	{
 		/***************************************************************************

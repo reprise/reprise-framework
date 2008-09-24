@@ -15,7 +15,6 @@ package reprise.ui.renderers
 	import flash.geom.Point;
 	
 	import reprise.controls.Label;
-	import reprise.core.ccInternal;
 	import reprise.css.propertyparsers.DisplayPosition;
 	import reprise.ui.UIComponent;
 	import reprise.ui.UIObject;
