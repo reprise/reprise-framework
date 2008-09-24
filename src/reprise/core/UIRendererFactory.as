@@ -10,14 +10,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.core
-{ 
+{
+	import reprise.controls.Label;
+	import reprise.controls.html.Image;
 	import reprise.ui.UIComponent;
 	import reprise.ui.renderers.AbstractTooltip;
 	import reprise.ui.renderers.DefaultBackgroundRenderer;
 	import reprise.ui.renderers.DefaultBorderRenderer;
 	import reprise.ui.renderers.DefaultTooltipRenderer;
-	import reprise.ui.renderers.ICSSRenderer;
-	
+	import reprise.ui.renderers.ICSSRenderer;	
+
 	public class UIRendererFactory 
 	{
 		/***************************************************************************
@@ -54,9 +56,7 @@ package reprise.core
 			m_borderRenderers = {};
 			m_backgroundRenderers = {};
 			m_tooltipRenderers = {};
-			m_defaultBorderRenderer = DefaultBorderRenderer;
-			m_defaultBackgroundRenderer = DefaultBackgroundRenderer;
-			m_defaultTooltipRenderer = DefaultTooltipRenderer;
+			registerDefaultRenderers();
 		}
 		/**
 		 * registers an id handler
@@ -297,6 +297,29 @@ package reprise.core
 				renderer = m_defaultTooltipRenderer;
 			}
 			return new renderer();
+		}
+		
+		/***************************************************************************
+		*							protected methods							   *
+		***************************************************************************/
+		protected function registerDefaultRenderers() : Boolean
+		{
+			m_defaultBorderRenderer = DefaultBorderRenderer;
+			m_defaultBackgroundRenderer = DefaultBackgroundRenderer;
+			m_defaultTooltipRenderer = DefaultTooltipRenderer;
+			
+			registerTagRenderer('p', Label);
+			registerTagRenderer('h1', Label);
+			registerTagRenderer('h2', Label);
+			registerTagRenderer('h3', Label);
+			registerTagRenderer('h4', Label);
+			registerTagRenderer('h5', Label);
+			registerTagRenderer('h6', Label);
+			registerTagRenderer('div', UIComponent);
+			registerTagRenderer('hr', UIComponent);
+			registerTagRenderer('img', Image);
+			
+			return true;
 		}
 	}
 }
