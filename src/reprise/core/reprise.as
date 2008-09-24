@@ -11,5 +11,5 @@
 
 package reprise.core
 {
-	public namespace ccInternal;
+	public namespace reprise;
 }
