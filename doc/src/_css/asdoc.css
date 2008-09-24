@@ -81,3 +81,10 @@ hr.headerSeparator
 {
 	font-weight: bold;
 }
+
+div.detailBody
+{
+	margin-bottom: 30px;
+	padding-bottom: 30px;
+	border-bottom: 1px dotted #8c8b8d;
+}

@@ -206,11 +206,24 @@ package reprise.media
 			setOptionsFlag(OPTIONS_AUTOPLAY, bFlag);
 		}
 		
+		/**
+		* Specifies whether the playback should happen continuously. Set to true to make the 
+		* player loop.
+		* 
+		* @param bFlag Specifies whether the player loops or not
+		*/
 		public function setLoops(bFlag:Boolean):void
 		{
 			setOptionsFlag(OPTIONS_LOOP, bFlag);
 		}
 		
+		/**
+		* Specifies whether or not to jump back to the first frame of the media, after playback 
+		* finished. If set to false, the media stops at the last frame.
+		* 
+		* @param bFlag The flag which sets, whether or not to jump back to the first frame 
+		* after playback
+		*/
 		public function setReversesOnComplete(bFlag:Boolean):void
 		{
 			setOptionsFlag(OPTIONS_REVERSE_ON_COMPLETE, bFlag);
