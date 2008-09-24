@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.external
-{ 
+{
 	import reprise.commands.CompositeCommand;
 	import reprise.commands.IAsynchronousCommand;
 	import reprise.commands.ICommand;
@@ -18,7 +18,7 @@ package reprise.external
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
 	import reprise.events.ResourceEvent;
-	
+
 	public class ResourceLoader extends CompositeCommand
 		implements IProgressCommand
 	{
@@ -44,12 +44,12 @@ package reprise.external
 		
 		public function addResource(cmd:IResource) : void
 		{
-			if (m_isExecuting && cmd.url().indexOf("attach://") == 0)
-			{
-				cmd.execute();
-				m_finishedCommands.push(cmd);
-				return;
-			}
+//			if (m_isExecuting && cmd.url().indexOf("attach://") == 0)
+//			{
+//				cmd.execute();
+//				m_finishedCommands.push(cmd);
+//				return;
+//			}
 			addCommand(cmd);
 		}
 		
@@ -79,16 +79,16 @@ package reprise.external
 			}
 			super.execute();
 			var i : Number = m_pendingCommands.length;
-			while(i--)
-			{
-				var resource : IResource = IResource(m_pendingCommands[i]);
-				if (resource.url().indexOf("attach://") == 0)
-				{
-					resource.execute();
-					m_finishedCommands.push(resource);
-					m_pendingCommands.splice(i, 1);
-				}
-			}
+//			while(i--)
+//			{
+//				var resource : IResource = IResource(m_pendingCommands[i]);
+//				if (resource.url().indexOf("attach://") == 0)
+//				{
+//					resource.execute();
+//					m_finishedCommands.push(resource);
+//					m_pendingCommands.splice(i, 1);
+//				}
+//			}
 		}
 		
 		public function getProgress():Number
