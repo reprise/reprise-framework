@@ -34,9 +34,6 @@ package reprise.controls.html
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected override function createButtonDisplay() : void {}
-	
-		
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
 			var htmlEvent : HTMLEvent = new HTMLEvent(HTMLEvent.ANCHOR_CLICK);

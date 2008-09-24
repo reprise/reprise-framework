@@ -21,7 +21,6 @@ package reprise.css
 	import reprise.events.ResourceEvent;
 	import reprise.external.AbstractResource;
 	import reprise.external.BitmapResource;
-	import reprise.external.FileResource;
 	import reprise.external.ResourceLoader;
 	import reprise.utils.StringUtil;		
 
