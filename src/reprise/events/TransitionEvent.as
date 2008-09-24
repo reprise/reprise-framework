@@ -21,6 +21,7 @@ package reprise.events
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
+		public static const TRANSITION_START : String = 'transitionStart';
 		public static const TRANSITION_COMPLETE : String = 'transitionComplete';
 		public static const ALL_TRANSITIONS_COMPLETE : String = 'allTransitionComplete';
 		public static const TRANSITION_CANCEL : String = 'transitionCancel';
@@ -73,10 +74,14 @@ package reprise.events
 		public override function toString() : String
 		{
 			var str : String = 'TransitionEvent.' + type;
-			if (type == TRANSITION_COMPLETE || type == TRANSITION_CANCEL)
+			if (type == TRANSITION_START || 
+				type == TRANSITION_COMPLETE || type == TRANSITION_CANCEL)
 			{
-				str += ', propertyName = ' + m_propertyName + 
-					', elapsedTime = ' + m_elapsedTime;
+				str += ', propertyName = ' + m_propertyName;
+			}
+			if (type != TRANSITION_START)
+			{
+				str += ', elapsedTime = ' + m_elapsedTime;
 			}
 			return str;
 		}

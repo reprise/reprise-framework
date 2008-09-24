@@ -225,7 +225,15 @@ package reprise.css.transitions
 			for (transitionPropName in m_activeTransitions)
 			{
 				transition = m_activeTransitions[transitionPropName];
+				var previousRatio : Number = transition.currentRatio;
 				transition.setValueForTimeInContext(startTime, this);
+				if (previousRatio == 0 && transition.currentRatio != 0)
+				{
+					var startEvent : TransitionEvent = 
+						new TransitionEvent(TransitionEvent.TRANSITION_START);
+					startEvent.propertyName = transitionPropName;
+					m_target.dispatchEvent(startEvent);
+				}
 				styles.setPropertyForKey(transition.currentValue, transitionPropName);
 				if (transition.hasCompleted)
 				{
