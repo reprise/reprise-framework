@@ -48,6 +48,11 @@ package reprise.css.transitions
 			return m_activeTransitions != null;
 		}
 		
+		public function hasActiveTransitionForStyle(style : String) : Boolean
+		{
+			return m_activeTransitions[style] != null;
+		}
+
 		public function processTransitions(
 			oldStyles : CSSDeclaration, newStyles : CSSDeclaration) : CSSDeclaration
 		{

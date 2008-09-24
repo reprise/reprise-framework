@@ -961,6 +961,23 @@ package reprise.ui
 				setTooltipData(value);
 			}
 		}
+		
+		/**
+		 * Returns true if this element has any currently running CSS transitions
+		 */
+		public function hasActiveTransitions() : Boolean
+		{
+			return m_transitionsManager.isActive();
+		}
+		
+		/**
+		 * Returns true if this element has a currently running CSS transition for the 
+		 * given style
+		 */
+		public function hasActiveTransitionForStyle(style : String) : Boolean
+		{
+			return m_transitionsManager.hasActiveTransitionForStyle(style);
+		}
 
 		/***************************************************************************
 		*							protected methods								   *
