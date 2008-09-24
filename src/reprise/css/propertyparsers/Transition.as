@@ -158,9 +158,13 @@ package reprise.css.propertyparsers
 			{
 				return property;
 			}
-			property.setSpecifiedValue(
-				(intermediateResult.filteredString as String).split(',').
-				map(CSSParsingHelper.camelCaseCSSValueName));
+			var entries : Array = 
+				(intermediateResult.filteredString as String).split(',');
+			for (var i : int = entries.length; i--;)
+			{
+				entries[i] = CSSParsingHelper.camelCaseCSSValueName(entries[i]);
+			}
+			property.setSpecifiedValue(entries);
 			return property;
 		}
 		
