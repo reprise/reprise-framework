@@ -11,18 +11,19 @@
 
 package reprise.css.transitions
 {
-	import reprise.events.TransitionEvent;	
-	
-	import flash.events.EventDispatcher;	
-	
-	import com.robertpenner.easing.Linear;
-	
-	import flash.utils.getTimer;
-	
+	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyCache;
+	import reprise.events.TransitionEvent;
+	
+	import com.robertpenner.easing.Linear;
+	
+	import flash.events.EventDispatcher;
+	import flash.utils.getTimer;
+	
+	use namespace reprise;
 	
 	public class CSSTransitionsManager
 	{

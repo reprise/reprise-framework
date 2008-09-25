@@ -9,9 +9,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css { 
+package reprise.css
+{
+	import reprise.core.reprise;
 	import reprise.utils.StringUtil;
 	
+	use namespace reprise;
 	
 	public class CSSPropertyParser
 	{

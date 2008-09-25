@@ -9,7 +9,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
@@ -17,12 +19,12 @@ package reprise.css.propertyparsers {
 	import reprise.css.transitions.ColorListTransitionVO;
 	import reprise.css.transitions.ColorTransitionVO;
 	import reprise.css.transitions.NumericListTransitionVO;
-	import reprise.utils.StringUtil;
+	import reprise.utils.StringUtil; 
 	
+	use namespace reprise;
 	
 	public class Background extends CSSPropertyParser
 	{
-			
 		public static var KNOWN_PROPERTIES	: Array		=
 		[
 			'background',

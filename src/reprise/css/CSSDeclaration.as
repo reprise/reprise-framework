@@ -11,9 +11,8 @@
 
 package reprise.css
 {
-	import flash.text.StyleSheet;
-	
 	import reprise.controls.csspropertyparsers.ScrollbarProperties;
+	import reprise.core.reprise;
 	import reprise.css.propertyparsers.Background;
 	import reprise.css.propertyparsers.Border;
 	import reprise.css.propertyparsers.DefaultParser;
@@ -25,14 +24,18 @@ package reprise.css
 	import reprise.css.propertyparsers.Transition;
 	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.css.transitions.TransitionVOFactory;
-	import reprise.utils.StringUtil;	 
+	import reprise.utils.StringUtil;
+	
+	import flash.text.StyleSheet;
+	
+	use namespace reprise;
 
 	public class CSSDeclaration
 	{
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static const TEXT_STYLESHEET : StyleSheet = new StyleSheet();
+		reprise static const TEXT_STYLESHEET : StyleSheet = new StyleSheet();
 		
 		
 		/***************************************************************************
@@ -59,22 +62,19 @@ package reprise.css
 			'textDecoration' : true,
 			'url' : true
 		};
+		protected static const g_textStyleNames : Object = {};
 		
 		protected static var m_inheritableProperties : Object = {};
 		protected static var m_defaultValues : Object	= {};
 		protected static var m_propertyToParserTable : Object	= {};
-		
-		protected static const g_textStyleNames : Object = {};
-		
 		protected static var g_defaultPropertiesRegistered : Boolean;	
+		
+		protected var m_properties : Object;
+		protected var m_hasDefaultValues : Boolean;
 		
 		// this property only exist to reduce the display of errors, 
 		// if there are missing parsers
 		protected static var m_thrownErrors : Object	= {};
-		
-		public var m_properties : Object;
-	
-		protected var m_hasDefaultValues : Boolean;
 		
 		
 		/***************************************************************************
@@ -140,7 +140,7 @@ package reprise.css
 			}
 		}
 		
-		public static function parserForProperty(key : String) : Function
+		reprise static function parserForProperty(key : String) : Function
 		{
 			// get the name of the associated class
 			var parser : Function = CSSDeclaration.m_propertyToParserTable[key];
@@ -149,7 +149,7 @@ package reprise.css
 				parser = DefaultParser.parseAnything;
 				if (!m_thrownErrors[key])
 				{
-					trace('n No parser registered for css property "' + key + 
+					log('n No parser registered for css property "' + key + 
 						'". Parsing property via DefaultParser (probably as string).');
 					m_thrownErrors[key] = true;
 				}
@@ -193,8 +193,8 @@ package reprise.css
 		}
 	
 		// the cssdeclaration defined by argument will by default overwrite our properties
-		public function mergeCSSDeclaration(
-			otherDeclaration: CSSDeclaration, inheritableStylesOnly:Boolean = false) : void
+		public function mergeCSSDeclaration(otherDeclaration: CSSDeclaration, 
+			inheritableStylesOnly:Boolean = false) : void
 		{
 			var props : Object = otherDeclaration.m_properties;
 			var key : String;
@@ -224,19 +224,14 @@ package reprise.css
 			}
 		}
 		
-		public function inheritCSSDeclaration(
-			parentDeclaration:CSSDeclaration) : void
+		public function inheritCSSDeclaration(parentDeclaration:CSSDeclaration) : void
 		{
 			mergeCSSDeclaration(parentDeclaration, true);
 		}
 		
 		public function addDefaultValues() : void
 		{
-			// init default values
-			var key : String;
-			var prop : CSSProperty;
-			
-			for (key in m_defaultValues)
+			for (var key : String in m_defaultValues)
 			{
 				if (m_properties[key])
 				{
@@ -286,7 +281,7 @@ package reprise.css
 			return decl;
 		}
 		
-		public function toObject() : ComputedStyles
+		public function toComputedStyles() : ComputedStyles
 		{
 			var obj : ComputedStyles = new ComputedStyles();
 			for (var key:String in m_properties)
@@ -319,7 +314,7 @@ package reprise.css
 			return tfObject;
 		}
 		
-		public function textStyleName(applyToRootNode : Boolean) : String
+		reprise function textStyleName(applyToRootNode : Boolean) : String
 		{
 			//build hash key
 			var hash : String = '';
@@ -369,7 +364,7 @@ package reprise.css
 		*							protected methods								   *
 		***************************************************************************/
 		// internal handling of getting and setting properties
-		public function setValueForKeyDefinedInFile(
+		reprise function setValueForKeyDefinedInFile(
 			val:String, key:String, file:String = '') : void
 		{
 			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file);
@@ -390,15 +385,15 @@ package reprise.css
 			}
 			var msg : String = 'c Parser for key "' + key + '" returned ';
 			msg += result == null ? 'null. Perhaps you didn\'t define the ' +
-			'parser method as static? Or you probably gave the parser method ' +
-			'a wrong name. Or you even forgot to implement it. Double-check ' +
-			'and retry!' : 'value of wrong type.';
+				'parser method as static? Or you probably gave the parser method ' +
+				'a wrong name. Or you even forgot to implement it. Double-check ' +
+				'and retry!' : 'value of wrong type.';
 			msg += 'Parsing property via DefaultParser (probably as String).';
 			
 			result = DefaultParser.parseAnything(val, file);
 			m_properties[key] = result;
 			
-			trace(msg);
+			log(msg);
 		}
 		
 		protected static function registerDefaultProperties() : Boolean

@@ -11,6 +11,13 @@
 
 package reprise.css.propertyparsers 
 {
+	import reprise.core.reprise;
+	import reprise.css.CSSParsingHelper;
+	import reprise.css.CSSParsingResult;
+	import reprise.css.CSSProperty;
+	import reprise.css.CSSPropertyParser;
+	import reprise.utils.StringUtil;
+	
 	import com.robertpenner.easing.Back;
 	import com.robertpenner.easing.Bounce;
 	import com.robertpenner.easing.Circ;
@@ -19,14 +26,9 @@ package reprise.css.propertyparsers
 	import com.robertpenner.easing.Quad;
 	import com.robertpenner.easing.Quart;
 	import com.robertpenner.easing.Quint;
-	import com.robertpenner.easing.Sine;
+	import com.robertpenner.easing.Sine;	
 	
-	import reprise.css.CSSParsingHelper;
-	import reprise.css.CSSParsingResult;
-	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyParser;
-	import reprise.utils.StringUtil;
- 
+	use namespace reprise;
 
 	public class Transition extends CSSPropertyParser
 	{

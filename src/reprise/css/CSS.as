@@ -11,10 +11,7 @@
 
 package reprise.css
 {
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;
-	
+	import reprise.core.reprise;
 	import reprise.css.propertyparsers.RuntimeParser;
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
@@ -22,7 +19,13 @@ package reprise.css
 	import reprise.external.AbstractResource;
 	import reprise.external.BitmapResource;
 	import reprise.external.ResourceLoader;
-	import reprise.utils.StringUtil;		
+	import reprise.utils.StringUtil;
+	
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.utils.getTimer;
+	
+	use namespace reprise;
 
 	public class CSS extends AbstractResource
 	{
@@ -133,7 +136,7 @@ package reprise.css
 		{
 			return getStyleForEscapedSelectorPath(escapeSelectorPath(sp));
 		}
-		public function getStyleForEscapedSelectorPath(sp : String) : CSSDeclaration
+		reprise function getStyleForEscapedSelectorPath(sp : String) : CSSDeclaration
 		{
 			return m_declarationList.getStyleForSelectorsPath(sp);
 		}

@@ -9,16 +9,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
 	import reprise.css.transitions.ColorTransitionVO;
-	import reprise.utils.StringUtil;
+	import reprise.utils.StringUtil; 
 	
-	
-	
+	use namespace reprise;
 	
 	public class Border extends CSSPropertyParser
 	{

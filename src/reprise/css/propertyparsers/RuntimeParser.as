@@ -11,11 +11,12 @@
 
 package reprise.css.propertyparsers
 {
+	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSPropertyParser;
-	import reprise.utils.ProxyFunction;
-	import reprise.utils.StringUtil;
+	import reprise.utils.StringUtil;	
 	
+	use namespace reprise;
 	
 	public dynamic class RuntimeParser extends CSSPropertyParser
 	{

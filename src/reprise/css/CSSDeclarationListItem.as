@@ -11,17 +11,25 @@
 
 package reprise.css
 {
+	import reprise.core.reprise;
+	
+	use namespace reprise;
+	
 	internal class CSSDeclarationListItem
-	{	
+	{
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public var declarationSpecificity : Number;
+		public var declarationIndex : Number;
+		
+		
 		/***************************************************************************
 		*							protected properties						   *
 		***************************************************************************/
-		public var m_declarationSpecificity : Number;
-		public var m_declarationIndex : Number;
-		
 		protected var m_selector : String;
 		protected var m_selectorPattern : Array;
-		public var m_declaration : CSSDeclaration;
+		protected var m_declaration : CSSDeclaration;
 		
 		
 		/***************************************************************************
@@ -47,17 +55,17 @@ package reprise.css
 				m_selectorPattern[i] = m_selectorPattern[i].split('|');
 			}
 			
-			m_declarationSpecificity = specificityForSelector(selector);
-			m_declarationIndex = index;
+			declarationSpecificity = specificityForSelector(selector);
+			declarationIndex = index;
 			m_declaration = CSSDeclaration(declaration);
 		}
 		
-		public function declaration() : CSSDeclaration
+		reprise function declaration() : CSSDeclaration
 		{
 			return m_declaration;
 		}
 		
-		public function matchesSubjectPath(subjectPath:String) : Boolean
+		reprise function matchesSubjectPath(subjectPath:String) : Boolean
 		{
 			var subjectIndex : Number = subjectPath.length;
 			var minSubjectIndex : Number = subjectPath.lastIndexOf(" ") + 1;
@@ -68,7 +76,6 @@ package reprise.css
 			while(i--)
 			{
 				//get pattern for the current element from the itemPath
-//				var currentPattern : Array = patterns.pop().split("|");
 				var currentPattern : Array = m_selectorPattern[i];
 				var subjectPartBegin : Number;
 				var patternPart : String = 

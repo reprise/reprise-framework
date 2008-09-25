@@ -11,14 +11,18 @@
 
 package reprise.css
 {
+	import reprise.core.reprise;
+	
+	use namespace reprise;
+	
 	internal class CSSDeclarationList
 	{
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_items : Array;
-		protected	var m_declarationIndex : Number = 0;
-		protected	var m_declarationCache : Array;	
+		protected var m_declarationIndex : Number = 0;
+		protected var m_declarationCache : Array;	
 		
 		
 		/***************************************************************************
@@ -30,14 +34,14 @@ package reprise.css
 			m_declarationCache = [];		
 		}
 		
-		public function addDeclaration(
+		reprise function addDeclaration(
 			declaration : CSSDeclaration, selector : String) : void
 		{
 			m_items.push(
 				new CSSDeclarationListItem(selector, declaration, m_declarationIndex++));
 		}
 		
-		public function getStyleForSelectorsPath(sp:String) : CSSDeclaration
+		reprise function getStyleForSelectorsPath(sp:String) : CSSDeclaration
 		{
 			// prefer cached results
 			var decl : CSSDeclaration = CSSDeclaration(m_declarationCache[ sp ]);
@@ -60,7 +64,7 @@ package reprise.css
 				}
 			}
 	
-			matches.sortOn(['m_declarationSpecificity', 'm_declarationIndex'], 
+			matches.sortOn(['declarationSpecificity', 'declarationIndex'], 
 				Array.NUMERIC | Array.DESCENDING);
 			i = matches.length;
 			
@@ -102,7 +106,7 @@ package reprise.css
 //				}
 //			}
 //	
-//			matches.sortOn(['m_declarationSpecificity', 'm_declarationIndex'], 
+//			matches.sortOn(['declarationSpecificity', 'declarationIndex'], 
 //				Array.NUMERIC);
 //			i = matches.length;
 //			

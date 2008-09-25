@@ -9,10 +9,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyParser;
+	import reprise.css.CSSPropertyParser; 
 	
+	use namespace reprise;
 	
 	public class DefaultParser extends CSSPropertyParser
 	{

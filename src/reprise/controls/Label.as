@@ -11,6 +11,14 @@
 
 package reprise.controls
 {
+	import reprise.core.reprise;
+	import reprise.css.CSS;
+	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingHelper;
+	import reprise.css.CSSProperty;
+	import reprise.events.LabelEvent;
+	import reprise.ui.AbstractInput;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
@@ -23,12 +31,7 @@ package reprise.controls
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	import reprise.css.CSS;
-	import reprise.css.CSSDeclaration;
-	import reprise.css.CSSParsingHelper;
-	import reprise.css.CSSProperty;
-	import reprise.events.LabelEvent;
-	import reprise.ui.AbstractInput;	 
+	use namespace reprise;
 
 	public class Label extends AbstractInput
 	{

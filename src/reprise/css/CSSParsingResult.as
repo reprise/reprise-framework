@@ -9,17 +9,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css { 
+package reprise.css
+{
+	import reprise.core.reprise;
 	
+	use namespace reprise;
 	
 	public class CSSParsingResult
 	{
-		
-		
-		
-		protected	var m_properties : Object;
-		
-		
+		protected var m_properties : Object;
 		
 		public function CSSParsingResult() 
 		{
@@ -28,22 +26,22 @@ package reprise.css {
 		
 		
 		
-		public function addPropertyForKey( prop : CSSProperty, key : String ) : void
+		reprise function addPropertyForKey( prop : CSSProperty, key : String ) : void
 		{
 			m_properties[ key ] = prop;
 		}
 		
-		public function propertyForKey( key : String ) : CSSProperty
+		reprise function propertyForKey( key : String ) : CSSProperty
 		{
 			return CSSProperty( m_properties[ key ] );
 		}
 		
-		public function properties() : Object
+		reprise function properties() : Object
 		{
 			return m_properties;
 		}
 		
-		public function addEntriesFromResult( res : CSSParsingResult ) : void
+		reprise function addEntriesFromResult( res : CSSParsingResult ) : void
 		{
 			var props : Object = res.properties();
 			var key : String;
@@ -56,7 +54,7 @@ package reprise.css {
 		/**
 		* pass instances of CSSProperty and String in an alternating order
 		**/
-		public static function ResultWithPropertiesAndKeys(... args) : CSSParsingResult
+		reprise static function ResultWithPropertiesAndKeys(... args) : CSSParsingResult
 		{
 			var res : CSSParsingResult = new CSSParsingResult();
 			var prop : CSSProperty;

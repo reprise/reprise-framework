@@ -10,22 +10,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css
-{ 
+{
+	import reprise.core.reprise;
 	import reprise.data.AdvancedColor;
 	import reprise.data.URL;
 	import reprise.utils.PathUtil;
 	import reprise.utils.StringUtil;
 	
+	use namespace reprise;
+	
 	public class CSSParsingHelper
 	{
-		public static var percentageExpression : RegExp = /\d+%/;
-		public static var lengthExpression : RegExp = /\d+px|0/;
-		public static var URIExpression : RegExp = 
+		public static const percentageExpression : RegExp = /\d+%/;
+		public static const lengthExpression : RegExp = /\d+px|0/;
+		public static const URIExpression : RegExp = 
 			/(?:url\([ ]*(['"]).*\1[ ]*\)|url\([ ]*[^'"][^)]*\))/;
-		public static var repeatExpression : RegExp = 
+		public static const repeatExpression : RegExp = 
 			/repeat[-]x|repeat[-]y|no[-]repeat|repeat/;
 		
-		public static var positionExpression : RegExp = 
+		public static const positionExpression : RegExp = 
 			new RegExp('(?:(?:left|center|right|' + 
 			CSSParsingHelper.percentageExpression.source + '|' + 
 			CSSParsingHelper.lengthExpression.source + 
@@ -33,10 +36,10 @@ package reprise.css
 			'|' + CSSParsingHelper.lengthExpression.source + ')?)|' + 
 			'(?:(?:left|center|right|top|bottom)[ ]?(?:left|center|right|top|bottom)?)');
 		
-		public static var attachmentExpression : RegExp = /scroll|fixed/;
-		public static var preloadExpression : RegExp = /no[-]preload|preload/;
-		public static var durationExpression : RegExp = /(?:\d*[.]\d+m?s)|(?:\d+m?s)|0/;
-		public static var propertyNameExpression : RegExp = /(?:[-]?\w+)+/;
+		public static const attachmentExpression : RegExp = /scroll|fixed/;
+		public static const preloadExpression : RegExp = /no[-]preload|preload/;
+		public static const durationExpression : RegExp = /(?:\d*[.]\d+m?s)|(?:\d+m?s)|0/;
+		public static const propertyNameExpression : RegExp = /(?:[-]?\w+)+/;
 		
 		
 		protected static var g_colorExpression : RegExp;

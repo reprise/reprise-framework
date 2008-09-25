@@ -13,6 +13,7 @@ package reprise.ui
 {
 	import reprise.controls.Scrollbar;
 	import reprise.core.UIRendererFactory;
+	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSProperty;
@@ -31,7 +32,9 @@ package reprise.ui
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;	
+	import flash.geom.Rectangle;
+	
+	use namespace reprise;
 
 	public class UIComponent extends UIObject implements ICSSCalculationContext
 	{
@@ -1355,7 +1358,7 @@ package reprise.ui
 			m_specifiedStyles = styles;
 			styles = m_transitionsManager.processTransitions(oldStyles, styles);
 			m_complexStyles = styles;
-			m_currentStyles = styles.toObject();
+			m_currentStyles = styles.toComputedStyles();
 			
 			if (m_transitionsManager.isActive())
 			{

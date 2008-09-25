@@ -9,7 +9,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
@@ -18,7 +20,9 @@ package reprise.css.propertyparsers {
 	import reprise.geom.Vector;
 	import reprise.utils.StringUtil;
 	
-	import flash.filters.DropShadowFilter;
+	import flash.filters.DropShadowFilter; 
+	
+	use namespace reprise;
 	
 	
 	public class Filters extends CSSPropertyParser

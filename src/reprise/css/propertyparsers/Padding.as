@@ -9,14 +9,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
-	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyParser;
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
+	import reprise.css.CSSProperty;
+	import reprise.css.CSSPropertyParser; 
 	
-	
-	
+	use namespace reprise;
 	
 	public class Padding extends CSSPropertyParser
 	{

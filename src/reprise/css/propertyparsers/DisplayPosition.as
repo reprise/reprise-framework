@@ -9,13 +9,15 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
-	import reprise.css.transitions.VisibilityTransitionVO;
+	import reprise.css.transitions.VisibilityTransitionVO; 
 	
-	
+	use namespace reprise;
 	
 	public class DisplayPosition extends CSSPropertyParser
 	{

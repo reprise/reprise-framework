@@ -10,7 +10,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css
-{ 
+{
+	import reprise.core.reprise;
+	
+	use namespace reprise;
+	
 	public class CSSPropertyCache 
 	{
 		/***************************************************************************
@@ -27,7 +31,7 @@ package reprise.css
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public static function propertyForKeyValue(
+		reprise static function propertyForKeyValue(
 			key:String, value:String, file : String) : Object
 		{
 			var prop:Object = g_propertyCache[key+"="+value+file];
@@ -39,7 +43,7 @@ package reprise.css
 			}
 			return prop;
 		}
-		public static function setPropertyForKeyValue(
+		reprise static function setPropertyForKeyValue(
 			key:String, value:String, file : String, property:Object) : void
 		{
 			g_propertyCache[key+"="+value+file] = property;
