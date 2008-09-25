@@ -9,10 +9,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css { 
-	/**
-	 * @author Till Schneidereit
-	 */
+package reprise.css
+{ 
 	public class CSSPropertyCache 
 	{
 		/***************************************************************************

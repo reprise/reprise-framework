@@ -11,7 +11,7 @@
 
 package reprise.css
 { 
-	public class CSSSegment
+	internal class CSSSegment
 	{	
 		
 		/***************************************************************************

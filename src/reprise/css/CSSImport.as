@@ -10,16 +10,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.css
-{ 
+{
 	import reprise.external.FileResource;
 	
-	public class CSSImport extends FileResource
+	internal class CSSImport extends FileResource
 	{
-		
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		protected	var m_owner : CSS;
+		protected var m_owner : CSS;
 		
 		
 		/***************************************************************************

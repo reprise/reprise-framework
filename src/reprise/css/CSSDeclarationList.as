@@ -11,7 +11,7 @@
 
 package reprise.css
 {
-	public class CSSDeclarationList
+	internal class CSSDeclarationList
 	{
 		/***************************************************************************
 		*							protected properties							   *
