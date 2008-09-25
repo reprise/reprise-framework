@@ -9,41 +9,37 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.tweens { 
+package reprise.tweens
+{
+	import reprise.commands.AbstractAsynchronousCommand;
+	import reprise.events.TweenEvent;
+	
+	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;
-	
-	import reprise.commands.IAsynchronousCommand;
-	import reprise.core.GlobalMCManager;
-	import reprise.events.CommandEvent;
-	import reprise.events.TweenEvent;
-	public class SimpleTween extends EventDispatcher
-		implements IAsynchronousCommand
+	import flash.utils.getTimer;	
+
+	public class SimpleTween extends AbstractAsynchronousCommand
 	{
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static const DIRECTION_FORWARD : Number = 1;
-		public static const DIRECTION_BACKWARD : Number = -1;
+		public static const DIRECTION_FORWARD : int = 1;
+		public static const DIRECTION_BACKWARD : int = -1;
 		
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_direction:Number;
-		protected var m_isRunning:Boolean;
-		protected var m_isCancelled:Boolean;
+		protected static const g_frameEventDispatcher : Shape = new Shape();
 		
-		protected var m_startTime : Number;
-		protected var m_currentTime:Number;
-		protected var m_duration:Number;
-		protected var m_delay : uint;
+		protected var m_direction : int;
+		protected var m_startTime : int;
+		protected var m_currentTime:int;
+		protected var m_duration : int;
+		protected var m_delay : int;
 	
 		protected var m_tweenedProperties:Array;
-		
-		protected var m_priority : Number;
-		protected var m_id : Number;
 		
 		
 		/***************************************************************************
@@ -176,7 +172,7 @@ package reprise.tweens {
 		/**
 		 * returns the tween's direction
 		 */
-		public function getDirection () : Number
+		public function getDirection () : int
 		{
 			return m_direction;
 		}
@@ -184,30 +180,30 @@ package reprise.tweens {
 		/**
 		 * sets the tween's direction
 		 */
-		public function setDirection (newDirection:Number) : void
+		public function setDirection(direction : int) : void
 		{
-			m_direction = newDirection;
+			m_direction = direction;
 		}
 		
 		/**
 		 * returns true if tweens is running
 		 */
-		public function isRunning () : Boolean
+		public function isRunning() : Boolean
 		{
-			return m_isRunning;
+			return m_isExecuting;
 		}
-		
+
 		/**
 		 * starts the tween
 		 */
-		public function startTween (executeFirstTickImmediately:Boolean = false) : void
+		public function startTween(executeFirstTickImmediately:Boolean = false) : void
 		{
 			m_isCancelled = false;
-			if (!m_isRunning && m_currentTime < m_duration)
+			if (!m_isExecuting && m_currentTime < m_duration)
 			{
-				GlobalMCManager.instance().stage().addEventListener(
+				g_frameEventDispatcher.addEventListener(
 					Event.ENTER_FRAME, executeTick);
-				m_isRunning = true;
+				m_isExecuting = true;
 				m_startTime = getTimer() + m_currentTime;
 				dispatchEvent(new TweenEvent(TweenEvent.START, true));
 				if (executeFirstTickImmediately)
@@ -217,27 +213,26 @@ package reprise.tweens {
 			}
 		}
 		
-		public function execute(...rest) : void
+		public override function execute(...rest) : void
 		{
-			startTween();
+			if (m_isExecuting)
+			{
+				return;
+			}
+			super.execute();
+			startTween(true);
 		}
 		
-		public function cancel() : void
+		public override function cancel() : void
 		{
-			m_isCancelled = true;
 			resetTween();
-			dispatchEvent(new CommandEvent(Event.CANCEL));
-		}
-		
-		public function isCancelled() : Boolean
-		{
-			return m_isCancelled;
+			super.cancel();
 		}
 		
 		/**
 		 * resets the tween's position and stops
 		 */
-		public function resetTween () : void
+		public function resetTween() : void
 		{
 			stopTween();
 			m_currentTime = 0;
@@ -246,16 +241,16 @@ package reprise.tweens {
 		/**
 		 * stops the tween
 		 */
-		public function stopTween () : void
+		public function stopTween() : void
 		{
-			GlobalMCManager.instance().stage().removeEventListener(
+			g_frameEventDispatcher.removeEventListener(
 				Event.ENTER_FRAME, executeTick);
-			m_isRunning = false;
+			m_isExecuting = false;
 		}
 		
 		public function finish() : void
 		{
-			if (!m_isRunning)
+			if (!m_isExecuting)
 			{
 				return;
 			}
@@ -265,39 +260,19 @@ package reprise.tweens {
 			dispatchEvent(new TweenEvent(Event.COMPLETE, true));		
 		}
 		
-		public function setPriority(value : Number) : void
-		{
-			m_priority = value;
-		}
-		public function priority() : Number
-		{
-			return m_priority;
-		}
-		public function setId(value : Number) : void
-		{
-			m_id = value;
-		}
-		public function id() : Number
-		{
-			return m_id;
-		}
-		
 		public override function toString() : String
 		{
 			return "reprise.tweens.SimpleTween";
 		}
 		
-		public function didSucceed() : Boolean
+		public override function didSucceed() : Boolean
 		{
 			return true;
 		}
 		
-		public function isExecuting() : Boolean
+		public override function reset() : void
 		{
-			return isRunning();
-		}
-		public function reset() : void
-		{
+			super.reset();
 			resetTween();
 		}
 		
@@ -319,7 +294,6 @@ package reprise.tweens {
 			{
 				m_currentTime = m_duration;
 			}
-	//		trace([m_currentTime, m_duration]);
 			tweenProperties();
 			dispatchEvent(new TweenEvent(TweenEvent.TICK, true));
 			if (m_currentTime == m_duration)
