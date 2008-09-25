@@ -47,7 +47,8 @@ package reprise.core
 		
 		protected var m_resourceLoader : ResourceLoader;
 		protected var m_css : CSS;
-		
+		protected var m_tooltipContainer : Sprite;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -171,10 +172,11 @@ package reprise.core
 			m_rootElement = new DocumentView();
 			addChild(m_rootElement);
 			m_rootElement.setParent(m_rootElement);
-			GlobalMCManager.instance(this);
-			m_tooltipManager = new TooltipManager(m_rootElement);
+			m_tooltipContainer = new Sprite();
+			addChild(m_tooltipContainer);
+			m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
 		}
-		
+
 		protected function startApplication() : void
 		{
 		}

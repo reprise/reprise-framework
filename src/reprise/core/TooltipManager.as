@@ -11,16 +11,7 @@
 
 package reprise.core
 {
-
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	
 	import reprise.commands.TimeCommandExecutor;
-	import reprise.core.GlobalMCManager;
 	import reprise.events.DisplayEvent;
 	import reprise.ui.DocumentView;
 	import reprise.ui.UIComponent;
@@ -28,8 +19,12 @@ package reprise.core
 	import reprise.ui.renderers.AbstractTooltip;
 	import reprise.utils.Delegate;
 	
-	
-	
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;	
+
 	public class TooltipManager
 	{
 		
@@ -55,13 +50,13 @@ package reprise.core
 		/***************************************************************************
 		*                              Public methods                              *
 		***************************************************************************/
-		public function TooltipManager(rootView:DocumentView)
+		public function TooltipManager(rootView:DocumentView, container : Sprite)
 		{
 			m_rootView = rootView;
 			m_rootView.addEventListener(MouseEvent.MOUSE_OVER, rootView_mouseOver);
 			m_rootView.addEventListener(MouseEvent.MOUSE_OUT, rootView_mouseOut);
 			
-			m_tooltipContainer = GlobalMCManager.instance().addHighLevelMc('tooltip_container');
+			m_tooltipContainer = container;
 			m_tooltipContainer.mouseEnabled = false;
 			m_tooltipContainer.mouseChildren = false;
 		}
