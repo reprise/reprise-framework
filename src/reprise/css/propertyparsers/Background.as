@@ -25,38 +25,34 @@ package reprise.css.propertyparsers
 	
 	public class Background extends CSSPropertyParser
 	{
-		public static var KNOWN_PROPERTIES	: Array		=
-		[
-			'background',
-			'backgroundImage',
-			'backgroundColor',
-			'backgroundRepeat',
-			'backgroundPosition',
-			'backgroundAttachment',
-			'backgroundRenderer',
-			'backgroundBlendMode',
-			'backgroundGradient',
-			'backgroundGradientColors',
-			'backgroundGradientType',
-			'backgroundGradientRatios',
-			'backgroundGradientRotation',
-			'backgroundScale9',
-			'backgroundScale9Type',
-			'backgroundScale9Rect',
-			'backgroundScale9RectTop',
-			'backgroundScale9RectRight',
-			'backgroundScale9RectBottom',
-			'backgroundScale9RectLeft',
-			'backgroundImageType',
-			'backgroundImagePreload',
-			'backgroundImageAliasing'
-		];
-		
-		public static var PROPERTY_TRANSITIONS	: Object	=
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			backgroundColor : ColorTransitionVO,
-			backgroundGradientRatios : NumericListTransitionVO,
-			backgroundGradientColors : ColorListTransitionVO
+			background : {parser : parseBackground},
+			backgroundImage : {parser : strToURLProperty},
+			backgroundColor : {parser : strToColorProperty, transition : ColorTransitionVO},
+			backgroundRepeat : {parser : strToStringProperty},
+			backgroundPosition : {parser : parseBackgroundPosition},
+			backgroundAttachment : {parser : strToStringProperty},
+			backgroundRenderer : {parser : strToStringProperty},
+			backgroundBlendMode : {parser : strToStringProperty},
+			backgroundGradient : {parser : parseBackgroundGradient},
+			backgroundGradientColors : {parser : parseBackgroundGradientColors, transition : ColorListTransitionVO},
+			backgroundGradientType : {parser : parseBackgroundGradientType},
+			backgroundGradientRatios : {parser : parseBackgroundGradientRatios, transition : NumericListTransitionVO},
+			backgroundGradientRotation : {parser : strToIntProperty},
+			backgroundScale9 : {parser : parseBackgroundScale9},
+			backgroundScale9Type : {parser : parseBackgroundScale9Type},
+			backgroundScale9Rect : {parser : parseBackgroundScale9Rect},
+			backgroundScale9RectTop : {parser : strToIntProperty},
+			backgroundScale9RectRight : {parser : strToIntProperty},
+			backgroundScale9RectBottom : {parser : strToIntProperty},
+			backgroundScale9RectLeft : {parser : strToIntProperty},
+			backgroundImageType : {parser : parseBackgroundImageType},
+			backgroundImagePreload : {parser : parseBackgroundImagePreload},
+			backgroundImageAliasing : {parser : parseBackgroundImageAliasing}
 		};
 		
 		public static var TRANSITION_SHORTCUTS : Object	=
@@ -76,46 +72,36 @@ package reprise.css.propertyparsers
 			]
 		};
 		
-		public static var REPEAT_REPEAT_XY	: String	= 'repeat';	/* default */
-		public static var REPEAT_REPEAT_X	: String	= 'repeat-x';
-		public static var REPEAT_REPEAT_Y	: String	= 'repeat-y';
-		public static var REPEAT_NO_REPEAT	: String	= 'no-repeat';
+		public static const REPEAT_REPEAT_XY	: String	= 'repeat';	/* default */
+		public static const REPEAT_REPEAT_X	: String	= 'repeat-x';
+		public static const REPEAT_REPEAT_Y	: String	= 'repeat-y';
+		public static const REPEAT_NO_REPEAT	: String	= 'no-repeat';
 		
-		public static var ATTACHMENT_SCROLL	: String	= 'scrollV';	/* default */
-		public static var ATTACHMENT_FIXED	: String	= 'fixed';
+		public static const ATTACHMENT_SCROLL	: String	= 'scrollV';	/* default */
+		public static const ATTACHMENT_FIXED	: String	= 'fixed';
 		
-		public static var POSITION_TOP		: String	= 'top';
-		public static var POSITION_BOTTOM	: String	= 'bottom';
-		public static var POSITION_LEFT		: String	= 'left';
-		public static var POSITION_RIGHT	: String	= 'right';
-		public static var POSITION_CENTER	: String	= 'center';
+		public static const POSITION_TOP		: String	= 'top';
+		public static const POSITION_BOTTOM	: String	= 'bottom';
+		public static const POSITION_LEFT		: String	= 'left';
+		public static const POSITION_RIGHT	: String	= 'right';
+		public static const POSITION_CENTER	: String	= 'center';
 		
-		public static var GRADIENT_TYPE_LINEAR : String	= 'linear';
-		public static var GRADIENT_TYPE_RADIAL : String = 'radial';
+		public static const GRADIENT_TYPE_LINEAR : String	= 'linear';
+		public static const GRADIENT_TYPE_RADIAL : String = 'radial';
 		
-		public static var SCALE9_TYPE_STRETCH : String 	= 'stretch';
-		public static var SCALE9_TYPE_REPEAT : String	= 'repeat';
-		public static var SCALE9_TYPE_NONE : String	= 'none';
+		public static const SCALE9_TYPE_STRETCH : String 	= 'stretch';
+		public static const SCALE9_TYPE_REPEAT : String	= 'repeat';
+		public static const SCALE9_TYPE_NONE : String	= 'none';
 		
-		public static var IMAGE_TYPE_IMAGE : String = 'image';
-		public static var IMAGE_TYPE_ANIMATION : String = 'animation';
-		public static var IMAGE_NONE : String = 'none';
+		public static const IMAGE_TYPE_IMAGE : String = 'image';
+		public static const IMAGE_TYPE_ANIMATION : String = 'animation';
+		public static const IMAGE_NONE : String = 'none';
 		
-		public static var IMAGE_ALIASING_ALIAS : String = 'alias';
-		public static var IMAGE_ALIASING_ANTIALIAS : String = 'anti-alias';
-		
-		
-		protected static var g_backgroundExpression : RegExp;
-		
-		
+		public static const IMAGE_ALIASING_ALIAS : String = 'alias';
+		public static const IMAGE_ALIASING_ANTIALIAS : String = 'anti-alias';
 		
 				
 		public function Background() {}
-		
-		public static function get defaultValues() : Object
-		{
-			return null;
-		}
 		
 		
 		public static function parseBackground(val:String, file:String) : CSSParsingResult
@@ -249,21 +235,6 @@ package reprise.css.propertyparsers
 			return res;
 		}
 		
-		public static function parseBackgroundImage(val:String, file:String) : CSSProperty
-		{
-			return strToURLProperty(val, file);
-		}
-		
-		public static function parseBackgroundColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		public static function parseBackgroundRepeat(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
 		public static function parseBackgroundPosition(val:String, file:String) : CSSParsingResult
 		{		
 			// evaluate important flag
@@ -280,21 +251,6 @@ package reprise.css.propertyparsers
 				strToIntProperty(parts[1] + important, file), 'backgroundPositionY');
 		}
 		
-		public static function parseBackgroundAttachment(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBackgroundRenderer(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBackgroundBlendMode(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
 		public static function parseBackgroundGradientType(val:String, file:String) : CSSProperty
 		{
 			var prop : CSSProperty = strToStringProperty(val, file);
@@ -304,11 +260,6 @@ package reprise.css.propertyparsers
 				return prop;
 			}
 			return null;
-		}
-		
-		public static function parseBackgroundGradientRotation(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 		
 		public static function parseBackgroundGradientColors(val:String, file:String) : CSSProperty
@@ -410,26 +361,6 @@ package reprise.css.propertyparsers
 			return strToRectParsingResult(val, file, 'backgroundScale9Rect');
 		}
 		
-		public static function parseBackgroundScale9RectTop(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBackgroundScale9RectRight(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBackgroundScale9RectBottom(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBackgroundScale9RectLeft(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
 		public static function parseBackgroundImageType(val:String, file:String) : CSSProperty
 		{
 			return strToStringProperty(val.toLowerCase(), file);
@@ -437,7 +368,7 @@ package reprise.css.propertyparsers
 		
 		public static function parseBackgroundImagePreload(val:String, file:String) : CSSProperty
 		{		
-			return strToBoolProperty(val, ['preload'], file);
+			return strToBoolProperty(val, file, ['preload']);
 		}
 		
 		public static function parseBackgroundImageAliasing(val:String, file:String) : CSSProperty

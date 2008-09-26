@@ -21,21 +21,17 @@ package reprise.css.propertyparsers
 	
 	public class Padding extends CSSPropertyParser
 	{
-		
-		public static var KNOWN_PROPERTIES	: Array 	= 
-		[
-			'padding',
-			'paddingTop',
-			'paddingRight',
-			'paddingBottom',
-			'paddingLeft'
-		];
-		
-		public static function get defaultValues() : Object
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			return null;
-		}
-		
+			padding : {parser : strToIntProperty},
+			paddingTop : {parser : strToIntProperty},
+			paddingRight : {parser : strToIntProperty},
+			paddingBottom : {parser : strToIntProperty},
+			paddingLeft : {parser : strToIntProperty}
+		};
 	
 		public static function parsePadding(val:String, file:String) : CSSParsingResult
 		{
@@ -89,27 +85,6 @@ package reprise.css.propertyparsers
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				paddingTop, 'paddingTop', paddingRight, 'paddingRight',
 				paddingBottom, 'paddingBottom', paddingLeft, 'paddingLeft');		
-		}
-	
-	
-		public static function parsePaddingTop(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parsePaddingRight(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parsePaddingBottom(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parsePaddingLeft(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 	}
 }

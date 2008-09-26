@@ -13,73 +13,72 @@ package reprise.css.propertyparsers
 {
 	import reprise.core.reprise;
 	import reprise.css.CSS;
-	import reprise.css.CSSPropertyParser;
-	import reprise.utils.StringUtil;	
+	import reprise.css.CSSPropertyParser;	
 	
 	use namespace reprise;
 	
 	public dynamic class RuntimeParser extends CSSPropertyParser
 	{
 		
-		public static var KNOWN_PROPERTIES : Array = [];
-		public static var INHERITABLE_PROPERTIES : Array = [];
+		public static var KNOWN_PROPERTIES : Object = [];
 		
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
 		public static function registerProperty(
-			name : String, type : uint, inheritable : Boolean) : void
+			name : String, type : uint, inheritable : Boolean, 
+			transition : Class = null, parserMethod : Function = null) : void
 		{
-			var parserMethod : Function;
-			
-			switch (type)
+			if (parserMethod == null)
 			{
-				case CSS.PROPERTY_TYPE_STRING:
+				switch (type)
 				{
-					parserMethod = strToStringProperty;
-					break;
-				}
-				case CSS.PROPERTY_TYPE_INT:
-				{
-					parserMethod = strToIntProperty;
-					break;
-				}
-				case CSS.PROPERTY_TYPE_FLOAT:
-				{
-					parserMethod = strToFloatProperty;
-					break;
-				}
-				case CSS.PROPERTY_TYPE_BOOL:
-				{
-					parserMethod = strToBoolProperty;
-					break;
-				}
-				case CSS.PROPERTY_TYPE_URL:
-				{
-					parserMethod = strToURLProperty;
-					break;
-				}
-				case CSS.PROPERTY_TYPE_COLOR:
-				{
-					parserMethod = strToColorProperty;
-					break;
-				}
-				default:
-				{
-					trace('e Error registering property with name "' + name + 
-						'". Unknown type ' + type);
-					return;
+					case CSS.PROPERTY_TYPE_STRING:
+					{
+						parserMethod = strToStringProperty;
+						break;
+					}
+					case CSS.PROPERTY_TYPE_INT:
+					{
+						parserMethod = strToIntProperty;
+						break;
+					}
+					case CSS.PROPERTY_TYPE_FLOAT:
+					{
+						parserMethod = strToFloatProperty;
+						break;
+					}
+					case CSS.PROPERTY_TYPE_BOOL:
+					{
+						parserMethod = strToBoolProperty;
+						break;
+					}
+					case CSS.PROPERTY_TYPE_URL:
+					{
+						parserMethod = strToURLProperty;
+						break;
+					}
+					case CSS.PROPERTY_TYPE_COLOR:
+					{
+						parserMethod = strToColorProperty;
+						break;
+					}
+					default:
+					{
+						trace('e Error registering property with name "' + name + 
+							'". Unknown type ' + type);
+						return;
+					}
 				}
 			}
 			
-			KNOWN_PROPERTIES.push(name);
+			var obj : Object = {parser : parserMethod};
 			if (inheritable)
 			{
-				INHERITABLE_PROPERTIES.push(name);
+				obj['inheritable'] = true;
 			}
-			var methodName : String = 'parse' + StringUtil.ucFirst(name);
-			RuntimeParser[methodName] = parserMethod;
+			KNOWN_PROPERTIES[name] = obj;
 		}
 		
 		

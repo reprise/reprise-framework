@@ -168,7 +168,7 @@ package reprise.css
 		}
 		
 		protected static function strToBoolProperty(val:String, 
-			trueFlags:Array = null, file:String = null) : CSSProperty
+			file:String = null, trueFlags:Array = null) : CSSProperty
 		{
 			var obj : Object = strToProperty(val, file);
 			var prop : CSSProperty = obj.property;

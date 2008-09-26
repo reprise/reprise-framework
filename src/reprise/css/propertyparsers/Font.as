@@ -9,204 +9,70 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.css.propertyparsers { 
+package reprise.css.propertyparsers
+{
+	import reprise.core.reprise;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
-	import reprise.css.transitions.ColorTransitionVO;
+	import reprise.css.transitions.ColorTransitionVO; 
 	
-	
+	use namespace reprise;
 	
 	public class Font extends CSSPropertyParser
 	{
-		
-		public static var KNOWN_PROPERTIES			: Array		=
-		[
-			/*'font', soon! */
-			'color',
-			'fontSize',
-			'fontFamily',
-			'embedFonts',
-			'cacheAsBitmap',
-			'rasterizeDeviceFonts',
-			'antiAliasType',
-			'gridFitType',
-			'sharpness',
-			'thickness',
-			'fontWeight',
-			'fontStyle',
-			'textAlign',
-			'textTransform',
-			'letterSpacing',
-			'leading',
-			'multiline',
-			'wordWrap',
-			'selectable',
-			'fontVariant',
-			'fixLineEndings',
-			'lineHeight'
-		];
-		
-		public static var INHERITABLE_PROPERTIES	: Object	=
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			color : true,
-			fontSize : true,
-			fontFamily : true,
-			embedFonts : true,
-			antiAliasType : true,
-			gridFitType : true,
-			sharpness : true,
-			thickness : true,
-			fontWeight : true,
-			fontStyle : true,
-			textAlign : true,
-			textTransform : true,
-			letterSpacing : true,
-			leading : true,
-			rasterizeDeviceFonts : true
+			color : {parser : strToColorProperty, inheritable : true, transition : ColorTransitionVO},
+			fontSize : {parser : strToIntProperty, inheritable : true},
+			fontFamily : {parser : strToStringProperty, inheritable : true},
+			embedFonts : {parser : parseEmbedFonts, inheritable : true},
+			cacheAsBitmap : {parser : parseCacheAsBitmap},
+			rasterizeDeviceFonts : {parser : parseRasterizeDeviceFonts, inheritable : true},
+			antiAliasType : {parser : strToStringProperty, inheritable : true},
+			gridFitType : {parser : strToStringProperty, inheritable : true},
+			sharpness : {parser : strToIntProperty, inheritable : true},
+			thickness : {parser : strToIntProperty, inheritable : true},
+			fontWeight : {parser : strToStringProperty, inheritable : true},
+			fontStyle : {parser : strToStringProperty, inheritable : true},
+			textAlign : {parser : strToStringProperty, inheritable : true},
+			textTransform : {parser : strToStringProperty, inheritable : true},
+			letterSpacing : {parser : strToFloatProperty, inheritable : true},
+			leading : {parser : strToIntProperty, inheritable : true},
+			multiline : {parser : strToBoolProperty},
+			wordWrap : {parser : strToStringProperty},
+			selectable : {parser : strToBoolProperty},
+			fontVariant : {parser : strToStringProperty},
+			fixLineEndings : {parser : parseFixLineEndings},
+			lineHeight : {parser : strToIntProperty}
 		};
-		
-		public static var PROPERTY_TRANSITIONS	: Object	=
-		{
-			color : ColorTransitionVO
-		};
-		
-		
 		
 		public function Font() {}
 		
-		public static function get defaultValues() : Object
-		{
-			return null;
-		}
-		
-		
-		
-		public static function setFont(val:String, file:String) : void
-		{
-			/*
-			// evaluate important flag
-			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : String = obj.important ? CSSProperty.IMPORTANT_FLAG : '';
-			val = obj.result;
-			
-			font-style, 
-			font-variant, 
-			font-weight, 
-			font-size, 
-			line-height
-			font-family
-			z.B. font:italic bold 13px Times;
-			*/
-		}
-		
-		public static function parseColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		public static function parseFontSize(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseFontFamily(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseEmbedFonts(val:String, file:String) : CSSProperty
+		/***************************************************************************
+		*							private methods								   *
+		***************************************************************************/
+		private static function parseEmbedFonts(val:String, file:String) : CSSProperty
 		{		
-			return strToBoolProperty(val, ['embed'], file);
+			return strToBoolProperty(val, file, ['embed']);
 		}
 		
-		public static function parseCacheAsBitmap(val:String, file:String) : CSSProperty
+		private static function parseCacheAsBitmap(val:String, file:String) : CSSProperty
 		{
-			return strToBoolProperty(val, ['cache'], file);
+			return strToBoolProperty(val, file, ['cache']);
 		}
 		
-		public static function parseAntiAliasType(val:String, file:String) : CSSProperty
+		private static function parseFixLineEndings(val:String, file:String) : CSSProperty
 		{
-			return strToStringProperty(val, file);
+			return strToBoolProperty(val, file, ['fix']);
 		}
 		
-		public static function parseGridFitType(val:String, file:String) : CSSProperty
+		private static function parseRasterizeDeviceFonts(
+			val:String, file:String) : CSSProperty
 		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseSharpness(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseThickness(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseFontWeight(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-	
-		public static function parseFontStyle(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseTextAlign(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseTextTransform(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseLetterSpacing(val:String, file:String) : CSSProperty
-		{
-			return strToFloatProperty(val, file);
-		}
-		
-		public static function parseLeading(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseWordWrap(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseMultiline(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, null, file);
-		}
-		
-		public static function parseSelectable(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, null, file);
-		}
-		
-		public static function parseFontVariant(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseLineHeight(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseFixLineEndings(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, null, file);
-		}
-		
-		public static function parseRasterizeDeviceFonts(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, ['rasterize', 'true'], file);
+			return strToBoolProperty(val, file, ['rasterize']);
 		}
 	}
 }

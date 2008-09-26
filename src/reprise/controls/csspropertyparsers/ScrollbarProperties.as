@@ -10,9 +10,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.controls.csspropertyparsers
-{ 
-	import reprise.css.CSSProperty;
-	import reprise.css.CSSPropertyParser;
+{
+	import reprise.css.CSSPropertyParser; 
+
 	/**
 	 * @author Till Schneidereit
 	 */
@@ -21,39 +21,12 @@ package reprise.controls.csspropertyparsers
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var KNOWN_PROPERTIES : Array = 
-		[
-			'autoHide',
-			'scaleScrollThumb',
-			'lineScrollSize',
-			'pageScrollSize'
-		];
-		
-		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
-		public static function parseAutoHide(
-			val : String, file : String = null) : CSSProperty
+		public static const KNOWN_PROPERTIES : Object = 
 		{
-			return strToBoolProperty(val, null, file);
-		}
-		
-		public static function parseScaleScrollThumb(
-			val : String, file : String = null) : CSSProperty
-		{
-			return strToBoolProperty(val, null, file);
-		}
-		
-		public static function parseLineScrollSize(
-			val : String, file : String = null) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		public static function parsePageScrollSize(
-			val : String, file : String = null) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
+			autoHide : {parser : strToBoolProperty},
+			scaleScrollThumb : {parser : strToBoolProperty},
+			lineScrollSize : {parser : strToIntProperty},
+			pageScrollSize : {parser : strToIntProperty}
+		};
 	}
 }

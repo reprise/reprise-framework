@@ -21,21 +21,17 @@ package reprise.css.propertyparsers
 	
 	public class Margin extends CSSPropertyParser
 	{
-		
-		public static var KNOWN_PROPERTIES	: Array 	= 
-		[
-			'margin',
-			'marginTop',
-			'marginRight',
-			'marginBottom',
-			'marginLeft'
-		];
-		
-		public static function get defaultValues() : Object
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			return null;
-		}
-		
+			margin : {parser : strToIntProperty},
+			marginTop : {parser : strToIntProperty},
+			marginRight : {parser : strToIntProperty},
+			marginBottom : {parser : strToIntProperty},
+			marginLeft : {parser : strToIntProperty}
+		};
 		
 		public static function parseMargin(val:String, file:String) : CSSParsingResult
 		{
@@ -89,27 +85,6 @@ package reprise.css.propertyparsers
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				marginTop, 'marginTop', marginRight, 'marginRight',
 				marginBottom, 'marginBottom', marginLeft, 'marginLeft');		
-		}
-	
-	
-		public static function parseMarginTop(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseMarginRight(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseMarginBottom(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseMarginLeft(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 	}
 }

@@ -104,42 +104,44 @@ package reprise.css
 		public static function registerPropertyCollection(
 			collection : Object /*CSSPropertyParser*/) : void
 		{
-			var properties : Array = collection.KNOWN_PROPERTIES;
-			var inheritableProperties : Object = collection.INHERITABLE_PROPERTIES || {};
-			var transitions : Object = collection.PROPERTY_TRANSITIONS || {};
-			var shortcuts : Object = collection.TRANSITION_SHORTCUTS || {};
+			var properties : Object = collection.KNOWN_PROPERTIES;
 			
-			var i : int = properties.length;
-			while (i--)
-			{
-				var prop : String = String(properties[i]);
-				m_propertyToParserTable[prop] = 
-					collection["parse" + StringUtil.ucFirst(prop)];
-				if (inheritableProperties[prop])
-				{
-					m_inheritableProperties[prop] = true;
-				}
-				if (transitions[prop])
-				{
-					TransitionVOFactory.registerProperty(prop, transitions[prop]);
-				}
-				if (shortcuts[prop])
-				{
-					CSSTransitionsManager.registerTransitionShortcut(
-						prop, shortcuts[prop]);
-				}
-			}
+			registerPropertyCollectionObject(properties, collection);
 			
-			var defaultValues : Object = collection.defaultValues;
-			if (defaultValues)
+			if (collection.defaultValues)
 			{
-				for (var key : String in defaultValues)
+				for (var key : String in collection.defaultValues)
 				{
-					m_defaultValues[key] = defaultValues[key];
+					m_defaultValues[key] = collection.defaultValues[key];
 				}
 			}
 		}
 		
+		private static function registerPropertyCollectionObject(
+			properties : Object, collection : Object) : void
+		{
+				var shortcuts : Object = collection.TRANSITION_SHORTCUTS || {};
+				for (var prop : String in properties)
+				{
+					var definition : Object = properties[prop];
+					m_propertyToParserTable[prop] = definition['parser'];
+					if (definition['inheritable'])
+					{
+						m_inheritableProperties[prop] = true;
+					}
+					if (definition['transition'])
+					{
+						TransitionVOFactory.registerProperty(
+							prop, definition['transition']);
+					}
+					if (shortcuts[prop])
+					{
+						CSSTransitionsManager.registerTransitionShortcut(
+							prop, shortcuts[prop]);
+					}
+				}
+		}
+
 		reprise static function parserForProperty(key : String) : Function
 		{
 			// get the name of the associated class

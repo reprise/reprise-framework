@@ -23,43 +23,37 @@ package reprise.css.propertyparsers
 	
 	public class Border extends CSSPropertyParser
 	{
-			
-		public static var KNOWN_PROPERTIES	: Array 	= 
-		[
-			'border',
-			'borderTop',
-			'borderRight',
-			'borderBottom',
-			'borderLeft',
-			'borderStyle',
-			'borderColor',
-			'borderWidth',
-			'borderTopWidth',
-			'borderRightWidth',
-			'borderBottomWidth',
-			'borderLeftWidth',
-			'borderTopStyle',
-			'borderRightStyle',
-			'borderBottomStyle',
-			'borderLeftStyle',
-			'borderTopColor',
-			'borderRightColor',
-			'borderBottomColor',
-			'borderLeftColor',
-			'borderRenderer',
-			'borderRadius',
-			'borderTopLeftRadius',
-			'borderTopRightRadius',
-			'borderBottomRightRadius',
-			'borderBottomLeftRadius'
-		];
-		
-		public static var PROPERTY_TRANSITIONS : Object	=
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			borderTopColor : ColorTransitionVO,
-			borderRightColor : ColorTransitionVO,
-			borderBottomColor : ColorTransitionVO,
-			borderLeftColor : ColorTransitionVO
+			border : {parser : parseBorder},
+			borderTop : {parser : parseBorderTop},
+			borderRight : {parser : parseBorderRight},
+			borderBottom : {parser : parseBorderBottom},
+			borderLeft : {parser : parseBorderLeft},
+			borderStyle : {parser : parseBorderStyle},
+			borderColor : {parser : parseBorderColor},
+			borderWidth : {parser : parseBorderWidth},
+			borderTopWidth : {parser : strToIntProperty},
+			borderRightWidth : {parser : strToIntProperty},
+			borderBottomWidth : {parser : strToIntProperty},
+			borderLeftWidth : {parser : strToIntProperty},
+			borderTopStyle : {parser : strToStringProperty},
+			borderRightStyle : {parser : strToStringProperty},
+			borderBottomStyle : {parser : strToStringProperty},
+			borderLeftStyle : {parser : strToStringProperty},
+			borderTopColor : {parser : strToColorProperty, transition : ColorTransitionVO},
+			borderRightColor : {parser : strToColorProperty, transition : ColorTransitionVO},
+			borderBottomColor : {parser : strToColorProperty, transition : ColorTransitionVO},
+			borderLeftColor : {parser : strToColorProperty, transition : ColorTransitionVO},
+			borderRenderer : {parser : strToStringProperty},
+			borderRadius : {parser : parseBorderRadius},
+			borderTopLeftRadius : {parser : strToIntProperty},
+			borderTopRightRadius : {parser : strToIntProperty},
+			borderBottomRightRadius : {parser : strToIntProperty},
+			borderBottomLeftRadius : {parser : strToIntProperty}
 		};
 		
 		public static var TRANSITION_SHORTCUTS : Object	=
@@ -119,17 +113,11 @@ package reprise.css.propertyparsers
 		};
 		
 		
-		public static var BORDER_STYLE_NONE 	: String = "none";	/* default */
-		public static var BORDER_STYLE_SOLID 	: String = "solid";
-		public static var BORDER_STYLE_DASHED 	: String = "dashed";
-		public static var BORDER_STYLE_DOTTED 	: String = "dotted";	
+		public static const BORDER_STYLE_NONE 	: String = "none";	/* default */
+		public static const BORDER_STYLE_SOLID 	: String = "solid";
+		public static const BORDER_STYLE_DASHED 	: String = "dashed";
+		public static const BORDER_STYLE_DOTTED 	: String = "dotted";	
 		
-		
-		
-		public static function get defaultValues() : Object
-		{
-			return null;
-		}
 		
 		/**
 		* Shortcuts
@@ -385,91 +373,6 @@ package reprise.css.propertyparsers
 		}	
 		
 		
-		
-		
-		/**
-		* Border width
-		**/	
-		public static function parseBorderTopWidth(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBorderRightWidth(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBorderBottomWidth(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBorderLeftWidth(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		
-		
-		/**
-		* Border style
-		**/	
-		public static function parseBorderTopStyle(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBorderRightStyle(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBorderBottomStyle(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBorderLeftStyle(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		
-		
-		/**
-		* Color style
-		**/	
-		public static function parseBorderTopColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		public static function parseBorderRightColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		public static function parseBorderBottomColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		public static function parseBorderLeftColor(val:String, file:String) : CSSProperty
-		{
-			return strToColorProperty(val, file);
-		}
-		
-		
-		/**
-		* Border renderer
-		**/
-		public static function parseBorderRenderer(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		
 		/**
 		* Border radius
 		**/
@@ -526,26 +429,6 @@ package reprise.css.propertyparsers
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				borderTopLeftRadius, 'borderTopLeftRadius', borderTopRightRadius, 'borderTopRightRadius',
 				borderBottomRightRadius, 'borderBottomRightRadius', borderBottomLeftRadius, 'borderBottomLeftRadius');
-		}
-		
-		public static function parseBorderTopLeftRadius(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);		
-		}
-		
-		public static function parseBorderTopRightRadius(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);		
-		}
-		
-		public static function parseBorderBottomRightRadius(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);		
-		}
-		
-		public static function parseBorderBottomLeftRadius(val:String, file:String) : CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 	}
 }

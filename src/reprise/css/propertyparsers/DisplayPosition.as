@@ -21,65 +21,55 @@ package reprise.css.propertyparsers
 	
 	public class DisplayPosition extends CSSPropertyParser
 	{
-			
-		public static var KNOWN_PROPERTIES			: Array	 	=
-		[
-			'display',
-			'position',
-			'overflow',
-			'overflowX',
-			'overflowY',
-			'left',
-			'right',
-			'top',
-			'bottom',
-			'zIndex',
-			'width',
-			'boxSizing',
-			'minWidth',
-			'maxWidth',
-			'height',
-			'minHeight',
-			'maxHeight',
-			'clear',
-			'float',
-			'visibility',
-			'itemSpacing',
-			'cursor',
-			'tooltipDelay',
-			'tooltipRenderer',
-			'blendMode',
-			'opacity',
-			'frameRate'
-			/* clip */
-		];
-		
-		public static var INHERITABLE_PROPERTIES	: Object	=
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
 		{
-			cursor:true
-		};
-		
-		public static var PROPERTY_TRANSITIONS	: Object	=
-		{
-			visibility : VisibilityTransitionVO
+			display : {parser : strToStringProperty},
+			position : {parser : strToStringProperty},
+			overflow : {parser : parseOverflow},
+			overflowX : {parser : strToStringProperty},
+			overflowY : {parser : strToStringProperty},
+			left : {parser : strToIntProperty},
+			right : {parser : strToIntProperty},
+			top : {parser : strToIntProperty},
+			bottom : {parser : strToIntProperty},
+			zIndex : {parser : strToIntProperty},
+			width : {parser : strToIntProperty},
+			height : {parser : strToIntProperty},
+			minWidth : {parser : strToIntProperty},
+			maxWidth : {parser : strToIntProperty},
+			minHeight : {parser : strToIntProperty},
+			maxHeight : {parser : strToIntProperty},
+			boxSizing : {parser : strToStringProperty},
+			clear : {parser : strToStringProperty},
+			float : {parser : strToStringProperty},
+			visibility : {parser : strToStringProperty, transition : VisibilityTransitionVO},
+			cursor : {parser : parseCursor, inheritable : true},
+			tooltipDelay : {parser : strToIntProperty},
+			tooltipRenderer : {parser : strToStringProperty},
+			blendMode : {parser : strToStringProperty},
+			opacity : {parser : strToIntProperty},
+			frameRate : {parser : strToIntProperty}
 		};
 		
 		
-		public static var DISPLAY_BLOCK 			: String 	= "block";
-		public static var DISPLAY_NONE 				: String 	= "none";
-		public static var POSITION_STATIC 			: String 	= "static";
-		public static var POSITION_ABSOLUTE 		: String 	= "absolute";
-		public static var POSITION_RELATIVE 		: String 	= "relative";
-		public static var POSITION_FIXED	 		: String 	= "fixed";
+		public static const DISPLAY_BLOCK 			: String 	= "block";
+		public static const DISPLAY_NONE 				: String 	= "none";
+		public static const POSITION_STATIC 			: String 	= "static";
+		public static const POSITION_ABSOLUTE 		: String 	= "absolute";
+		public static const POSITION_RELATIVE 		: String 	= "relative";
+		public static const POSITION_FIXED	 		: String 	= "fixed";
 			                                                 
-		public static var OVERFLOW_VISIBLE 			: String 	= "visible";
-		public static var OVERFLOW_HIDDEN 			: String 	= "hidden";
+		public static const OVERFLOW_VISIBLE 			: String 	= "visible";
+		public static const OVERFLOW_HIDDEN 			: String 	= "hidden";
 		
-		public static var VISIBILITY_VISIBLE		: String	= 'visible';
-		public static var VISIBILITY_HIDDEN			: String	= 'hidden';
+		public static const VISIBILITY_VISIBLE		: String	= 'visible';
+		public static const VISIBILITY_HIDDEN			: String	= 'hidden';
 		
-		public static var CURSOR_AUTO				: String	= 'auto';
-		public static var CURSOR_POINTER			: String	= 'pointer';
+		public static const CURSOR_AUTO				: String	= 'auto';
+		public static const CURSOR_POINTER			: String	= 'pointer';
 		
 	
 		
@@ -97,117 +87,15 @@ package reprise.css.propertyparsers
 			return defaults;
 		}
 		
-		
-		
-		public static function parseDisplay(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parsePosition(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
 		public static function parseOverflow(val:String, file:String):CSSParsingResult
 		{
 			var values:Array = val.split(' ');
-			var overflowX:CSSProperty = parseOverflowX(values[0] as String, file);
+			var overflowX:CSSProperty = strToStringProperty(values[0] as String, file);
 			var overflowY:CSSProperty = values.length > 1 
-				? parseOverflowY(values[1] as String, file) 
-				: parseOverflowY(values[0] as String, file);
+				? strToStringProperty(values[1] as String, file) 
+				: strToStringProperty(values[0] as String, file);
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				overflowX, 'overflowX', overflowY, 'overflowY');
-		}
-		
-		public static function parseOverflowY(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseOverflowX(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseLeft(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseRight(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseTop(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBottom(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseZIndex(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseWidth(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseOuterWidth(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseMinWidth(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseHeight(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}		
-		
-		public static function parseMinHeight(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseMaxHeight(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseBoxSizing(val:String, file:String) : CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseFloat(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseClear(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseVisibility(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseItemSpacing(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 		
 		public static function parseCursor(val:String, file:String):CSSProperty
@@ -216,31 +104,6 @@ package reprise.css.propertyparsers
 				return strToURLProperty(val, file);
 			else
 				return strToStringProperty(val, file);
-		}
-		
-		public static function parseTooltipDelay(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
-		}
-		
-		public static function parseTooltipRenderer(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseBlendMode(val:String, file:String):CSSProperty
-		{
-			return strToStringProperty(val, file);
-		}
-		
-		public static function parseOpacity(val:String, file:String):CSSProperty
-		{
-			return strToFloatProperty(val, file);
-		}
-		
-		public static function parseFrameRate(val:String, file:String):CSSProperty
-		{
-			return strToIntProperty(val, file);
 		}
 	}
 }

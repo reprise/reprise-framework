@@ -32,16 +32,19 @@ package reprise.css.propertyparsers
 
 	public class Transition extends CSSPropertyParser
 	{
-		public static var KNOWN_PROPERTIES : Array = 
-		[
-			'RepriseTransition',
-			'RepriseTransitionProperty',
-			'RepriseTransitionDuration',
-			'RepriseTransitionDelay',
-			'RepriseTransitionTimingFunction',
-			'RepriseTransitionDefaultValue'
-		];
-		public static var EASINGS : Object = 
+		/***************************************************************************
+		*							public properties							   *
+		***************************************************************************/
+		public static const KNOWN_PROPERTIES : Object =
+		{
+			RepriseTransition : {parser : parseRepriseTransition},
+			RepriseTransitionProperty : {parser : parseRepriseTransitionPart},
+			RepriseTransitionDuration : {parser : parseRepriseTransitionDuration},
+			RepriseTransitionDelay : {parser : parseRepriseTransitionDelay},
+			RepriseTransitionTimingFunction : {parser : parseRepriseTransitionTimingFunction},
+			RepriseTransitionDefaultValue : {parser : parseRepriseTransitionDefaultValue}
+		};
+		public static const EASINGS : Object = 
 		{
 			linear : Linear.easeNone,
 			Quad : Quad,
@@ -54,12 +57,6 @@ package reprise.css.propertyparsers
 			Sine : Sine
 		};
 		
-		public static function get defaultValues() : Object
-		{
-			return null;
-		}
-		
-		
 		public static function parseRepriseTransition(
 			val:String, file:String) : CSSParsingResult
 		{
@@ -68,8 +65,6 @@ package reprise.css.propertyparsers
 			val = obj.result;
 			
 			var result : CSSParsingResult = new CSSParsingResult();
-			
-			var counter : Number = 0;
 			
 			var properties : Array = [];
 			var durations : Array = [];
