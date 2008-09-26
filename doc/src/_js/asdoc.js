@@ -85,6 +85,32 @@ function toggleProtectedFields(toggleCheckbox)
 	{
 		checkbox.checked = !checkbox.checked;
 	}
+	
+	$$('.protected').each(function(item, i)
+	{
+		if (checkbox.checked)
+		{
+			item.setStyle('display', 'block');
+			var fx = new Fx.Slide(item, {duration:300});
+			fx.slideIn().chain(
+				function() 
+				{
+					var fx = new Fx.Tween(item, {duration:300});
+					fx.start('opacity', '1');
+				});
+		}
+		else
+		{
+			var fx = new Fx.Tween(item, {duration:300});
+			fx.start('opacity', '0').chain(
+				function()
+				{
+					var fx = new Fx.Slide(item, {duration:300});
+					fx.addEvent('onComplete', function(){this.element.setStyle('display', 'none');});
+					fx.slideOut();
+				});
+		}
+	});
 }
 
 function toggleInheritedFields(toggleCheckbox)

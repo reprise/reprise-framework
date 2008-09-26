@@ -427,7 +427,7 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:if>
 				</xsl:if>
 			</xsl:if>
-			<div class="summarySection">
+			<div class="summarySection {$accessLevel}">
 				
 				<!-- Headline -->
 				<h2 class="summaryTableTitle">
@@ -1327,7 +1327,7 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>
 			</xsl:if>
 			
-			<div class="summarySection">
+			<div class="summarySection {$accessLevel}">
 				
 				<!-- Headline -->
 				<h2 class="summaryTableTitle">

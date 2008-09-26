@@ -24,3 +24,8 @@ a img
 {
 	clear: both;
 }
+
+a:focus
+{
+	outline: none;
+}
