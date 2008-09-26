@@ -76,10 +76,6 @@ exclude-result-prefixes="redirect str exslt">
 				<xsl:copy-of select="$docType"/>
 				<xsl:element name="html">
 					<head>
-						<!-- <xsl:call-template name="getStyleLink">
-							<xsl:with-param name="link" select="/asdoc/link"/>
-							<xsl:with-param name="packageName" select="@packageName"/>
-						</xsl:call-template> -->
 						<xsl:call-template name="getKeywords"/>
 						<title>
 							<xsl:if test="$isTopLevel='false'">
@@ -95,8 +91,23 @@ exclude-result-prefixes="redirect str exslt">
 							<xsl:value-of select="$baseRef"/>
 							<xsl:text>_css/asdoc.css);</xsl:text></style>
 						<script src="../{$baseRef}_js/mootools-1.2-core.js" type="text/javascript" charset="utf-8"></script>
+						<script src="../{$baseRef}_js/mootools-1.2-more.js" type="text/javascript" charset="utf-8"></script>
+						<script src="../{$baseRef}_js/asdoc.js" type="text/javascript" charset="utf-8"></script>
 					</head>
 					<xsl:element name="body">
+						<div id="filterPreferences">
+							<ul>
+								<li>
+									<input type="checkbox" id="protectedFieldsCheckbox" name="showProtected" onclick="toggleProtectedFields()" value="1"/> 
+									<a href="#" onclick="toggleProtectedFields(true); return false;">Show protected fields</a>
+								</li>
+								<li>
+									<input type="checkbox" id="inheritedFieldsCheckbox" name="showInherited" onclick="toggleInheritedFields()" value="1"/> 
+									<a href="#" onclick="toggleInheritedFields(true); return false;">Show inherited fields</a>
+								</li>
+							</ul>
+							<div class="clearer"/>
+						</div>
 						<div id="toc">
 							<iframe src="{$baseRef}package-list.html" name="toc_frame"></iframe>
 						</div>
@@ -107,6 +118,7 @@ exclude-result-prefixes="redirect str exslt">
 								<li><a href="../{$baseRef}css/background.html">CSS Documentation</a></li>
 								<li><a href="../{$baseRef}asdoc/index.html">Source Documentation</a></li>
 								<li><a href="../{$baseRef}cookbook/doing_stuff.html">Cookbook</a></li>
+								<li class="filtersButton"><a href="#" onclick="showFilterPreferences(); return false;">Filters</a></li>
 							</ul>
 						</div>
 						<div id="content">
@@ -200,15 +212,6 @@ exclude-result-prefixes="redirect str exslt">
 							<xsl:with-param name="baseRef" select="$baseRef" />
 						</xsl:call-template>
 					
-					<script language="javascript" type="text/javascript">
-						<xsl:comment>
-							<xsl:text>
-</xsl:text>
-							<xsl:text>showHideInherited();</xsl:text>
-							<xsl:text>
-</xsl:text>
-						</xsl:comment>
-					</script>
 					<div class="MainContent"> 
 
 						<!--  PROPERTY DETAIL -->
@@ -425,6 +428,8 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>
 			</xsl:if>
 			<div class="summarySection">
+				
+				<!-- Headline -->
 				<h2 class="summaryTableTitle">
 					<xsl:choose>
 						<xsl:when test="$isGlobal">
@@ -444,6 +449,8 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:text>Properties</xsl:text>
 					</xsl:if>
 				</h2>
+				
+				<!-- Variables -->
 				<xsl:variable name="tableStyle">
 					<xsl:if test="$hasInherited and not($hasFields)">
 						<xsl:text>hideInherited</xsl:text>
@@ -470,25 +477,12 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:text>Property</xsl:text>
 					</xsl:if>
 				</xsl:variable>
-				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="{$tableId}">
-					<tr>
-						<th>
-							<xsl:if test="$isConst='false'">
-								<xsl:text>Property</xsl:text>
-							</xsl:if>
-							<xsl:if test="$isConst='true'">
-								<xsl:text>Constant</xsl:text>
-							</xsl:if>
-						</th>
-                        <xsl:if test="not($config/options/@docversion='2')">
-							<th class="summaryTableOwnerCol">
-								<xsl:value-of select="concat('Defined',$nbsp,'by')" />
-							</th>
-                        </xsl:if>
-					</tr>
+				
+				<ul class="summaryList">
 					<xsl:for-each select="fields/field[@isConst=$isConst and (@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.)] | asAncestors/asAncestor/fields/field[@isConst=$isConst and (@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.)]">
 						<xsl:sort select="translate(@name,'_','')" order="ascending" data-type="text"/>
-	<!--					<tr class="row{position() mod 2}">-->
+						
+						<!-- Variables -->
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
 								<xsl:text>hideInherited</xsl:text>
@@ -512,24 +506,40 @@ exclude-result-prefixes="redirect str exslt">
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						<tr class="{$rowStyle}">
-							<!-- <td class="summaryTableInheritanceCol">
-								<xsl:if test="ancestor::asAncestor">
-									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
-								</xsl:if>
-								<xsl:if test="not(ancestor::asAncestor)">
-									<xsl:value-of select="$nbsp" />
-								</xsl:if>
-							</td> -->
-							<td class="summaryTableSignatureCol">
+						
+						<li class="{$rowStyle}">
+							
+							<!-- Tooltip data -->
+							<xsl:variable name="linkRel">
+								<xsl:call-template name="deTilda">
+									<xsl:with-param name="inText" select="shortDescription/."/>
+								</xsl:call-template>
+							</xsl:variable>
+							
+							<!-- Icon -->
+							<span>
+								<xsl:attribute name="class">
+									<xsl:text>accessType</xsl:text>
+									<xsl:if test="string-length(@only)">
+										<xsl:text> </xsl:text>
+										<xsl:value-of select="@only"/>
+									</xsl:if>
+									<xsl:if test="@isStatic='true'">
+										<xsl:text> static</xsl:text>
+									</xsl:if>
+								</xsl:attribute>
+							</span>
+							
+							<!-- Property name and type -->
+							<code>
 								<xsl:choose>
 									<xsl:when test="ancestor::asAncestor">
-										<a href="{ancestor::asAncestor/classRef/@relativePath}#{@name}" class="signatureLink">
+										<a href="{ancestor::asAncestor/classRef/@relativePath}#{@name}" class="signatureLink" rel="{$linkRel}">
 											<xsl:value-of select="@name" />
 										</a>
 									</xsl:when>
 									<xsl:when test="ancestor::asClass or ancestor::asPackage">
-										<a href="#{@name}" class="signatureLink">
+										<a href="#{@name}" class="signatureLink" rel="{$linkRel}">
 											<xsl:value-of select="@name"/>
 										</a>
 									</xsl:when>
@@ -566,60 +576,12 @@ exclude-result-prefixes="redirect str exslt">
 										<xsl:text>"</xsl:text>
 									</xsl:if>
 								</xsl:if>
-								<div class="summaryTableDescription">
-									<xsl:apply-templates select="deprecated"/>
-									<xsl:if test="not(deprecated)">
-										<xsl:if test="@isStatic='true'">
-											<xsl:text>[static]</xsl:text>
-										</xsl:if>
-										<xsl:if test="string-length(@only) and not(@only='read-write')">
-											<xsl:text>[</xsl:text>
-											<xsl:value-of select="@only"/>
-											<xsl:text>-only</xsl:text>
-											<xsl:text>]</xsl:text>
-										</xsl:if>
-										<xsl:call-template name="shortDescription">
-											<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-										</xsl:call-template>
-									</xsl:if>
-								</div>
-							</td>
-							<xsl:if test="not($config/options/@docversion='2')">
-							<td class="summaryTableOwnerCol">
-								<xsl:choose>
-									<xsl:when test="ancestor::asAncestor">
-										<a href="{ancestor::asAncestor/classRef/@relativePath}">
-											<xsl:value-of select="ancestor::asAncestor/classRef/@name" />
-										</a>
-									</xsl:when>
-									<xsl:when test="ancestor::asClass">
-										<xsl:value-of select="ancestor::asClass/@name" />
-									</xsl:when>
-									<xsl:when test="ancestor::asPackage">
-										<xsl:if test="ancestor::asPackage/@name='$$Global$$'">
-											<xsl:value-of select="concat('Top',$nbsp,'Level')" />
-										</xsl:if>
-										<xsl:if test="ancestor::asPackage/@name!='$$Global$$'">
-											<xsl:value-of select="ancestor::asPackage/@name" />
-										</xsl:if>
-									</xsl:when>
-								</xsl:choose>
-							</td>
-							</xsl:if>
-							<!-- AS2 INHERITED PROPERTIES -->
-							<xsl:if test="$config/options/@docversion='2'">
-								<xsl:for-each select="asAncestors/asAncestor">
-								    <xsl:call-template name="inherited">
-									    <xsl:with-param name="lowerType">properties</xsl:with-param>
-									    <xsl:with-param name="upperType">Properties</xsl:with-param>
-									    <xsl:with-param name="inheritedItems" select="@properties" />
-									    <xsl:with-param name="staticItems" select="@staticProperties" />
-									</xsl:call-template>
-8       	                    </xsl:for-each>
-            			    </xsl:if>
-						</tr>
+							</code>
+							
+						</li>
 					</xsl:for-each>
-				</table>
+				</ul>
+				
 			</div>
 		</xsl:if>
 	</xsl:template>
@@ -856,16 +818,6 @@ exclude-result-prefixes="redirect str exslt">
 				<h2 class="summaryTableTitle">
 					<xsl:text>Styles</xsl:text>
 				</h2>
-				<xsl:if test="$hasInherited">
-					<div class="showHideLinks">
-						<div id="hideInheritedStyle" class="hideInheritedStyle">
-							<a class="showHideLink" href="#styleSummary" onclick="javascript:setInheritedVisible(false,'Style');"><img class="showHideLinkImage" src="{$baseRef}images/expanded.gif" /> Hide Inherited Styles</a>
-						</div>
-						<div id="showInheritedStyle" class="showInheritedStyle">
-							<a class="showHideLink" href="#styleSummary" onclick="javascript:setInheritedVisible(true,'Style');"><img class="showHideLinkImage" src="{$baseRef}images/collapsed.gif" /> Show Inherited Styles</a>
-						</div>
-					</div>
-				</xsl:if>
 				<xsl:variable name="tableStyle">
 					<xsl:if test="$hasInherited and not($hasStyles)">
 						<xsl:text>hideInheritedStyle</xsl:text>
@@ -1028,16 +980,6 @@ exclude-result-prefixes="redirect str exslt">
 				<h2 class="summaryTableTitle">
 					<xsl:text>Effects</xsl:text>
 				</h2>
-				<xsl:if test="$hasInherited">
-					<div class="showHideLinks">
-						<div id="hideInheritedEffect" class="hideInheritedEffect">
-							<a class="showHideLink" href="#effectSummary" onclick="javascript:setInheritedVisible(false,'Effect');"><img class="showHideLinkImage" src="{$baseRef}images/expanded.gif" /> Hide Inherited Effects</a>
-						</div>
-						<div id="showInheritedEffect" class="showInheritedEffect">
-							<a class="showHideLink" href="#effectSummary" onclick="javascript:setInheritedVisible(true,'Effect');"><img class="showHideLinkImage" src="{$baseRef}images/collapsed.gif" /> Show Inherited Effects</a>
-						</div>
-					</div>
-				</xsl:if>
 				<xsl:variable name="tableStyle">
 					<xsl:if test="$hasInherited and not($hasEffects)">
 						<xsl:text>hideInheritedEffect</xsl:text>
@@ -1158,39 +1100,30 @@ exclude-result-prefixes="redirect str exslt">
 
 		<xsl:variable name="hasEvents" select="count(eventsGenerated/event) &gt; 0" />
 		<xsl:variable name="hasInherited" select="count(asAncestors/asAncestor/eventsGenerated/event) &gt; 0" />
+		
 		<xsl:if test="$hasEvents or $hasInherited">
 			<a name="eventSummary" />
+			
 			<div class="summarySection">
+				
+				<!-- Headline -->
 				<h2 class="summaryTableTitle">
 					<xsl:text>Events</xsl:text>
 				</h2>
-				<xsl:if test="$hasInherited">
-					<div class="showHideLinks">
-						<div id="hideInheritedEvent" class="hideInheritedEvent">
-							<a class="showHideLink" href="#eventSummary" onclick="javascript:setInheritedVisible(false,'Event');"><img class="showHideLinkImage" src="{$baseRef}images/expanded.gif" /> Hide Inherited Events</a>
-						</div>
-						<div id="showInheritedEvent" class="showInheritedEvent">
-							<a class="showHideLink" href="#eventSummary" onclick="javascript:setInheritedVisible(true,'Event');"><img class="showHideLinkImage" src="{$baseRef}images/collapsed.gif" /> Show Inherited Events</a>
-						</div>
-					</div>
-				</xsl:if>
+				
+				<!-- Variables -->
 				<xsl:variable name="tableStyle">
 					<xsl:if test="$hasInherited and not($hasEvents)">
 						<xsl:text>hideInheritedEvent</xsl:text>
 					</xsl:if>
 				</xsl:variable>
-				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="summaryTableEvent">
-					<tr>
-						<th>Event</th>
-						<th>Summary</th>
-						<th class="summaryTableOwnerCol">
-							<xsl:value-of select="concat('Defined',$nbsp,'by')" />
-						</th>
-					</tr>
+				
+				<ul class="summaryList">
 
 					<xsl:for-each select="eventsGenerated/event | asAncestors/asAncestor/eventsGenerated/event">
 						<xsl:sort select="@name" order="ascending" data-type="text"/>
-
+						
+						<!-- Variables -->
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
 								<xsl:text>hideInheritedEvent</xsl:text>
@@ -1205,66 +1138,37 @@ exclude-result-prefixes="redirect str exslt">
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						<tr class="{$rowStyle}">
-							<!-- <td class="summaryTableInheritanceCol">
-								<xsl:if test="ancestor::asAncestor">
-									<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
-								</xsl:if>
-								<xsl:if test="not(ancestor::asAncestor)">
-									<xsl:value-of select="$nbsp" />
-								</xsl:if>
-							</td> -->
-							<td class="summaryTableSignatureCol">
-								<div class="summarySignature">
-									<xsl:choose>
-										<xsl:when test="ancestor::asAncestor">
-											<a href="{ancestor::asAncestor/classRef/@relativePath}#event:{@name}" class="signatureLink">
-												<xsl:value-of select="@name" />
-											</a>
-										</xsl:when>
-										<xsl:when test="ancestor::asClass">
-											<a href="#event:{@name}" class="signatureLink">
-												<xsl:value-of select="@name"/>
-											</a>
-										</xsl:when>
-									</xsl:choose>
-	<!-- TODO add param classRefs for AS2 -->
-									<xsl:if test="$config/options/@docversion='2'">
-										<xsl:text> = function(</xsl:text>
-										<xsl:call-template name="params" />
-										<xsl:text>) {}</xsl:text>
-									</xsl:if>
-								</div>
-							</td>
-							<td class="summaryTableDescription summaryTableCol">
-								<xsl:if test="$classDeprecated='true'">
-									<xsl:copy-of select="$deprecatedLabel" />
-									<xsl:text>. </xsl:text>
-								</xsl:if>
-								<xsl:if test="string-length(normalize-space(shortDescription/.))">
-									<xsl:call-template name="deTilda">
-										<xsl:with-param name="inText" select="shortDescription" />
-									</xsl:call-template>
-								</xsl:if>
-								<xsl:if test="not(string-length(normalize-space(shortDescription/.)))">
-									<xsl:value-of select="$nbsp" />
-								</xsl:if>
-							</td>
-							<td class="summaryTableOwnerCol">
+						
+						<!-- Tooltip data -->
+						<xsl:variable name="linkRel">
+							<xsl:call-template name="deTilda">
+								<xsl:with-param name="inText" select="shortDescription/."/>
+							</xsl:call-template>
+						</xsl:variable>
+						
+						<li class="{$rowStyle}">
+							
+							<span class="accessType event"/>
+							
+							<!-- Signature -->
+							<code>
 								<xsl:choose>
 									<xsl:when test="ancestor::asAncestor">
-										<a href="{ancestor::asAncestor/classRef/@relativePath}">
-											<xsl:value-of select="ancestor::asAncestor/classRef/@name" />
+										<a href="{ancestor::asAncestor/classRef/@relativePath}#event:{@name}" class="signatureLink" rel="{$linkRel}">
+											<xsl:value-of select="@owner" />.<xsl:value-of select="@typeName"/>
 										</a>
 									</xsl:when>
 									<xsl:when test="ancestor::asClass">
-										<xsl:value-of select="ancestor::asClass/@name" />
+										<a href="#event:{@name}" class="signatureLink" rel="{$linkRel}">
+											<xsl:value-of select="@owner"/>.<xsl:value-of select="@typeName"/>
+										</a>
 									</xsl:when>
 								</xsl:choose>
-							</td>
-						</tr>
+							</code>
+							
+						</li>
 					</xsl:for-each>
-				</table>
+				</ul>
 			</div>
 		</xsl:if>
 	</xsl:template>
@@ -1410,6 +1314,7 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:variable name="hasInherited" select="count(asAncestors/asAncestor/methods/method[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.]) &gt; 0" />
 
 		<xsl:if test="$hasMethods or $hasInherited">
+			
 			<xsl:if test="$showAnchor">
 				<xsl:if test="$accessLevel='public'">
 					<a name="methodSummary" />
@@ -1421,7 +1326,10 @@ exclude-result-prefixes="redirect str exslt">
 					<a name="protectedMethodSummary" />
 				</xsl:if>
 			</xsl:if>
+			
 			<div class="summarySection">
+				
+				<!-- Headline -->
 				<h2 class="summaryTableTitle">
 					<xsl:choose>
 						<xsl:when test="$isGlobal">
@@ -1436,26 +1344,8 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:choose>
 					<xsl:value-of select="$title" />
 				</h2>
-				<xsl:if test="$hasInherited">
-					<div class="showHideLinks">
-						<xsl:if test="$accessLevel!='protected'">
-							<div id="hideInheritedMethod" class="hideInheritedMethod">
-								<a class="showHideLink" href="#methodSummary" onclick="javascript:setInheritedVisible(false,'Method');"><img class="showHideLinkImage" src="{$baseRef}images/expanded.gif" /> Hide Inherited Public Methods</a>
-							</div>
-							<div id="showInheritedMethod" class="showInheritedMethod">
-								<a class="showHideLink" href="#methodSummary" onclick="javascript:setInheritedVisible(true,'Method');"><img class="showHideLinkImage" src="{$baseRef}images/collapsed.gif" /> Show Inherited Public Methods</a>
-							</div>
-						</xsl:if>
-						<xsl:if test="$accessLevel='protected'">
-							<div id="hideInheritedProtectedMethod" class="hideInheritedProtectedMethod">
-								<a class="showHideLink" href="#protectedMethodSummary" onclick="javascript:setInheritedVisible(false,'ProtectedMethod');"><img class="showHideLinkImage" src="{$baseRef}images/expanded.gif" /> Hide Inherited Protected Methods</a>
-							</div>
-							<div id="showInheritedProtectedMethod" class="showInheritedProtectedMethod">
-								<a class="showHideLink" href="#protectedMethodSummary" onclick="javascript:setInheritedVisible(true,'ProtectedMethod');"><img class="showHideLinkImage" src="{$baseRef}images/collapsed.gif" /> Show Inherited Protected Methods</a>
-							</div>
-						</xsl:if>
-					</div>
-				</xsl:if>
+				
+				<!-- Variables -->
 				<xsl:variable name="tableStyle">
 					<xsl:if test="$hasInherited and not($hasMethods)">
 						<xsl:text>hideInherited</xsl:text>
@@ -1472,21 +1362,8 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:if>
 					<xsl:text>Method</xsl:text>
 				</xsl:variable>
-				<table cellspacing="0" cellpadding="3" class="summaryTable {$tableStyle}" id="{$tableId}">
-					<tr>
-						<th>
-							<xsl:if test="self::asClass">
-								<xsl:text>Method</xsl:text>
-							</xsl:if>
-							<xsl:if test="not(self::asClass)">
-								<xsl:text>Function</xsl:text>
-							</xsl:if>
-						</th>
-						<th class="summaryTableOwnerCol">
-							<xsl:value-of select="concat('Defined',$nbsp,'by')" />
-						</th>
-					</tr>
-
+				
+				<ul class="summaryList">
 					<xsl:apply-templates select="methods/method[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.] | constructors/constructor[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.] | asAncestors/asAncestor/methods/method[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.]" mode="summary">
 						<xsl:sort select="local-name()" />
 						<xsl:sort select="@name" order="ascending" />
@@ -1494,7 +1371,8 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:with-param name="baseRef" select="$baseRef" />
 						<xsl:with-param name="accessLevel" select="$accessLevel" />
 					</xsl:apply-templates>
-				</table>
+				</ul>
+				
 			</div>
 		</xsl:if>
 	</xsl:template>
@@ -1526,6 +1404,7 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:param name="baseRef" select="''" />
 		<xsl:param name="accessLevel" select="'public'" />
 
+		<!-- Variables -->
 		<xsl:variable name="rowStyle">
 			<xsl:if test="ancestor::asAncestor">
 				<xsl:text>hideInherited</xsl:text>
@@ -1544,96 +1423,98 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<tr class="{$rowStyle}">
-			<!-- <td class="summaryTableInheritanceCol">
-				<xsl:if test="ancestor::asAncestor">
-					<img src="{$baseRef}images/inheritedSummary.gif" alt="Inherited" title="Inherited" class="inheritedSummaryImage" />
-				</xsl:if>
-				<xsl:if test="not(ancestor::asAncestor)">
-					<xsl:value-of select="$nbsp" />
-				</xsl:if>
-			</td> -->
-			<td class="summaryTableSignatureCol">
-				<div class="summarySignature">
-					<xsl:choose>
-						<xsl:when test="ancestor::asAncestor">
-							<a href="{ancestor::asAncestor/classRef/@relativePath}#{@name}()" class="signatureLink">
-								<xsl:value-of select="@name" />
-							</a>
-						</xsl:when>
-						<xsl:when test="self::constructor">
-							<xsl:if test="position()>1">
-								<a href="#{@name}{position()}()" class="signatureLink">
-									<xsl:value-of select="@name"/>
-								</a>
-							</xsl:if>
-							<xsl:if test="position()=1">
-								<a href="#{@name}()" class="signatureLink">
-									<xsl:value-of select="@name" />
-								</a>
-							</xsl:if>
-						</xsl:when>
-						<xsl:when test="ancestor::asClass or ancestor::asPackage">
-							<a href="#{@name}()" class="signatureLink">
+		<xsl:variable name="linkRel">
+			<xsl:call-template name="deTilda">
+				<xsl:with-param name="inText" select="shortDescription/."/>
+			</xsl:call-template>
+		</xsl:variable>
+		
+		<li class="{$rowStyle}">
+			
+			<!-- Icon -->
+			<span>
+				<xsl:attribute name="class">
+					<xsl:text>accessType</xsl:text>
+					<xsl:if test="string-length(@only)">
+						<xsl:text> </xsl:text>
+						<xsl:value-of select="@only"/>
+					</xsl:if>
+					<xsl:if test="@isStatic='true'">
+						<xsl:text> static</xsl:text>
+					</xsl:if>
+				</xsl:attribute>
+			</span>
+			
+			<!-- Method Signature -->
+			<code>
+				<xsl:choose>
+					<xsl:when test="ancestor::asAncestor">
+						<a href="{ancestor::asAncestor/classRef/@relativePath}#{@name}()" class="signatureLink" rel="{$linkRel}">
+							<xsl:value-of select="@name" />
+						</a>
+					</xsl:when>
+					<xsl:when test="self::constructor">
+						<xsl:if test="position()>1">
+							<a href="#{@name}{position()}()" class="signatureLink" rel="{$linkRel}">
 								<xsl:value-of select="@name"/>
 							</a>
-						</xsl:when>
-					</xsl:choose>
+						</xsl:if>
+						<xsl:if test="position()=1">
+							<a href="#{@name}()" class="signatureLink" rel="{$linkRel}">
+								<xsl:value-of select="@name" />
+							</a>
+						</xsl:if>
+					</xsl:when>
+					<xsl:when test="ancestor::asClass or ancestor::asPackage">
+						<a href="#{@name}()" class="signatureLink" rel="{$linkRel}">
+							<xsl:value-of select="@name"/>
+						</a>
+					</xsl:when>
+				</xsl:choose>
 
-					<xsl:if test="(not(@type) or @type='method')">
-						<xsl:text>(</xsl:text>
-						<xsl:call-template name="params"/>
-						<xsl:text>)</xsl:text>
-						<xsl:if test="self::method">
-							<xsl:text>:</xsl:text>
-							<xsl:choose>
-								<xsl:when test="@result_type='' or @result_type='*'">
-									<xsl:call-template name="getSpecialTypeLink">
-										<xsl:with-param name="type" select="'*'" />
-									</xsl:call-template>
-								</xsl:when>
-								<xsl:when test="@result_type='void'">
-									<xsl:call-template name="getSpecialTypeLink">
-										<xsl:with-param name="type" select="'void'" />
-									</xsl:call-template>
-								</xsl:when>
-                                <xsl:when test="@result_type='Void' and $config/options/@docversion='2'">
-                                     <xsl:value-of select="@result_type" />
-                                </xsl:when>
-								<xsl:when test="result/classRef">
-									<a href="{result/classRef/@relativePath}">
-										<xsl:call-template name="getSimpleClassName">
-											<xsl:with-param name="fullClassName" select="result/@type"/>
-										</xsl:call-template>
-									</a>
-								</xsl:when>
-								<xsl:when test="not(result/classRef) and result/@type">
-										<xsl:call-template name="getSimpleClassName">
+				<xsl:if test="(not(@type) or @type='method')">
+					<xsl:text>(</xsl:text>
+					<xsl:call-template name="params"/>
+					<xsl:text>)</xsl:text>
+					<xsl:if test="self::method">
+						<xsl:text>:</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@result_type='' or @result_type='*'">
+								<xsl:call-template name="getSpecialTypeLink">
+									<xsl:with-param name="type" select="'*'" />
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:when test="@result_type='void'">
+								<xsl:call-template name="getSpecialTypeLink">
+									<xsl:with-param name="type" select="'void'" />
+								</xsl:call-template>
+							</xsl:when>
+                               <xsl:when test="@result_type='Void' and $config/options/@docversion='2'">
+                                    <xsl:value-of select="@result_type" />
+                               </xsl:when>
+							<xsl:when test="result/classRef">
+								<a href="{result/classRef/@relativePath}">
+									<xsl:call-template name="getSimpleClassName">
 										<xsl:with-param name="fullClassName" select="result/@type"/>
 									</xsl:call-template>
-								</xsl:when>
-								<xsl:otherwise>
+								</a>
+							</xsl:when>
+							<xsl:when test="not(result/classRef) and result/@type">
 									<xsl:call-template name="getSimpleClassName">
-										<xsl:with-param name="fullClassName" select="@result_type" />
-									</xsl:call-template>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:if>
+									<xsl:with-param name="fullClassName" select="result/@type"/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:call-template name="getSimpleClassName">
+									<xsl:with-param name="fullClassName" select="@result_type" />
+								</xsl:call-template>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:if>
-				</div>
-				<div class="summaryTableDescription">
-					<xsl:apply-templates select="deprecated"/>
-					<xsl:if test="not(deprecated)">
-						<xsl:if test="@isStatic='true'">
-							<xsl:text>[static]</xsl:text>
-						</xsl:if>
-						<xsl:call-template name="shortDescription">
-							<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-						</xsl:call-template>
-					</xsl:if>
-				</div>
-			</td>
-			<xsl:if test="not($config/options/@docversion='2')">
+				</xsl:if>
+			</code>
+			
+			<!-- <xsl:if test="not($config/options/@docversion='2')">
 			<td class="summaryTableOwnerCol">
 				<xsl:choose>
 					<xsl:when test="ancestor::asAncestor">
@@ -1654,8 +1535,10 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:when>
 				</xsl:choose>
 			</td>
-			</xsl:if>
-		</tr>
+			</xsl:if> -->
+			
+		</li>
+		
 	</xsl:template>
 
 	<xsl:template name="getNamespaceLink">
@@ -1798,48 +1681,10 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:if>
 					<div class="detailBody">
 						<xsl:apply-templates select="codepart" />
-			
-						<xsl:if test="swfpart/@file and $showSWFs='true'">								
-							<xsl:call-template name="getPlugin">
-								<xsl:with-param name="pluginId" select="concat('example',position())" />
-								<xsl:with-param name="filename" select="swfpart/@file" />
-							</xsl:call-template>
-						</xsl:if>
 					</div>
 				</xsl:for-each>
 			</xsl:if>
 		</xsl:if>
-	</xsl:template>
-
-	<xsl:template name="getPlugin">
-		<xsl:param name="pluginId" />
-		<xsl:param name="filename" />
-							
-		<script language="javascript" type="text/javascript">
-			<xsl:comment>
-				AC_FL_RunContent(
-					"src", "<xsl:value-of select="substring-before($filename,'.swf')" />",
-					"width", "100%",
-					"height", "400px",
-					"align", "middle",
-					"id", "<xsl:value-of select="$pluginId" />",
-					"quality", "high",
-					"bgcolor", "",
-					"name", "<xsl:value-of select="$pluginId" />",
-					"flashvars","",
-					"allowScriptAccess","sameDomain",
-					"type", "application/x-shockwave-flash",
-					"pluginspage", "http://www.macromedia.com/go/getflashplayer"
-				);
-			</xsl:comment>
-		</script>
-
-
-<!--		<object id="{$pluginId}" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" width="100%" height="400px">
-			<param name="movie" value="{$filename}" />
-			<param name="quality" value="high" />
-			<embed name="{$pluginId}" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowScriptAccess="sameDomain" width="100%" height="400px" flashVars="" src="{$filename}" quality="high" play="true" loop="false" align="middle" />
-		</object>-->
 	</xsl:template>
 
 	<xsl:template match="method" mode="detail">
@@ -2194,24 +2039,6 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>	
 				<xsl:if test="swfpart/@file and $showSWFs='true'">
 					<xsl:variable name="filename" select="swfpart/@file" />
-<!-- 					<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%">
-						<param name="src" value="{$filename}" />
-						<embed pluginspage="http://www.macromedia.com/go/getflashplayer" width="100%" height="100%" flashVars="" src="{$filename}" />
-					</object> -->						
-<!-- 					<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,5,0,0" width="100%" height="100%">
-						<param name="src" value="{$filename}" />
-						<embed pluginspage="http://www.macromedia.com/go/getflashplayer" width="100%" height="100%" flashVars="" src="{$filename}" />
-					</object> -->
-					<xsl:call-template name="getPlugin">
-						<xsl:with-param name="filename" select="$filename" />
-					</xsl:call-template>
-<!-- 					<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%" id="TestExample">
-						<param name="allowScriptAccess" value="sameDomain" />
-						<param name="movie" value="{$filename}" />
-						<param name="quality" value="high" />
-						<param name="bgcolor" value="#ffffff" />
-						<embed src="{$filename}" quality="high" bgcolor="#ffffff" width="100%" height="100%" name="TestExample" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-					</object> -->
 				</xsl:if>
 			</xsl:if>
 			<p></p>

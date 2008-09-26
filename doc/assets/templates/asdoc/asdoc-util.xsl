@@ -192,24 +192,10 @@
 				<xsl:text>asdoc.js</xsl:text>
 			</xsl:attribute>
 		</script>
-		<xsl:if test="$isEclipse">
-			<script language="javascript" type="text/javascript">
-				<xsl:comment>
-					eclipseBuild = true;
-				</xsl:comment>
-			</script>
-		</xsl:if>
-		<script language="javascript" type="text/javascript">
-			<xsl:attribute name="src">
-				<xsl:value-of select="$baseRef"/>
-				<xsl:text>cookies.js</xsl:text>
-			</xsl:attribute>
-		</script>
 		<script language="javascript" type="text/javascript">
 			<xsl:comment>
 				asdocTitle = '<xsl:value-of select="$title" />';
 				var baseRef = '<xsl:value-of select="$baseRef" />';
-				window.onload = configPage;
 			</xsl:comment>
 		</script>
 	</xsl:template>
@@ -689,46 +675,6 @@
 					</tr>
 				</table>
 			</xsl:if>
-			<script language="javascript" type="text/javascript">
-				<xsl:comment>
-					<xsl:text>
-</xsl:text>
-					<xsl:text>if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {</xsl:text>
-					<xsl:text>titleBar_setSubTitle("</xsl:text><xsl:value-of select="$subTitle" /><xsl:text>"); </xsl:text>
-					<xsl:text>titleBar_setSubNav(</xsl:text>
-					<xsl:value-of select="$showConstants" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showProperties" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showStyles" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showEffects" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showEvents" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showConstructors" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showMethods" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showIncludeExamples" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showPackageConstants" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showPackageProperties" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showPackageFunctions" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showInterfaces" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showClasses" />
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="$showPackageUse" />
-					<xsl:text>);</xsl:text>
-					<xsl:text>}</xsl:text>
-					<xsl:text>
-</xsl:text>
-				</xsl:comment>
-			</script>
 		</xsl:if>
 
 <!--		<xsl:if test="$copyNum=2">
@@ -900,9 +846,6 @@
 				</xsl:choose>
 			</xsl:variable> -->
 <!--					<a href="http://livedocs.macromedia.com/labs/1/flex/langref/{$filename}" target="mm_livedocs"><xsl:text>Submit Feedback on LiveDocs</xsl:text></a> -->
-						<a href="javascript:gotoLiveDocs('{$filename}','{$filename2}');">
-							<xsl:value-of select="$config/feedback/feedbackLiveDocs/label/." />
-						</a>
 					</xsl:if>
 				</center>
 			</div>

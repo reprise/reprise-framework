@@ -88,3 +88,117 @@ div.detailBody
 	padding-bottom: 30px;
 	border-bottom: 1px dotted #8c8b8d;
 }
+
+.tooltip
+{
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #646464;
+	color: #fff;
+	padding: 10px;
+}
+
+ul.summaryList
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.summaryList li
+{
+	margin-bottom: 5px;
+}
+
+ul.summaryList li span.accessType
+{
+	display: block;
+	width: 21px;
+	height: 12px;
+	background-repeat: no-repeat;
+	float: left;
+	margin-right: 7px;
+	background-image: url(../_img/icons/readwrite.gif);
+}
+
+ul.summaryList li span.accessType.event
+{
+	background-image: url(../_img/icons/event.gif);
+}
+
+ul.summaryList li span.accessType.read
+{
+	background-image: url(../_img/icons/read.gif);
+}
+
+ul.summaryList li span.accessType.write
+{
+	background-image: url(../_img/icons/write.gif);
+}
+
+ul.summaryList li span.accessType.read-write
+{
+	background-image: url(../_img/icons/readwrite.gif);
+}
+
+ul.summaryList li span.accessType.static
+{
+	background-image: url(../_img/icons/static.gif);
+}
+
+ul.summaryList li span.accessType.read.static
+{
+	background-image: url(../_img/icons/static_read.gif);
+}
+
+ul.summaryList li span.accessType.write.static
+{
+	background-image: url(../_img/icons/static_write.gif);
+}
+
+ul.summaryList li span.accessType.read-write.static
+{
+	background-image: url(../_img/icons/static_readwrite.gif);
+}
+
+ul.summaryList a
+{
+	text-decoration: none !important;
+}
+
+ul.summaryList a:hover
+{
+	text-decoration: underline !important;
+}
+
+div.summarySection
+{
+	margin-bottom: 40px;
+}
+
+#filterPreferences
+{
+	background-color: #f3f3f3;
+	border-bottom: 1px solid #d6d6d6;
+	color: #3e3e3e;
+	margin-top: -20px;
+	margin-bottom: 20px;
+	padding: 20px 0 15px 0;
+}
+
+#filterPreferences ul
+{
+	list-style: none;
+	margin-left: 240px;
+}
+
+#filterPreferences ul li
+{
+	float: left;
+	margin-right: 20px;
+}
+
+#filterPreferences a
+{
+	text-decoration: none;
+}

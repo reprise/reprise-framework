@@ -87,7 +87,7 @@ exclude-result-prefixes="str">
 				<tr>
 					<td class="classHeaderTableLabel">Package</td>
 					<td>
-						<a href="package-detail.html" onclick="javascript:loadClassListFrame('class-list.html')">
+						<a href="package-detail.html">
 							<xsl:if test="string-length(@packageName) &gt; 0">
 								<xsl:value-of select="@packageName"/>
 							</xsl:if>
@@ -233,15 +233,6 @@ exclude-result-prefixes="str">
 				<div id="mxmlSyntax" class="mxmlSyntax">
 					<xsl:value-of disable-output-escaping="yes" select="customs/mxml/." />
 				</div>
-				<script language="javascript" type="text/javascript">
-					<xsl:comment>
-						<xsl:text>
-</xsl:text>
-						<xsl:text>setMXMLOnly();</xsl:text>
-						<xsl:text>
-</xsl:text>
-					</xsl:comment>
-				</script>
 			</xsl:if>
 
 			<xsl:apply-templates select="defaultProperty" />

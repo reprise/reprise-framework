@@ -39,3 +39,61 @@ function restorePackageTree()
 		if (elem) elem.addClass('expanded');
 	}
 }
+
+
+var InfoBubbles;
+var preferencesSlideTween;
+
+function initTooltips()
+{
+	var anchors = $$('a');
+	var usedAnchors = [];
+	var i = anchors.length;
+	while (i--)
+	{
+		var anchor = anchors[i];
+		if (anchor.rel && anchor.rel != '')
+		{
+			usedAnchors.push(anchor);
+		}
+	}
+	
+	InfoBubbles = new Tips(usedAnchors, {className:'tooltip'});
+	
+	preferencesSlideTween = new Fx.Slide($('filterPreferences'), {duration: 250});
+	preferencesSlideTween.addEvent('onComplete', function(){if (!this.open) this.element.setStyle('display', 'none')});
+	preferencesSlideTween.hide();
+}
+
+function showFilterPreferences()
+{
+	if (preferencesSlideTween.open)
+	{
+		preferencesSlideTween.slideOut()
+	}
+	else
+	{
+		preferencesSlideTween.element.setStyle('display', 'block');
+		preferencesSlideTween.slideIn();
+	}
+}
+
+function toggleProtectedFields(toggleCheckbox)
+{
+	var checkbox = $('protectedFieldsCheckbox');
+	if (toggleCheckbox)
+	{
+		checkbox.checked = !checkbox.checked;
+	}
+}
+
+function toggleInheritedFields(toggleCheckbox)
+{
+	var checkbox = $('inheritedFieldsCheckbox');
+	if (toggleCheckbox)
+	{
+		checkbox.checked = !checkbox.checked;
+	}
+}
+
+window.addEvent('domready', initTooltips);

@@ -19,3 +19,8 @@ a img
 {
 	border: 0;
 }
+
+.clearer
+{
+	clear: both;
+}
