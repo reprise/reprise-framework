@@ -11,16 +11,16 @@
 
 package reprise.controls
 {
-	import reprise.utils.StringUtil;	
-	
-	import flash.events.TextEvent;	
-	
-	import reprise.ui.DocumentView; 
-
-	import flash.events.Event;
-	import flash.text.TextFormat;
-	
+	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
+	import reprise.ui.DocumentView;
+	import reprise.utils.StringUtil;
+	
+	import flash.events.Event;
+	import flash.events.TextEvent;
+	import flash.text.TextFormat;		
+	
+	use namespace reprise;
 	
 	public class TextInput extends Label
 	{

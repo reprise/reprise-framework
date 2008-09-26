@@ -24,7 +24,6 @@ package reprise.css
 	import reprise.css.propertyparsers.Transition;
 	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.css.transitions.TransitionVOFactory;
-	import reprise.utils.StringUtil;
 	
 	import flash.text.StyleSheet;
 	

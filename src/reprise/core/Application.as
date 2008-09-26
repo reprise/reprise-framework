@@ -11,7 +11,6 @@
 
 package reprise.core
 {
-	import reprise.core.TooltipManager;
 	import reprise.css.CSS;
 	import reprise.events.DisplayEvent;
 	import reprise.external.IResource;
