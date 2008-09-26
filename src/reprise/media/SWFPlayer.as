@@ -163,7 +163,7 @@ package reprise.media
 		
 		protected function framerate():uint
 		{
-			return m_loader.content ? m_loader.contentLoaderInfo.frameRate || 25;
+			return m_loader.content ? m_loader.contentLoaderInfo.frameRate : 25;
 		}
 		
 		
