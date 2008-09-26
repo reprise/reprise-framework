@@ -93,6 +93,10 @@ package reprise.media
 		
 		protected override function doPlay():void 
 		{
+			if (!m_loader.content)
+			{
+				return;
+			}
 			MovieClip(m_loader.content).gotoAndPlay(timeToFrame(position()));
 		}
 		
@@ -159,7 +163,7 @@ package reprise.media
 		
 		protected function framerate():uint
 		{
-			return m_loader.contentLoaderInfo.frameRate || 25;
+			return m_loader.content ? m_loader.contentLoaderInfo.frameRate || 25;
 		}
 		
 		
