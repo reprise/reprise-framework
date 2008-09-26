@@ -207,169 +207,22 @@ package reprise.css.propertyparsers
 		
 		public static function parseBorderStyle(val:String, file:String) : CSSParsingResult
 		{
-			// evaluate important flag
-			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : Boolean = obj.important;
-			val = obj.result;	
-			
-			var parts : Array = val.split(" ");
-			
-			var borderTopStyle : CSSProperty;
-			var borderRightStyle : CSSProperty;
-			var borderBottomStyle : CSSProperty;
-			var borderLeftStyle : CSSProperty;
-			
-			switch (parts.length)
-			{
-				case 1:
-					borderTopStyle = borderRightStyle = borderBottomStyle = 
-						borderLeftStyle = strToStringProperty(parts[0], file);
-					break;
-					
-				case 2:
-					borderTopStyle = borderBottomStyle = strToStringProperty(parts[0], file);
-					borderRightStyle = borderLeftStyle = strToStringProperty(parts[1], file);								
-					break;
-					
-				case 3:
-					borderTopStyle = strToStringProperty(parts[0], file);
-					borderRightStyle = borderLeftStyle = strToStringProperty(parts[1], file);
-					borderBottomStyle = strToStringProperty(parts[2], file);
-					break;
-					
-				case 4:
-					borderTopStyle = strToStringProperty(parts[0], file);
-					borderRightStyle = strToStringProperty(parts[1], file);
-					borderBottomStyle = strToStringProperty(parts[2], file);
-					borderLeftStyle = strToStringProperty(parts[3], file);
-					break;
-					
-				default:
-					trace("Border::parseBorderStyle: wrong number of " +
-						"parameters in: " + val);
-					return null;
-			}
-			
-			borderTopStyle.setImportant(important);
-			borderRightStyle.setImportant(important);
-			borderBottomStyle.setImportant(important);
-			borderLeftStyle.setImportant(important);		
-			
-			return CSSParsingResult.ResultWithPropertiesAndKeys(
-				borderTopStyle, 'borderTopStyle', borderRightStyle, 'borderRightStyle',
-				borderBottomStyle, 'borderBottomStyle', borderLeftStyle, 'borderLeftStyle');
+			return strToRectParsingResult(
+				val, file, 'border', 'Style', strToStringProperty);
 		}
 		
 		
 		public static function parseBorderColor(val:String, file:String) : CSSParsingResult
 		{
-			// evaluate important flag
-			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : Boolean = obj.important;
-			val = obj.result;
-					
-			var parts : Array = val.split(" ");
-			
-			var borderTopColor : CSSProperty;
-			var borderRightColor : CSSProperty;
-			var borderBottomColor : CSSProperty;
-			var borderLeftColor : CSSProperty;		
-			
-			switch (parts.length)
-			{
-				case 1:
-					borderTopColor = borderRightColor = borderBottomColor = 
-						borderLeftColor = strToColorProperty(parts[0], file);
-					break;
-					
-				case 2:
-					borderTopColor = borderBottomColor = strToColorProperty(parts[0], file);
-					borderRightColor = borderLeftColor = strToColorProperty(parts[1], file);
-					break;
-					
-				case 3:
-					borderTopColor = strToColorProperty(parts[0], file);
-					borderRightColor = borderLeftColor = strToColorProperty(parts[1], file);
-					borderBottomColor = strToColorProperty(parts[2], file);
-					break;
-					
-				case 4:
-					borderTopColor = strToColorProperty(parts[0], file);
-					borderRightColor = strToColorProperty(parts[1], file);
-					borderBottomColor = strToColorProperty(parts[2], file);
-					borderLeftColor = strToColorProperty(parts[3], file);
-					break;
-					
-				default:
-					trace("Border::parseBorderColor: wrong number of " +
-						"parameters in: " + val);
-					return null;
-			}
-			
-			borderTopColor.setImportant(important);
-			borderRightColor.setImportant(important);
-			borderBottomColor.setImportant(important);
-			borderLeftColor.setImportant(important);		
-			
-			return CSSParsingResult.ResultWithPropertiesAndKeys(
-				borderTopColor, 'borderTopColor', borderRightColor, 'borderRightColor',
-				borderBottomColor, 'borderBottomColor', borderLeftColor, 'borderLeftColor');		
+			return strToRectParsingResult(
+				val, file, 'border', 'Color', strToColorProperty);
 		}
 		
 		
 		public static function parseBorderWidth(val:String, file:String) : CSSParsingResult
-		{		
-			// evaluate important flag
-			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : Boolean = obj.important;
-			val = obj.result;
-			
-			var parts : Array = val.split(" ");
-			
-			var borderTopWidth : CSSProperty;
-			var borderRightWidth : CSSProperty;
-			var borderBottomWidth : CSSProperty;
-			var borderLeftWidth : CSSProperty;		
-			
-			switch (parts.length)
-			{
-				case 1:
-					borderTopWidth = borderRightWidth = borderBottomWidth = 
-						borderLeftWidth = strToIntProperty(parts[0], file);
-					break;
-					
-				case 2:
-					borderTopWidth = borderBottomWidth = strToIntProperty(parts[0], file);
-					borderRightWidth = borderLeftWidth = strToIntProperty(parts[1], file);
-					break;
-					
-				case 3:
-					borderTopWidth = strToIntProperty(parts[0], file);
-					borderRightWidth = borderLeftWidth = strToIntProperty(parts[1], file);
-					borderBottomWidth = strToIntProperty(parts[2], file);
-					break;
-					
-				case 4:
-					borderTopWidth = strToIntProperty(parts[0], file);
-					borderRightWidth = strToIntProperty(parts[1], file);
-					borderBottomWidth = strToIntProperty(parts[2], file);
-					borderLeftWidth = strToIntProperty(parts[3], file);
-					break;
-					
-				default:
-					trace("Border::parseBorderWidth: wrong number of " +
-						"parameters in: " + val);
-					return null;
-			}
-			
-			borderTopWidth.setImportant(important);
-			borderRightWidth.setImportant(important);
-			borderBottomWidth.setImportant(important);
-			borderLeftWidth.setImportant(important);
-			
-			return CSSParsingResult.ResultWithPropertiesAndKeys(
-				borderTopWidth, 'borderTopWidth', borderRightWidth, 'borderRightWidth',
-				borderBottomWidth, 'borderBottomWidth', borderLeftWidth, 'borderLeftWidth');				
+		{
+			return strToRectParsingResult(
+				val, file, 'border', 'Color', strToIntProperty);
 		}	
 		
 		

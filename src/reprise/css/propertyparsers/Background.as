@@ -358,7 +358,8 @@ package reprise.css.propertyparsers
 		
 		public static function parseBackgroundScale9Rect(val:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(val, file, 'backgroundScale9Rect');
+			return strToRectParsingResult(
+				val, file, 'backgroundScale9Rect', '', strToIntProperty);
 		}
 		
 		public static function parseBackgroundImageType(val:String, file:String) : CSSProperty

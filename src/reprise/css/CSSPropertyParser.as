@@ -189,7 +189,8 @@ package reprise.css
 			return prop;		
 		}
 		
-		protected static function strToRectParsingResult(val:String, file:String, name:String) : CSSParsingResult
+		protected static function strToRectParsingResult(val : String, file : String, 
+			prefix : String, postfix : String, parser : Function) : CSSParsingResult
 		{
 			var obj : Object = strToProperty(val, file);
 			var prop : CSSProperty = obj.property;
@@ -199,10 +200,10 @@ package reprise.css
 		
 			if (prop.inheritsValue())
 			{
-				res.addPropertyForKey(prop, name + 'Top');
-				res.addPropertyForKey(prop, name + 'Right');
-				res.addPropertyForKey(prop, name + 'Bottom');
-				res.addPropertyForKey(prop, name + 'Left');
+				res.addPropertyForKey(prop, prefix + 'Top' + postfix);
+				res.addPropertyForKey(prop, prefix + 'Right' + postfix);
+				res.addPropertyForKey(prop, prefix + 'Bottom' + postfix);
+				res.addPropertyForKey(prop, prefix + 'Left' + postfix);
 			}
 			
 			if (val.length == 0)
@@ -222,29 +223,29 @@ package reprise.css
 			{
 				case 1:
 					rectTop = rectRight = rectBottom = 
-						rectLeft = strToIntProperty(parts[0], file);
+						rectLeft = parser(parts[0], file);
 					break;
 					
 				case 2:
-					rectTop = rectBottom = strToIntProperty(parts[0], file);
-					rectRight = rectLeft = strToIntProperty(parts[1], file);								
+					rectTop = rectBottom = parser(parts[0], file);
+					rectRight = rectLeft = parser(parts[1], file);								
 					break;
 					
 				case 3:
-					rectTop = strToIntProperty(parts[0], file);
-					rectRight = rectLeft = strToIntProperty(parts[1], file);
-					rectBottom = strToIntProperty(parts[2], file);
+					rectTop = parser(parts[0], file);
+					rectRight = rectLeft = parser(parts[1], file);
+					rectBottom = parser(parts[2], file);
 					break;
 					
 				case 4:
-					rectTop = strToIntProperty(parts[0], file);
-					rectRight = strToIntProperty(parts[1], file);
-					rectBottom = strToIntProperty(parts[2], file);
-					rectLeft = strToIntProperty(parts[3], file);
+					rectTop = parser(parts[0], file);
+					rectRight = parser(parts[1], file);
+					rectBottom = parser(parts[2], file);
+					rectLeft = parser(parts[3], file);
 					break;
 					
 				default:
-					trace('w Wrong number of parameters for CSSProperty rect with name"' + name + '"');
+					trace('w Wrong number of parameters for CSSProperty rect with name"' + prefix + '"');
 					return res;
 			}
 			rectTop.setImportant(important);
@@ -252,10 +253,10 @@ package reprise.css
 			rectBottom.setImportant(important);
 			rectLeft.setImportant(important);
 	
-			res.addPropertyForKey(rectTop, name + 'Top');
-			res.addPropertyForKey(rectRight, name + 'Right');
-			res.addPropertyForKey(rectBottom, name + 'Bottom');
-			res.addPropertyForKey(rectLeft, name + 'Left');		
+			res.addPropertyForKey(rectTop, prefix + 'Top' + postfix);
+			res.addPropertyForKey(rectRight, prefix + 'Right' + postfix);
+			res.addPropertyForKey(rectBottom, prefix + 'Bottom' + postfix);
+			res.addPropertyForKey(rectLeft, prefix + 'Left' + postfix);		
 			return res;
 		}
 		
