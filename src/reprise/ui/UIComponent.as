@@ -41,7 +41,6 @@ package reprise.ui
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "UIComponent";
 		
 		
 		/***************************************************************************
@@ -84,27 +83,30 @@ package reprise.ui
 		protected static const DEFAULT_SCROLLBAR_WIDTH : int = 16;
 		
 		
-		protected var m_containingBlock : UIComponent;
-		protected var m_explicitContainingBlock : UIComponent;
-		
+		//attribute properties
 		protected var m_xmlDefinition : XML;
+		protected var m_nodeAttributes : Object;
 		protected var m_cssClasses : String = "";
-		protected var m_cssPseudoClasses : String = "";
-		protected var m_pseudoClassesBackup : String;
 		protected var m_cssId : String = "";
 		protected var m_selectorPath : String;
+		
+		//style properties
 		protected var m_currentStyles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
-		protected var m_specifiedStyles : CSSDeclaration;
-		protected var m_elementDefaultStyles : CSSDeclaration;
 		protected var m_instanceStyles : CSSDeclaration;
-		protected var m_transitionsManager : CSSTransitionsManager;
+		protected var m_elementDefaultStyles : CSSDeclaration;
 		
 		protected var m_autoFlags : Object = {};
+		protected var m_positionInFlow : int = 1;
+		protected var m_positioningType : String;
 		
+		//validation properties
 		protected var m_stylesInvalidated : Boolean;
-		protected var m_skipNextValidation : Boolean;
+		protected var m_dimensionsChanged : Boolean;
+		protected var m_specifiedDimensionsChanged : Boolean;
+		protected var m_selectorPathChanged : Boolean;
 		
+		//dimensions and position
 		protected var m_contentBoxWidth : Number = 0;
 		protected var m_contentBoxHeight : Number = 0;
 		protected var m_borderBoxHeight : Number = 0;
@@ -112,8 +114,18 @@ package reprise.ui
 		protected var m_paddingBoxHeight : Number = 0;
 		protected var m_paddingBoxWidth : Number = 0;
 		
+		protected var m_intrinsicWidth : Number = -1;
+		protected var m_intrinsicHeight : Number = -1;
+		
+		protected var m_positionOffset : Point;
+		
+		//managers and renderers
+		protected var m_layoutManager : CSSBoxModelLayoutManager;
 		protected var m_borderRenderer : ICSSRenderer;
 		protected var m_backgroundRenderer : ICSSRenderer;
+		
+		//displays
+		protected var m_containingBlock : UIComponent;
 		
 		protected var m_upperContentDisplay : Sprite;
 		protected var m_lowerContentDisplay : Sprite;
@@ -121,31 +133,25 @@ package reprise.ui
 		protected var m_bordersDisplay : Sprite;
 		protected var m_upperContentMask : Sprite;
 		protected var m_lowerContentMask : Sprite;
-		protected var m_scrollbarsDisplay : Sprite;
 		
 		protected var m_vScrollbar : Scrollbar;
 		protected var m_hScrollbar : Scrollbar;
 		
 		protected var m_dropShadowFilter : DropShadowFilter;
 		
-		protected var m_nodeAttributes : Object;
 		
-		protected var m_positionInFlow : int = 1;
-		protected var m_oldInFlowStatus : int = -1;
-		protected var m_positioningType : String;
-		protected var m_positionOffset : Point;
-		protected var m_verticalFlowPosition : Number = 0;
-		protected var m_oldOuterBoxDimension : Point;
-		
-		protected var m_intrinsicWidth : Number = -1;
-		protected var m_intrinsicHeight : Number = -1;
-		
-		protected var m_dimensionsChanged : Boolean;
-		protected var m_specifiedDimensionsChanged : Boolean;
-		
-		protected var m_selectorPathChanged : Boolean;
-		
-		protected var m_layoutManager : CSSBoxModelLayoutManager;
+		/***************************************************************************
+		*							private properties							   *
+		***************************************************************************/
+		private var m_explicitContainingBlock : UIComponent;
+		private var m_cssPseudoClasses : String = "";
+		private var m_pseudoClassesBackup : String;
+		private var m_specifiedStyles : CSSDeclaration;
+		private var m_transitionsManager : CSSTransitionsManager;
+		private var m_skipNextValidation : Boolean;
+		private var m_scrollbarsDisplay : Sprite;
+		private var m_oldInFlowStatus : int = -1;
+		private var m_oldOuterBoxDimension : Point;
 
 		
 		/***************************************************************************
@@ -1024,6 +1030,11 @@ package reprise.ui
 			m_upperContentDisplay.name = 'upper_content_display';
 		}
 		
+		/**
+		 * Resets the elements styles.
+		 * 
+		 * Mostly used in debugging to enable style reloading.
+		 */
 		protected function resetStyles() : void
 		{
 			m_complexStyles = null;
@@ -1036,6 +1047,14 @@ package reprise.ui
 			invalidate();
 		}
 		
+		/**
+		 * Executes element validation, refreshing and applying all style properties and 
+		 * redrawing the element.
+		 * 
+		 * Components shouldn't need to override this method, since it only starts the 
+		 * validation cycle and doesn't really implement functionality that's worth 
+		 * overriding.
+		 */
 		protected override function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
@@ -1051,6 +1070,7 @@ package reprise.ui
 			}
 			super.validateElement(forceValidation);
 		}
+		
 		/**
 		 * Hook method, executed before the UIComponents' children get validated.
 		 * 
@@ -1080,34 +1100,34 @@ package reprise.ui
 					visible = false;
 					return;
 				}
-				visible = m_visible;
-				
-				if (m_currentStyles.overflowY == 'scroll')
-				{
-					if (!m_vScrollbar)
-					{
-						m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
-					}
-					else
-					{
-						m_vScrollbar.setVisibility(true);
-					}
-				}
-				
-				if (m_currentStyles.overflowX == 'scroll')
-				{
-					if (!m_hScrollbar)
-					{
-						m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
-					}
-					else
-					{
-						m_hScrollbar.setVisibility(true);
-					}
-				}
 				
 				if (m_stylesInvalidated)
 				{
+					visible = m_visible;
+					
+					if (m_currentStyles.overflowY == 'scroll')
+					{
+						if (!m_vScrollbar)
+						{
+							m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+						}
+						else
+						{
+							m_vScrollbar.setVisibility(true);
+						}
+					}
+					
+					if (m_currentStyles.overflowX == 'scroll')
+					{
+						if (!m_hScrollbar)
+						{
+							m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
+						}
+						else
+						{
+							m_hScrollbar.setVisibility(true);
+						}
+					}
 					applyStyles();
 					if (m_currentStyles.width != oldWidth || 
 						m_currentStyles.height != oldHeight)
@@ -1217,6 +1237,7 @@ package reprise.ui
 					{
 	//					trace("w parentreflow needed in " + 
 	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
+						//TODO: change this use parent.validateAfterChildren
 						m_skipNextValidation = true;
 						m_parentElement.forceRedraw();
 						return;
@@ -1233,7 +1254,8 @@ package reprise.ui
 					applyOutOfFlowChildPositions();
 				}
 			}
-			applyDepthSorting();
+			m_layoutManager.applyDepthSorting(
+				m_lowerContentDisplay, m_upperContentDisplay);
 		}
 		protected override function finishValidation() : void
 		{
@@ -1243,12 +1265,6 @@ package reprise.ui
 			m_specifiedDimensionsChanged = false;
 			
 			m_stylesInvalidated = false;
-		}
-		
-		protected function applyDepthSorting() : void
-		{
-			m_layoutManager.applyDepthSorting(
-				m_lowerContentDisplay, m_upperContentDisplay);
 		}
 
 		protected override function validateChildren() : void
@@ -1742,7 +1758,7 @@ package reprise.ui
 		 * If that fails, the method invokes setValueForKey to try to assign the value 
 		 * by other means.
 		 */
-		protected function assignValueFromAttribute(
+		private function assignValueFromAttribute(
 			attribute : String, value : String) : void
 		{
 			var usedValue : * = resolveBindings(value);
@@ -1815,7 +1831,7 @@ package reprise.ui
 			}
 		}
 		
-		protected function preprocessTextNode(node : XML) : void
+		private function preprocessTextNode(node : XML) : void
 		{
 			var textNodeTags : String = UIRendererFactory.TEXTNODE_TAGS;
 			if (textNodeTags.indexOf(node.localName() + ",") != -1)
@@ -2147,6 +2163,7 @@ package reprise.ui
 			scrollbar.cssClasses = orientation + "Scrollbar";
 			scrollbar.setStyle('position', 'absolute');
 			scrollbar.setStyle('autoHide', 'false');
+			//TODO: remove scrollbarWidth property
 			scrollbar.setStyle('width', 
 				(m_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH) + 'px');
 			if (orientation == Scrollbar.ORIENTATION_HORIZONTAL)
@@ -2158,12 +2175,12 @@ package reprise.ui
 				scrollbar.addEventListener(Event.CHANGE, 
 					this[orientation + 'Scrollbar_change']);
 			}
-			scrollbar.addEventListener(MouseEvent.CLICK, scrollbar_event);
+			scrollbar.addEventListener(MouseEvent.CLICK, scrollbar_click);
 			scrollbar.validateElement(true, true);
 			return scrollbar;
 		}
 		
-		protected function scrollbar_event(event : Event) : void
+		protected function scrollbar_click(event : Event) : void
 		{
 			event.stopImmediatePropagation();
 			event.stopPropagation();
