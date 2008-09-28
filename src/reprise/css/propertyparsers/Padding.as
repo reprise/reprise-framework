@@ -24,7 +24,7 @@ package reprise.css.propertyparsers
 		***************************************************************************/
 		public static const KNOWN_PROPERTIES : Object =
 		{
-			padding : {parser : strToIntProperty},
+			padding : {parser : parsePadding},
 			paddingTop : {parser : strToIntProperty},
 			paddingRight : {parser : strToIntProperty},
 			paddingBottom : {parser : strToIntProperty},

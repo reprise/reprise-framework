@@ -24,7 +24,7 @@ package reprise.css.propertyparsers
 		***************************************************************************/
 		public static const KNOWN_PROPERTIES : Object =
 		{
-			margin : {parser : strToIntProperty},
+			margin : {parser : parseMargin},
 			marginTop : {parser : strToIntProperty},
 			marginRight : {parser : strToIntProperty},
 			marginBottom : {parser : strToIntProperty},
