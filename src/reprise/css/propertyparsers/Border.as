@@ -161,6 +161,7 @@ package reprise.css.propertyparsers
 			var extractionResult : Object = extractBorderStyleFromString(val, file);
 			var borderStyle : CSSProperty = extractionResult.borderStyle;
 			val = extractionResult.filteredString;
+			trace('after style: ' + val);
 			if (side == '')
 			{
 				res.addPropertyForKey(borderStyle, 'borderTopStyle');
@@ -189,15 +190,22 @@ package reprise.css.propertyparsers
 			}
 			
 			var parts : Array = val.split(" ");
-			var returnValue : Object;
+			var borderColor : CSSProperty;
 			
 			if (parts.length)
 			{
-				returnValue = Border["parseBorder" + side + "Color"](String(parts.shift()) + important, file);
+				borderColor = strToColorProperty(String(parts.shift()) + important, file);
 				if (side == '')
-					res.addEntriesFromResult(CSSParsingResult(returnValue));
+				{
+					res.addPropertyForKey(borderColor, 'borderTopColor');
+					res.addPropertyForKey(borderColor, 'borderRightColor');
+					res.addPropertyForKey(borderColor, 'borderBottomColor');
+					res.addPropertyForKey(borderColor, 'borderLeftColor');
+				}
 				else
-					res.addPropertyForKey(CSSProperty(returnValue), 'border' + side + 'Color');
+				{
+					res.addPropertyForKey(borderColor, 'border' + side + 'Color');
+				}
 			}
 			
 			return res;
