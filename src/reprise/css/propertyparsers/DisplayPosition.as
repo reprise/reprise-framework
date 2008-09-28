@@ -50,7 +50,7 @@ package reprise.css.propertyparsers
 			tooltipDelay : {parser : strToIntProperty},
 			tooltipRenderer : {parser : strToStringProperty},
 			blendMode : {parser : strToStringProperty},
-			opacity : {parser : strToIntProperty},
+			opacity : {parser : strToFloatProperty},
 			frameRate : {parser : strToIntProperty}
 		};
 		
