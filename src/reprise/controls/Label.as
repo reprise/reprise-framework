@@ -11,6 +11,7 @@
 
 package reprise.controls
 {
+	import reprise.utils.StringUtil;	
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
@@ -606,6 +607,11 @@ package reprise.controls
 				case 'lowercase':
 				{
 					text = text.toLowerCase();
+					break;
+				}
+				case 'capitalize':
+				{
+					text = StringUtil.toTitleCase(text);
 					break;
 				}
 			}
