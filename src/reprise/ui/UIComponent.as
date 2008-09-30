@@ -1831,7 +1831,7 @@ package reprise.ui
 			}
 		}
 		
-		private function preprocessTextNode(node : XML) : void
+		protected function preprocessTextNode(node : XML) : void
 		{
 			var textNodeTags : String = UIRendererFactory.TEXTNODE_TAGS;
 			if (textNodeTags.indexOf(node.localName() + ",") != -1)
