@@ -242,7 +242,6 @@ exclude-result-prefixes="str">
 			<xsl:call-template name="sees">
 				<xsl:with-param name="labelClass" select="'classHeaderTableLabel'" />
 			</xsl:call-template>
-			<hr class="headerSeparator" />
 		</div>
 	</xsl:template>
 

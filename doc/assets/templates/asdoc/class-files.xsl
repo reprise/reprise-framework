@@ -92,22 +92,10 @@ exclude-result-prefixes="redirect str exslt">
 							<xsl:text>_css/asdoc.css);</xsl:text></style>
 						<script src="../{$baseRef}_js/mootools-1.2-core.js" type="text/javascript" charset="utf-8"></script>
 						<script src="../{$baseRef}_js/mootools-1.2-more.js" type="text/javascript" charset="utf-8"></script>
+						<script src="../{$baseRef}_js/cookie_storage.js" type="text/javascript" charset="utf-8"></script>
 						<script src="../{$baseRef}_js/asdoc.js" type="text/javascript" charset="utf-8"></script>
 					</head>
 					<xsl:element name="body">
-						<div id="filterPreferences">
-							<ul>
-								<li>
-									<input type="checkbox" id="protectedFieldsCheckbox" name="showProtected" onclick="toggleProtectedFields()" value="1"/> 
-									<a href="#" onclick="toggleProtectedFields(true); return false;">Show protected fields</a>
-								</li>
-								<li>
-									<input type="checkbox" id="inheritedFieldsCheckbox" name="showInherited" onclick="toggleInheritedFields()" value="1"/> 
-									<a href="#" onclick="toggleInheritedFields(true); return false;">Show inherited fields</a>
-								</li>
-							</ul>
-							<div class="clearer"/>
-						</div>
 						<div id="toc">
 							<iframe src="{$baseRef}package-list.html" name="toc_frame"></iframe>
 						</div>
@@ -118,7 +106,6 @@ exclude-result-prefixes="redirect str exslt">
 								<li><a href="../{$baseRef}css/background.html">CSS Documentation</a></li>
 								<li><a href="../{$baseRef}asdoc/index.html">Source Documentation</a></li>
 								<li><a href="../{$baseRef}cookbook/doing_stuff.html">Cookbook</a></li>
-								<li class="filtersButton"><a href="#" onclick="showFilterPreferences(); return false;">Filters</a></li>
 							</ul>
 						</div>
 						<div id="content">
@@ -133,6 +120,20 @@ exclude-result-prefixes="redirect str exslt">
 						<xsl:call-template name="classHeader">
 							<xsl:with-param name="classDeprecated" select="$classDeprecated" />
 						</xsl:call-template>
+
+						<div id="filterPreferences">
+							<a href="#" onclick="showFilterPreferences(); return false;" class="label">Filter settings</a>
+							<ul>
+								<li>
+									<input type="checkbox" id="protectedFieldsCheckbox" name="hideProtected" onclick="toggleProtectedFields()" value="1"/> 
+									<a href="#" onclick="toggleProtectedFields(true); return false;">Hide protected fields</a>
+								</li>
+								<li>
+									<input type="checkbox" id="inheritedFieldsCheckbox" name="hideInherited" onclick="toggleInheritedFields()" value="1"/> 
+									<a href="#" onclick="toggleInheritedFields(true); return false;">Hide inherited fields</a>
+								</li>
+							</ul>
+						</div>
 
 						<!--  INNER CLASS SUMMARY  -->
 <!--						<xsl:call-template name="innerClassSummary">

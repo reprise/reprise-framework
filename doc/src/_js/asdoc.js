@@ -1,44 +1,4 @@
-function toggleClassList(id)
-{
-	var listEntry = $(id);
-	if (listEntry.hasClass('expanded'))
-	{
-		listEntry.removeClass('expanded');
-		setPackageListItemExpanded(id, false);
-	}
-	else
-	{
-		listEntry.addClass('expanded');
-		setPackageListItemExpanded(id, true);
-	}
-	return false;
-}
-
-function setPackageListItemExpanded(id, isExpanded)
-{
-	var ids = (Cookie.read('packageExpansionState') || '').split('|');
-	if (isExpanded)
-	{
-		if (ids.contains(id)) return;
-		ids.push(id);
-	}
-	else
-	{
-		ids = ids.erase(id);
-	}
-	Cookie.write('packageExpansionState', ids.join('|'));
-}
-
-function restorePackageTree()
-{
-	var ids = (Cookie.read('packageExpansionState') || '').split('|');
-	var i = ids.length;
-	while (i--)
-	{
-		var elem = $(ids[i]);
-		if (elem) elem.addClass('expanded');
-	}
-}
+var cookieStorage = new Storage('filterSettings');
 
 
 var InfoBubbles;
@@ -60,19 +20,47 @@ function initTooltips()
 	
 	InfoBubbles = new Tips(usedAnchors, {className:'tooltip'});
 	
-	preferencesSlideTween = new Fx.Slide($('filterPreferences'), {duration: 250});
-	preferencesSlideTween.addEvent('onComplete', function(){if (!this.open) this.element.setStyle('display', 'none')});
+	preferencesSlideTween = new Fx.Slide($$('#filterPreferences ul')[0], {duration: 250});
+	preferencesSlideTween.addEvent('onComplete', function()
+	 	{
+	 		if (!this.open) this.element.setStyle('display', 'none')
+	 	});
 	preferencesSlideTween.hide();
+	$$('#filterPreferences ul')[0].setStyle('display', 'none');
+	
+	initFilters();
+}
+
+function initFilters()
+{
+	var hideInheritedFields = cookieStorage.valueForKey('hideInheritedFields');
+	var hideProtectedFields = cookieStorage.valueForKey('hideProtectedFields');
+	$('inheritedFieldsCheckbox').checked = hideInheritedFields;
+	$('protectedFieldsCheckbox').checked = hideProtectedFields;
+
+	function hideElementsWithSelector(selector)
+	{
+		$$(selector).each(function(item, i)
+		{
+			item.setStyle('display', 'none');
+			item.setStyle('opacity', '0');
+		});
+	}
+	hideInheritedFields && hideElementsWithSelector('.inherited');
+	hideProtectedFields && hideElementsWithSelector('.protected');
+	updateFiltersEnabledCheck();
 }
 
 function showFilterPreferences()
 {
 	if (preferencesSlideTween.open)
 	{
-		preferencesSlideTween.slideOut()
+		$('filterPreferences').removeClass('expanded');
+		preferencesSlideTween.slideOut();
 	}
 	else
 	{
+		$('filterPreferences').addClass('expanded');
 		preferencesSlideTween.element.setStyle('display', 'block');
 		preferencesSlideTween.slideIn();
 	}
@@ -90,17 +78,6 @@ function toggleProtectedFields(toggleCheckbox)
 	{
 		if (checkbox.checked)
 		{
-			item.setStyle('display', 'block');
-			var fx = new Fx.Slide(item, {duration:300});
-			fx.slideIn().chain(
-				function() 
-				{
-					var fx = new Fx.Tween(item, {duration:300});
-					fx.start('opacity', '1');
-				});
-		}
-		else
-		{
 			var fx = new Fx.Tween(item, {duration:300});
 			fx.start('opacity', '0').chain(
 				function()
@@ -110,7 +87,20 @@ function toggleProtectedFields(toggleCheckbox)
 					fx.slideOut();
 				});
 		}
+		else
+		{
+			item.setStyle('display', 'block');
+			var fx = new Fx.Slide(item, {duration:300});
+			fx.slideIn().chain(
+				function() 
+				{
+					var fx = new Fx.Tween(item, {duration:300});
+					fx.start('opacity', '1');
+				});
+		}
 	});
+	cookieStorage.setValueForKey(checkbox.checked, 'hideProtectedFields');
+	updateFiltersEnabledCheck();
 }
 
 function toggleInheritedFields(toggleCheckbox)
@@ -119,6 +109,20 @@ function toggleInheritedFields(toggleCheckbox)
 	if (toggleCheckbox)
 	{
 		checkbox.checked = !checkbox.checked;
+	}
+	updateFiltersEnabledCheck();
+}
+
+function updateFiltersEnabledCheck()
+{
+	if (cookieStorage.valueForKey('hideProtectedFields') || 
+		cookieStorage.valueForKey('hideInheritedFields'))
+	{
+		$('filterPreferences').addClass('filter_enabled');
+	}
+	else
+	{
+		$('filterPreferences').removeClass('filter_enabled');
 	}
 }
 

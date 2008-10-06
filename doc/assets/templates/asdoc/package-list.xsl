@@ -10,7 +10,9 @@
 			<title>Package List - <xsl:value-of select="$title-base"/></title>
 			<base id="base_target" target="_top"/>
 			<script language="javascript" src="../_js/mootools-1.2-core.js" type="text/javascript" />
-			<script language="javascript" src="../_js/asdoc.js" type="text/javascript" />
+			<script language="javascript" src="../_js/mootools-1.2-more.js" type="text/javascript" />
+			<script language="javascript" src="../_js/cookie_storage.js" type="text/javascript" />
+			<script language="javascript" src="../_js/class_list.js" type="text/javascript" />
 			<style type="text/css">@import url(../_css/asdoc_toc.css);</style>
 		</head>
 		<body class="classFrameContent">

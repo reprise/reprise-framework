@@ -86,7 +86,7 @@ div.detailBody
 {
 	margin-bottom: 30px;
 	padding-bottom: 30px;
-	border-bottom: 1px dotted #8c8b8d;
+/*	border-bottom: 1px dotted #8c8b8d;*/
 }
 
 .tooltip
@@ -176,26 +176,57 @@ div.summarySection
 	margin-bottom: 40px;
 }
 
+
+
+
 #filterPreferences
 {
-	background-color: #f3f3f3;
-	border-bottom: 1px solid #d6d6d6;
-	color: #3e3e3e;
-	margin-top: -20px;
-	margin-bottom: 20px;
-	padding: 20px 0 15px 0;
+	background-color: #f2f9fc;
+	border: 1px solid #dff0f7;
+	color: #525252;
+	padding: 13px 18px;
+	font-size: 10px;
+	line-height: 10px;
+	width: 50%;
+	margin: 60px 0 40px 0;
+}
+
+#filterPreferences.filter_enabled
+{
+	background-image: url(../_img/filter_enabled_check.gif);
+	background-repeat: no-repeat;
+	background-position: 100% 50%;
+}
+
+#filterPreferences.expanded
+{
+	background-image: none;
+}
+
+#filterPreferences a.label
+{
+	padding-left: 11px;
+	background: transparent url(../_img/arrow_right.gif) no-repeat 0 50%;
+	margin-left: -11px;
+	font-weight: bold;
+}
+
+#filterPreferences.expanded a.label
+{
+	background-image: url(../_img/arrow_down.gif);
 }
 
 #filterPreferences ul
 {
 	list-style: none;
-	margin-left: 240px;
+	display: none;
+	margin: 0;
+	padding: 10px 0 0 0;
 }
 
 #filterPreferences ul li
 {
-	float: left;
-	margin-right: 20px;
+	line-height: 20px;
 }
 
 #filterPreferences a

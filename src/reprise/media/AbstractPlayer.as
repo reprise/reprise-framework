@@ -51,9 +51,6 @@ package reprise.media
 	* The AbstractPlayer class is a base class for every type of streaming media.
 	* It aids in calculating buffer times and supports autostart if the buffer is full
 	* as well as pausing the playback if the buffer runs out.
-	* 
-	* @see reprise.media.FLVPlayer
-	* @see reprise.media.MP3Player
 	*/
 	public class AbstractPlayer extends EventDispatcher
 	{
@@ -196,11 +193,23 @@ package reprise.media
 		}
 		
 		
+		/**
+		* Sets the resource, which should be used for later playback. May be overwritten by
+		* concrete subclasses.
+		* 
+		* @param resource The resource which should be used for later playback
+		*/
 		public function setResource(resource:IResource):void
 		{
 			m_source = resource;
 		}
 		
+		/**
+		* Specifies whether the playback should start automatically after the buffer was filled
+		* with enough data to play flawlessly at the current bandwidth of the user.
+		* 
+		* @param bFlag The flag which sets if the playback should start automatically
+		*/
 		public function setAutoplayEnabled(bFlag:Boolean):void
 		{
 			setOptionsFlag(OPTIONS_AUTOPLAY, bFlag);
@@ -229,6 +238,11 @@ package reprise.media
 			setOptionsFlag(OPTIONS_REVERSE_ON_COMPLETE, bFlag);
 		}
 		
+		/**
+		* Starts loading the media resource. This method is also automatically called by the
+		* the method play(). So you would call this method only directly if you want to 
+		* manually start preloading the data.
+		*/
 		public function load():void
 		{
 			if (m_status & STATUS_LOAD_FINISHED || m_status & STATUS_IS_LOADING)
@@ -249,6 +263,9 @@ package reprise.media
 			doLoad();
 		}
 		
+		/**
+		* Unloads the loaded resource and frees the used memory.
+		*/
 		public function unload():void
 		{
 			stop();
@@ -265,6 +282,12 @@ package reprise.media
 			setState(STATE_IDLE);
 		}
 		
+		/**
+		* Attempts to playback the media. If the file did not start loading before, it gets loaded
+		* first. If the buffer insufficiently filled to play flawlessly at the user's current
+		* bandwidth calling this method leads to no immediate effect. After the buffer was filled
+		* with data the playback starts automatically.
+		*/
 		public function play():void
 		{
 			if (m_status & STATUS_PAUSED_AT_END)
@@ -287,6 +310,9 @@ package reprise.media
 			doPlay();
 		}
 		
+		/**
+		* Pauses the media file if is playing.
+		*/
 		public function pause():void
 		{
 			// what's ever happening right now, but we notice that the user wishes to 
@@ -304,6 +330,10 @@ package reprise.media
 			goIdle();
 		}
 		
+		/**
+		* Stops the media file. If the media is not playing, but instead buffering, calling this
+		* method leads to that the playback happens not automatically after the buffer was filled.
+		*/
 		public function stop():void
 		{
 			// again: what's ever happening right now, but we notice that the user wishes to 
@@ -325,6 +355,13 @@ package reprise.media
 			goIdle();
 		}
 		
+		/**
+		* Seeks the media file. If neither load() or play() were called previously, this method
+		* does nothing. If the specified offset is greater than the already loaded duration of the
+		* media file, the offset will be set to the loaded duration.
+		* 
+		* @param offset The offset to seek in seconds.
+		*/
 		public function seek(offset:Number):void
 		{
 			m_status &= ~STATUS_PAUSED_AT_END;
@@ -344,11 +381,22 @@ package reprise.media
 			doSeek(offset);
 		}
 		
+		/**
+		* This method is a convenience wrapper for seek(), which practically can be used with
+		* statusbars, which return percentage values.
+		* 
+		* @param percent The value to seek in percent relative to the duration of the media file
+		*/
 		public function seekPercent(percent:Number):void
 		{
 			seek(duration() / 100 * percent);
 		}
 		
+		/**
+		* Sets the volume of the played back media.
+		* 
+		* @param vol The volume between 0 and 1
+		*/
 		public function setVolume(vol:Number):void
 		{
 			vol = Math.max(0, vol);
@@ -357,6 +405,12 @@ package reprise.media
 			doSetVolume(vol);
 		}
 		
+		/**
+		* If playing, fades out the volume and pauses the media file afterwards. If the media file
+		* is not playing, this method does nothing.
+		* 
+		* @param duration The time how long the fade should take before the media file pauses
+		*/
 		public function muteAndPause(duration:uint):void
 		{
 			if (m_state != STATE_PLAYING)
@@ -372,21 +426,35 @@ package reprise.media
 			m_muteTween.execute();
 		}
 		
+		/**
+		* Returns the actual volume of the media file between 0 and 1
+		*/
 		public function volume():Number
 		{
 			return m_volume;
 		}
 		
+		/**
+		* Returns the bytes loaded of the media file. Needs to be overwritten in concrete
+		* subclasses!
+		*/
 		public function bytesLoaded():Number
 		{
 			return 0;
 		}
 		
+		/**
+		* Returns the total size of the media file. Needs to be overwritten in concrete
+		* subclasses!
+		*/
 		public function bytesTotal():Number
 		{
 			return 0;
 		}
 		
+		/**
+		* Returns the duration of the media file in seconds.
+		*/
 		public function duration():Number
 		{
 			return m_duration;
