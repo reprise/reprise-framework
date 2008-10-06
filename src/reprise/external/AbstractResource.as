@@ -309,6 +309,8 @@ package reprise.external
 				trace(errMsg);
 			}
 			
+			m_didSucceed = success;
+			
 			dispatchEvent(new ResourceEvent(Event.COMPLETE, 
 				success, m_failureReason, m_httpStatus));
 			m_isExecuting = false;
