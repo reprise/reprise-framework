@@ -219,7 +219,7 @@ package reprise.tweens
 			{
 				return;
 			}
-			super.execute();
+			m_isCancelled = false;
 			startTween(true);
 		}
 		
@@ -286,6 +286,7 @@ package reprise.tweens
 		protected function executeTick(event : Event = null) : void
 		{
 			m_currentTime = getTimer() - m_startTime - m_delay;
+			log('m_currentTime: ' + (m_currentTime));
 			if (m_currentTime < 0)
 			{
 				return;
