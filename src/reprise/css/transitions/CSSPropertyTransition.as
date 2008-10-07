@@ -41,10 +41,11 @@ package reprise.css.transitions
 		***************************************************************************/
 		protected var m_startValue : CSSProperty;
 		protected var m_endValue : CSSProperty;
+		protected var m_backupValue : CSSProperty;
 		
 		protected var m_propertyTransition : PropertyTransitionVO;
+
 		
-	
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
@@ -59,6 +60,7 @@ package reprise.css.transitions
 		{
 			m_startValue = value;
 			currentValue = CSSProperty(value.clone(true));
+			m_backupValue = CSSProperty(value.clone(true));
 			m_propertyTransition.startValue = value.specifiedValue();
 			m_propertyTransition.currentValue = currentValue.specifiedValue();
 		}
@@ -150,6 +152,12 @@ package reprise.css.transitions
 				return;
 			}
 			currentRatio = easing(currentTime, 0, 1, durationValue);
+			//We need to change the currentValue property to be another object on each 
+			//validation. If we don't the validation system doesn't know that anything 
+			//really changed in the style because it compares object identities
+			var backup : CSSProperty = currentValue;
+			currentValue = m_backupValue;
+			m_backupValue = backup;
 			currentValue.setSpecifiedValue(
 				m_propertyTransition.setCurrentValueToRatio(currentRatio));
 		}
