@@ -1557,7 +1557,7 @@ package reprise.ui
 			
 			
 			var wProp : CSSProperty = styles.getStyle('width');
-			if (wProp.specifiedValue() == 'auto')
+			if (!wProp || wProp.specifiedValue() == 'auto')
 			{
 				m_autoFlags.width = true;
 				if (!m_positionInFlow)

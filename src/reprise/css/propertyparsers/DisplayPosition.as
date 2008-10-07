@@ -75,18 +75,6 @@ package reprise.css.propertyparsers
 		
 		public function DisplayPosition() {}
 		
-		
-		
-		public static function get defaultValues() : Object
-		{
-			var defaults:Object = {};
-			var width:CSSProperty = defaults.width = new CSSProperty();
-			width.setSpecifiedValue('auto');
-			var height:CSSProperty = defaults.height = new CSSProperty();
-			height.setSpecifiedValue('auto');
-			return defaults;
-		}
-		
 		public static function parseOverflow(val:String, file:String):CSSParsingResult
 		{
 			var values:Array = val.split(' ');
