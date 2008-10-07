@@ -52,15 +52,49 @@ div#toc
 {
 	list-style: none;
 	padding: 0;
+	line-height: 16px;
 }
 
 #toc ul ul
 {
-	border: 1px solid #efefef;
-	background-color: #fcfcfc;
-	padding: 10px;
-	margin: 2px 0 8px 0;
+	margin-left: 11px;
+	margin-top: 2px;
+	margin-bottom: 5px;
 	line-height: 14px;
+	margin-right: 10px;
+}
+
+#toc ul ul li
+{
+	padding: 3px 10px;
+}
+
+#toc ul ul li.odd
+{
+	border-top: 1px solid #efefef;
+	border-bottom: 1px solid #efefef;
+}
+
+#toc ul ul li:last-child
+{
+	border-bottom: none;
+}
+
+a.expandButton
+{
+	background: transparent url(../_img/arrow_right.gif) no-repeat 0 50%;
+	padding-left: 11px;
+}
+
+li.expanded a.expandButton
+{
+	font-weight: bold;
+	background-image: url(../_img/arrow_down.gif);
+}
+
+#toc ul li.expanded ul
+{
+	display: block;
 }
 
 #toc a.selected

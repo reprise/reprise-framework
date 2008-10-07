@@ -42,8 +42,9 @@ function initFilters()
 	{
 		$$(selector).each(function(item, i)
 		{
-			item.setStyle('display', 'none');
 			item.setStyle('opacity', '0');
+			var fx = new Fx.Slide(item);
+			fx.hide();
 		});
 	}
 	hideInheritedFields && hideElementsWithSelector('.inherited');
@@ -73,32 +74,7 @@ function toggleProtectedFields(toggleCheckbox)
 	{
 		checkbox.checked = !checkbox.checked;
 	}
-	
-	$$('.protected').each(function(item, i)
-	{
-		if (checkbox.checked)
-		{
-			var fx = new Fx.Tween(item, {duration:300});
-			fx.start('opacity', '0').chain(
-				function()
-				{
-					var fx = new Fx.Slide(item, {duration:300});
-					fx.addEvent('onComplete', function(){this.element.setStyle('display', 'none');});
-					fx.slideOut();
-				});
-		}
-		else
-		{
-			item.setStyle('display', 'block');
-			var fx = new Fx.Slide(item, {duration:300});
-			fx.slideIn().chain(
-				function() 
-				{
-					var fx = new Fx.Tween(item, {duration:300});
-					fx.start('opacity', '1');
-				});
-		}
-	});
+	setElementsWithSelectorVisible('.protected', !checkbox.checked);
 	cookieStorage.setValueForKey(checkbox.checked, 'hideProtectedFields');
 	updateFiltersEnabledCheck();
 }
@@ -110,6 +86,8 @@ function toggleInheritedFields(toggleCheckbox)
 	{
 		checkbox.checked = !checkbox.checked;
 	}
+	setElementsWithSelectorVisible('.inherited', !checkbox.checked);
+	cookieStorage.setValueForKey(checkbox.checked, 'hideInheritedFields');
 	updateFiltersEnabledCheck();
 }
 
@@ -124,6 +102,33 @@ function updateFiltersEnabledCheck()
 	{
 		$('filterPreferences').removeClass('filter_enabled');
 	}
+}
+
+function setElementsWithSelectorVisible(selector, visible)
+{
+	$$(selector).each(function(item, i)
+	{
+		if (!visible)
+		{
+			var fx = new Fx.Tween(item, {duration:300});
+			fx.start('opacity', '0').chain(
+				function()
+				{
+					var fx = new Fx.Slide(item, {duration:300});
+					fx.slideOut();
+				});
+		}
+		else
+		{
+			var fx = new Fx.Slide(item, {duration:300});
+			fx.slideIn().chain(
+				function() 
+				{
+					var fx = new Fx.Tween(item, {duration:300});
+					fx.start('opacity', '1');
+				});
+		}
+	});
 }
 
 window.addEvent('domready', initTooltips);

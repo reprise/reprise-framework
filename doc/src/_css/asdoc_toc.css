@@ -13,8 +13,6 @@ ul.packageList ul.classList
 	margin-left: 11px;
 	margin-top: 2px;
 	margin-bottom: 5px;
-	border: 1px solid #efefef;
-	background-color: #fcfcfc;
 	line-height: 14px;
 	margin-right: 10px;
 }
@@ -31,7 +29,13 @@ ul.classList li
 
 ul.classList li.odd
 {
-	background-color: #f4f4f4;
+	border-top: 1px solid #efefef;
+	border-bottom: 1px solid #efefef;
+}
+
+ul.classList li:last-child
+{
+	border-bottom: none;
 }
 
 li.expanded .classList
@@ -41,21 +45,11 @@ li.expanded .classList
 
 a.expandButton
 {
-	display: block;
-	float: left;
-	width: 9px;
-	height: 9px;
-	background: transparent url(../_img/arrow_right.gif) no-repeat;
-	margin-right: 2px;
-	margin-top: 4px;
+	background: transparent url(../_img/arrow_right.gif) no-repeat 0 50%;
+	padding-left: 11px;
 }
 
 li.expanded a.expandButton
 {
 	background-image: url(../_img/arrow_down.gif);
-}
-
-li.expanded span.packageName
-{
-	font-weight: bold;
 }

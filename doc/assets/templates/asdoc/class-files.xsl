@@ -135,23 +135,6 @@ exclude-result-prefixes="redirect str exslt">
 							</ul>
 						</div>
 
-						<!--  INNER CLASS SUMMARY  -->
-<!--						<xsl:call-template name="innerClassSummary">
-							<xsl:with-param name="hasInherited" select="count(asAncestors/asAncestor[string-length(@innerClasses) &gt; 0])"/>
-							<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-						</xsl:call-template>-->
-						
-						<!-- INHERITED INNER CLASSES -->
-<!--						<xsl:for-each select="asAncestors/asAncestor">
-							<xsl:call-template name="inherited">
-								<xsl:with-param name="lowerType">innerClasses</xsl:with-param>
-								<xsl:with-param name="upperType">Inner Classes</xsl:with-param>
-								<xsl:with-param name="inheritedItems" select="@innerClasses"/>
-								<xsl:with-param name="staticItems" select="@innerClasses" />
-								<xsl:with-param name="innerClass" select="true()"/>
-							</xsl:call-template>
-						</xsl:for-each>-->
-
 						<!--  PUBLIC PROPERTY SUMMARY  -->
 						<xsl:call-template name="fieldSummary">
 							<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
@@ -258,15 +241,15 @@ exclude-result-prefixes="redirect str exslt">
  						<xsl:if test="includeExamples/includeExample/codepart">
 							<xsl:call-template name="includeExamples"/>
 						</xsl:if>
-<!-- 						<xsl:if test="includeExamples/includeExample/codepart">
+						
+						<!--
+						<xsl:if test="includeExamples/includeExample/codepart">
 							<a name="includeExamplesSummary"></a>
 							<xsl:apply-templates select="includeExamples/includeExample" />
 							<p></p>
-						</xsl:if> -->
-						<br />
-						<br />
-						<hr />
-						<br />
+						</xsl:if> 
+						-->
+						
 						<xsl:call-template name="getPageLinks">
 							<xsl:with-param name="copyNum" select="'2'"/>
 						</xsl:call-template>
@@ -486,17 +469,7 @@ exclude-result-prefixes="redirect str exslt">
 						<!-- Variables -->
 						<xsl:variable name="rowStyle">
 							<xsl:if test="ancestor::asAncestor">
-								<xsl:text>hideInherited</xsl:text>
-								<xsl:if test="$accessLevel='protected'">
-									<xsl:text>Protected</xsl:text>
-								</xsl:if>
-								<xsl:if test="$isConst='true'">
-									<xsl:text>Constant</xsl:text>
-								</xsl:if>
-								<xsl:if test="$isConst='false'">
-									<xsl:text>Property</xsl:text>
-								</xsl:if>
-								<xsl:text> </xsl:text>
+								<xsl:text>inherited </xsl:text>
 							</xsl:if>
 							<xsl:choose>
 								<xsl:when test="position() mod 2">
@@ -524,6 +497,9 @@ exclude-result-prefixes="redirect str exslt">
 									<xsl:if test="string-length(@only)">
 										<xsl:text> </xsl:text>
 										<xsl:value-of select="@only"/>
+									</xsl:if>
+									<xsl:if test="$isConst='true'">
+										<xsl:text> constant</xsl:text>
 									</xsl:if>
 									<xsl:if test="@isStatic='true'">
 										<xsl:text> static</xsl:text>
@@ -608,108 +584,32 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:if>
 			</h2>
 			<xsl:for-each select="field[@isConst=$isConst]">
-				<xsl:sort select="translate(@name,'_','')" order="ascending"/>
-				<a name="{@name}"/>
-				<div class="detailBody">
-					<h3>
-						<xsl:if test="string-length(@only)">
-							<xsl:value-of select="@name" />
-						</xsl:if>
-						<xsl:if test="not(string-length(@only))">
-							<xsl:call-template name="getNamespaceLink">
-								<xsl:with-param name="accessLevel" select="@accessLevel" />
-								<xsl:with-param name="baseRef" select="$baseRef" />
-							</xsl:call-template>
-							<xsl:text> </xsl:text>
-							<xsl:if test="@isStatic='true'">
-								<xsl:text>static </xsl:text>
+				<div class="{@accessLevel}">
+					<xsl:sort select="translate(@name,'_','')" order="ascending"/>
+					<a name="{@name}"/>
+					<div class="detailBody">
+						<h3>
+							<!-- Icon - Read/Write-only? -->
+							<span>
+								<xsl:attribute name="class">
+									<xsl:text>accessType</xsl:text>
+									<xsl:if test="string-length(@only)">
+										<xsl:text> </xsl:text>
+										<xsl:value-of select="@only"/>
+									</xsl:if>
+									<xsl:if test="isConst='true'">
+										<xsl:text> constant</xsl:text>
+									</xsl:if>
+									<xsl:if test="@isStatic='true'">
+										<xsl:text> static</xsl:text>
+									</xsl:if>
+								</xsl:attribute>
+							</span>
+							
+							<xsl:if test="string-length(@only)">
+								<xsl:value-of select="@name" />
 							</xsl:if>
-							<xsl:choose>
-								<xsl:when test="@isConst='true' and $config/options/@docversion='3'">
-									<xsl:text>const </xsl:text>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>var </xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-							<xsl:value-of select="@name"/>
-						</xsl:if>
-						<xsl:if test="@type">
-							<xsl:text>:</xsl:text>
-							<xsl:choose>
-								<xsl:when test="classRef">
-									<a href="{classRef/@relativePath}">
-										<xsl:call-template name="getSimpleClassName">
-											<xsl:with-param name="fullClassName" select="@type"/>
-										</xsl:call-template>
-									</a>
-								</xsl:when>
-								<xsl:when test="@type='' or @type='*'">
-									<xsl:call-template name="getSpecialTypeLink">
-										<xsl:with-param name="type" select="'*'" />
-									</xsl:call-template>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="getSimpleClassName">
-										<xsl:with-param name="fullClassName" select="@type"/>
-									</xsl:call-template>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:if>
-						<xsl:if test="(string-length(@defaultValue) or @type='String') and @defaultValue!='unknown'">
-							<xsl:text> = </xsl:text>
-							<xsl:if test="@type='String'">
-								<xsl:text>"</xsl:text>
-							</xsl:if>
-							<xsl:value-of select="@defaultValue" />
-							<xsl:if test="@type='String'">
-								<xsl:text>"</xsl:text>
-							</xsl:if>
-						</xsl:if>
-					</h3>
-					<xsl:if test="string-length(@only)">
-						<xsl:text disable-output-escaping="yes"><![CDATA[&nbsp;&nbsp;]]>[</xsl:text>
-						<xsl:value-of select="@only"/>
-						<xsl:if test="not(@only='read-write')">
-							<xsl:text>-only</xsl:text>
-						</xsl:if>
-						<xsl:text>]</xsl:text>
-					</xsl:if>
-					<xsl:apply-templates select="deprecated"/>
-					<xsl:if test="$classDeprecated='true'">
-						<xsl:call-template name="description">
-							<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-							<xsl:with-param name="addParagraphTags" select="true()" />
-						</xsl:call-template>
-					</xsl:if>
-					<xsl:call-template name="version"/>
-					<xsl:if test="$classDeprecated!='true'">
-						<xsl:call-template name="description">
-							<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-							<xsl:with-param name="addParagraphTags" select="true()" />
-						</xsl:call-template>
-					</xsl:if>
-					<xsl:if test="customs/default">
-						<p>
-							<xsl:text>The default value is </xsl:text>
-							<code>
-								<xsl:value-of select="normalize-space(customs/default/.)" />
-							</code>
-							<xsl:text>.</xsl:text>
-						</p>
-					</xsl:if>
-					<xsl:if test="@isBindable='true'">
-						<p>
-							<xsl:text>This property can be used as the source for data binding.</xsl:text>
-						</p>
-					</xsl:if>
-
-					<xsl:if test="string-length(@only)">
-						<span class="label">Implementation</span>
-						<br />
-						<xsl:if test="contains(@only,'read')">
-							<code>
-								<xsl:text disable-output-escaping="yes"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]></xsl:text>
+							<xsl:if test="not(string-length(@only))">
 								<xsl:call-template name="getNamespaceLink">
 									<xsl:with-param name="accessLevel" select="@accessLevel" />
 									<xsl:with-param name="baseRef" select="$baseRef" />
@@ -718,9 +618,18 @@ exclude-result-prefixes="redirect str exslt">
 								<xsl:if test="@isStatic='true'">
 									<xsl:text>static </xsl:text>
 								</xsl:if>
-								<xsl:text>function get </xsl:text>
-								<xsl:value-of select="@name" />
-								<xsl:text>():</xsl:text>
+								<xsl:choose>
+									<xsl:when test="@isConst='true' and $config/options/@docversion='3'">
+										<xsl:text>const </xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>var </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:value-of select="@name"/>
+							</xsl:if>
+							<xsl:if test="@type">
+								<xsl:text>:</xsl:text>
 								<xsl:choose>
 									<xsl:when test="classRef">
 										<a href="{classRef/@relativePath}">
@@ -740,67 +649,139 @@ exclude-result-prefixes="redirect str exslt">
 										</xsl:call-template>
 									</xsl:otherwise>
 								</xsl:choose>
-							</code>
+							</xsl:if>
+							<xsl:if test="(string-length(@defaultValue) or @type='String') and @defaultValue!='unknown'">
+								<xsl:text> = </xsl:text>
+								<xsl:if test="@type='String'">
+									<xsl:text>"</xsl:text>
+								</xsl:if>
+								<xsl:value-of select="@defaultValue" />
+								<xsl:if test="@type='String'">
+									<xsl:text>"</xsl:text>
+								</xsl:if>
+							</xsl:if>
+						</h3>
+						<xsl:apply-templates select="deprecated"/>
+						<xsl:if test="$classDeprecated='true'">
+							<xsl:call-template name="description">
+								<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
+								<xsl:with-param name="addParagraphTags" select="true()" />
+							</xsl:call-template>
+						</xsl:if>
+						<xsl:call-template name="version"/>
+						<xsl:if test="$classDeprecated!='true'">
+							<xsl:call-template name="description">
+								<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
+								<xsl:with-param name="addParagraphTags" select="true()" />
+							</xsl:call-template>
+						</xsl:if>
+						<xsl:if test="customs/default">
+							<p>
+								<xsl:text>The default value is </xsl:text>
+								<code>
+									<xsl:value-of select="normalize-space(customs/default/.)" />
+								</code>
+								<xsl:text>.</xsl:text>
+							</p>
+						</xsl:if>
+						<xsl:if test="@isBindable='true'">
+							<p>
+								<xsl:text>This property can be used as the source for data binding.</xsl:text>
+							</p>
+						</xsl:if>
+
+						<!-- <xsl:if test="string-length(@only)">
+							<span class="label">Implementation</span>
 							<br />
-<!--							<xsl:if test="not(contains(@only,'write'))">
+							<xsl:if test="contains(@only,'read')">
+								<code>
+									<xsl:text disable-output-escaping="yes"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]></xsl:text>
+									<xsl:call-template name="getNamespaceLink">
+										<xsl:with-param name="accessLevel" select="@accessLevel" />
+										<xsl:with-param name="baseRef" select="$baseRef" />
+									</xsl:call-template>
+									<xsl:text> </xsl:text>
+									<xsl:if test="@isStatic='true'">
+										<xsl:text>static </xsl:text>
+									</xsl:if>
+									<xsl:text>function get </xsl:text>
+									<xsl:value-of select="@name" />
+									<xsl:text>():</xsl:text>
+									<xsl:choose>
+										<xsl:when test="classRef">
+											<a href="{classRef/@relativePath}">
+												<xsl:call-template name="getSimpleClassName">
+													<xsl:with-param name="fullClassName" select="@type"/>
+												</xsl:call-template>
+											</a>
+										</xsl:when>
+										<xsl:when test="@type='' or @type='*'">
+											<xsl:call-template name="getSpecialTypeLink">
+												<xsl:with-param name="type" select="'*'" />
+											</xsl:call-template>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:call-template name="getSimpleClassName">
+												<xsl:with-param name="fullClassName" select="@type"/>
+											</xsl:call-template>
+										</xsl:otherwise>
+									</xsl:choose>
+								</code>
 								<br />
-							</xsl:if>-->
-						</xsl:if>
-						<xsl:if test="contains(@only,'write')">
-<!--							<xsl:if test="contains(@only,'read')">
-								<div style="height:0px"></div>
-							</xsl:if>-->
-							<code>
-								<xsl:text disable-output-escaping="yes"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]></xsl:text>
-								<xsl:call-template name="getNamespaceLink">
-									<xsl:with-param name="accessLevel" select="@accessLevel" />
-									<xsl:with-param name="baseRef" select="$baseRef" />
-								</xsl:call-template>
-								<xsl:text> </xsl:text>
-								<xsl:text>function set </xsl:text>
-								<xsl:value-of select="@name" />
-								<xsl:text>(value:</xsl:text>
-								<xsl:choose>
-									<xsl:when test="classRef">
-										<a href="{classRef/@relativePath}">
+							</xsl:if>
+							<xsl:if test="contains(@only,'write')">
+								<code>
+									<xsl:text disable-output-escaping="yes"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;]]></xsl:text>
+									<xsl:call-template name="getNamespaceLink">
+										<xsl:with-param name="accessLevel" select="@accessLevel" />
+										<xsl:with-param name="baseRef" select="$baseRef" />
+									</xsl:call-template>
+									<xsl:text> </xsl:text>
+									<xsl:text>function set </xsl:text>
+									<xsl:value-of select="@name" />
+									<xsl:text>(value:</xsl:text>
+									<xsl:choose>
+										<xsl:when test="classRef">
+											<a href="{classRef/@relativePath}">
+												<xsl:call-template name="getSimpleClassName">
+													<xsl:with-param name="fullClassName" select="@type"/>
+												</xsl:call-template>
+											</a>
+										</xsl:when>
+										<xsl:when test="@type='' or @type='*'">
+											<xsl:call-template name="getSpecialTypeLink">
+												<xsl:with-param name="type" select="'*'" />
+											</xsl:call-template>
+										</xsl:when>
+										<xsl:otherwise>
 											<xsl:call-template name="getSimpleClassName">
 												<xsl:with-param name="fullClassName" select="@type"/>
 											</xsl:call-template>
-										</a>
-									</xsl:when>
-									<xsl:when test="@type='' or @type='*'">
-										<xsl:call-template name="getSpecialTypeLink">
-											<xsl:with-param name="type" select="'*'" />
-										</xsl:call-template>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:call-template name="getSimpleClassName">
-											<xsl:with-param name="fullClassName" select="@type"/>
-										</xsl:call-template>
-									</xsl:otherwise>
-								</xsl:choose>
-								<xsl:text>):</xsl:text>
-								<xsl:call-template name="getSpecialTypeLink">
-									<xsl:with-param name="type" select="'void'" />
-								</xsl:call-template>
-							</code>
+										</xsl:otherwise>
+									</xsl:choose>
+									<xsl:text>):</xsl:text>
+									<xsl:call-template name="getSpecialTypeLink">
+										<xsl:with-param name="type" select="'void'" />
+									</xsl:call-template>
+								</code>
+								<br />
+							</xsl:if>
+						</xsl:if> -->
+
+						<xsl:if test="canThrow">
 							<br />
+							<span class="label">
+								<xsl:text>Throws</xsl:text>
+							</span>
+							<br/>
+							<table cellpadding="0" cellspacing="0" border="0">
+								<xsl:apply-templates select="canThrow"/>
+							</table>
 						</xsl:if>
-					</xsl:if>
 
-					<xsl:if test="canThrow">
-						<br />
-						<span class="label">
-							<xsl:text>Throws</xsl:text>
-						</span>
-						<br/>
-						<table cellpadding="0" cellspacing="0" border="0">
-							<xsl:apply-templates select="canThrow"/>
-						</table>
-					</xsl:if>
-
-					<xsl:call-template name="sees" />
-					<xsl:apply-templates select="example | includeExamples/includeExample[codepart]"/>
+						<xsl:call-template name="sees" />
+						<xsl:apply-templates select="example | includeExamples/includeExample[codepart]"/>
+					</div>
 				</div>
 			</xsl:for-each>
 		</xsl:if>
@@ -1186,10 +1167,8 @@ exclude-result-prefixes="redirect str exslt">
 
 				<a name="event:{@name}"/>
 				<div class="detailBody">
+					<span class="accessType event"/>
 					<xsl:if test="eventObject">
-						<span class="label">
-							<xsl:text>Event object type: </xsl:text>
-						</span>
 						<a href="{eventObject/@href}">
 							<code>
 								<xsl:value-of select="eventObject/@label"/>
@@ -1310,7 +1289,7 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:param name="isGlobal" select="false()" />
 		<xsl:param name="showAnchor" select="true()" />
 
-<!-- TODO - adding non-protected to public -->
+		<!-- TODO - adding non-protected to public -->
 		<xsl:variable name="hasMethods" select="count(methods/method[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.]) &gt; 0 or count(constructors/constructor[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.]) &gt; 0" />
 		<xsl:variable name="hasInherited" select="count(asAncestors/asAncestor/methods/method[@accessLevel=$accessLevel or @accessLevel=$config/namespaces/namespace[@summaryDisplay=$accessLevel]/.]) &gt; 0" />
 
@@ -1408,12 +1387,7 @@ exclude-result-prefixes="redirect str exslt">
 		<!-- Variables -->
 		<xsl:variable name="rowStyle">
 			<xsl:if test="ancestor::asAncestor">
-				<xsl:text>hideInherited</xsl:text>
-				<xsl:if test="$accessLevel='protected'">
-					<xsl:text>Protected</xsl:text>
-				</xsl:if>
-				<xsl:text>Method</xsl:text>
-				<xsl:text> </xsl:text>
+				<xsl:text>inherited </xsl:text>
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="position() mod 2">
@@ -1424,6 +1398,8 @@ exclude-result-prefixes="redirect str exslt">
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		
+		<!-- Tooltip -->
 		<xsl:variable name="linkRel">
 			<xsl:call-template name="deTilda">
 				<xsl:with-param name="inText" select="shortDescription/."/>
@@ -1436,13 +1412,10 @@ exclude-result-prefixes="redirect str exslt">
 			<span>
 				<xsl:attribute name="class">
 					<xsl:text>accessType</xsl:text>
-					<xsl:if test="string-length(@only)">
-						<xsl:text> </xsl:text>
-						<xsl:value-of select="@only"/>
-					</xsl:if>
 					<xsl:if test="@isStatic='true'">
 						<xsl:text> static</xsl:text>
 					</xsl:if>
+					<xsl:text> method</xsl:text>
 				</xsl:attribute>
 			</span>
 			
@@ -1514,32 +1487,7 @@ exclude-result-prefixes="redirect str exslt">
 					</xsl:if>
 				</xsl:if>
 			</code>
-			
-			<!-- <xsl:if test="not($config/options/@docversion='2')">
-			<td class="summaryTableOwnerCol">
-				<xsl:choose>
-					<xsl:when test="ancestor::asAncestor">
-						<a href="{ancestor::asAncestor/classRef/@relativePath}">
-							<xsl:value-of select="ancestor::asAncestor/classRef/@name" />
-						</a>
-					</xsl:when>
-					<xsl:when test="ancestor::asClass">
-						<xsl:value-of select="ancestor::asClass/@name" />
-					</xsl:when>
-					<xsl:when test="ancestor::asPackage">
-						<xsl:if test="ancestor::asPackage/@name='$$Global$$'">
-							<xsl:value-of select="concat('Top',$nbsp,'Level')" />
-						</xsl:if>
-						<xsl:if test="ancestor::asPackage/@name!='$$Global$$'">
-							<xsl:value-of select="ancestor::asPackage/@name" />
-						</xsl:if>
-					</xsl:when>
-				</xsl:choose>
-			</td>
-			</xsl:if> -->
-			
 		</li>
-		
 	</xsl:template>
 
 	<xsl:template name="getNamespaceLink">
@@ -1694,91 +1642,114 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:param name="className" select="''" />
 		<xsl:param name="baseRef" />
 
-		<a name="{@name}()"/>
-		<div class="detailBody">
-			<xsl:if test="(not(@type) or @type='method')">
-				<h3>
-					<xsl:call-template name="getNamespaceLink">
-						<xsl:with-param name="accessLevel" select="@accessLevel" />
-						<xsl:with-param name="baseRef" select="$baseRef" />
-					</xsl:call-template>
-					<xsl:text> </xsl:text>
-					<xsl:if test="@isFinal='true'">
-						<xsl:text>final </xsl:text>
-					</xsl:if>
-					<xsl:if test="@isStatic='true'">
-						<xsl:text>static </xsl:text>
-					</xsl:if>
-					<xsl:if test="@isOverride='true'">
-						<xsl:text>override </xsl:text>
-					</xsl:if>
-					<xsl:text>function </xsl:text>
-					<xsl:value-of select="@name"/>
-					<xsl:text>(</xsl:text>
-					<xsl:call-template name="params"/>
-					<xsl:text>):</xsl:text>
-					<xsl:choose>
-						<xsl:when test="result/@type='' or result/@type='*'">
-							<xsl:call-template name="getSpecialTypeLink">
-								<xsl:with-param name="type" select="'*'" />
-							</xsl:call-template>
-						</xsl:when>
-						<xsl:when test="result/@type='void'">
-							<xsl:call-template name="getSpecialTypeLink">
-								<xsl:with-param name="type" select="'void'" />
-							</xsl:call-template>
-						</xsl:when>
-                        <xsl:when test="result/@type='Void' and $config/options/@docversion='2'">
-                            <xsl:value-of select="@result_type" />
-                        </xsl:when>
-						<xsl:when test="result/classRef">
-							<a href="{result/classRef/@relativePath}">
+		<!-- CSS classes for div -->
+		<xsl:variable name="rowStyle">
+			<xsl:if test="ancestor::asAncestor">
+				<xsl:text>inherited </xsl:text>
+			</xsl:if>
+			<xsl:value-of select="@accessLevel" />
+		</xsl:variable>
+
+		<div class="{$rowStyle}">
+			<a name="{@name}()"/>
+			<div class="detailBody">
+				<xsl:if test="(not(@type) or @type='method')">
+					<h3>
+						<!-- Icon -->
+						<span>
+							<xsl:attribute name="class">
+								<xsl:text>accessType</xsl:text>
+								<xsl:if test="@isStatic='true'">
+									<xsl:text> static</xsl:text>
+								</xsl:if>
+								<xsl:text> method</xsl:text>
+							</xsl:attribute>
+						</span>
+						
+						<xsl:call-template name="getNamespaceLink">
+							<xsl:with-param name="accessLevel" select="@accessLevel" />
+							<xsl:with-param name="baseRef" select="$baseRef" />
+						</xsl:call-template>
+						<xsl:text> </xsl:text>
+						<xsl:if test="@isFinal='true'">
+							<xsl:text>final </xsl:text>
+						</xsl:if>
+						<xsl:if test="@isStatic='true'">
+							<xsl:text>static </xsl:text>
+						</xsl:if>
+						<xsl:if test="@isOverride='true'">
+							<xsl:text>override </xsl:text>
+						</xsl:if>
+						<xsl:text>function </xsl:text>
+						<xsl:value-of select="@name"/>
+						<xsl:text>(</xsl:text>
+						<xsl:call-template name="params"/>
+						<xsl:text>):</xsl:text>
+						<xsl:choose>
+							<xsl:when test="result/@type='' or result/@type='*'">
+								<xsl:call-template name="getSpecialTypeLink">
+									<xsl:with-param name="type" select="'*'" />
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:when test="result/@type='void'">
+								<xsl:call-template name="getSpecialTypeLink">
+									<xsl:with-param name="type" select="'void'" />
+								</xsl:call-template>
+							</xsl:when>
+	                        <xsl:when test="result/@type='Void' and $config/options/@docversion='2'">
+	                            <xsl:value-of select="@result_type" />
+	                        </xsl:when>
+							<xsl:when test="result/classRef">
+								<a href="{result/classRef/@relativePath}">
+									<xsl:call-template name="getSimpleClassName">
+										<xsl:with-param name="fullClassName" select="result/@type"/>
+									</xsl:call-template>
+								</a>
+							</xsl:when>
+							<xsl:when test="not(result/classRef)">
 								<xsl:call-template name="getSimpleClassName">
 									<xsl:with-param name="fullClassName" select="result/@type"/>
 								</xsl:call-template>
-							</a>
-						</xsl:when>
-						<xsl:when test="not(result/classRef)">
-							<xsl:call-template name="getSimpleClassName">
-								<xsl:with-param name="fullClassName" select="result/@type"/>
-							</xsl:call-template>
-						</xsl:when>
-					</xsl:choose>
-				</h3>
-			</xsl:if>
+							</xsl:when>
+						</xsl:choose>
+					</h3>
+				</xsl:if>
 
-			<xsl:apply-templates select="deprecated"/>
-	<!-- 		<xsl:if test="deprecated">
-				<br />
-			</xsl:if> -->
-			<xsl:if test="$classDeprecated='true'">
-				<xsl:call-template name="description">
-					<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-					<xsl:with-param name="addParagraphTags" select="true()" />
-				</xsl:call-template>
-			</xsl:if>
-			<xsl:call-template name="version"/>
-			<xsl:if test="$classDeprecated!='true'">
-				<xsl:call-template name="description">
-					<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
-					<xsl:with-param name="addParagraphTags" select="true()" />
-				</xsl:call-template>
-			</xsl:if>
+				<xsl:apply-templates select="deprecated"/>
+				<!-- 
+				<xsl:if test="deprecated">
+					<br />
+				</xsl:if> 
+				-->
+				<xsl:if test="$classDeprecated='true'">
+					<xsl:call-template name="description">
+						<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
+						<xsl:with-param name="addParagraphTags" select="true()" />
+					</xsl:call-template>
+				</xsl:if>
+				<xsl:call-template name="version"/>
+				<xsl:if test="$classDeprecated!='true'">
+					<xsl:call-template name="description">
+						<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
+						<xsl:with-param name="addParagraphTags" select="true()" />
+					</xsl:call-template>
+				</xsl:if>
 			
-			<xsl:apply-templates select="params"/>
-			<xsl:call-template name="result"/>
-			<xsl:call-template name="event"/>
+				<xsl:apply-templates select="params"/>
+				<xsl:call-template name="result"/>
+				<xsl:call-template name="event"/>
 			
-			<xsl:if test="canThrow">
-				<br />
-				<span class="label">Throws</span>
-				<table cellpadding="0" cellspacing="0" border="0">
-					<xsl:apply-templates select="canThrow"/>
-				</table>
-			</xsl:if>
+				<xsl:if test="canThrow">
+					<br />
+					<span class="label">Throws</span>
+					<table cellpadding="0" cellspacing="0" border="0">
+						<xsl:apply-templates select="canThrow"/>
+					</table>
+				</xsl:if>
 
-			<xsl:call-template name="sees" />
-			<xsl:apply-templates select="example | includeExamples/includeExample[codepart]"/>
+				<xsl:call-template name="sees" />
+				<xsl:apply-templates select="example | includeExamples/includeExample[codepart]"/>
+			</div>
 		</div>
 	</xsl:template>
 
@@ -1786,14 +1757,12 @@ exclude-result-prefixes="redirect str exslt">
 	<xsl:template match="constructor" mode="detail">
 		<xsl:param name="classDeprecated" select="'false'"/>		
 		<xsl:param name="baseRef" />
-			
 		<xsl:if test="position()>1">
 			<a name="{@name}{position()}()"></a>
 		</xsl:if>
 		<xsl:if test="position()=1">
 			<a name="{@name}()"></a>
 		</xsl:if>
-
 		<div class="detailBody">
 			<xsl:if test="(not(@type) or @type='method')">
 				<h3>
@@ -1808,7 +1777,6 @@ exclude-result-prefixes="redirect str exslt">
 					<xsl:text>)</xsl:text>
 				</h3>
 			</xsl:if>
-
 			<xsl:call-template name="version"/>
 			<xsl:call-template name="description">
 				<xsl:with-param name="classDeprecated" select="$classDeprecated"/>
@@ -1816,7 +1784,6 @@ exclude-result-prefixes="redirect str exslt">
 			</xsl:call-template>
 			<xsl:apply-templates select="params"/>
 			<xsl:call-template name="event" />
-
 			<xsl:if test="canThrow">
 				<br />
 				<span class="label">Throws</span>
@@ -1824,7 +1791,6 @@ exclude-result-prefixes="redirect str exslt">
 					<xsl:apply-templates select="canThrow"/>
 				</table>
 			</xsl:if>
-
 			<xsl:call-template name="sees"/>
 			<xsl:apply-templates select="example | includeExamples/includeExample[codepart]"/>
 		</div>
@@ -2065,35 +2031,6 @@ exclude-result-prefixes="redirect str exslt">
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template name="inherited">
-		<xsl:param name="lowerType" />
-		<xsl:param name="upperType" />
-		<xsl:param name="prefix" />
-		<xsl:param name="postfix" />
-		<xsl:param name="inheritedItems" />
-		<xsl:param name="staticItems" />
-
-		<xsl:if test="string-length($inheritedItems) &gt; 0">
-			<xsl:call-template name="doInherited">
-				<xsl:with-param name="lowerType" select="$lowerType" />
-				<xsl:with-param name="upperType" select="$upperType" />
-				<xsl:with-param name="prefix" select="$prefix" />
-				<xsl:with-param name="postfix" select="$postfix" />
-				<xsl:with-param name="items" select="$inheritedItems" />
-			</xsl:call-template>
-		</xsl:if>
-		<xsl:if test="string-length($staticItems) &gt; 0">
-			<xsl:call-template name="doInherited">
-				<xsl:with-param name="lowerType" select="$lowerType" />
-				<xsl:with-param name="upperType" select="$upperType" />
-				<xsl:with-param name="prefix" select="$prefix" />
-				<xsl:with-param name="postfix" select="$postfix" />
-				<xsl:with-param name="items" select="$staticItems" />
-				<xsl:with-param name="isStatic" select="true()" />
-			</xsl:call-template>
-		</xsl:if>
-	</xsl:template>
-
 	<xsl:template name="doInherited">
 		<xsl:param name="lowerType" />
 		<xsl:param name="upperType" />
@@ -2252,8 +2189,10 @@ exclude-result-prefixes="redirect str exslt">
 		<xsl:value-of select="count(.//*[method])"/>
 	</xsl:template>
 
-	<!-- TODO currently the mxmlc compiler does not recognize events defined in interfaces that are
-	     not redeclared by the implementor, so we can not consider them when determining the event count -->
+	<!-- 
+		TODO currently the mxmlc compiler does not recognize events defined in interfaces that are
+	     not redeclared by the implementor, so we can not consider them when determining the event count
+	-->
 	<xsl:template name="hasEvents">
 		<xsl:value-of select="count(.//*[event[../../eventsGenerated and not(ancestor::asImplements)]])"/>
 	</xsl:template>

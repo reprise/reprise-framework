@@ -30,8 +30,9 @@
 					<li id="{$itemId}">
 						<xsl:if test="$isTopLevel='false'">
 							<xsl:variable name="packagePath" select="translate(@name,'.','/')"/>
-							<a href="#" onclick="toggleClassList('{$itemId}'); return false;" class="expandButton"></a>
-							<span class="packageName"><xsl:value-of select="@name"/></span>
+							<a href="#" onclick="toggleClassList('{$itemId}'); return false;" class="expandButton">
+								<xsl:value-of select="@name"/>
+							</a>
 						</xsl:if>
 
 						<ul class="classList">						
