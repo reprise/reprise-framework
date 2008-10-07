@@ -35,6 +35,8 @@ package reprise.css.propertyparsers
 			backgroundColor : {parser : strToColorProperty, transition : ColorTransitionVO},
 			backgroundRepeat : {parser : strToStringProperty},
 			backgroundPosition : {parser : parseBackgroundPosition},
+			backgroundPositionX : {parser : strToIntProperty},
+			backgroundPositionY : {parser : strToIntProperty},
 			backgroundAttachment : {parser : strToStringProperty},
 			backgroundRenderer : {parser : strToStringProperty},
 			backgroundBlendMode : {parser : strToStringProperty},
@@ -57,6 +59,11 @@ package reprise.css.propertyparsers
 		
 		public static var TRANSITION_SHORTCUTS : Object	=
 		{
+			backgroundPosition :
+			[
+				'backgroundPositionX',
+				'backgroundPositionY'
+			],
 			backgroundScale9Rect :
 			[
 				'backgroundScale9RectTop',
