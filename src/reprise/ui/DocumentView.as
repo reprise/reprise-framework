@@ -86,6 +86,7 @@ package reprise.ui
 		public override function setParent(parent:UIObject) : UIObject
 		{
 			super.setParent(parent);
+			//TODO: remove these after making sure that that's ok (it really should be)
 			m_rootElement = this;
 			m_containingBlock = this;
 			return this;

@@ -11,11 +11,14 @@
 
 package reprise.css
 {
+	import reprise.core.reprise;	
 	import reprise.core.Cloneable;
 	import reprise.css.math.AbstractCSSCalculation;
 	import reprise.css.math.CSSCalculationGroup;
 	import reprise.css.math.CSSCalculationPercentage;
 	import reprise.css.math.ICSSCalculationContext;
+	
+	use namespace reprise;
 	 
 	// @see http://www.w3.org/TR/REC-CSS2/cascade.html
 	public class CSSProperty implements Cloneable
@@ -69,7 +72,7 @@ package reprise.css
 			return m_important;
 		}
 	
-		public function setImportant(val:Boolean) : void
+		reprise function setImportant(val:Boolean) : void
 		{
 			m_important = val;
 		}
@@ -79,7 +82,7 @@ package reprise.css
 			return m_unit;
 		}
 		
-		public function setUnit(unitStr:String) : void
+		reprise function setUnit(unitStr:String) : void
 		{
 			if (unitStr == UNIT_PIXEL)
 			{
@@ -98,7 +101,7 @@ package reprise.css
 			return m_isRelativeValue;
 		}
 		
-		public function setIsRelativeValue( bFlag : Boolean ) : void
+		reprise function setIsRelativeValue( bFlag : Boolean ) : void
 		{
 			m_isRelativeValue = bFlag;
 			m_calculationResultsCache = {};
@@ -113,7 +116,7 @@ package reprise.css
 			return m_isCalculation;
 		}
 	
-		public function setIsCalculation(value : Boolean) : void
+		reprise function setIsCalculation(value : Boolean) : void
 		{
 			m_isCalculation = value;
 			if (value)
@@ -127,7 +130,7 @@ package reprise.css
 			}
 		}
 		
-		public function setInheritsValue( bFlag : Boolean ) : void
+		reprise function setInheritsValue( bFlag : Boolean ) : void
 		{
 			m_inheritsValue = bFlag;
 		}
@@ -147,7 +150,7 @@ package reprise.css
 			return m_specifiedValue;
 		}
 	
-		public function setSpecifiedValue(value : *) : void
+		reprise function setSpecifiedValue(value : *) : void
 		{
 			m_specifiedValue = value;
 			if (value == 'auto')
@@ -171,7 +174,7 @@ package reprise.css
 			}
 		}
 		
-		public function setCSSFile(cssFile : String) : void
+		reprise function setCSSFile(cssFile : String) : void
 		{
 			m_cssFile = cssFile;
 		}

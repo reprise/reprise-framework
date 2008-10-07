@@ -11,9 +11,12 @@
 
 package reprise.css.transitions
 {
+	import reprise.core.reprise;
+	import reprise.css.CSSProperty;
+	
 	import flash.utils.getTimer;
 	
-	import reprise.css.CSSProperty;
+	use namespace reprise;
 	
 	public class CSSPropertyTransition
 	{

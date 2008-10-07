@@ -272,7 +272,6 @@ package reprise.css.propertyparsers
 		public static function parseBackgroundGradientColors(val:String, file:String) : CSSProperty
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : String = obj.important ? CSSProperty.IMPORTANT_FLAG : '';
 			val = obj.result;
 			
 			var prop : CSSProperty = new CSSProperty();
@@ -301,7 +300,6 @@ package reprise.css.propertyparsers
 		public static function parseBackgroundGradientRatios(val:String, file:String) : CSSProperty
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
-			var important : String = obj.important ? CSSProperty.IMPORTANT_FLAG : '';
 			val = obj.result;
 			
 			var prop : CSSProperty = new CSSProperty();
