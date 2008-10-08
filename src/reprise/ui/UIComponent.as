@@ -148,7 +148,6 @@ package reprise.ui
 		private var m_pseudoClassesBackup : String;
 		private var m_specifiedStyles : CSSDeclaration;
 		private var m_transitionsManager : CSSTransitionsManager;
-		private var m_skipNextValidation : Boolean;
 		private var m_scrollbarsDisplay : Sprite;
 		private var m_oldInFlowStatus : int = -1;
 		private var m_oldOuterBoxDimension : Point;
@@ -1059,11 +1058,6 @@ package reprise.ui
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
 			m_rootElement.increaseValidatedElementsCount();
-			if (m_skipNextValidation)
-			{
-				m_skipNextValidation = false;
-				return;
-			}
 			if (validateStyles)
 			{
 				m_stylesInvalidated = true;
@@ -1237,9 +1231,7 @@ package reprise.ui
 					{
 	//					trace("w parentreflow needed in " + 
 	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
-						//TODO: change this use parent.validateAfterChildren
-						m_skipNextValidation = true;
-						m_parentElement.forceRedraw();
+						UIComponent(m_parentElement).validateAfterChildren();
 						return;
 					}
 					else
