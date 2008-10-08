@@ -22,7 +22,7 @@ package reprise.css.transitions
 		
 		public override function setCurrentValueToRatio(ratio : Number) : *
 		{
-			if (startValue == 'hidden')
+			if (startValue == 'hidden' || startValue == 'none')
 			{
 				return ratio == 0 ? startValue : endValue;
 			}

@@ -26,7 +26,7 @@ package reprise.css.propertyparsers
 		***************************************************************************/
 		public static const KNOWN_PROPERTIES : Object =
 		{
-			display : {parser : strToStringProperty},
+			display : {parser : strToStringProperty, transition : VisibilityTransitionVO},
 			position : {parser : strToStringProperty},
 			overflow : {parser : parseOverflow},
 			overflowX : {parser : strToStringProperty},
