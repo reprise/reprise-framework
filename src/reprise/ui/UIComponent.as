@@ -2235,7 +2235,6 @@ package reprise.ui
 		
 		protected override function unregisterChildView(child:UIObject) : void
 		{
-			log(child, child.parent);
 			if (child is UIComponent)
 			{
 				if (m_children.indexOf(child) != -1)
