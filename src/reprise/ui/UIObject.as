@@ -851,6 +851,7 @@ package reprise.ui {
 		{
 			if (child.parent == this)
 			{
+				m_children.splice(m_children.indexOf(child), 1);
 				removeChild(child);
 				child.dispatchEvent(
 					new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
