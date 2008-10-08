@@ -170,7 +170,8 @@ package reprise.ui {
 			if (child is UIObject)
 			{
 				var element : UIObject = UIObject(child);
-				m_contentDisplay.addChildAt(child, index);
+				m_contentDisplay.addChildAt(
+					child, Math.min(m_contentDisplay.numChildren, index));
 				element.setParent(this);
 				
 				
