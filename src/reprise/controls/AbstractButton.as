@@ -182,7 +182,6 @@ package reprise.controls
 		
 		protected function buttonDisplay_over(event : MouseEvent) : void
 		{
-			log('button: ' + this);
 			if (m_enabled)
 			{
 				addPseudoClass("hover");
