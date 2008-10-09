@@ -22,10 +22,10 @@ package {
 	{
 		public function AllTests() 
 		{
-/*			addTest(new CancelledResourceLoaderTest());
+			addTest(new CancelledResourceLoaderTest());
 			addTest(new ResourceLoaderTest());
 			addTest(new CancelledParallelCompositeTest());
-			addTest(new ParallelCompositeTest());*/
+			addTest(new ParallelCompositeTest());
 			addTest(new CompositeCommandSortingTest());
 			addTest(new CompositeCommandSortByIdTest());
 			addTest(new BasicTest());
