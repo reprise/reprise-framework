@@ -15,7 +15,8 @@ package reprise.css.propertyparsers
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
-	import reprise.css.transitions.VisibilityTransitionVO; 
+	import reprise.css.transitions.VisibilityTransitionVO;
+	import reprise.utils.StringUtil;		
 	
 	use namespace reprise;
 	
@@ -51,7 +52,11 @@ package reprise.css.propertyparsers
 			tooltipRenderer : {parser : strToStringProperty},
 			blendMode : {parser : strToStringProperty},
 			opacity : {parser : strToFloatProperty},
-			frameRate : {parser : strToIntProperty}
+			frameRate : {parser : strToIntProperty},
+			transform : {parser : parseTransform},
+			transformOrigin : {parser : parseTransformOrigin},
+			transformOriginX : {parser : strToIntProperty},
+			transformOriginY : {parser : strToIntProperty}
 		};
 		
 		
@@ -92,6 +97,94 @@ package reprise.css.propertyparsers
 				return strToURLProperty(val, file);
 			else
 				return strToStringProperty(val, file);
+		}
+		
+		public static function parseTransform(val:String, file:String) : CSSProperty
+		{
+			var obj : Object = strToProperty(val, file);
+			var prop : CSSProperty = obj.property;
+			
+			if (prop.inheritsValue())
+			{
+				return prop;
+			}
+			
+			val = StringUtil.trim(obj.filteredString);
+			var transforms : Array = [];
+			var transformTypes : String = '';
+			
+			//extract all transforms in order
+			var regexp : RegExp = /(\w+)\((.*?)\)/g;
+			while (true)
+			{
+				var result : Array = regexp.exec(val);
+				if (!result) break;
+				
+				var rawParams : Array = result[2].split(/\s*,\s*/);
+				var parameters : Array = [];
+				var type : String = result[1];
+				var transform : Object = {type : type, parameters : parameters};
+				var i : int;
+				
+				transformTypes += type + ',';
+				
+				switch (type)
+				{
+					case 'translate' : 
+					{
+						parameters[0] = strToFloatProperty(rawParams[0], file);
+						if (rawParams.length == 1)
+						{
+							parameters[1] = parameters[0];
+						}
+						else
+						{
+							parameters[1] = strToFloatProperty(rawParams[1], file);
+						}
+						break;
+					}
+					case 'scale' : 
+					case 'skew' : 
+					{
+						parameters[0] = parseFloat(rawParams[0]);
+						if (rawParams.length == 1)
+						{
+							parameters[1] = parameters[0];
+						}
+						else
+						{
+							parameters[1] = parseFloat(rawParams[1]);
+						}
+						break;
+					}
+					default : 
+					{
+						for (i = rawParams.length; i--;)
+						{
+							parameters[i] = parseFloat(rawParams[i]);
+						}
+						break;
+					}
+				}
+				transforms.push(transform);
+			}
+			transforms.transformTypes = transformTypes;
+			
+			prop.setSpecifiedValue(transforms);
+			
+			return prop;
+		}
+		
+		public static function parseTransformOrigin(
+			val:String, file:String) : CSSParsingResult
+		{
+			var values:Array = val.split(' ');
+			var originX:CSSProperty = strToIntProperty(values[0], file);
+			var originY:CSSProperty = values.length > 1 
+				? strToIntProperty(values[1], file) 
+				: originX;
+			return CSSParsingResult.ResultWithPropertiesAndKeys(
+				originX, 'transformOriginX', originY, 'transformOriginY');
 		}
 	}
 }
