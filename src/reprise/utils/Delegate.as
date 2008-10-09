@@ -23,8 +23,8 @@ package reprise.utils
 		protected var m_scope : Object;
 		protected var m_method : Function;
 		protected var m_args : Array;
-		protected var m_priority : Number;
-		protected var m_id : Number;
+		public var m_priority : Number;
+		public var m_id : Number;
 		
 		
 		/***************************************************************************

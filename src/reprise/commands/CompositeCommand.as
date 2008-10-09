@@ -9,23 +9,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.commands { 
-	import reprise.data.collection.IndexedArray;
-	import reprise.events.CommandEvent;
-	
+package reprise.commands 
+{
 	import flash.events.Event;
 	
-	public class CompositeCommand
-		extends AbstractAsynchronousCommand
+	import reprise.data.collection.IndexedArray;
+	import reprise.events.CommandEvent;
+
+	
+	public class CompositeCommand extends AbstractAsynchronousCommand
 	{
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var g_id : Number = 0;
-		
-		//TODO: check if this should be uint
-		protected var m_maxParallelExecutionCount : Number = 1; //default value
+		protected var m_maxParallelExecutionCount : int = 1;
 		protected var m_pendingCommands : IndexedArray;
 		protected var m_finishedCommands : IndexedArray;
 		protected var m_currentCommands : IndexedArray;
@@ -33,6 +31,7 @@ package reprise.commands {
 		protected var m_abortOnFailure : Boolean = true;
 		protected var m_failureOccured : Boolean = false;
 		protected var m_failedCommands : Array;
+		protected var m_nextResourceId : int = 0;
 		
 		
 		
@@ -41,7 +40,6 @@ package reprise.commands {
 		***************************************************************************/
 		public function CompositeCommand()
 		{
-			m_id = g_id++;
 			clear();
 		}
 		
@@ -58,6 +56,7 @@ package reprise.commands {
 		
 		public function addCommand(cmd:ICommand):void
 		{
+			cmd.setId(m_nextResourceId++);
 			m_pendingCommands.push(cmd);
 			if (m_isExecuting)
 			{
@@ -73,11 +72,6 @@ package reprise.commands {
 			}
 			m_pendingCommands.remove(cmd);
 		}
-		
-	//	public function commandWithIndex(n:Number):ICommand
-	//	{
-	//		return ICommand(m_commands[n]);
-	//	}
 		
 		public function abortOnFailure():Boolean
 		{
@@ -175,6 +169,9 @@ package reprise.commands {
 		
 		protected function executeNext() : void
 		{
+			m_pendingCommands.sortOn(['m_priority', 'm_id'], 
+				[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
+			
 			if (m_pendingCommands.length == 0)
 			{
 				if (m_isExecutingAsynchronously && m_currentCommands.length == 0 && 

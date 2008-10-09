@@ -27,10 +27,8 @@ package reprise.external
 		*							protected properties							   *
 		***************************************************************************/
 		protected static var DEFAULT_MAX_PARALLEL_EXECUTION_COUNT : Number = 3;
-		
 		protected var m_resourcesToLoad:Number;
 		
-		protected var m_nextResourceId : Number = 0;
 		
 		
 		/***************************************************************************
@@ -55,7 +53,6 @@ package reprise.external
 		
 		public override function addCommand(cmd:ICommand):void
 		{
-			cmd.setId(m_nextResourceId++);
 			super.addCommand(cmd);
 			calculateResourcesToLoad();
 		}
@@ -176,12 +173,6 @@ package reprise.external
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected override function executeNext():void
-		{
-			m_pendingCommands.sortOn(['m_priority', 'm_id'], 
-				[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
-			super.executeNext();
-		}
 		protected override function registerListenersForAsynchronousCommand(
 			cmd:IAsynchronousCommand):void
 		{
