@@ -7,20 +7,27 @@ package {
 	 */
 
 	import asunit.framework.TestSuite;
-	import prerequisites.BasicTest;
-	import commands.ParallelCompositeTest;
+	
 	import commands.CancelledParallelCompositeTest;
-	import external.ResourceLoaderTest;
+	import commands.CompositeCommandSortByIdTest;
+	import commands.CompositeCommandSortingTest;
+	import commands.ParallelCompositeTest;
+	
 	import external.CancelledResourceLoaderTest;
+	import external.ResourceLoaderTest;
+	
+	import prerequisites.BasicTest;
 
 	public class AllTests extends TestSuite 
 	{
 		public function AllTests() 
 		{
-			addTest(new CancelledResourceLoaderTest());
+/*			addTest(new CancelledResourceLoaderTest());
 			addTest(new ResourceLoaderTest());
 			addTest(new CancelledParallelCompositeTest());
-			addTest(new ParallelCompositeTest());
+			addTest(new ParallelCompositeTest());*/
+			addTest(new CompositeCommandSortingTest());
+			addTest(new CompositeCommandSortByIdTest());
 			addTest(new BasicTest());
 		}
 	}

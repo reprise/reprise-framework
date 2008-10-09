@@ -35,6 +35,7 @@ mxmlc model.test_output => [:asunit3] do |t|
   t.input                     = "#{model.test_dir}/RepriseTestRunner.as"
   t.source_path               << model.src_dir
   t.source_path               << model.test_dir
+  t.source_path               << 'lib/trazzle'
 end
 
 ############################################

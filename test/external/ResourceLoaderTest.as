@@ -44,16 +44,16 @@ package external
 			m_loader.execute();
 		}
 		
+		public function testSuccess():void
+		{
+			assertTrue('resourceloader was successful', m_loaderSuccess);
+		}
+		
 		protected function loader_complete(e:CommandEvent):void
 		{
 			trace('done');
 			m_loaderSuccess = e.success;
 			super.run();
-		}
-		
-		protected function testSuccess():void
-		{
-			assertTrue('resourceloader was successful', m_loaderSuccess);
 		}
 	}
 }

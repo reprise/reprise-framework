@@ -20,6 +20,11 @@ package commands
 			super(methodName);
 		}
 		
+		public function testCancelSuccess():void
+		{
+			assertNull('no error should occur on cancel', m_cancelError);
+		}
+		
 		protected override function setUp():void
 		{
 			super.setUp();
@@ -48,11 +53,6 @@ package commands
 			}
 			trace('executing 700 TimerCommands. Please be patient ...');
 			m_composite.execute();
-		}
-		
-		protected function testCancelSuccess():void
-		{
-			assertNull('no error should occur on cancel', m_cancelError);
 		}
 		
 		protected function cancelCommand_complete(e:CommandEvent):void
