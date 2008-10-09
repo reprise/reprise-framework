@@ -2,6 +2,16 @@
 @import url(common_content.css);
 
 
+h2
+{
+	margin-top: 50px;
+}
+
+p
+{
+	line-height: 16px;
+}
+
 dd
 {
 	margin-left: 10px;
