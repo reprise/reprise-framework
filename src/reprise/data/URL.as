@@ -23,6 +23,7 @@ package reprise.data
 		protected var m_path : String;
 		protected var m_port : Number;
 		protected var m_query : String;
+		protected var m_queryObject : Object;
 		protected var m_fragment : String;
 		
 		
@@ -106,6 +107,22 @@ package reprise.data
 		public function setQuery(val:String) : void
 		{
 			m_query = val;
+			m_queryObject = {};
+			var parts:Array = m_query.split('&');
+			for each (var part:String in parts)
+			{
+				if (!part || !part.length)
+				{
+					continue;
+				}
+				var keyValueParts:Array = part.split('=');
+				m_queryObject[keyValueParts[0]] = keyValueParts[1];
+			}
+		}
+		
+		public function queryObject():Object
+		{
+			return m_queryObject;
 		}
 		
 		public function fragment() : String
@@ -228,7 +245,7 @@ package reprise.data
 			{
 				var query : String = urlString.substring(queryStartIndex + 1);
 				var queryParts : Array = query.split('#');
-				m_query = queryParts[0];
+				setQuery(queryParts[0]);
 				m_fragment = queryParts[1];
 				m_path = urlString.substring(0, queryStartIndex);
 			}
