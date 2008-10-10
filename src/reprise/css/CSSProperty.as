@@ -206,6 +206,10 @@ package reprise.css
 		public function resolveRelativeValueTo(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
+			if (!m_isRelativeValue)
+			{
+				return m_specifiedValue is Number && m_specifiedValue || 0;
+			}
 			if (m_calculationResultsCache[reference])
 			{
 				return m_calculationResultsCache[reference];

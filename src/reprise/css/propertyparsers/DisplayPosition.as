@@ -16,7 +16,7 @@ package reprise.css.propertyparsers
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
 	import reprise.css.transitions.VisibilityTransitionVO;
-	import reprise.utils.StringUtil;		
+	import reprise.utils.StringUtil;	
 	
 	use namespace reprise;
 	
@@ -144,7 +144,6 @@ package reprise.css.propertyparsers
 						break;
 					}
 					case 'scale' : 
-					case 'skew' : 
 					{
 						parameters[0] = parseFloat(rawParams[0]);
 						if (rawParams.length == 1)
@@ -155,6 +154,41 @@ package reprise.css.propertyparsers
 						{
 							parameters[1] = parseFloat(rawParams[1]);
 						}
+						break;
+					}
+					case 'rotate' : 
+					{
+						parameters[0] = parseFloat(rawParams[0]) * Math.PI / 180;
+						if (rawParams.length == 1)
+						{
+							parameters[1] = parameters[0];
+						}
+						else
+						{
+							parameters[1] = parseFloat(rawParams[1]) * Math.PI / 180;
+						}
+						break;
+					}
+					case 'skew' : 
+					{
+						parameters[0] = 
+							Math.tan(parseFloat(rawParams[0]) * Math.PI / 180);
+						if (rawParams.length == 1)
+						{
+							parameters[1] = 0;
+						}
+						else
+						{
+							parameters[1] = 
+								Math.tan(parseFloat(rawParams[1]) * Math.PI / 180);
+						}
+						break;
+					}
+					case 'skewX' : 
+					case 'skewY' : 
+					{
+						parameters[0] = 
+							Math.tan(parseFloat(rawParams[0]) * Math.PI / 180);
 						break;
 					}
 					default : 

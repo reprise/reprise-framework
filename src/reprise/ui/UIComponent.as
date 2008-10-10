@@ -11,6 +11,8 @@
 
 package reprise.ui
 {
+	import flash.geom.Matrix;	
+	
 	import reprise.controls.Scrollbar;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
@@ -1073,6 +1075,11 @@ package reprise.ui
 		 */
 		protected override function validateBeforeChildren() : void
 		{
+			m_contentDisplay.transform.matrix = new Matrix();
+			if (m_scrollbarsDisplay)
+			{
+				m_scrollbarsDisplay.transform.matrix = m_contentDisplay.transform.matrix;
+			}
 			m_oldOuterBoxDimension = new Point(
 				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
 				m_borderBoxHeight + m_currentStyles.marginTop + m_currentStyles.marginBottom);
@@ -1147,8 +1154,6 @@ package reprise.ui
 			}
 			
 			applyInFlowChildPositions();
-			
-			var autoFlag:String = CSSProperty.AUTO_FLAG;
 			
 			var oldIntrinsicHeight : Number = m_intrinsicHeight;
 			var oldIntrinsicWidth : Number = m_intrinsicWidth;
@@ -1248,6 +1253,8 @@ package reprise.ui
 			}
 			m_layoutManager.applyDepthSorting(
 				m_lowerContentDisplay, m_upperContentDisplay);
+			
+			applyTransform();
 		}
 		protected override function finishValidation() : void
 		{
@@ -2267,6 +2274,117 @@ package reprise.ui
 			{
 				//failed, try to assign to a property
 				this[key] = value;
+			}
+		}
+		
+		public function applyTransform() : void
+		{
+			if (m_currentStyles.transform)
+			{
+				var originX : Number = m_borderBoxWidth / 2;
+				var originY : Number = m_borderBoxHeight / 2;
+				if (m_complexStyles.hasStyle('transformOriginX'))
+				{
+					originX = m_complexStyles.getStyle('transformOriginX').
+						resolveRelativeValueTo(m_borderBoxWidth);
+				}
+				else
+				{
+					originX = m_borderBoxWidth / 2;
+				}
+				if (m_complexStyles.hasStyle('transformOriginY'))
+				{
+					originY = m_complexStyles.getStyle('transformOriginY').
+						resolveRelativeValueTo(m_borderBoxHeight);
+				}
+				else
+				{
+					originY = m_borderBoxHeight / 2;
+				}
+				
+				var transformations : Array = m_currentStyles.transform;
+				var matrix : Matrix = new Matrix();
+				
+				matrix.translate(-originX, -originY);
+				var length : int = transformations.length;
+				for (var i : int = length; i--;)
+				{
+					var transformation : Object = transformations[i];
+					var parameters :Array = transformation.parameters;
+					switch (transformation.type)
+					{
+						case 'translate' : 
+						{
+							matrix.translate(
+								CSSProperty(parameters[0]).
+								resolveRelativeValueTo(m_borderBoxWidth),
+								CSSProperty(parameters[1]).
+								resolveRelativeValueTo(m_borderBoxHeight));
+							break;
+						}
+						case 'translateX' : 
+						{
+							matrix.translate(
+								CSSProperty(parameters[0]).
+								resolveRelativeValueTo(m_borderBoxWidth), 0);
+							break;
+						}
+						case 'translateY' : 
+						{
+							matrix.translate(0,
+								CSSProperty(parameters[1]).
+								resolveRelativeValueTo(m_borderBoxHeight));
+							break;
+						}
+						case 'rotate' : 
+						{
+							matrix.rotate(parameters[0]);
+							break;
+						}
+						case 'scale' : 
+						{
+							matrix.scale(parameters[0], parameters[1]);
+							break;
+						}
+						case 'scaleX' : 
+						{
+							matrix.scale(parameters[0], 1);
+							break;
+						}
+						case 'scaleY' : 
+						{
+							matrix.scale(1, parameters[1]);
+							break;
+						}
+						case 'skew' : 
+						{
+							var skewer : Matrix = new Matrix(1, parameters[1], parameters[0]);
+							matrix.concat(skewer);
+							break;
+						}
+						case 'skewX' : 
+						{
+							matrix.c = parameters[0];
+							break;
+						}
+						case 'skewY' : 
+						{
+							matrix.b = parameters[0];
+							break;
+						}
+					}
+					log('transformation.type: ' + (transformation.type));
+				}
+				matrix.translate(originX, originY);
+				if (m_positioningType == 'relative')
+				{
+					matrix.translate(m_currentStyles.left, m_currentStyles.top);
+				}
+				m_contentDisplay.transform.matrix = matrix;
+				if (m_scrollbarsDisplay)
+				{
+					m_scrollbarsDisplay.transform.matrix = matrix;
+				}
 			}
 		}
 	}

@@ -11,11 +11,12 @@
 
 package reprise.ui.layoutmanagers 
 {
+	import reprise.ui.UIComponent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	import flash.geom.Point;
-	
-	import reprise.ui.UIComponent;		
+	import flash.geom.Matrix;
+	import flash.geom.Point;	
 
 	/**
 	 * @author till
