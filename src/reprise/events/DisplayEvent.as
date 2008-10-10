@@ -33,7 +33,9 @@ package reprise.events
 		public static const LOAD_COMPLETE : String = 'loadComplete';
 		public static const LOAD_FAIL : String = 'loadFail';
 		public static const VALIDATION_COMPLETE : String = 'validationComplete';
-		
+		public static const DOCUMENT_VALIDATION_COMPLETE : String = 
+			'documentValidationComplete';
+
 		
 		/***************************************************************************
 		*							public methods								   *

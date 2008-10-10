@@ -11,6 +11,7 @@
 
 package reprise.ui
 {
+	import reprise.events.DisplayEvent;	
 	import reprise.core.UIRendererFactory;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
@@ -303,6 +304,7 @@ package reprise.ui
 			super.validateElement(forceValidation, validateStyles);
 			stageDimensionsChanged = false;
 		}
+
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
@@ -362,6 +364,7 @@ package reprise.ui
 			}
 			log('d validation of ' + m_validatedElementsCount + 
 				' elements took ' + (getTimer() - t1) + 'ms');
+			dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
 			//validate elements that have been marked as invalid during validation
 			if (m_invalidChildren.length)
 			{
