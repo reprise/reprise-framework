@@ -780,8 +780,8 @@ package reprise.controls
 				}
 				var bitmap : BitmapData = new BitmapData(
 					m_labelDisplay.width, m_labelDisplay.height, true, 0);
-				bitmap.draw(m_labelDisplay);
-				m_bitmapCache = new Bitmap(bitmap);
+				bitmap.draw(m_labelDisplay, null, null, null, null, true);
+				m_bitmapCache = new Bitmap(bitmap, 'auto', true);
 				m_contentDisplay.addChild(m_bitmapCache);
 				m_bitmapCache.x = -2;
 				m_bitmapCache.y = -2;
