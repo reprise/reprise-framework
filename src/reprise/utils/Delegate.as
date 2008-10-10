@@ -23,8 +23,8 @@ package reprise.utils
 		protected var m_scope : Object;
 		protected var m_method : Function;
 		protected var m_args : Array;
-		public var m_priority : Number;
-		public var m_id : Number;
+		protected var m_priority : Number;
+		protected var m_id : Number;
 		
 		
 		/***************************************************************************
@@ -59,22 +59,26 @@ package reprise.utils
 		{
 			m_scope = scope;
 		}
-		public function setPriority(value : Number) : void
-		{
-			m_priority = value;
-		}
-		public function priority() : Number
+		
+		public function get priority():Number
 		{
 			return m_priority;
 		}
-		public function setId(value : Number) : void
+		
+		public function set priority(value:Number):void
 		{
-			m_id = value;
+			m_priority = value;
 		}
-		public function id() : Number
+		
+		public function get id():Number
 		{
 			return m_id;
 		}
+		
+		public function set id(value:Number):void
+		{
+			m_id = value;
+		}		
 		
 		public function didSucceed():Boolean
 		{

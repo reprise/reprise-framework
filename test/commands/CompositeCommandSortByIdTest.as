@@ -78,8 +78,8 @@ package commands
 				return;
 			}
 			m_delegate1Complete = true;
-			m_delegate2.setPriority(2);
-			m_delegate3.setPriority(2);
+			m_delegate2.priority = 2;
+			m_delegate3.priority = 2;
 		}
 		
 		protected function delegate2_complete(e:Event, d:Delegate):void

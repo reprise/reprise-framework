@@ -121,13 +121,13 @@ package reprise.external {
 			m_containingImageResource = imageResource;
 		}
 		
-		public override function setPriority(value : Number) : void
+		public override function set priority(value : Number) : void
 		{
-			super.setPriority(value);
+			super.priority = value;
 			// @FIXME
 			if (m_containingImageResource)
 			{
-				m_containingImageResource.setPriority(value);
+				m_containingImageResource.priority = value;
 			}
 		}
 		

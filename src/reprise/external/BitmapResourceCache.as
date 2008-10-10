@@ -130,7 +130,7 @@ package reprise.external
 		{
 			var imageResource : ImageResource = 
 				new ImageResource(bmpResource.url());
-			imageResource.setPriority(bmpResource.priority());
+			imageResource.priority = bmpResource.priority;
 			imageResource.setTimeout(bmpResource.timeout());
 			imageResource.setForceReload(bmpResource.forceReload());
 			imageResource.setCheckPolicyFile(bmpResource.checkPolicyFile());

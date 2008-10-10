@@ -18,20 +18,12 @@ package reprise.commands
 	public class AbstractCommand extends EventDispatcher 
 		implements ICommand
 	{
-		
-		/***************************************************************************
-		*                             Public properties                            *
-		***************************************************************************/
-		public var m_id : Number;
-		public var m_priority : Number = 0;
-		
-		
-		
 		/***************************************************************************
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_didSucceed : Boolean;
-		
+		protected var m_id:Number;
+		protected var m_priority:Number;
 		
 		
 		/***************************************************************************
@@ -45,24 +37,24 @@ package reprise.commands
 			
 		}
 		
-		public function setPriority(value : Number) : void
-		{
-			m_priority = value;
-		}
-		
-		public function priority() : Number
+		public function get priority():Number
 		{
 			return m_priority;
 		}
 		
-		public function setId(value : Number) : void
+		public function set priority(value:Number):void
 		{
-			m_id = value;
+			m_priority = value;
 		}
 		
-		public function id() : Number
+		public function get id():Number
 		{
 			return m_id;
+		}
+		
+		public function set id(value:Number):void
+		{
+			m_id = value;
 		}
 		
 		public function didSucceed() : Boolean

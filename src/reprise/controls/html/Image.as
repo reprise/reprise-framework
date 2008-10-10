@@ -60,7 +60,7 @@ package reprise.controls.html
 			m_loaded = false;
 			m_imageLoader = new BitmapResource();
 			m_imageLoader.setCheckPolicyFile(m_checkPolicyFile);
-			m_imageLoader.setPriority(m_priority);
+			m_imageLoader.priority = m_priority;
 			m_imageLoader.setURL(src);
 			m_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);
 			m_imageLoader.execute();
@@ -80,7 +80,7 @@ package reprise.controls.html
 			m_priority = value;
 			if (m_imageLoader)
 			{
-				m_imageLoader.setPriority(value);
+				m_imageLoader.priority = value;
 			}
 		}
 	

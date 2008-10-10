@@ -56,7 +56,7 @@ package reprise.commands
 		
 		public function addCommand(cmd:ICommand):void
 		{
-			cmd.setId(m_nextResourceId++);
+			cmd.id = m_nextResourceId++;
 			m_pendingCommands.push(cmd);
 			if (m_isExecuting)
 			{
@@ -169,7 +169,7 @@ package reprise.commands
 		
 		protected function executeNext() : void
 		{
-			m_pendingCommands.sortOn(['m_priority', 'm_id'], 
+			m_pendingCommands.sortOn(['priority', 'id'], 
 				[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
 			
 			if (m_pendingCommands.length == 0)
