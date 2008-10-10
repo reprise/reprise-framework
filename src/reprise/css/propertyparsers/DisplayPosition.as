@@ -11,6 +11,8 @@
 
 package reprise.css.propertyparsers
 {
+	import flash.geom.Matrix;	
+	
 	import reprise.core.reprise;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
@@ -189,6 +191,17 @@ package reprise.css.propertyparsers
 					{
 						parameters[0] = 
 							Math.tan(parseFloat(rawParams[0]) * Math.PI / 180);
+						break;
+					}
+					case 'matrix' : 
+					{
+						var mappings : Array = ['a', 'c', 'b', 'd', 'tx', 'ty'];
+						var matrix : Matrix = new Matrix();
+						for (i = rawParams.length; i--;)
+						{
+							matrix[mappings[i]] = parseFloat(rawParams[i]);
+						}
+						parameters[0] = matrix;
 						break;
 					}
 					default : 

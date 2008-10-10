@@ -2358,22 +2358,25 @@ package reprise.ui
 						}
 						case 'skew' : 
 						{
-							var skewer : Matrix = new Matrix(1, parameters[1], parameters[0]);
-							matrix.concat(skewer);
+							matrix.concat(new Matrix(1, parameters[1], parameters[0]));
 							break;
 						}
 						case 'skewX' : 
 						{
-							matrix.c = parameters[0];
+							matrix.concat(new Matrix(1, 0, parameters[0]));
 							break;
 						}
 						case 'skewY' : 
 						{
-							matrix.b = parameters[0];
+							matrix.concat(new Matrix(1, parameters[1]));
+							break;
+						}
+						case 'matrix' : 
+						{
+							matrix.concat(Matrix(parameters[0]));
 							break;
 						}
 					}
-					log('transformation.type: ' + (transformation.type));
 				}
 				matrix.translate(originX, originY);
 				if (m_positioningType == 'relative')
