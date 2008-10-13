@@ -354,10 +354,10 @@ package reprise.ui
 				var path : String = sortedElements[i].path;
 				if (path.indexOf(lastValidatedPath) == 0)
 				{
-//					trace("d skip validation of: " + path);
+//					log("d skip validation of: " + path);
 					continue;
 				}
-				log("d validate " + path);
+//				log("d validate " + path);
 				lastValidatedPath = path + '.';
 				var element : UIObject = UIObject(sortedElements[i].element);
 				element.validation_execute();
