@@ -14,7 +14,7 @@ In it's simplest form commands need to implement a single method named `execute(
 
 ## Asynchronous vs. non-asynchronous commands
 
-There are two different kinds of commands, asynchronous and non-asynchronous commands. In general asynchronous commands are wrapped around either timers (Timer class, setInterval) or around built-in events, like `Event.ENTER_FRAME`, `Event.COMPLETE` (for loading or media playback) and events generated through user interaction, whereas non-asynchronous commands return immediately after execution.
+There are two different kinds of commands, asynchronous and non-asynchronous commands. In general asynchronous commands are wrapped around either timers (Timer class, setInterval) or around built-in events, like `Event.ENTER_FRAME`, `Event.COMPLETE` (for loading or media playback) and events generated through user interaction, whereas non-asynchronous commands return immediately after execution. In either case should a consumer be able to learn about the success of a command execution by calling `didSucceed()` on the command, as defined in the `ICommand` interface. This is also important for queues which abort execution if any of the contained commands fails.
 
 Due to not returning immediately, asynchronous have a slightly more complicated interface. They require a mechanism to notify a consumer when their task is completed. Fortunately if you inherit from AbstractAsynchronousCommand (which you should), most of the work is already done for you.
 
@@ -103,6 +103,6 @@ _Fig. 2.1 Using the class_
 
 ## Queuing
 
-As mentioned before an important strength of commands is their ability to be queued. Reprise accomplishes this task with the help of composite commands. Once fired a `CompositeCommand` executes all its contained commands. If it contains solely non-asynchronous commands it will return immediately, if it contains any asynchronous commands it will notify consumers on completion via an event. 
+As mentioned before an important strength of commands is their ability to be queued. Reprise accomplishes this task with the help of composite commands. Once fired, a `CompositeCommand` executes all its contained commands. If it contains solely non-asynchronous commands it will return immediately, if it contains any asynchronous commands it will notify consumers on completion via an event. 
 
-Composite commands let you also specify how many commands you want to have run concurrently, if any.
+Composite commands let you also specify how many commands you want to have run concurrently, if any. In order to maintain a queue sorted by priority, every command added to a `CompositeCommand` needs to implement the `ICommand` interface and thus implement the getter/setters `priority` and `id`. The `id` value is automatically assigned to a command after it was added to a `CompositeCommand`. It represents its index in the queue and is used to distinguish which command to execute, if two or more commands have an equal priority. In this case the command which was first pushed into the `CompositeCommand` will be executed.
