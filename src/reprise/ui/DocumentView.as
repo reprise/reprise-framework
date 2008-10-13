@@ -357,7 +357,7 @@ package reprise.ui
 //					trace("d skip validation of: " + path);
 					continue;
 				}
-//				trace("d validate " + path);
+				log("d validate " + path);
 				lastValidatedPath = path;
 				var element : UIObject = UIObject(sortedElements[i].element);
 				element.validation_execute();
