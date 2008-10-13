@@ -358,7 +358,7 @@ package reprise.ui
 					continue;
 				}
 				log("d validate " + path);
-				lastValidatedPath = path;
+				lastValidatedPath = path + '.';
 				var element : UIObject = UIObject(sortedElements[i].element);
 				element.validation_execute();
 			}
