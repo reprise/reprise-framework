@@ -137,36 +137,19 @@ package reprise.external
 		
 		public function resourceWithURL(url:String) : IResource
 		{
-			var resource:IResource;
+			function resourceHasURL(elem:*, index:int, arr:Array):Boolean
+			{
+				return (elem is IResource) && (IResource(elem).url() == this);
+			}
 			
-			var i:Number = m_pendingCommands.length;
-			while (i--)
-			{
-				resource = IResource(m_pendingCommands[i]);
-				if (resource.url() == url)
-				{
-					return resource;
-				}
-			}
-			i = m_finishedCommands.length;
-			while (i--)
-			{
-				resource = IResource(m_finishedCommands[i]);
-				if (resource.url() == url)
-				{
-					return resource;
-				}
-			}
-			i = m_currentCommands.length;
-			while (i--)
-			{
-				resource = IResource(m_currentCommands[i]);
-				if (resource.url() == url)
-				{
-					return resource;
-				}
-			}
-			return null;
+			var resource:IResource;
+			var foundResources:Array = m_pendingCommands.filter(resourceHasURL, url);
+			if (foundResources.length) return foundResources[0];
+			foundResources = foundResources.concat(m_finishedCommands.filter(resourceHasURL, url));
+			if (foundResources.length) return foundResources[0];
+			foundResources = foundResources.concat(m_currentCommands.filter(resourceHasURL, url));
+			
+			return foundResources.length ? foundResources[0] : null;
 		}
 		
 		

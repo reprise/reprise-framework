@@ -31,12 +31,12 @@ package mock
 			return null;
 		}
 		
-		public override function getBytesLoaded():Number
+		public override function bytesLoaded():Number
 		{
 			return 0;
 		}
 		
-		public override function getBytesTotal():Number
+		public override function bytesTotal():Number
 		{
 			return 0;
 		}
