@@ -27,7 +27,7 @@ package reprise.external
 		function forceReload() : Boolean;
 		function setRetryTimes( times : Number ) : void;
 		function retryTimes() : Number;
-		function getBytesLoaded() : Number;
-		function getBytesTotal() : Number;
+		function bytesLoaded() : Number;
+		function bytesTotal() : Number;
 	}
 }

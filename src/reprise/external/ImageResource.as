@@ -57,7 +57,7 @@ package reprise.external
 			return bmp;
 		}
 		
-		public override function getBytesLoaded() : Number
+		public override function bytesLoaded() : Number
 		{
 			if (m_attachMode)
 			{
@@ -66,7 +66,7 @@ package reprise.external
 			return m_loader.contentLoaderInfo.bytesLoaded;
 		}
 		
-		public override function getBytesTotal() : Number
+		public override function bytesTotal() : Number
 		{
 			if (m_attachMode)
 			{

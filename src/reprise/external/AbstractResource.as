@@ -127,24 +127,24 @@ package reprise.external
 			return m_content;
 		}
 		
-		public function getBytesLoaded() : Number
+		public function bytesLoaded() : Number
 		{
 			throw new Error(
-				'Cannot call getBytesLoaded of AbstractResource directly!');
+				'Cannot call bytesLoaded of AbstractResource directly!');
 			return null;
 		}
 		
-		public function getBytesTotal() : Number
+		public function bytesTotal() : Number
 		{
 			throw new Error(
-				'Cannot call getBytesTotal of AbstractResource directly!');
+				'Cannot call bytesTotal of AbstractResource directly!');
 			return null;
 		}
 		
 		public function getProgress() : Number
 		{
 			var progress : Number = 
-				Math.round(getBytesLoaded() / (getBytesTotal() / 100));
+				Math.round(bytesLoaded() / (bytesTotal() / 100));
 			if (isNaN(progress))
 			{
 				progress = 0;
@@ -228,7 +228,7 @@ package reprise.external
 		protected function checkProgress(...rest : Array) : void
 		{
 			// no progress this time
-			if (m_lastBytesLoaded == getBytesLoaded())
+			if (m_lastBytesLoaded == bytesLoaded())
 			{
 				// resource received timeout
 				if (getTimer() - m_lastCheckTime >= m_timeout)
@@ -241,7 +241,7 @@ package reprise.external
 				return;
 			}
 			
-			m_lastBytesLoaded = getBytesLoaded();
+			m_lastBytesLoaded = bytesLoaded();
 			m_lastCheckTime = getTimer();
 			
 			dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));

@@ -164,8 +164,8 @@ package reprise.external {
 			m_loadFinished = true;
 	
 			m_httpStatus = m_loader.httpStatus();
-			m_bytesLoaded = m_loader.getBytesLoaded();
-			m_bytesTotal = m_loader.getBytesTotal();
+			m_bytesLoaded = m_loader.bytesLoaded();
+			m_bytesTotal = m_loader.bytesTotal();
 			m_success = e.success;
 			
 			if (m_success)
@@ -195,8 +195,8 @@ package reprise.external {
 			while (i--)
 			{
 				target = BitmapResource(m_targets[i]);
-				target.setBytesLoaded(m_loader.getBytesLoaded());
-				target.setBytesTotal(m_loader.getBytesTotal());
+				target.setBytesLoaded(m_loader.bytesLoaded());
+				target.setBytesTotal(m_loader.bytesTotal());
 				target.updateProgress();
 			}
 		}

@@ -97,18 +97,18 @@ package reprise.external
 				(getProgressOfCurrentResources() / total));
 		}
 		
-		public function getBytesLoaded() : Number
+		public function bytesLoaded() : Number
 		{
 			var bytesLoaded : Number = 0;
 			var i : Number = m_finishedCommands.length;
 			while(i--)
 			{
-				bytesLoaded += IResource(m_finishedCommands[i]).getBytesLoaded();
+				bytesLoaded += IResource(m_finishedCommands[i]).bytesLoaded();
 			}
 			i = m_currentCommands.length;
 			while(i--)
 			{
-				bytesLoaded += IResource(m_currentCommands[i]).getBytesLoaded();
+				bytesLoaded += IResource(m_currentCommands[i]).bytesLoaded();
 			}
 			return bytesLoaded;
 		}

@@ -46,12 +46,12 @@ package reprise.external {
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
 		}
 		
-		public override function getBytesLoaded() : Number
+		public override function bytesLoaded() : Number
 		{
 			return m_bytesLoaded;
 		}
 		
-		public override function getBytesTotal() : Number
+		public override function bytesTotal() : Number
 		{
 			return m_bytesTotal;
 		}	

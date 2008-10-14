@@ -213,12 +213,12 @@ package reprise.css
 		{
 			return m_declarationList;
 		}
-		public override function getBytesLoaded() : Number
+		public override function bytesLoaded() : Number
 		{
 			//TODO: Check if we shouldn't return a better status here
 			return m_importsLoaded;
 		}
-		public override function getBytesTotal() : Number
+		public override function bytesTotal() : Number
 		{
 			//TODO: Check if we shouldn't return a better status here
 			return m_importsTotal;
