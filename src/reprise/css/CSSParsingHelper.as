@@ -126,7 +126,7 @@ package reprise.css
 				sourcePath = PathUtil.stringByDeletingLastPathComponent(sourcePath);
 			}
 			
-			var absolutePath : String = PathUtil.absolutePathToBase(targetPath, sourcePath);
+			var absolutePath : String = PathUtil.stringByResolvingRelativePathToPath(targetPath, sourcePath);
 	
 			if (!sourceIsURL)
 			{
