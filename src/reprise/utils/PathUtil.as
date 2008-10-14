@@ -183,33 +183,46 @@ package reprise.utils
 			}
 		}
 	
-		public static function absolutePathToBase(file:String, base:String = null) : String
+		/**
+		* Converts a relative path into an absolute path by resolving the relative path 
+		* <code>resolvee</code> to a given absolute path <code>base</code>.
+		* 
+		* If <code>base</code> is <code>null</code> or <code>resolvee</code> is already an absolute 
+		* path, the method returns the value of <code>resolvee</code> unaltered.
+		* 
+		* @param resolvee A relative path to be converted into an absolute path
+		* @param base An absolute path to be used as the root for the relative path
+		* 
+		* @return The resolved absolute path
+		*/
+		public static function stringByResolvingRelativePathToPath(resolvee:String, 
+			base:String = null) : String
 		{
-			file = stringByStandardizingPath(file);
+			resolvee = stringByStandardizingPath(resolvee);
 			if (!base)
 			{
-				return file;
+				return resolvee;
 			}
 			base = stringByStandardizingPath(base);
 			
-			if (isAbsolutePath(file))
+			if (isAbsolutePath(resolvee))
 			{
-				return file;
+				return resolvee;
 			}
 	
-			var fileComponents : Array = pathComponents(file);
+			var resolveeComponents : Array = pathComponents(resolvee);
 			var baseComponents : Array = pathComponents(base);
 			var lastComponent : String = '';
 	
-			if (pathExtension(file) != '')
+			if (pathExtension(resolvee) != '')
 			{
-				lastComponent = String(fileComponents.pop());
+				lastComponent = String(resolveeComponents.pop());
 			}
 	
 			var i : Number;
-			for (i = 0; i < fileComponents.length; i++)
+			for (i = 0; i < resolveeComponents.length; i++)
 			{
-				var currentDirPart:String = fileComponents[i];
+				var currentDirPart:String = resolveeComponents[i];
 				if (currentDirPart == '..')
 				{
 					baseComponents.pop();
