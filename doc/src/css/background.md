@@ -179,6 +179,8 @@ and uses the size of the element in which the background image is drawn.
 ### Description
 Specifies if the CSS implementation should preload the `background-image` specified in the same declaration as this property.
 
+Using this property, you can force images to be preloaded as part of the CSS loading process, making sure that the image is displayed immediately when first used in the view structure.
+
 Note that this property only works in conjunction with the `background-image` property, not with background images specified in the `background` shortcut.
 
 ### Values
