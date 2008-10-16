@@ -176,6 +176,15 @@ and uses the size of the element in which the background image is drawn.
 
 ## background-image-preload
 
+### Description
+Specifies if the CSS implementation should preload the `background-image` specified in the same declaration as this property.
+
+Note that this property only works in conjunction with the `background-image` property, not with background images specified in the `background` shortcut.
+
+### Values
+* `preload` | `true`
+* `false`
+
 ***
 
 ## background-image-aliasing
