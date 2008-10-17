@@ -526,6 +526,8 @@ package reprise.css
 			}
 			var loader : BitmapResource = 
 				new BitmapResource(prop.valueOf() as String, true);
+			loader.setCacheBitmap(true);
+			loader.setCloneBitmap(false);
 			m_imagePreloadingResource.addResource(loader);
 		}
 		
