@@ -204,6 +204,10 @@ package reprise.css
 		**/
 		public override function setURL(src : String) : void
 		{
+			if (!m_cssSegments)
+			{
+				m_cssSegments = new IndexedArray();
+			}
 			m_url = src;
 			m_cssFile = cssImportWithURL(src);
 			m_cssSegments[0] = m_cssFile;
