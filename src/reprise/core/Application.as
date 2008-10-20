@@ -11,6 +11,14 @@
 
 package reprise.core
 {
+	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
+	import flash.events.Event;
+	import flash.external.ExternalInterface;
+	import flash.utils.Timer;
+	
+	import reprise.core.ApplicationContext;
 	import reprise.css.CSS;
 	import reprise.events.DisplayEvent;
 	import reprise.external.IResource;
@@ -18,13 +26,6 @@ package reprise.core
 	import reprise.ui.DocumentView;
 	import reprise.ui.UIObject;
 	import reprise.utils.PathUtil;
-	
-	import flash.display.Sprite;
-	import flash.display.StageAlign;
-	import flash.display.StageScaleMode;
-	import flash.events.Event;
-	import flash.external.ExternalInterface;
-	import flash.utils.Timer;	
 
 	public class Application extends Sprite
 	{
@@ -43,6 +44,7 @@ package reprise.core
 		protected var m_lastView : UIObject;
 		protected var m_stageCheckTimer : Timer;
 		protected var m_tooltipManager : TooltipManager;
+		protected var m_appContext:ApplicationContext;
 		
 		protected var m_resourceLoader : ResourceLoader;
 		protected var m_css : CSS;
@@ -107,6 +109,7 @@ package reprise.core
 		
 		protected function initialize() : void
 		{
+			m_appContext = new ApplicationContext(this, stage.loaderInfo);
 			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -115,13 +118,12 @@ package reprise.core
 		
 		protected function initResourceLoading() : void
 		{
-			m_resourceLoader = new ResourceLoader();
-			m_resourceLoader.addEventListener(Event.COMPLETE, resource_complete);
+			m_appContext.coreResourceLoader.addEventListener(Event.COMPLETE, resource_complete);
 			loadDefaultResources();
 			loadResources();
-			if (m_resourceLoader.length())
+			if (m_appContext.coreResourceLoader.length())
 			{
-				m_resourceLoader.execute();
+				m_appContext.coreResourceLoader.execute();
 			}
 			else
 			{
@@ -151,12 +153,12 @@ package reprise.core
 		
 		protected function addResource(resource : IResource) : IResource
 		{
-			m_resourceLoader.addResource(resource);
+			m_appContext.coreResourceLoader.addResource(resource);
 			return resource;
 		}
 		protected function resource_complete(event : Event) : void
 		{
-			m_resourceLoader.removeEventListener(Event.COMPLETE, resource_complete);
+			m_appContext.coreResourceLoader.removeEventListener(Event.COMPLETE, resource_complete);
 			initApplication();
 		}
 		
