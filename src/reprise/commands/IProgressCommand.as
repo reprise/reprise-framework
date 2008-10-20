@@ -15,6 +15,6 @@ package reprise.commands
 	
 	public interface IProgressCommand extends IAsynchronousCommand
 	{
-		function getProgress() : Number;
+		function progress() : Number;
 	}
 }

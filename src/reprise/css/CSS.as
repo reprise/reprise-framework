@@ -387,7 +387,7 @@ package reprise.css
 		protected function dequeueImports() : void
 		{
 			var i:Number;
-			m_loader.clear();
+			//m_loader.clear();
 			for (i = 0; i < m_importQueue.length; i++)
 			{
 				m_loader.addResource(m_importQueue[i]);

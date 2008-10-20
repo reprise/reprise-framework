@@ -50,10 +50,5 @@ package external
 			m_resourceLoader.addResource(m_resource1);
 			m_resourceLoader.addResource(m_resource2);
 		}
-		
-		protected override function tearDown():void
-		{
-			super.tearDown();
-		}
 	}
 }

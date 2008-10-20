@@ -14,7 +14,6 @@ package {
 	import commands.ParallelCompositeTest;
 	
 	import external.CancelledResourceLoaderTest;
-	import external.ResourceLoaderMethodsTest;
 	import external.ResourceLoaderTest;
 	
 	import prerequisites.BasicTest;
@@ -23,7 +22,6 @@ package {
 	{
 		public function AllTests() 
 		{
-			addTest(new ResourceLoaderMethodsTest());
 			addTest(new CancelledResourceLoaderTest());
 			addTest(new ResourceLoaderTest());
 			addTest(new CancelledParallelCompositeTest());

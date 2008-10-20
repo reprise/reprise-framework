@@ -20,40 +20,29 @@ package commands
 			super(methodName);
 		}
 		
-		protected override function setUp():void
-		{
-			super.setUp();
-		}
-		
-		protected override function tearDown():void
-		{
-			super.tearDown();
-		}
-		
 		public override function run():void
 		{
 			m_composite = new CompositeCommand();
 			m_composite.addEventListener(Event.COMPLETE, composite_complete);
 			m_composite.setMaxParallelExecutionCount(3);
-			var i:Number = 1000;
+			var i:Number = 200;
 			while (i--)
 			{
 				m_composite.addCommand(new TimerCommand(10));
 			}
-			trace('executing 1000 TimerCommands. Please be patient ...');
+			trace('executing 200 TimerCommands. Please be patient ...');
 			m_composite.execute();
 		}
 		
 		protected function composite_complete(e:CommandEvent):void
 		{
-			trace('done');
-			super.run();
 			m_compositeSuccess = e.success;
+			super.run();
 		}
 		
-		protected function testSuccess():void
+		public function testSuccess():void
 		{
-			assertTrue('composite command was successful', m_compositeSuccess);
+			assertTrue('composite command should be successful', m_compositeSuccess);
 		}
 	}
 }

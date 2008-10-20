@@ -20,16 +20,6 @@ package external
 			super(methodName);
 		}
 		
-		protected override function setUp():void
-		{
-			super.setUp();
-		}
-		
-		protected override function tearDown():void
-		{
-			super.tearDown();
-		}
-		
 		public override function run():void
 		{
 			m_loader = new ResourceLoader();

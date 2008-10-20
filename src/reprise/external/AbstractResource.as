@@ -141,7 +141,7 @@ package reprise.external
 			return null;
 		}
 		
-		public function getProgress() : Number
+		public function progress() : Number
 		{
 			var progress : Number = 
 				Math.round(bytesLoaded() / (bytesTotal() / 100));

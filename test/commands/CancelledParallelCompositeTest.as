@@ -25,16 +25,6 @@ package commands
 			assertNull('no error should occur on cancel', m_cancelError);
 		}
 		
-		protected override function setUp():void
-		{
-			super.setUp();
-		}
-		
-		protected override function tearDown():void
-		{
-			super.tearDown();
-		}
-		
 		public override function run():void
 		{
 			m_composite = new CompositeCommand();
@@ -42,7 +32,7 @@ package commands
 			var i:Number = 1000;
 			while (i--)
 			{
-				if (i == 300)
+				if (i == 700)
 				{
 					var cmd:TimerCommand = new TimerCommand(10);
 					cmd.addEventListener(Event.COMPLETE, cancelCommand_complete);
@@ -57,6 +47,7 @@ package commands
 		
 		protected function cancelCommand_complete(e:CommandEvent):void
 		{
+			trace('cancelCommand_complete');
 			try
 			{
 				m_composite.cancel();
@@ -66,7 +57,10 @@ package commands
 				m_cancelError = err;
 				trace(m_cancelError);
 			}
-			super.run();
+			finally
+			{
+				super.run();
+			}
 		}
 	}
 }
