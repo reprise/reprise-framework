@@ -154,6 +154,10 @@ package reprise.commands
 		*/
 		public function length():uint
 		{
+			if (!m_pendingCommands)
+			{
+				return 0;
+			}
 			return m_pendingCommands.length + m_currentCommands.length;
 		}
 		
