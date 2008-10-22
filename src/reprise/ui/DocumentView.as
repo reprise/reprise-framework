@@ -11,14 +11,13 @@
 
 package reprise.ui
 {
-	import reprise.events.DisplayEvent;	
+	import reprise.core.ApplicationContext;
 	import reprise.core.UIRendererFactory;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
 	import reprise.data.collection.HashMap;
 	import reprise.events.DebugEvent;
-	import reprise.i18n.II18NService;
-	import reprise.services.tracking.ITrackingService;
+	import reprise.events.DisplayEvent;
 	
 	import com.nesium.events.FileMonitorEvent;
 	import com.nesium.logging.FileMonitor;
@@ -59,8 +58,7 @@ package reprise.ui
 		protected var m_elementsById : HashMap;
 		protected var m_elementsByTagName : HashMap;
 		
-		protected var m_i18nService : II18NService;
-		protected var m_trackingService : ITrackingService;
+		protected var m_appContext : ApplicationContext;
 		
 		protected var m_invalidChildren : Array;
 		
@@ -74,6 +72,7 @@ package reprise.ui
 		protected var m_debuggingMode : Boolean;
 		protected var m_debugInterface : Sprite;
 		protected var m_validatedElementsCount : int;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -84,6 +83,16 @@ package reprise.ui
 			m_elementsById = new HashMap();
 		}
 		
+		public function setApplicationContext(appContext : ApplicationContext) : void
+		{
+			m_appContext = appContext;
+		}
+		
+		public function applicationContext() : ApplicationContext
+		{
+			return m_appContext;
+		}
+
 		public override function setParent(parent:UIObject) : UIObject
 		{
 			super.setParent(parent);
@@ -91,17 +100,6 @@ package reprise.ui
 			m_rootElement = this;
 			m_containingBlock = this;
 			return this;
-		}
-		
-		public function setI18NService(i18nService : II18NService) : void
-		{
-			m_i18nService = i18nService;
-		}
-		
-		public function setTrackingService(
-			trackingService : ITrackingService) : void
-		{
-			m_trackingService = trackingService;
 		}
 		
 		/**
@@ -167,58 +165,6 @@ package reprise.ui
 			return UIComponent(m_elementsById.objectForKey(id));
 		}
 		
-		public function getI18N(key : String) : String
-		{
-			if (!m_i18nService)
-			{
-				return key;
-			}
-			var result : String;
-			if (m_i18nService.keyExists(key))
-			{
-				result = m_i18nService.getStringByKey(key);
-				if (typeof result == "string")
-				{
-					result = result.split('\r\n').join('\n').split('\r').join('\n');
-				}
-			}
-			if (result == null)
-			{
-				return key;
-			}
-			return result;
-		}
-		
-		public function getI18NFlag(key : String) : Boolean
-		{
-			if (!m_i18nService)
-			{
-				return false;
-			}
-			if (m_i18nService.keyExists(key))
-			{
-				return m_i18nService.getBoolByKey(key) || false;
-			}
-			return false;
-		}
-		
-		public function getI18NObject(key : String) : Object
-		{
-			if (!m_i18nService)
-			{
-				return null;
-			}
-			if (m_i18nService.keyExists(key))
-			{
-				return m_i18nService.getGenericContentByKey(key);
-			}
-			return null;
-		}
-		
-		public function getTrack(trackingId : String) : void
-		{
-			m_trackingService.track(trackingId);
-		}
 		public override function hasHiddenAncestors() : Boolean
 		{
 			return false;

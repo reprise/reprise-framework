@@ -37,7 +37,7 @@ package reprise.core
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static const CSS_URL : String = 'style/main.css';
+		protected static const CSS_URL : String = 'flash.css';
 		
 		protected var m_rootElement : DocumentView;
 		protected var m_currentView : UIObject;
@@ -136,7 +136,7 @@ package reprise.core
 			{
 				return;
 			}
-			var cssURL:String = 'flash.css';
+			var cssURL:String = CSS_URL;
 			if (hasOwnProperty('cssURL'))
 			{
 				cssURL = this['cssURL'];
@@ -171,6 +171,7 @@ package reprise.core
 		protected function createRootElement() : void
 		{
 			m_rootElement = new DocumentView();
+			m_rootElement.setApplicationContext(m_appContext);
 			addChild(m_rootElement);
 			m_rootElement.setParent(m_rootElement);
 			m_tooltipContainer = new Sprite();

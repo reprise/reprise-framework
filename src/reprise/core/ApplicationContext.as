@@ -11,24 +11,16 @@
 
 package reprise.core
 {
-
-	import flash.display.LoaderInfo;
-	import flash.utils.ByteArray;
-	
 	import reprise.core.Application;
 	import reprise.core.CoreResourceLoader;
+	import reprise.i18n.II18NService;
+	import reprise.services.tracking.ITrackingService;
 	
+	import flash.display.LoaderInfo;
+	import flash.utils.ByteArray;	
+
 	public class ApplicationContext
 	{
-		
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
-		protected static var g_mainContext:ApplicationContext;
-		protected var m_application:Application;
-		
-		
-		
 		/***************************************************************************
 		*                             Public properties                            *
 		***************************************************************************/
@@ -36,6 +28,15 @@ package reprise.core
 		public var applicationURL:String;
 		public var applicationParameters:Object;
 		
+		
+		/***************************************************************************
+		*                           Protected properties                           *
+		***************************************************************************/
+		protected static var g_mainContext:ApplicationContext;
+		protected var m_application:Application;
+		
+		protected var m_i18nService : II18NService;
+		protected var m_trackingService : ITrackingService;
 		
 		
 		/***************************************************************************
@@ -53,11 +54,49 @@ package reprise.core
 				coreResourceLoader = g_mainContext.coreResourceLoader;
 			}
 			
-			var objCopy:ByteArray = new ByteArray()
+			var objCopy:ByteArray = new ByteArray();
 			objCopy.writeObject(loaderInfo.parameters);
 			objCopy.position = 0;
-			applicationURL = loaderInfo.loaderURL;
+			applicationURL = application.applicationURL();
 			applicationParameters = objCopy.readObject();
+		}
+		
+		public function setI18NService(i18nService : II18NService) : void
+		{
+			m_i18nService = i18nService;
+		}
+		
+		public function setTrackingService(
+			trackingService : ITrackingService) : void
+		{
+			m_trackingService = trackingService;
+		}
+		
+		public function i18n(key : String, defaultReturnValue : * = null) : *
+		{
+			if (!m_i18nService)
+			{
+				return key;
+			}
+			var result : *;
+			if (m_i18nService.keyExists(key))
+			{
+				result = m_i18nService.contentByKey(key);
+				if (typeof result == "string")
+				{
+					result = (result as String).split('\r\n').join('\n').split('\r').join('\n');
+				}
+			}
+			if (result == null)
+			{
+				return defaultReturnValue;
+			}
+			return result;
+		}
+		
+		public function track(trackingId : String) : void
+		{
+			m_trackingService.track(trackingId);
 		}
 	}
 }

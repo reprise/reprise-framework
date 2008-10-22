@@ -16,9 +16,7 @@ package reprise.i18n
 	 */
 	public interface II18NService
 	{
-		function getStringByKey(key : String) : String;
-		function getBoolByKey(key : String) : Boolean;
-		function getGenericContentByKey(key : String) : Object;
+		function contentByKey(key : String) : *;
 		function keyExists(key : String) : Boolean;
 	}
 }

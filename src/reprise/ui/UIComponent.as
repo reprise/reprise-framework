@@ -2212,21 +2212,13 @@ package reprise.ui
 			}
 		}
 		
-		protected function i18n(key : String) : String
+		protected function i18n(key : String) : *
 		{
-			return m_rootElement.getI18N(key);
-		}
-		protected function i18nFlag(key : String) : Boolean
-		{
-			return m_rootElement.getI18NFlag(key);
-		}
-		protected function i18nObject(key : String) : Object
-		{
-			return m_rootElement.getI18NObject(key);
+			return m_rootElement.applicationContext().i18n(key);
 		}
 		protected function track(trackingId : String) : void
 		{
-			m_rootElement.getTrack(trackingId);
+			m_rootElement.applicationContext().track(trackingId);
 		}
 		
 		/**
