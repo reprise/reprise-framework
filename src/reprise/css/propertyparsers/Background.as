@@ -53,6 +53,7 @@ package reprise.css.propertyparsers
 			backgroundScale9RectBottom : {parser : strToIntProperty},
 			backgroundScale9RectLeft : {parser : strToIntProperty},
 			backgroundImageType : {parser : parseBackgroundImageType},
+			backgroundAnimationControl : {parser : parseBackgroundAnimationControl},
 			backgroundImagePreload : {parser : parseBackgroundImagePreload},
 			backgroundImageAliasing : {parser : parseBackgroundImageAliasing}
 		};
@@ -380,6 +381,38 @@ package reprise.css.propertyparsers
 		public static function parseBackgroundImageAliasing(val:String, file:String) : CSSProperty
 		{
 			return strToStringProperty(val.toLowerCase(), file);
+		}
+		
+		public static function parseBackgroundAnimationControl(val:String, file:String) : CSSProperty
+		{
+			log(val);
+			var obj : Object = strToProperty(val, file);
+			var property : CSSProperty = obj.property;
+			val = obj.filteredString;
+			var controlExtractor : RegExp = /\s*(play|stop|loop|marquee)\s*\((.*?)\)/g;
+			var paramSplitter : RegExp = /\s*,\s*/;
+			var playControls : Array = [];
+			while(true)
+			{
+				var match : Array = controlExtractor.exec(val);
+				if (!match)
+				{
+					break;
+				}
+				var control : Object = {type : match[1]};
+				
+				var parameters : Array = (match[2] as String).split(paramSplitter);
+				for (var i : int = parameters.length; i--;)
+				{
+					
+				}
+				log('"', parameters);
+				
+				playControls.push(control);
+			}
+			
+			property.setSpecifiedValue(playControls);
+			return property;
 		}
 	}
 }
