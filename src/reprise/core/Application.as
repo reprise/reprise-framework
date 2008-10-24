@@ -54,10 +54,45 @@ package reprise.core
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
+		public function Application()
+		{
+			if (stage)
+			{
+				initialize();
+			}
+			else
+			{
+				addEventListener(Event.ADDED_TO_STAGE, self_addedToStage, false, 0, true);
+			}
+		}
+		
+		/**
+		 * Returns the URL of the SWF file this application is associated with
+		 * 
+		 * @return The URL of the SWF file this application is associated with
+		 */
 		public function applicationURL() : String
 		{
 			return loaderInfo.url;
 		}
+		
+		/**
+		 * Returns the base path part of the URL of the SWF file this application is associated with
+		 * 
+		 * @return The base path part of the URL of the SWF file this application is associated with
+		 */
+		public function basePath() : String
+		{
+			return PathUtil.stringByDeletingLastPathComponent(stage.loaderInfo.url);
+		}
+		
+		/**
+		 * Returns the complete current location String of the browser content the application is 
+		 * embedded in
+		 * 
+		 * @return The current location String of the browser or an empty String
+		 * @see https://developer.mozilla.org/en/DOM/window.location
+		 */
 		public function browserLocation() : String
 		{
 			if (ExternalInterface.available)
@@ -76,31 +111,20 @@ package reprise.core
 			return '';
 		}
 		
+		/**
+		 * Returns the DocumentView acting as the root element of the Applications view structure
+		 * 
+		 * @return The DocumentView acting as the root element of the Applications view structure
+		 */
 		public function rootElement() : DocumentView
 		{
 			return m_rootElement;
-		}
-		
-		public function basePath() : String
-		{
-			return PathUtil.stringByDeletingLastPathComponent(stage.loaderInfo.url);
 		}
 		
 		
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		public function Application()
-		{
-			if (stage)
-			{
-				initialize();
-			}
-			else
-			{
-				addEventListener(Event.ADDED_TO_STAGE, self_addedToStage, false, 0, true);
-			}
-		}
 		protected function self_addedToStage(event : Event) : void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, self_addedToStage);
