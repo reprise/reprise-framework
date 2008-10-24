@@ -695,7 +695,7 @@ package reprise.controls
 					availableHeight -= scrollbarWidth;
 					m_hScrollbar.setVisibility(true);
 					
-					if ((!m_vScrollbar || !m_vScrollbar.getVisibility()) && 
+					if ((!m_vScrollbar || !m_vScrollbar.visibility()) && 
 						m_labelDisplay.maxScrollV > 1)
 					{
 						if (!m_vScrollbar)
@@ -712,8 +712,8 @@ package reprise.controls
 					m_hScrollbar.setVisibility(false);
 				}
 			}
-			if (!(m_vScrollbar && m_vScrollbar.getVisibility()) && 
-				!(m_hScrollbar && m_hScrollbar.getVisibility()))
+			if (!(m_vScrollbar && m_vScrollbar.visibility()) && 
+				!(m_hScrollbar && m_hScrollbar.visibility()))
 			{
 				return;
 			}

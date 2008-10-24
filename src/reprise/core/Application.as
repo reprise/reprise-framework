@@ -198,7 +198,7 @@ package reprise.core
 				 lastView_hide);
 				m_lastView.hide();
 			}
-			m_currentView = m_rootElement.addChildView(viewClass);
+			m_currentView = UIObject(m_rootElement.addChild(UIObject(new viewClass())));
 			if (!m_lastView && !delayShow)
 			{
 				m_currentView.show();

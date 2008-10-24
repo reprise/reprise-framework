@@ -120,38 +120,6 @@ package reprise.ui {
 			return this;
 		}
 		
-		/**
-		 * Sets the <code>MovieClip</code> in which the actual display for the 
-		 * <code>UIObject</code> gets created.
-		 * 
-		 * In most cases, this method doesn't need to be called and, in fact, 
-		 * shouldn't be called as it gets called internally when adding the object
-		 * to another objects displayList by using <code>UIObject::addchild</code>
-		 * or one of its variants.<br/>
-		 * <br/>
-		 * <b>Note:</b> The name of the newly created <code>MovieClip</code> is 
-		 * determined automatically by combining the objects <code>className</code> 
-		 * and the depth.
-		 * 
-		 * @param parent The <code>MovieClip</code> in which the display for the 
-		 * <code>UIObject</code> gets created
-		 * @param depth The depth at which the display gets created.
-		 */
-//		public function setDisplay(
-//			parent : DisplayObjectContainer, depth : Number = -1) : UIObject
-//		{
-//			if (depth == -1)
-//			{
-//				parent.addChild(this);
-//			}
-//			else
-//			{
-//				parent.addChildAt(this, depth);
-//			}
-//			initialize();
-//			return this;
-//		}
-		
 		public override function addChild(child : DisplayObject) : DisplayObject
 		{
 			if (child is UIObject)
@@ -213,60 +181,6 @@ package reprise.ui {
 		}
 		
 		/**
-		 * adds an instance of the given class at the next available index.
-		 * The given Function has to be a class that derives from UIObject.
-		 * 
-		 * @deprecated This method exists mainly for backwards compatibility with 
-		 * previous versions of the framework. Users are advised to use 
-		 * <code>addChild</code> instead.
-		 * 
-		 * @param viewClass The class of which an instance is to be created and 
-		 * added to the displayList.
-		 * 
-		 * @return The newly created element after adding it to the displayList.
-		 * 
-		 * @see UIObject::addChild
-		 * @see UIObject::addChildAtIndex
-		 * @see UIObject::addChildViewAtIndex
-		 */
-		public function addChildView(viewClass:Class) : UIObject
-		{
-			return addChildViewAt(viewClass, m_children.length);
-		}
-		/**
-		 * adds an instance of the given class at the given index.
-		 * The given Function has to be a class that derives from UIObject.
-		 * 
-		 * Use this method if you want to add an element to a specific index in the 
-		 * displayList instead of simply to the top.
-		 * <b>Note:</b> If an element exists at the given index, it doesn't get 
-		 * replaced by the new element. Instead, the index of the existing element 
-		 * as well as all following elements indexes get incremented and the new 
-		 * element is inserted at the index.
-		 * 
-		 * @deprecated This method exists mainly for backwards compatibility with 
-		 * previous versions of the framework. Users are advised to use 
-		 * <code>addChild</code> instead.
-		 * 
-		 * @param viewClass The class of which an instance is to be created and 
-		 * added to the displayList.
-		 * @param index The index at which the element is to be added
-		 * 
-		 * @return The newly created element after adding it to the displayList.
-		 * 
-		 * @see UIObject::addChild
-		 * @see UIObject::addChildAtIndex
-		 * @see UIObject::addChildView
-		 */
-		public function addChildViewAt(
-			viewClass:Class, depth:int) : UIObject
-		{
-			var child : UIObject = UIObject(new viewClass());
-			addChildAt(child, depth);
-			return child;
-		}
-		
-		/**
 		 * TODO: write a description of this method
 		 */
 		public function nextKeyView() : UIObject
@@ -302,7 +216,7 @@ package reprise.ui {
 		public function nextValidKeyView() : UIObject
 		{
 			var nextValidKey : UIObject;
-			if (getVisibility())
+			if (visibility())
 			{
 				nextValidKey = nextKeyView();
 			}
@@ -534,8 +448,8 @@ package reprise.ui {
 			hide_complete();
 		}
 		/**
-		 * Removes the UIObject from its parents displayList.
-		 * 
+		 * Removes the element from its parents displayList.
+		 * <p>
 		 * Override this method or subscribe to the event <code>DisplayEvent.REMOVE
 		 * </code> if you need to do cleanup once the element gets removed.
 		 * This is advisable if you use intervals or external resources that should 
@@ -545,37 +459,6 @@ package reprise.ui {
 		{
 			m_parentElement.unregisterChildView(this);
 		}
-		
-		/**
-		 * Sets the elements position.
-		 * 
-		 * @param x The horizontal position to move the element to.
-		 * @param y The vertical position to move the element to.
-		 */
-		public function setPosition(x:Number, y:Number) : void
-		{
-			left = x;
-			top = y;
-		}
-		/**
-		 * Sets the elements position.
-		 * 
-		 * @param value The position to move the element to.
-		 */
-		public function set position(value:Point) : void
-		{
-			setPosition(value.x, value.y);
-		}
-		/**
-		 * Returns the elements position relative to its containing element.
-		 * 
-		 * @return The elements position as a <code>Point</code>
-		 */
-		public function get position() : Point
-		{
-			return new Point(left, top);
-		}
-		
 		
 		/**
 		 * returns a point for this views position relative to the given context.
@@ -605,47 +488,13 @@ package reprise.ui {
 			pos = displayObject.globalToLocal(pos);
 			return pos;
 		}
-		public function get top () : Number
-		{
-			return y;
-		}
-		public function set top (value:Number) : void
-		{
-			y = value;
-		}	
-		public function get left () : Number
-		{
-			return x;
-		}
-		public function set left (value:Number) : void
-		{
-			x = value;
-		}	
-		public function get right () : Number
-		{
-			return left + getWidth();
-		}
-		public function get bottom () : Number
-		{
-			return top + getHeight();
-		}
-		
-		public function getWidth() : Number
-		{
-			return width;
-		}
-		public function getHeight() : Number
-		{
-			return height;
-		}	
-		
 		
 		/**
 		 * sets the elements visibility without executing any transitions that 
 		 * might be defined in the elements <code>hide</code> and <code>show</code> 
 		 * methods.
 		 * 
-		 * @param visiblity The 
+		 * @param visibility Boolean specifying if the element should be visible or not
 		 */
 		public function setVisibility(visibility : Boolean) : void
 		{
@@ -656,15 +505,32 @@ package reprise.ui {
 			}
 			dispatchEvent(new DisplayEvent(DisplayEvent.VISIBLE_CHANGED));
 		}
-		public function getVisibility() : Boolean
+		/**
+		 * Returns the elements visibility
+		 * 
+		 * @return Boolean specifying if the element is visible or not
+		 */
+		public function visibility() : Boolean
 		{
 			return m_visible;
 		}
 		
+		/**
+		 * Returns the inversion of the elements visibility
+		 * 
+		 * @return Boolean specifying if the element is hidden or not
+		 */
 		public function isHidden() : Boolean
 		{
-			return !getVisibility();
+			return !visibility();
 		}
+		
+		/**
+		 * Returns the actual display state of the element taking the visibility of its ancestors 
+		 * in the display list into account.
+		 * 
+		 * @return Boolean specifying if the element is visible on the screen
+		 */
 		public function hasHiddenAncestors() : Boolean
 		{
 			if (!stage)
@@ -675,7 +541,7 @@ package reprise.ui {
 			while (ancestor.m_parentElement != ancestor)
 			{
 				ancestor = ancestor.m_parentElement;
-				if (!ancestor.getVisibility())
+				if (!ancestor.visibility())
 				{
 					return true;
 				}
@@ -689,7 +555,7 @@ package reprise.ui {
 			{
 				return true;
 			}
-			var isVisible : Boolean = getVisibility() && !hasHiddenAncestors();
+			var isVisible : Boolean = visibility() && !hasHiddenAncestors();
 			if (!isVisible)
 			{
 				return true;
@@ -700,6 +566,9 @@ package reprise.ui {
 				bounds.bottom > 0 || bounds.top < stage.stageHeight);
 		}
 		
+		/**
+		 * Marks the element as invalid so that it gets validated during the next validation cycle.
+		 */
 		public function invalidate() : void
 		{
 			//TODO: check if we need this:
@@ -717,6 +586,12 @@ package reprise.ui {
 			m_isInvalidated = true;
 		}
 		
+		/**
+		 * Returns all descentant elements that have the supplied tag name
+		 * 
+		 * @param tagName The CSS tag name to match descendant elements against
+		 * @return An Array conaining all matching elements
+		 */
 		public function getElementsByTagName(tagName:String) : Array
 		{	
 			tagName = tagName.toLowerCase();

@@ -329,7 +329,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public override function get top() : Number
+		public function get top() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -357,7 +357,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public override function set top(value:Number) : void
+		public function set top(value:Number) : void
 		{
 			if (isNaN(value))
 			{
@@ -386,7 +386,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public override function get left() : Number
+		public function get left() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -414,7 +414,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public override function set left(value:Number) : void
+		public function set left(value:Number) : void
 		{
 			if (isNaN(value))
 			{
@@ -443,7 +443,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right CSS documentation for right
 		 * @return The elements current right position
 		 */
-		public override function get right() : Number
+		public function get right() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -500,7 +500,7 @@ package reprise.ui
 		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
-		public override function get bottom() : Number
+		public function get bottom() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -991,9 +991,7 @@ package reprise.ui
 		}
 		
 		/**
-		 * removes the UIComponent from its' parents' display list
-		 * 
-		 * Override this method if you need to do cleanup on display list removal of your component.
+		 * @inheritDoc
 		 */
 		public override function remove(...args) : void
 		{
@@ -1008,7 +1006,7 @@ package reprise.ui
 		 * Returns all descentant elements that have the supplied CSS class set
 		 * 
 		 * @param className The CSS class name to match descendant elements against
-		 * @return An Array conaining all matching CSS classes
+		 * @return An Array conaining all matching elements
 		 */
 		public function getElementsByClassName(className : String) : Array
 		{
@@ -1042,7 +1040,7 @@ package reprise.ui
 		 * //TODO: describe the selector path format
 		 * 
 		 * @param selector The selector path to match descendant elements against
-		 * @return An Array conaining all matching CSS classes
+		 * @return An Array conaining all matching elements
 		 */
 		public function getElementsBySelector(selector : String) : Array
 		{
@@ -1268,7 +1266,7 @@ package reprise.ui
 		 */
 		reprise function innerWidth() : Number
 		{
-			if (m_vScrollbar && m_vScrollbar.getVisibility())
+			if (m_vScrollbar && m_vScrollbar.visibility())
 			{
 				return m_currentStyles.width - m_vScrollbar.outerWidth;
 			}
@@ -1280,7 +1278,7 @@ package reprise.ui
 		 */
 		reprise function innerHeight() : Number
 		{
-			if (m_hScrollbar && m_hScrollbar.getVisibility())
+			if (m_hScrollbar && m_hScrollbar.visibility())
 			{
 				return m_currentStyles.height - m_hScrollbar.outerWidth;
 			}
@@ -2520,7 +2518,7 @@ package reprise.ui
 				m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
 			}
 			else if ((!event.shiftKey && m_vScrollbar) || 
-				(event.shiftKey && (!m_hScrollbar || !m_hScrollbar.getVisibility())))
+				(event.shiftKey && (!m_hScrollbar || !m_hScrollbar.visibility())))
 			{
 				m_vScrollbar.scrollPosition -= m_vScrollbar.lineScrollSize * event.delta;
 				m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;

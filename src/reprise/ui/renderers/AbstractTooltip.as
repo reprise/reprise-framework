@@ -84,7 +84,7 @@ package reprise.ui.renderers
 			setPosition(pos.x, pos.y);
 		}
 		
-		public override function setPosition(xValue:Number, yValue:Number) : void
+		public function setPosition(xValue:Number, yValue:Number) : void
 		{
 			var newPos : Point = new Point(xValue, yValue);
 			newPos = stage.localToGlobal(newPos);
