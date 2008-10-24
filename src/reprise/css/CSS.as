@@ -492,7 +492,6 @@ package reprise.css
 				var cssClassDefArr:Array = classesArr[i].split("{");
 				if (cssClassDefArr.length == 2)
 				{
-					log('cssClassDefArr[1]: ' + (cssClassDefArr[1]));
 					//parse all properties of this class into a declaration
 					var declaration : CSSDeclaration = 
 						CSSParsingHelper.parseDeclarationString(cssClassDefArr[1], url);
