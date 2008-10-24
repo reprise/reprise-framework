@@ -85,7 +85,8 @@ package reprise.tweens
 		 */
 		public function addMultipleProperties (
 			scope:Object, properties:Array, startValues:Array, endValues:Array, 
-			tweenFunction:Function, roundResults:Boolean, extraParams:Array) : void
+			tweenFunction:Function = null, roundResults:Boolean = false, 
+			extraParams:Array = null) : void
 		{
 			for (var i : Number = 0; i < properties.length; i++)
 			{
