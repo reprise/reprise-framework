@@ -80,7 +80,7 @@ package reprise.ui
 		
 		public function markAsInvalid():void
 		{
-			addPseudoClass('error');
+			addCSSPseudoClass('error');
 		}
 		
 		public function markAsValid():void
@@ -93,7 +93,10 @@ package reprise.ui
 			m_required = value;
 		}
 		
-		public function setAttributeRequired(value : String):void
+		/**
+		 * @private
+		 */
+		public function setRequiredAttribute(value : String):void
 		{
 			m_required = (value == 'required' || value == 'true');
 		}

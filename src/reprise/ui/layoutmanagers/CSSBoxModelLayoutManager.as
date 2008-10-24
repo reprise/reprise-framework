@@ -11,16 +11,15 @@
 
 package reprise.ui.layoutmanagers 
 {
+	import reprise.core.reprise;
 	import reprise.ui.UIComponent;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	import flash.geom.Matrix;
-	import flash.geom.Point;	
-
-	/**
-	 * @author till
-	 */
+	import flash.geom.Point;
+	
+	use namespace reprise;
+	
 	public class CSSBoxModelLayoutManager 
 	{
 		/***************************************************************************
@@ -78,7 +77,7 @@ package reprise.ui.layoutmanagers
 			{
 				var child:UIComponent = children[i] as UIComponent;
 				//only deal with children that derive from UIComponent
-				if (!child || !child.isDisplayed())
+				if (!child || !child.isRendered())
 				{
 					continue;
 				}
@@ -250,7 +249,7 @@ package reprise.ui.layoutmanagers
 			for (var i:Number = 0; i < childCount; i++)
 			{
 				var child:UIComponent = children[i] as UIComponent;
-				if (!child || !child.isDisplayed())
+				if (!child || !child.isRendered())
 				{
 					//only deal with children that derive from UIComponent
 					continue;

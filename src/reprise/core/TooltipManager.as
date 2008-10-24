@@ -176,7 +176,7 @@ package reprise.core
 				m_tooltip = m_rootView.uiRendererFactory().tooltipRendererById(renderer);
 				m_tooltipContainer.addChild(m_tooltip);
 				m_tooltip.setParent(m_rootView);
-				m_tooltip.cssId = 'Tooltip';
+				m_tooltip.cssID = 'Tooltip';
 				m_tooltip.mouseEnabled = m_tooltip.mouseChildren = false;
 				m_tooltip.addEventListener(DisplayEvent.SHOW_COMPLETE, tooltip_showComplete);
 				m_tooltip.addEventListener(DisplayEvent.HIDE_COMPLETE, tooltip_hideComplete);

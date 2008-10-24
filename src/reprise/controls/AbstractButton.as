@@ -101,7 +101,7 @@ package reprise.controls
 			m_enabled = value;
 			if (!value)
 			{
-				addPseudoClass("disabled");
+				addCSSPseudoClass("disabled");
 				removePseudoClass("hover");
 				removePseudoClass("down");
 			}
@@ -154,7 +154,7 @@ package reprise.controls
 		
 		protected function activate() : void
 		{
-			addPseudoClass("checked");
+			addCSSPseudoClass("checked");
 			m_selected = true;
 		}
 		
@@ -184,7 +184,7 @@ package reprise.controls
 		{
 			if (m_enabled)
 			{
-				addPseudoClass("hover");
+				addCSSPseudoClass("hover");
 			}
 		}
 		protected function buttonDisplay_out(event : MouseEvent) : void
@@ -196,7 +196,7 @@ package reprise.controls
 			stage.addEventListener(MouseEvent.MOUSE_UP, buttonDisplay_up);
 			if (m_enabled)
 			{
-				addPseudoClass("active");
+				addCSSPseudoClass("active");
 			}
 		}
 		protected function buttonDisplay_up(event : MouseEvent) : void
@@ -209,10 +209,6 @@ package reprise.controls
 		}
 		protected function buttonDisplay_click(event : MouseEvent) : void
 		{
-			if (m_enabled)
-			{
-				removeErrorMark();
-			}
 			if (m_canBecomeKeyView)
 			{
 				m_rootElement.setFocusedElement(this, DocumentView.FOCUS_METHOD_MOUSE);

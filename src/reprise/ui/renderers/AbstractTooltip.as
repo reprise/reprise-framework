@@ -10,14 +10,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.ui.renderers
-{ 
-	import flash.display.DisplayObject;
-	import flash.geom.Point;
-	
+{
 	import reprise.controls.Label;
+	import reprise.core.reprise;
 	import reprise.css.propertyparsers.DisplayPosition;
 	import reprise.ui.UIComponent;
 	import reprise.ui.UIObject;
+	
+	import flash.display.DisplayObject;
+	import flash.geom.Point;	 
+	
+	use namespace reprise;
 	
 	public class AbstractTooltip extends UIComponent
 	{

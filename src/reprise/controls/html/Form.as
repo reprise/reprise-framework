@@ -66,7 +66,7 @@ package reprise.controls.html
 		
 		public function activate() : void
 		{
-			addPseudoClass('active');
+			addCSSPseudoClass('active');
 		}
 		
 		public function deactivate() : void

@@ -362,6 +362,16 @@ package reprise.ui {
 			return m_canBecomeKeyView && !isOffScreen();
 		}
 		
+		/**
+		 * Informs the element about its focus state.
+		 * 
+		 * Note that this method doesn't really set the focus as that's implemented by other means. 
+		 * Instead, it serves only to inform the element about whether it is focused or not.
+		 * 
+		 * @param value A boolean specifying if the element has focus
+		 * @param method The means by which the focus was applied, i.e. whether the element was 
+		 * focused by mouse or by keyboard
+		 */
 		public function setFocus(value : Boolean, method : String) : void
 		{
 		}

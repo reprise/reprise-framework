@@ -60,7 +60,7 @@ package reprise.controls
 			m_enabled = value;
 			if (!value)
 			{
-				addPseudoClass("disabled");
+				addCSSPseudoClass("disabled");
 				m_labelDisplay.type = "dynamic";
 			}
 			else
@@ -146,7 +146,10 @@ package reprise.controls
 			setLabel(value);
 		}
 		
-		public function setAttributePlaceholder(value : String):void
+		/**
+		 * @private
+		 */
+		public function setPlaceholderAttribute(value : String):void
 		{
 			m_placeholder = value;
 			if (!m_labelStr)

@@ -37,7 +37,10 @@ package reprise.controls
 			return m_labelDisplay;
 		}
 		
-		public function setAttributeChecked(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setCheckedAttribute(value : String) : void
 		{
 			selected = (value == '1' || value == 'true');
 		}

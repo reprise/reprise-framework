@@ -317,7 +317,7 @@ package reprise.controls
 					m_scrollTrack.enabled = true;
 				}
 			
-				var scrollTrackBox:Rectangle = m_scrollTrack.actualBox();
+				var scrollTrackBox:Rectangle = m_scrollTrack.clientRect();
 				m_thumbMinPos = scrollTrackBox.top;
 				if (m_currentStyles.scaleScrollThumb)
 				{

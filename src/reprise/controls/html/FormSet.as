@@ -39,9 +39,9 @@ package reprise.controls.html
 			{
 				var formData : Object = form.data();
 				data.push(formData);
-				if (form.cssId)
+				if (form.cssID)
 				{
-					data[form.cssId] = formData;
+					data[form.cssID] = formData;
 				}
 			}
 			return data;

@@ -89,6 +89,7 @@ package reprise.ui
 		protected var m_xmlDefinition : XML;
 		protected var m_nodeAttributes : Object;
 		protected var m_cssClasses : String = "";
+		protected var m_cssPseudoClasses : String = "";
 		protected var m_cssId : String = "";
 		protected var m_selectorPath : String;
 		
@@ -146,8 +147,6 @@ package reprise.ui
 		*							private properties							   *
 		***************************************************************************/
 		private var m_explicitContainingBlock : UIComponent;
-		private var m_cssPseudoClasses : String = "";
-		private var m_pseudoClassesBackup : String;
 		private var m_specifiedStyles : CSSDeclaration;
 		private var m_transitionsManager : CSSTransitionsManager;
 		private var m_scrollbarsDisplay : Sprite;
@@ -165,12 +164,18 @@ package reprise.ui
 		/**
 		 * Convenience method that eases the process to add a child element.
 		 * 
+		 * Creates a new instance of the given componentClass or UIComponent if no class is 
+		 * provided. This instance is immediately attached to the elements display list and 
+		 * initialized with the given CSS classes and ID.
+		 * 
 		 * @param classes The css classes the component should have.
 		 * @param id The css id the component should have.
 		 * @param componentClass The ActionScript class to instantiate. If this is 
 		 * omitted, an instance of UIComponent will be created.
 		 * @param index The index at which the element should be added. If this is 
 		 * omitted, the element will be created at the next available index.
+		 * 
+		 * @return The newly created element
 		 */
 		public function addComponent(classes : String = null, id : String = null, 
 			componentClass : Class = null, index : int = -1) : UIComponent
@@ -190,7 +195,7 @@ package reprise.ui
 			}
 			if (id)
 			{
-				component.cssId = id;
+				component.cssID = id;
 			}
 			if (classes)
 			{
@@ -201,7 +206,16 @@ package reprise.ui
 		
 		/**
 		 * initializes the UIComponent structure from the given xml structure, 
-		 * creating child views as needed
+		 * creating child views as needed.
+		 * 
+		 * Using setInnerXML, entire structures of child elements can be created based on the 
+		 * supplied XML structure. For a description of how the XML is interpreted, see the 
+		 * documentation for UIRendererFactory.
+		 * 
+		 * @param	xml	the XML structure to parse
+		 * @return		The instance that setInnerXML is invoked on, so that calls can be chained
+		 * @see 		UIRendererFactory
+		 * 
 		 * TODO: check if this method should call parseXMLDefinition to fully initialize 
 		 * using the xml data (including attributes)
 		 */
@@ -213,59 +227,108 @@ package reprise.ui
 		}
 		
 		/**
-		 * initializes the UIComponent structure from the given xml structure, 
-		 * creating child views as needed
+		 * Returns the containing block for this element.
+		 * 
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details formal definition of containing block
 		 */
-		public function overrideContainingBlock(
-			containingBlock : UIComponent) : void
-		{
-			m_explicitContainingBlock = containingBlock;
-		}
-		
 		public function get containingBlock() : UIComponent
 		{
 			return m_containingBlock;
 		}
 
-		
+		/**
+		 * shortcut for setting the elements width
+		 * 
+		 * @param value The width to apply
+		 */
 		public override function set width(value : Number) : void
 		{
 			setStyle('width', value + "px");
 		}
+		/**
+		 * Returns the elements width excluding padding and borders.
+		 * 
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public override function get width() : Number
 		{
 			return m_contentBoxWidth;
 		}
-		
+		/**
+		 * Returns the elements width including padding and borders.
+		 * 
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public function get outerWidth() : Number
 		{
 			return m_borderBoxWidth;
 		}
-		
+		/**
+		 * Returns the elements width intrinsic including padding and borders.
+		 * 
+		 * The returned value is the width that the element occupies naturally, i.e. if no 
+		 * other constraints apply to it.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public function get intrinsicWidth() : Number
 		{
 			return m_intrinsicWidth;
 		}
 		
+		/**
+		 * shortcut for setting the elements height
+		 * 
+		 * @param value The height to apply
+		 */
 		public override function set height(value:Number) : void
 		{
 			setStyle('height', value + "px");
 		}
+		/**
+		 * Returns the elements height excluding padding and borders.
+		 * 
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public override function get height() : Number
 		{
 			return m_contentBoxHeight;
 		}
-		
+		/**
+		 * Returns the elements height including padding and borders.
+		 * 
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public function get outerHeight() : Number
 		{
 			return m_borderBoxHeight;
 		}
-		
+		/**
+		 * Returns the elements height intrinsic including padding and borders.
+		 * 
+		 * The returned value is the height that the element occupies naturally, i.e. if no 
+		 * other constraints apply to it.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 */
 		public function get intrinsicHeight() : Number
 		{
 			return m_intrinsicHeight;
 		}
 		
+		/**
+		 * Returns the elements top position.
+		 * 
+		 * The returned value is the value currently specified and is to be interpreted differently 
+		 * depending on the value of the CSS property 'position'.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
+		 * @return The elements current top position
+		 */
 		public override function get top() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
@@ -279,6 +342,21 @@ package reprise.ui
 			}
 			return 0;
 		}
+		/**
+		 * Sets the elements top position as specified by CSS.
+		 * 
+		 * The applied value is interpreted differently depending on the value of the CSS property 
+		 * 'position'.
+		 * <p>
+		 * This value is applied immediately and doesn't cause the element to be validated. Because 
+		 * of that, it might interfere with transitions specified for the 'top' CSS property, 
+		 * meaning it shouldn't be used if a transition is specified.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
+		 * @return The elements current top position
+		 */
 		public override function set top(value:Number) : void
 		{
 			if (isNaN(value))
@@ -296,6 +374,18 @@ package reprise.ui
 				y = value + m_currentStyles.marginTop - absolutePosition.y;
 			}
 		}
+		
+		/**
+		 * Returns the elements left position.
+		 * 
+		 * The returned value is the value currently specified and is to be interpreted differently 
+		 * depending on the value of the CSS property 'position'.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
+		 * @return The elements current left position
+		 */
 		public override function get left() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
@@ -309,6 +399,21 @@ package reprise.ui
 			}
 			return 0;
 		}
+		/**
+		 * Sets the elements left position as specified by CSS.
+		 * 
+		 * The applied value is interpreted differently depending on the value of the CSS property 
+		 * 'position'.
+		 * <p>
+		 * This value is applied immediately and doesn't cause the element to be validated. Because 
+		 * of that, it might interfere with transitions specified for the 'left' CSS property, 
+		 * meaning it shouldn't be used if a transition is specified.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
+		 * @return The elements current left position
+		 */
 		public override function set left(value:Number) : void
 		{
 			if (isNaN(value))
@@ -327,6 +432,17 @@ package reprise.ui
 			}
 		}
 		
+		/**
+		 * Returns the elements right position.
+		 * 
+		 * The returned value is the value currently specified and is to be interpreted differently 
+		 * depending on the value of the CSS property 'position'.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right CSS documentation for right
+		 * @return The elements current right position
+		 */
 		public override function get right() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
@@ -339,6 +455,21 @@ package reprise.ui
 			}
 			return 0 + m_borderBoxWidth;
 		}
+		/**
+		 * Sets the elements right position as specified by CSS.
+		 * 
+		 * The applied value is interpreted differently depending on the value of the CSS property 
+		 * 'position'.
+		 * <p>
+		 * This value is applied immediately and doesn't cause the element to be validated. Because 
+		 * of that, it might interfere with transitions specified for the 'right' CSS property, 
+		 * meaning it shouldn't be used if a transition is specified.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right CSS documentation for right
+		 * @return The elements current right position
+		 */
 		public function set right(value:Number) : void
 		{
 			if (isNaN(value))
@@ -358,6 +489,17 @@ package reprise.ui
 			}
 		}
 		
+		/**
+		 * Returns the elements bottom position.
+		 * 
+		 * The returned value is the value currently specified and is to be interpreted differently 
+		 * depending on the value of the CSS property 'position'.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom CSS documentation for bottom
+		 * @return The elements current bottom position
+		 */
 		public override function get bottom() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
@@ -370,6 +512,21 @@ package reprise.ui
 			}
 			return 0 + m_borderBoxHeight;
 		}
+		/**
+		 * Sets the elements bottom position as specified by CSS.
+		 * 
+		 * The applied value is interpreted differently depending on the value of the CSS property 
+		 * 'position'.
+		 * <p>
+		 * This value is applied immediately and doesn't cause the element to be validated. Because 
+		 * of that, it might interfere with transitions specified for the 'bottom' CSS property, 
+		 * meaning it shouldn't be used if a transition is specified.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom CSS documentation for bottom
+		 * @return The elements current bottom position
+		 */
 		public function set bottom(value:Number) : void
 		{
 			if (isNaN(value))
@@ -389,105 +546,131 @@ package reprise.ui
 			}
 		}
 		
-		//TODO: check if these should be removed in favor of styles.margin*
-		public function get marginTop() : Number
-		{
-			return m_currentStyles.marginTop;
-		}
-		public function get marginRight() : Number
-		{
-			return m_currentStyles.marginRight;
-		}
-		public function get marginBottom() : Number
-		{
-			return m_currentStyles.marginBottom;
-		}
-		public function get marginLeft() : Number
-		{
-			return m_currentStyles.marginLeft;
-		}
-		
+		/**
+		 * Returns the node attributes that were defined in this elements XML node.
+		 * 
+		 * This value is only defined for elements that were created by parsing an XML structure.
+		 * 
+		 * @return An untyped object containing the elements attributes. Changing the values doesn't update the element.
+		 */
 		public function get attributes() : Object
 		{
 			return m_nodeAttributes;
 		}
 		
 		/**
-		 * returns a Rectangle object that contains the current position and 
-		 * dimensions of the UIComponent relative to its parentElement
+		 * Returns a Rectangle object that contains the current actual position and 
+		 * dimensions of the UIComponent relative to its parentElement.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return A Rectangle describing the elements position and dimensions in pixels 
 		 */
-		public function actualBox() : Rectangle
+		public function clientRect() : Rectangle
 		{
 			return new Rectangle(
 				x, y, m_borderBoxWidth, m_borderBoxHeight);
 		}
 		
+		/**
+		 * Returns the width of the element excluding paddings and borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The width of the element including paddings and borders
+		 */
 		public function get contentBoxWidth() : Number
 		{
 			return m_contentBoxWidth;
 		}
+		/**
+		 * Returns the height of the element excluding paddings and borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The height of the element including paddings and borders
+		 */
 		public function get contentBoxHeight() : Number
 		{
 			return m_contentBoxHeight;
 		}
+		/**
+		 * Returns the width of the element including paddings but exluding borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The width of the element including paddings and borders
+		 */
 		public function get paddingBoxWidth() : Number
 		{
 			return m_paddingBoxWidth;
 		}
+		/**
+		 * Returns the height of the element including paddings but exluding borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The height of the element including paddings and borders
+		 */
 		public function get paddingBoxHeight() : Number
 		{
 			return m_paddingBoxHeight;
 		}
+		/**
+		 * Returns the width of the element including paddings and borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The width of the element including paddings and borders
+		 */
 		public function get borderBoxWidth() : Number
 		{
 			return m_borderBoxWidth;
 		}
+		/**
+		 * Returns the height of the element including paddings and borders.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The height of the element including paddings and borders
+		 */
 		public function get borderBoxHeight() : Number
 		{
 			return m_borderBoxHeight;
 		}
-
-		/**
-		 * Returns the width that is available to child elements.
-		 */
-		public function innerWidth() : Number
-		{
-			if (m_vScrollbar && m_vScrollbar.getVisibility())
-			{
-				return m_currentStyles.width - m_vScrollbar.outerWidth;
-			}
-			return m_currentStyles.width;
-		}
 		
 		/**
-		 * Returns the height that is available to child elements.
+		 * Returns the current styles as applied to the element.
+		 * <p>
+		 * The returned value can only be used for reference, updating them doesn't change the 
+		 * element.
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The elements current styles as a ComputedStyles object
+		 * @see ComputedStyles
 		 */
-		public function innerHeight() : Number
-		{
-			if (m_hScrollbar && m_hScrollbar.getVisibility())
-			{
-				return m_currentStyles.height - m_hScrollbar.outerWidth;
-			}
-			return m_currentStyles.height;
-		}
-		
 		public function get style() : ComputedStyles
 		{
 			return m_currentStyles;
 		}
-		public function get autoFlags() : Object
+		
+		/**
+		 * Returns the CSS tag name of this element
+		 * 
+		 * @return The elements CSS tag name
+		 */
+		public function get cssTag() : String
 		{
-			return m_autoFlags;
-		}
-		public function get positionInFlow() : int
-		{
-			return m_positionInFlow;
+			return m_elementType;
 		}
 
 		/**
-		 * sets the CSS id and invalidates styling
+		 * Sets the CSS id and invalidates styling
+		 * 
+		 * @param id The CSS id to set for the element
 		 */
-		public function set cssId(id:String) : void
+		public function set cssID(id:String) : void
 		{
 			if (m_cssId)
 			{
@@ -499,14 +682,22 @@ package reprise.ui
 			invalidate();
 		}
 		/**
-		 * returns the CSS id of this element
+		 * Returns the CSS id of this element
+		 * <p>
+		 * Note that this value is only guaranteed to be available for valid elements.
+		 * 
+		 * @return The elements CSS id
 		 */
-		public function get cssId() : String
+		public function get cssID() : String
 		{
 			return m_cssId;
 		}
 		/**
-		 * sets the CSS classes and invalidates styling
+		 * Sets the CSS classes and invalidates styling
+		 * <p>
+		 * Replaces any currently specified CSS classes. Use UIComponent#addCSSClass to add classes.
+		 * 
+		 * @param classes A space separated list of CSS classes to associate the element with
 		 */
 		public function set cssClasses(classes:String) : void
 		{
@@ -515,164 +706,20 @@ package reprise.ui
 			invalidate();
 		}
 		/**
-		 * returns the CSS classes of this element
+		 * Returns the CSS classes of this element
+		 * 
+		 * @return A space separated list of CSS classes specified for the element
 		 */
 		public function get cssClasses() : String
 		{
 			return m_cssClasses;
 		}
-		/**
-		 * sets the CSS pseudo classes and invalidates styling
-		 */
-		public function set cssPseudoClasses(classes:String) : void
-		{
-			m_cssPseudoClasses = classes;
-			m_stylesInvalidated = true;
-			invalidate();
-		}
-		/**
-		 * returns the CSS pseudo classes of this element
-		 */
-		public function get cssPseudoClasses() : String
-		{
-			return m_cssPseudoClasses;
-		}
-		
-		public function hasClass(className : String) : Boolean
-		{
-			return StringUtil.delimitedStringContainsSubstring(
-				m_cssClasses, className, ' ');
-		}
-		
-		public function setStyle(name : String, value : String = null) : void
-		{
-			m_instanceStyles.setStyle(name, value);
-			invalidate();
-			m_stylesInvalidated = true;
-		}
-		
-		public override function tooltipDelay() : Number
-		{
-			return m_currentStyles.tooltipDelay || 0;
-		}
-		public override function setTooltipDelay(delay : Number) : void
-		{
-			// we don't need no invalidation
-			m_instanceStyles.setStyle('tooltipDelay', delay.toString());
-			m_currentStyles.tooltipDelay = delay;
-		}
-		public override function tooltipRenderer() : String
-		{
-			return m_tooltipRenderer;
-		}
-		public override function setTooltipRenderer(renderer : String) : void
-		{
-			// we don't need no invalidation
-			m_instanceStyles.setStyle('tooltipRenderer', renderer);
-			m_currentStyles.tooltipRenderer = renderer;
-		}
-		
-		public override function setFocus(value : Boolean, method : String) : void
-		{
-			if (value)
-			{
-				addPseudoClass('focus');
-			}
-			else
-			{
-				removePseudoClass('focus');
-			}
-		}
 		
 		/**
-		 * replaces all CSS pseudo classes with the :error class, but saves the 
-		 * other classes for a switch back later on.
-		 */
-		public function setErrorMark() : void
-		{
-			if (m_pseudoClassesBackup == null)
-			{
-				m_pseudoClassesBackup = m_cssPseudoClasses;
-				cssPseudoClasses = " :error";
-			}
-		}
-		/**
-		 * removes the CSS error marking and reactivates the old pseudo classes.
-		 */
-		public function removeErrorMark() : void
-		{
-			if (m_pseudoClassesBackup != null)
-			{
-				cssPseudoClasses = m_pseudoClassesBackup;
-				m_pseudoClassesBackup = null;
-			}
-		}
-		/**
-		 * adds a pseudo class if it's not already in the list of pseudo classes.
-		 */
-		public function addPseudoClass(name:String) : void
-		{
-			if (m_pseudoClassesBackup)
-			{
-				if (StringUtil.delimitedStringContainsSubstring(
-					m_pseudoClassesBackup, ':' + name, ' '))
-				{
-					return;
-				}
-				m_pseudoClassesBackup += " :" + name;
-				if (m_pseudoClassesBackup.charAt(0) == ' ')
-				{
-					m_pseudoClassesBackup = m_pseudoClassesBackup.substr(1);
-				}
-			}
-			else
-			{
-				if (StringUtil.delimitedStringContainsSubstring(
-					m_cssPseudoClasses, ':' + name, ' '))
-				{
-					return;
-				}
-				m_cssPseudoClasses += " :" + name;
-				if (m_cssPseudoClasses.charAt(0) == ' ')
-				{
-					m_cssPseudoClasses = m_cssPseudoClasses.substr(1);
-				}
-			}
-			m_stylesInvalidated = true;
-			invalidate();
-		}
-		/**
-		 * removes a pseudo class from the list.
-		 */
-		public function removePseudoClass(name:String) : void
-		{
-			if (m_pseudoClassesBackup)
-			{
-				if (!StringUtil.delimitedStringContainsSubstring(
-					m_pseudoClassesBackup, ':' + name, ' '))
-				{
-					return;
-				}
-				m_pseudoClassesBackup = 
-					StringUtil.removeSubstringFromDelimitedString(
-					m_pseudoClassesBackup, ':' + name, ' ');
-			}
-			else
-			{
-				if (!StringUtil.delimitedStringContainsSubstring(
-					m_cssPseudoClasses, ':' + name, ' '))
-				{
-					return;
-				}
-				m_cssPseudoClasses = StringUtil.removeSubstringFromDelimitedString(
-					m_cssPseudoClasses, ':' + name, ' ');
-			}
-			m_stylesInvalidated = true;
-			invalidate();
-		}
-		
-		/**
-		 * adds a CSS class if it's not already in the list of CSS classes.
+		 * adds a CSS class if it's not already in the list of CSS classes and invalidates the 
+		 * element.
+		 * 
+		 * @param name The CSS class to add to the element
 		 */
 		public function addCSSClass(name : String) : void
 		{
@@ -690,7 +737,9 @@ package reprise.ui
 			invalidate();
 		}
 		/**
-		 * removes a CSS class from the list.
+		 * removes a CSS class from the list and invalidates the element
+		 * 
+		 * @param name The CSS class to remove from the object
 		 */
 		public function removeCSSClass(name : String) : void
 		{
@@ -703,6 +752,146 @@ package reprise.ui
 				removeSubstringFromDelimitedString(m_cssClasses, name, ' ');
 			m_stylesInvalidated = true;
 			invalidate();
+		}
+		/**
+		 * Returns true if the element has the supplied CSS class
+		 * 
+		 * @param className The CSS class name to check for
+		 * @return A boolean value specifying if the element has the supplied CSS class
+		 */
+		public function hasCSSClass(className : String) : Boolean
+		{
+			return StringUtil.delimitedStringContainsSubstring(
+				m_cssClasses, className, ' ');
+		}
+		
+		/**
+		 * Sets the CSS pseudo classes and invalidates styling
+		 * <p>
+		 * Replaces any currently specified CSS pseudo classes. 
+		 * Use UIComponent#addCSSPseudoClass to add classes.
+		 * 
+		 * @param classes A space separated list of CSS classes to associate the element with
+		 */
+		public function set cssPseudoClasses(classes:String) : void
+		{
+			m_cssPseudoClasses = classes;
+			m_stylesInvalidated = true;
+			invalidate();
+		}
+		/**
+		 * Returns the CSS pseudo classes of this element
+		 * 
+		 * @return A space separated list of CSS pseudo classes specified for the element
+		 */
+		public function get cssPseudoClasses() : String
+		{
+			return m_cssPseudoClasses;
+		}
+		
+		/**
+		 * adds a CSS pseudo class if it's not already in the list of CSS classes and invalidates 
+		 * the element
+		 * 
+		 * @param name The CSS pseudo class to add to the element
+		 */
+		public function addCSSPseudoClass(name:String) : void
+		{
+			if (StringUtil.delimitedStringContainsSubstring(
+				m_cssPseudoClasses, ':' + name, ' '))
+			{
+				return;
+			}
+			m_cssPseudoClasses += " :" + name;
+			if (m_cssPseudoClasses.charAt(0) == ' ')
+			{
+				m_cssPseudoClasses = m_cssPseudoClasses.substr(1);
+			}
+			m_stylesInvalidated = true;
+			invalidate();
+		}
+		/**
+		 * removes a CSS pseudo class from the list and invalidates the element
+		 * 
+		 * @param name The CSS pseudo class to remove from the object
+		 */
+		public function removePseudoClass(name : String) : void
+		{
+			if (!StringUtil.delimitedStringContainsSubstring(
+				m_cssPseudoClasses, ':' + name, ' '))
+			{
+				return;
+			}
+			m_cssPseudoClasses = StringUtil.removeSubstringFromDelimitedString(
+				m_cssPseudoClasses, ':' + name, ' ');
+			m_stylesInvalidated = true;
+			invalidate();
+		}
+		
+		/**
+		 * Sets a single CSS style property and invalidates the element
+		 * <p>
+		 * The value is added to the elements instance styles and thus overrides all values set for 
+		 * the same property through other means, i.e. through external stylesheets or the element 
+		 * type supplying a default value.
+		 * 
+		 * @param name The name of the property to set
+		 * @param value The value to set for the property as a String. If no value is supplied, the 
+		 * property is removed from the elements instance styles.
+		 */
+		public function setStyle(name : String, value : String = null) : void
+		{
+			m_instanceStyles.setStyle(name, value);
+			invalidate();
+			m_stylesInvalidated = true;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public override function tooltipDelay() : Number
+		{
+			return m_currentStyles.tooltipDelay || 0;
+		}
+		/**
+		 * @inheritDoc
+		 */
+		public override function setTooltipDelay(delay : Number) : void
+		{
+			// we don't need no invalidation
+			m_instanceStyles.setStyle('tooltipDelay', delay.toString());
+			m_currentStyles.tooltipDelay = delay;
+		}
+		/**
+		 * @inheritDoc
+		 */
+		public override function tooltipRenderer() : String
+		{
+			return m_tooltipRenderer;
+		}
+		/**
+		 * @inheritDoc
+		 */
+		public override function setTooltipRenderer(renderer : String) : void
+		{
+			// we don't need no invalidation
+			m_instanceStyles.setStyle('tooltipRenderer', renderer);
+			m_currentStyles.tooltipRenderer = renderer;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public override function setFocus(value : Boolean, method : String) : void
+		{
+			if (value)
+			{
+				addCSSPseudoClass('focus');
+			}
+			else
+			{
+				removePseudoClass('focus');
+			}
 		}
 		
 		/**
@@ -717,27 +906,47 @@ package reprise.ui
 			super.setVisibility(visible);
 		}
 		
-		public function isDisplayed() : Boolean
+		/**
+		 * Returns true if the element is rendered.
+		 * <p>
+		 * Right now, the only circumstance under which this method returns false is if the element 
+		 * has the CSS property display: none applied to it, causing all validation of the element 
+		 * itself and its children to be stopped right after style calculation.
+		 * <p>
+		 * If this value is false, all other values that depend on the element being valid might be 
+		 * outdated or not even set at all.
+		 * 
+		 * @return A boolean indicating if the element is rendered to the screen or not
+		 */
+		public function isRendered() : Boolean
 		{
 			return !(m_currentStyles.display && m_currentStyles.display == 'none');
 		}
 		
 		/**
-		* setter for the alpha property
+		* Sets the elements alpha property immediately and without invalidating the element
+		* 
+		* @param value The value to set alpha to as a fraction between 0 and 1
+		* @see #opacity
 		*/
 		public override function set alpha(value:Number) : void
 		{
 			opacity = value;
 		}
 		/**
-		* getter for the alpha property
+		* Returns the elements alpha as a fraction between 0 and 1
+		* 
+		* @return The elements alpha as a fraction between 0 and 1
 		*/
 		public override function get alpha() : Number
 		{
 			return opacity;
 		}
+		
 		/**
-		* setter for the opacity property
+		* Sets the elements opacity property immediately and without invalidating the element
+		* 
+		* @param value The elements opacity as a fraction between 0 and 1
 		*/
 		public function set opacity(value:Number) : void
 		{
@@ -746,7 +955,9 @@ package reprise.ui
 			m_instanceStyles.setStyle('opacity', value.toString());
 		}
 		/**
-		* getter for the opacity property
+		* Returns the elements opacity as a fraction between 0 and 1
+		* 
+		* @return The value to set opacity to as a fraction between 0 and 1
 		*/
 		public function get opacity() : Number
 		{
@@ -758,7 +969,10 @@ package reprise.ui
 		}
 	
 		/**
-		* setter for the rotation property
+		* Sets the elements rotation as a Number between 0 and 360
+		* 
+		* @return The value to set rotation to as a Number. Value below 0 and above 360 get 
+		* normalized by applying modulo 360.
 		*/
 		public override function set rotation(value : Number) : void
 		{
@@ -767,7 +981,9 @@ package reprise.ui
 			m_instanceStyles.setStyle('rotation', value.toString());
 		}
 		/**
-		* getter for the rotation property
+		* Returns the elements rotation as a value between 0 and 360
+		* 
+		* @return The elements rotation as a value between 0 and 360
 		*/
 		public override function get rotation() : Number
 		{
@@ -776,6 +992,8 @@ package reprise.ui
 		
 		/**
 		 * removes the UIComponent from its' parents' display list
+		 * 
+		 * Override this method if you need to do cleanup on display list removal of your component.
 		 */
 		public override function remove(...args) : void
 		{
@@ -786,8 +1004,13 @@ package reprise.ui
 			super.remove();
 		}
 		
-		
-		public function getElementsByClassName(className:String) : Array
+		/**
+		 * Returns all descentant elements that have the supplied CSS class set
+		 * 
+		 * @param className The CSS class name to match descendant elements against
+		 * @return An Array conaining all matching CSS classes
+		 */
+		public function getElementsByClassName(className : String) : Array
 		{
 			var elements:Array = [];
 			
@@ -800,7 +1023,7 @@ package reprise.ui
 					continue;
 				}
 				var childView : UIComponent = child as UIComponent;
-				if (childView.hasClass(className))
+				if (childView.hasCSSClass(className))
 				{
 					elements.push(childView);
 				}
@@ -813,6 +1036,14 @@ package reprise.ui
 			return elements;		
 		}
 		
+		/**
+		 * Returns all descentant elements that match the supplied CSS selector
+		 * <p>
+		 * //TODO: describe the selector path format
+		 * 
+		 * @param selector The selector path to match descendant elements against
+		 * @return An Array conaining all matching CSS classes
+		 */
 		public function getElementsBySelector(selector : String) : Array
 		{
 			var matches : Array = [];
@@ -896,21 +1127,24 @@ package reprise.ui
 			matches = candidates;
 			return matches;
 		}
+		/**
+		 * Returns the first descentant element that matches the supplied CSS selector
+		 * <p>
+		 * //TODO: describe the selector path format
+		 * 
+		 * @param selector The selector path to match descendant elements against
+		 * @return The first descentant element that matches the supplied CSS selector
+		 */
 		public function getElementBySelector(selector : String) : UIComponent
 		{
 			return getElementsBySelector(selector)[0];
 		}
 		
-		public function get selectorPath() : String
-		{
-			return m_selectorPath;
-		}
-		
-		public function get cssTag() : String
-		{
-			return m_elementType;
-		}
-		
+		/**
+		 * @private
+		 * 
+		 * Only used internally but implements an interface and interface methods can only be public
+		 */
 		public function valueBySelectorProperty(
 			selector : String, property : String, ...rest : Array) : *
 		{
@@ -947,24 +1181,39 @@ package reprise.ui
 			return targetProperty;
 		}
 		
-		public function setAttributeId(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setIdAttribute(value : String) : void
 		{
-			cssId = value;
+			cssID = value;
 		}
-		public function setAttributeClass(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setClassAttribute(value : String) : void
 		{
 			cssClasses = value;
 		}
-		public function setAttributeStyle(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setStyleAttribute(value : String) : void
 		{
 			m_instanceStyles = 
 				CSSParsingHelper.parseDeclarationString(value, applicationURL());
 		}
-		public function setAttributeTooltip(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setTooltipAttribute(value : String) : void
 		{
 			setTooltipData(value);
 		}
-		public function setAttributeTitle(value : String) : void
+		/**
+		 * @private
+		 */
+		public function setTitleAttribute(value : String) : void
 		{
 			if (!m_tooltipData)
 			{
@@ -974,6 +1223,8 @@ package reprise.ui
 		
 		/**
 		 * Returns true if this element has any currently running CSS transitions
+		 * 
+		 * @return Boolean value indicating if the element has active CSS transitions
 		 */
 		public function hasActiveTransitions() : Boolean
 		{
@@ -983,11 +1234,71 @@ package reprise.ui
 		/**
 		 * Returns true if this element has a currently running CSS transition for the 
 		 * given style
+		 * 
+		 * @param style The name of the CSS property to check for transitions for
+		 * @return Boolean value indicating if the element has an active CSS transition for the 
+		 * supplied CSS property
 		 */
 		public function hasActiveTransitionForStyle(style : String) : Boolean
 		{
 			return m_transitionsManager.hasActiveTransitionForStyle(style);
 		}
+		
+		
+		/***************************************************************************
+		*							reprise methods								   *
+		***************************************************************************/
+		/**
+		 * Allows to explicitly specify a containing block for the element.
+		 * 
+		 * Use this method if you need to override the element that's used as a frame of reference 
+		 * for resolving relative properties in the CSS box model.
+		 * 
+		 * @param containingBlock The element to use as the containing block for this element
+		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details formal definition of containing block
+		 */
+		reprise function overrideContainingBlock(
+			containingBlock : UIComponent) : void
+		{
+			m_explicitContainingBlock = containingBlock;
+		}
+
+		/**
+		 * Returns the width that is available to child elements.
+		 */
+		reprise function innerWidth() : Number
+		{
+			if (m_vScrollbar && m_vScrollbar.getVisibility())
+			{
+				return m_currentStyles.width - m_vScrollbar.outerWidth;
+			}
+			return m_currentStyles.width;
+		}
+		
+		/**
+		 * Returns the height that is available to child elements.
+		 */
+		reprise function innerHeight() : Number
+		{
+			if (m_hScrollbar && m_hScrollbar.getVisibility())
+			{
+				return m_currentStyles.height - m_hScrollbar.outerWidth;
+			}
+			return m_currentStyles.height;
+		}
+		reprise function get autoFlags() : Object
+		{
+			return m_autoFlags;
+		}
+		reprise function get positionInFlow() : int
+		{
+			return m_positionInFlow;
+		}
+		reprise function get selectorPath() : String
+		{
+			return m_selectorPath;
+		}
+		
 
 		/***************************************************************************
 		*							protected methods								   *
@@ -1096,7 +1407,7 @@ package reprise.ui
 			{
 				calculateStyles();
 				
-				if (!isDisplayed())
+				if (!isRendered())
 				{
 					visible = false;
 					return;
@@ -1148,7 +1459,7 @@ package reprise.ui
 		 */
 		protected override function validateAfterChildren() : void
 		{
-			if (!isDisplayed())
+			if (!isRendered())
 			{
 				return;
 			}
@@ -1268,7 +1579,7 @@ package reprise.ui
 
 		protected override function validateChildren() : void
 		{
-			if (!isDisplayed())
+			if (!isRendered())
 			{
 				return;
 			}
@@ -1287,6 +1598,9 @@ package reprise.ui
 			}
 		}
 		
+		/**
+		 * Hook for specifying styles that a components instances should have by default
+		 */
 		protected function initDefaultStyles() : void
 		{
 		}
@@ -1687,7 +2001,7 @@ package reprise.ui
 			m_layoutManager.applyAbsolutePositions(this, m_children);
 			for each (var child : UIComponent in m_children)
 			{
-				if (!child || !child.isDisplayed())
+				if (!child || !child.isRendered())
 				{
 					//only deal with children that derive from UIComponent
 					continue;
@@ -1753,7 +2067,8 @@ package reprise.ui
 		}
 		
 		/**
-		 * Tries invoking a setter named after the schema 'setAttribute[attribute name]'. 
+		 * Tries invoking a setter named after the schema 
+		 * 'set[capitalized attribute name]Attribute'. 
 		 * If that fails, the method invokes setValueForKey to try to assign the value 
 		 * by other means.
 		 */
@@ -1763,8 +2078,8 @@ package reprise.ui
 			var usedValue : * = resolveBindings(value);
 			try
 			{
-				var attributeSetterName : String = 'setAttribute' + 
-					attribute.charAt(0).toUpperCase() + attribute.substr(1);
+				var attributeSetterName : String = 'set' + 
+					attribute.charAt(0).toUpperCase() + attribute.substr(1) + 'Attribute';
 				this[attributeSetterName](usedValue);
 			}
 			catch (error: Error)

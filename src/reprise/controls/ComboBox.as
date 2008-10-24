@@ -78,7 +78,11 @@ package reprise.controls
 				m_label.setLabel(m_list.selectedLabel());
 			}
 		}
-		public function setAttributeValue(value : String) : void
+		
+		/**
+		 * @private
+		 */
+		public function setValueAttribute(value : String) : void
 		{
 			setValue(value);
 		}
