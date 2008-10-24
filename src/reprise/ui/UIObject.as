@@ -616,7 +616,16 @@ package reprise.ui {
 			return elements;
 		}
 		
-		
+		/**
+		 * Adds a display object Filter to the element
+		 * <p>
+		 * UIObject keeps an internal copy of the filters Array, allowing for duplicate checking.
+		 * <p>
+		 * This means that you can't add the same Filter multiple times.
+		 * 
+		 * @param filter The Filter to add to the element
+		 * @see #removeFilter()
+		 */
 		public function addFilter(filter : Object) : void
 		{
 			if (!m_filters)
@@ -631,6 +640,18 @@ package reprise.ui {
 			m_contentDisplay.filters = m_filters;
 		}
 		
+		/**
+		 * Removes a display object Filter from the element
+		 * <p>
+		 * UIObject keeps an internal copy of the filters Array, allowing for identity comparison 
+		 * of Filters, as opposed to the internal Filter handling of DisplayObject.
+		 * <p>
+		 * This means that it's possible to remove a Filter by supplying the original instance that 
+		 * was added with addFilter().
+		 * 
+		 * @param filter The Filter to add to the element
+		 * @see #addFilter()
+		 */
 		public function removeFilter(filter : Object) : void
 		{
 			if (!m_filters)
@@ -645,11 +666,18 @@ package reprise.ui {
 			}
 		}
 		
+		/**
+		 * Removes all currently applyed Filters from the element
+		 */
 		public function clearFilters() : void
 		{
 			m_contentDisplay.filters = null;
 		}
-	
+		
+		/**
+		 * Returns the elements path from the root element in a similar fashion to how 
+		 * MovieClip::toString worked in AS2.
+		 */
 		public override function toString() : String
 		{
 			if (!root || this == m_rootElement)
