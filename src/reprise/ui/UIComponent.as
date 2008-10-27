@@ -666,9 +666,11 @@ package reprise.ui
 		}
 
 		/**
-		 * Sets the CSS id and invalidates styling
+		 * Sets the CSS ID and invalidates styling
+		 * <p>
+		 * CSS IDs
 		 * 
-		 * @param id The CSS id to set for the element
+		 * @param id The CSS ID to set for the element
 		 */
 		public function set cssID(id:String) : void
 		{
@@ -1006,7 +1008,7 @@ package reprise.ui
 		 * Returns all descentant elements that have the supplied CSS class set
 		 * 
 		 * @param className The CSS class name to match descendant elements against
-		 * @return An Array conaining all matching elements
+		 * @return An Array containing all matching elements
 		 */
 		public function getElementsByClassName(className : String) : Array
 		{

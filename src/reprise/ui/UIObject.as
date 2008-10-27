@@ -9,7 +9,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.ui { 
+package reprise.ui 
+{
+	import reprise.core.reprise;
+	import reprise.events.DisplayEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -18,7 +22,8 @@ package reprise.ui {
 	import flash.geom.Rectangle;
 	import flash.utils.getQualifiedClassName;
 	
-	import reprise.events.DisplayEvent;
+	use namespace reprise;
+	
 	public class UIObject extends Sprite
 	{
 		/***************************************************************************

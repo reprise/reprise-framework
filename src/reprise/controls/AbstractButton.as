@@ -11,15 +11,18 @@
 
 package reprise.controls
 {
-	import flash.display.DisplayObject;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.ui.Keyboard;
-	
+	import reprise.core.reprise;
 	import reprise.events.MouseEventConstants;
 	import reprise.ui.AbstractInput;
 	import reprise.ui.DocumentView;
-	import reprise.ui.UIComponent; 
+	import reprise.ui.UIComponent;
+	
+	import flash.display.DisplayObject;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.ui.Keyboard;		
+	
+	use namespace reprise;
 
 	public class AbstractButton extends AbstractInput
 	{

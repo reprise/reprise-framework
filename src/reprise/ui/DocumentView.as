@@ -13,6 +13,7 @@ package reprise.ui
 {
 	import reprise.core.ApplicationContext;
 	import reprise.core.UIRendererFactory;
+	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
 	import reprise.data.collection.HashMap;
@@ -33,7 +34,9 @@ package reprise.ui
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
-	import flash.utils.setTimeout;		
+	import flash.utils.setTimeout;
+	
+	use namespace reprise;
 
 	public class DocumentView extends UIComponent
 	{
@@ -83,16 +86,35 @@ package reprise.ui
 			m_elementsById = new HashMap();
 		}
 		
+		/**
+		 * Sets the ApplicationContext for the document structure.
+		 * <p>
+		 * The ApplicationContext has to be set for the document structure to work because it 
+		 * provides essential functionality such as the central resource loading queue.
+		 * 
+		 * @param appContext The AppicationContext to set
+		 * @see ApplicationContext
+		 */
 		public function setApplicationContext(appContext : ApplicationContext) : void
 		{
 			m_appContext = appContext;
 		}
 		
+		/**
+		 * Returns the document structures ApplicationContext
+		 * 
+		 * @return The document structures ApplicationContext
+		 * @see ApplicationContext
+		 */
 		public function applicationContext() : ApplicationContext
 		{
 			return m_appContext;
 		}
-
+		
+		/**
+		 * TODO: remove this override or turn it into a no-op. This should really be handled in a 
+		 * cleaner way.
+		 */
 		public override function setParent(parent:UIObject) : UIObject
 		{
 			super.setParent(parent);
@@ -140,7 +162,7 @@ package reprise.ui
 			invalidate();
 		}
 		/**
-		 * returns the views' styleSheet
+		 * returns the stylesheet for this element structure
 		 */
 		public function get styleSheet() : CSS
 		{
@@ -151,33 +173,46 @@ package reprise.ui
 			return g_defaultStyleSheet;
 		}
 		
-		public function registerElementID(id:String, element:UIComponent) : void
-		{
-			m_elementsById.setObjectForKey(element, id);
-		}
-		public function removeElementID(id:String) : void
-		{
-			m_elementsById.removeObjectForKey(id);
-		}
-		
+		/**
+		 * Returns the element matching the given CSS ID.
+		 * 
+		 * @param className The CSS ID to match descendant elements against
+		 * @return The element matching the given CSS ID or null
+		 */
 		public function getElementById(id:String) : UIComponent
 		{
 			return UIComponent(m_elementsById.objectForKey(id));
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public override function hasHiddenAncestors() : Boolean
 		{
 			return false;
 		}
 		
-		public function markChildAsInvalid(child : UIObject) : void
+		
+		/***************************************************************************
+		*							reprise methods								   *
+		***************************************************************************/
+		reprise function registerElementID(id:String, element:UIComponent) : void
+		{
+			m_elementsById.setObjectForKey(element, id);
+		}
+		reprise function removeElementID(id:String) : void
+		{
+			m_elementsById.removeObjectForKey(id);
+		}
+		
+		reprise function markChildAsInvalid(child : UIObject) : void
 		{
 			//TODO: check if child.toString() is ok to use
 			m_invalidChildren.push({element : child, path : child.toString()});
 			stage.invalidate();
 		}
 		
-		public function markChildAsValid(child : UIObject) : void
+		reprise function markChildAsValid(child : UIObject) : void
 		{
 			var path : String = child.toString();
 			var i : int = m_invalidChildren.length;
@@ -190,7 +225,7 @@ package reprise.ui
 			}
 		}
 		
-		public function setFocusedElement(element : UIObject, method : String) : Boolean
+		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
 			if (m_focus && m_focus == element)
 			{
@@ -209,6 +244,10 @@ package reprise.ui
 			return true;
 		}
 		
+		
+		/***************************************************************************
+		*							internal methods							   *
+		***************************************************************************/
 		internal function increaseValidatedElementsCount() : void
 		{
 			m_validatedElementsCount++;
