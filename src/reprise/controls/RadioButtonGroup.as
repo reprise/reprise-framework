@@ -7,10 +7,14 @@
 
 package reprise.controls
 {
-	import reprise.ui.DocumentView;	
 	import reprise.controls.RadioButton;
-	import flash.events.EventDispatcher;
+	import reprise.core.reprise;
+	import reprise.ui.DocumentView;
+	
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	
+	use namespace reprise;
 	
 	public class RadioButtonGroup extends EventDispatcher
 	{
