@@ -85,7 +85,7 @@ package reprise.ui
 		
 		public function markAsValid():void
 		{
-			removePseudoClass('error');
+			removeCSSPseudoClass('error');
 		}
 		
 		public function setRequired(value : Boolean) : void

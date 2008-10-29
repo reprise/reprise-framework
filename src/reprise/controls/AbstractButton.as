@@ -105,12 +105,12 @@ package reprise.controls
 			if (!value)
 			{
 				addCSSPseudoClass("disabled");
-				removePseudoClass("hover");
-				removePseudoClass("down");
+				removeCSSPseudoClass("hover");
+				removeCSSPseudoClass("down");
 			}
 			else
 			{
-				removePseudoClass("disabled");
+				removeCSSPseudoClass("disabled");
 			}
 //			m_buttonDisplay.enabled = value;
 			invalidate();
@@ -163,7 +163,7 @@ package reprise.controls
 		
 		protected function deactivate() : void
 		{
-			removePseudoClass("checked");
+			removeCSSPseudoClass("checked");
 			m_selected = false;
 		}
 		
@@ -192,7 +192,7 @@ package reprise.controls
 		}
 		protected function buttonDisplay_out(event : MouseEvent) : void
 		{
-			removePseudoClass("hover");
+			removeCSSPseudoClass("hover");
 		}
 		protected function buttonDisplay_down(event : MouseEvent) : void
 		{
@@ -204,7 +204,7 @@ package reprise.controls
 		}
 		protected function buttonDisplay_up(event : MouseEvent) : void
 		{
-			removePseudoClass("active");
+			removeCSSPseudoClass("active");
 			if (!(event.target == this || contains(DisplayObject(event.target))))
 			{
 		        dispatchEvent(new MouseEvent(MouseEventConstants.MOUSE_UP_OUTSIDE));

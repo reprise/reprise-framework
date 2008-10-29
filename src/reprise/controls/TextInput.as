@@ -65,7 +65,7 @@ package reprise.controls
 			}
 			else
 			{
-				removePseudoClass("disabled");
+				removeCSSPseudoClass("disabled");
 				m_labelDisplay.type = "input";
 			}
 			invalidate();

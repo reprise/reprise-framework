@@ -817,7 +817,7 @@ package reprise.ui
 		 * 
 		 * @param name The CSS pseudo class to remove from the object
 		 */
-		public function removePseudoClass(name : String) : void
+		public function removeCSSPseudoClass(name : String) : void
 		{
 			if (!StringUtil.delimitedStringContainsSubstring(
 				m_cssPseudoClasses, ':' + name, ' '))
@@ -892,7 +892,7 @@ package reprise.ui
 			}
 			else
 			{
-				removePseudoClass('focus');
+				removeCSSPseudoClass('focus');
 			}
 		}
 		

@@ -71,7 +71,7 @@ package reprise.controls.html
 		
 		public function deactivate() : void
 		{
-			removePseudoClass('active');
+			removeCSSPseudoClass('active');
 		}
 		
 		public function addCustomValidator(validator:IValidator):void
