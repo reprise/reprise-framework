@@ -787,6 +787,7 @@ package reprise.controls
 				m_labelDisplay.visible = false;
 				if (m_currentStyles.opacity == 0)
 				{
+					m_cacheInvalid = true;
 					return;
 				}
 				var bitmap : BitmapData = new BitmapData(
