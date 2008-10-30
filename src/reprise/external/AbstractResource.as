@@ -310,11 +310,11 @@ package reprise.external
 			}
 			
 			m_didSucceed = success;
+			m_isExecuting = false;
+			m_didFinishLoading = true;
 			
 			dispatchEvent(new ResourceEvent(Event.COMPLETE, 
 				success, m_failureReason, m_httpStatus));
-			m_isExecuting = false;
-			m_didFinishLoading = true;
 		}
 		
 		protected function loader_httpStatus(statusCode : Number) : void
