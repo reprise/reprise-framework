@@ -766,6 +766,16 @@ package reprise.controls
 				return;
 			}
 			m_cacheInvalid = false;
+			applyRasterize();
+		}
+		
+		/**
+		 * Applies the 'rasterize-device-fonts' CSS setting by making a bitmap copy of the text 
+		 * field and displaying that instead of the text field itself. This allows text set in 
+		 * device fonts to be transformed and displayed with opacities other than 1.
+		 */
+		protected function applyRasterize() : void
+		{
 			if (m_bitmapCache)
 			{
 				m_contentDisplay.removeChild(m_bitmapCache);
@@ -783,15 +793,15 @@ package reprise.controls
 				bitmap.draw(m_labelDisplay, null, null, null, null, true);
 				m_bitmapCache = new Bitmap(bitmap, 'auto', true);
 				m_contentDisplay.addChild(m_bitmapCache);
-				m_bitmapCache.x = -2;
-				m_bitmapCache.y = -2;
+				m_bitmapCache.x = m_labelDisplay.x - 2;
+				m_bitmapCache.y = m_labelDisplay.y - 2;
 			}
 			else
 			{
 				m_labelDisplay.visible = true;
 			}
 		}
-		
+
 		protected function scrollbar_change(event : Event) : void
 		{
 			draw();
