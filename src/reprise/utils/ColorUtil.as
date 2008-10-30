@@ -82,6 +82,20 @@ package reprise.utils
 			return (Math.random() * 255) << 16 | (Math.random() * 255) << 8 | (Math.random() * 255);
 		}
 		
+		public static function transformColorByValue(color:int, value:int):int
+		{
+			var clr:Object = number2rgbObject(color);
+			for (var key:String in clr)
+			{
+				var clrValue:int = int(clr[key]);
+				clrValue += value;
+				clrValue = Math.max(0, clrValue);
+				clrValue = Math.min(255, clrValue);
+				clr[key] = clrValue;
+			}
+			return int(rgbObject2Number(clr));
+		}
+		
 		
 		/**
 		* returns either black or white depending on which contrast is greater to a given color
