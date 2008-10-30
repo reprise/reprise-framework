@@ -779,6 +779,7 @@ package reprise.controls
 			if (m_bitmapCache)
 			{
 				m_contentDisplay.removeChild(m_bitmapCache);
+				m_bitmapCache = null;
 			}
 			if (!m_currentStyles.embedFonts && 
 				(m_currentStyles.opacity < 1 || m_currentStyles.rasterizeDeviceFonts))
