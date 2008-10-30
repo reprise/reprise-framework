@@ -157,9 +157,8 @@ package reprise.ui
 		public function set styleSheet(stylesheet : CSS) : void
 		{
 			m_styleSheet = stylesheet;
-			m_stylesInvalidated = true;
+			invalidateStyles();
 			startWatchingStylesheets();
-			invalidate();
 		}
 		/**
 		 * returns the stylesheet for this element structure
@@ -444,8 +443,7 @@ package reprise.ui
 				(m_heightIsRelative && m_contentBoxHeight != stage.stageHeight))
 			{
 				stageDimensionsChanged = true;
-				m_stylesInvalidated = true;
-				invalidate();
+				invalidateStyles();
 			}
 		}
 		

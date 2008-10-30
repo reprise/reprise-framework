@@ -152,6 +152,7 @@ package reprise.ui
 		private var m_scrollbarsDisplay : Sprite;
 		private var m_oldInFlowStatus : int = -1;
 		private var m_oldOuterBoxDimension : Point;
+		protected var m_invalidateStylesAfterValidation : Boolean;
 
 		
 		/***************************************************************************
@@ -680,8 +681,7 @@ package reprise.ui
 			}
 			m_rootElement.registerElementID(id, this);
 			m_cssId = id;
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * Returns the CSS id of this element
@@ -704,8 +704,7 @@ package reprise.ui
 		public function set cssClasses(classes:String) : void
 		{
 			m_cssClasses = classes;
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * Returns the CSS classes of this element
@@ -735,8 +734,7 @@ package reprise.ui
 			{
 				m_cssClasses = m_cssClasses.substr(1);
 			}
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * removes a CSS class from the list and invalidates the element
@@ -752,8 +750,7 @@ package reprise.ui
 			}
 			m_cssClasses = StringUtil.
 				removeSubstringFromDelimitedString(m_cssClasses, name, ' ');
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * Returns true if the element has the supplied CSS class
@@ -778,8 +775,7 @@ package reprise.ui
 		public function set cssPseudoClasses(classes:String) : void
 		{
 			m_cssPseudoClasses = classes;
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * Returns the CSS pseudo classes of this element
@@ -809,8 +805,7 @@ package reprise.ui
 			{
 				m_cssPseudoClasses = m_cssPseudoClasses.substr(1);
 			}
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		/**
 		 * removes a CSS pseudo class from the list and invalidates the element
@@ -826,8 +821,7 @@ package reprise.ui
 			}
 			m_cssPseudoClasses = StringUtil.removeSubstringFromDelimitedString(
 				m_cssPseudoClasses, ':' + name, ' ');
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		
 		/**
@@ -844,8 +838,7 @@ package reprise.ui
 		public function setStyle(name : String, value : String = null) : void
 		{
 			m_instanceStyles.setStyle(name, value);
-			invalidate();
-			m_stylesInvalidated = true;
+			invalidateStyles();
 		}
 		
 		/**
@@ -1355,8 +1348,7 @@ package reprise.ui
 			{
 				child.resetStyles();
 			}
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		
 		/**
@@ -1399,10 +1391,6 @@ package reprise.ui
 			var oldWidth : Number = m_currentStyles.width;
 			var oldHeight : Number = m_currentStyles.height;
 			
-			if (!m_stylesInvalidated && m_transitionsManager.isActive())
-			{
-				m_stylesInvalidated = true;
-			}
 			if (m_stylesInvalidated)
 			{
 				calculateStyles();
@@ -1445,12 +1433,7 @@ package reprise.ui
 						m_currentStyles.height != oldHeight)
 					{
 						m_specifiedDimensionsChanged = true;
-						resolveSpecifiedDimensions();
 					}
-				}
-				else
-				{
-					m_stylesInvalidated = false;
 				}
 			}
 		}
@@ -1501,6 +1484,12 @@ package reprise.ui
 				m_currentStyles.marginTop + m_currentStyles.marginBottom));
 			
 			var parentReflowNeeded:Boolean = false;
+			
+			//apply final relative position/borderWidths to content
+			m_contentDisplay.y = m_positionOffset.y + 
+				m_currentStyles.borderTopWidth;
+			m_contentDisplay.x = m_positionOffset.x + 
+				m_currentStyles.borderLeftWidth;
 			
 			if (m_dimensionsChanged || m_stylesInvalidated)
 			{
@@ -1574,7 +1563,15 @@ package reprise.ui
 			m_dimensionsChanged = false;
 			m_specifiedDimensionsChanged = false;
 			
-			m_stylesInvalidated = false;
+			if (m_invalidateStylesAfterValidation)
+			{
+				m_invalidateStylesAfterValidation = false;
+				invalidateStyles();
+			}
+			else
+			{
+				m_stylesInvalidated = false;
+			}
 		}
 
 		protected override function validateChildren() : void
@@ -1691,8 +1688,7 @@ package reprise.ui
 			
 			if (m_transitionsManager.isActive())
 			{
-				m_stylesInvalidated = true;
-				invalidate();
+				invalidateStyles();
 			}
 			
 			resolvePositioningProperties();
@@ -1975,20 +1971,7 @@ package reprise.ui
 		{
 			return m_contentBoxWidth;
 		}
-		
-		/**
-		 * applies position and dimensions based on css definitions and other 
-		 * relevant factors.
-		 */
-		protected function resolveSpecifiedDimensions() : void
-		{
-			//apply final relative position/paddings/borderWidths to displays
-			m_contentDisplay.y = m_positionOffset.y + 
-				m_currentStyles.borderTopWidth;
-			m_contentDisplay.x = m_positionOffset.x + 
-				m_currentStyles.borderLeftWidth;
-		}
-	
+
 		protected function applyInFlowChildPositions() : void
 		{
 			m_layoutManager.applyFlowPositions(this, m_children);
@@ -2033,10 +2016,22 @@ package reprise.ui
 			parseXMLAttributes(xmlDefinition);
 			parseXMLContent(xmlDefinition);
 			
-			m_stylesInvalidated = true;
-			invalidate();
+			invalidateStyles();
 		}
 		
+		protected function invalidateStyles() : void
+		{
+			if (m_isValidating)
+			{
+				m_invalidateStylesAfterValidation = true;
+			}
+			else
+			{
+				m_stylesInvalidated = true;
+				invalidate();
+			}
+		}
+
 		protected function parseXMLAttributes(node : XML) : void
 		{
 			if (node.nodeKind() == 'text')
