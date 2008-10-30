@@ -14,7 +14,8 @@ package reprise.css.propertyparsers
 	import reprise.core.reprise;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
-	import reprise.css.transitions.ColorTransitionVO; 
+	import reprise.css.transitions.BooleanTransitionVO;
+	import reprise.css.transitions.ColorTransitionVO;		
 	
 	use namespace reprise;
 	
@@ -41,9 +42,9 @@ package reprise.css.propertyparsers
 			textTransform : {parser : strToStringProperty, inheritable : true},
 			letterSpacing : {parser : strToFloatProperty, inheritable : true},
 			leading : {parser : strToIntProperty, inheritable : true},
-			multiline : {parser : strToBoolProperty},
+			multiline : {parser : strToBoolProperty, transition : BooleanTransitionVO},
 			wordWrap : {parser : strToStringProperty},
-			selectable : {parser : strToBoolProperty},
+			selectable : {parser : strToBoolProperty, transition : BooleanTransitionVO}, 
 			fontVariant : {parser : strToStringProperty},
 			fixLineEndings : {parser : parseFixLineEndings},
 			lineHeight : {parser : strToIntProperty}

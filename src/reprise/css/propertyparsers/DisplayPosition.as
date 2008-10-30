@@ -60,6 +60,14 @@ package reprise.css.propertyparsers
 			transformOriginX : {parser : strToIntProperty},
 			transformOriginY : {parser : strToIntProperty}
 		};
+		public static var TRANSITION_SHORTCUTS : Object	=
+		{
+			transformOrigin : 
+			[
+				'transformOriginX',
+				'transformOriginY'
+			]
+		};
 		
 		
 		public static const DISPLAY_BLOCK 			: String 	= "block";

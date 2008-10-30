@@ -30,6 +30,16 @@ package reprise.css.propertyparsers
 			marginBottom : {parser : strToIntProperty},
 			marginLeft : {parser : strToIntProperty}
 		};
+		public static var TRANSITION_SHORTCUTS : Object	=
+		{
+			margin : 
+			[
+				'marginTop',
+				'marginRight',
+				'marginBottom',
+				'marginLeft'
+			]
+		};
 		
 		public static function parseMargin(val:String, file:String) : CSSParsingResult
 		{

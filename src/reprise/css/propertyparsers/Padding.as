@@ -30,6 +30,16 @@ package reprise.css.propertyparsers
 			paddingBottom : {parser : strToIntProperty},
 			paddingLeft : {parser : strToIntProperty}
 		};
+		public static var TRANSITION_SHORTCUTS : Object	=
+		{
+			padding : 
+			[
+				'paddingTop',
+				'paddingRight',
+				'paddingBottom',
+				'paddingLeft'
+			]
+		};
 	
 		public static function parsePadding(val:String, file:String) : CSSParsingResult
 		{

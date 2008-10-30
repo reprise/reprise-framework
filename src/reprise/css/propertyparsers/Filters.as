@@ -11,15 +11,17 @@
 
 package reprise.css.propertyparsers
 {
+	import reprise.css.transitions.BooleanTransitionVO;	
 	import reprise.core.reprise;
 	import reprise.css.CSSParsingHelper;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
+	import reprise.css.transitions.ColorTransitionVO;
 	import reprise.data.AdvancedColor;
 	import reprise.geom.Vector;
 	
-	import flash.filters.DropShadowFilter;
+	import flash.filters.DropShadowFilter;	
 	
 	use namespace reprise;
 	
@@ -31,23 +33,23 @@ package reprise.css.propertyparsers
 			backgroundShadow : {parser : parseBackgroundShadow},
 			backgroundShadowXOffset : {parser : strToIntProperty},
 			backgroundShadowYOffset : {parser : strToIntProperty},
-			backgroundShadowColor : {parser : strToColorProperty},
+			backgroundShadowColor : {parser : strToColorProperty, transition : ColorTransitionVO},
 			backgroundShadowXBlur : {parser : strToIntProperty},
 			backgroundShadowYBlur : {parser : strToIntProperty},
 			backgroundShadowStrength : {parser : strToIntProperty},
 			backgroundShadowInner : {parser : strToBoolProperty},
-			backgroundShadowKnockout : {parser : strToBoolProperty},
-			backgroundShadowHideObject : {parser : strToBoolProperty},
+			backgroundShadowKnockout : {parser : strToBoolProperty, transition : BooleanTransitionVO}, 
+			backgroundShadowHideObject : {parser : strToBoolProperty, transition : BooleanTransitionVO},
 			textShadow : {parser : parseTextShadow},
 			textShadowXOffset : {parser : strToIntProperty},
 			textShadowYOffset : {parser : strToIntProperty},
-			textShadowColor : {parser : strToColorProperty},
+			textShadowColor : {parser : strToColorProperty, transition : ColorTransitionVO},
 			textShadowXBlur : {parser : strToIntProperty},
 			textShadowYBlur : {parser : strToIntProperty},
 			textShadowStrength : {parser : strToIntProperty},
-			textShadowInner : {parser : strToBoolProperty},
-			textShadowKnockout : {parser : strToBoolProperty},
-			textShadowHideObject : {parser : strToBoolProperty}
+			textShadowInner : {parser : strToBoolProperty, transition : BooleanTransitionVO},
+			textShadowKnockout : {parser : strToBoolProperty, transition : BooleanTransitionVO},
+			textShadowHideObject : {parser : strToBoolProperty, transition : BooleanTransitionVO}
 		};
 		
 		
