@@ -66,7 +66,7 @@ package reprise.css.propertyparsers
 					}
 					default:
 					{
-						trace('e Error registering property with name "' + name + 
+						log('e Error registering property with name "' + name + 
 							'". Unknown type ' + type);
 						return;
 					}

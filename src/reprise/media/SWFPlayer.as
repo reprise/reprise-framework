@@ -194,7 +194,7 @@ package reprise.media
 		
 		protected function loader_error(e:IOErrorEvent):void
 		{
-			trace('Something went wrong while loading file ' + m_source.url());
+			log('w Something went wrong while loading file ' + m_source.url());
 		}
 		
 		protected function content_enterFrame(e:Event):void

@@ -119,7 +119,7 @@ package reprise.controls
 					m_rootElement.uiRendererFactory().rendererByNode(childNode);
 				if (childNode.localName() != 'option')
 				{
-					trace('Illegal node ' + childNode.localName() + ' below ComboBox');
+					log('Illegal node ' + childNode.localName() + ' below ComboBox');
 					continue;
 				}
 				else

@@ -97,7 +97,7 @@ package reprise.media
 			}
 			catch (e:Error)
 			{
-				trace(e);
+				log('w ' + e);
 			}
 		}
 		
@@ -149,14 +149,14 @@ package reprise.media
 		
 		protected function sound_id3(e:Event):void
 		{
-			trace('--------------------- ID3 ---------------------');
+			log('--------------------- ID3 ---------------------');
 			for (var key:String in m_sound.id3)
 			{
-				trace(key + ' - ' + m_sound.id3[key]);
+				log(key + ' - ' + m_sound.id3[key]);
 			}
 			//m_duration = m_sound.id3.TIME;
-			trace(m_sound.id3.TIME);
-			trace('--------------------- /ID3 ---------------------');
+			log(m_sound.id3.TIME);
+			log('--------------------- /ID3 ---------------------');
 		}
 	}
 }

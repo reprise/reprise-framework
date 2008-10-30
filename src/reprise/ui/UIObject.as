@@ -419,7 +419,7 @@ package reprise.ui
 				validatableElement = validatableElement.m_parentElement;
 				if (validatableElement.m_isInvalidated)
 				{
-					trace('f Be ye warned: The element you are calling ' + 
+					log('w Be ye warned: The element you are calling ' + 
 					'forceRedraw on has invalid ascendants. This might cause ' + 
 					'styling and all sorts of other things not to work as ' + 
 					'expected. Consider calling m_rootElement.forceRedraw ' + 

@@ -1509,7 +1509,7 @@ package reprise.ui
 				if ((m_currentStyles.float || m_positionInFlow) && m_dimensionsChanged)
 				{
 					parentReflowNeeded = true;
-	//				trace("f reason for parentReflow: dims of in-flow changed");
+	//				log("f reason for parentReflow: dims of in-flow changed");
 				}
 			}
 			else if (m_intrinsicHeight != oldIntrinsicHeight || 
@@ -1532,27 +1532,27 @@ package reprise.ui
 						(m_autoFlags.left && m_autoFlags.right))
 					{
 						parentReflowNeeded = true;
-	//					trace("f reason for reflow: All positions in " +
+	//					log("f reason for reflow: All positions in " +
 	//						"absolute positioned element are auto");
 					}
 				}
 				else if (m_oldInFlowStatus != m_positionInFlow)
 				{
 					parentReflowNeeded = true;
-	//				trace("f reason for parentReflow: flowPos changed");
+	//				log("f reason for parentReflow: flowPos changed");
 				}
 				if (m_parentElement && m_parentElement != this)
 				{
 					if (parentReflowNeeded)
 					{
-	//					trace("w parentreflow needed in " + 
+	//					log("w parentreflow needed in " + 
 	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
 						UIComponent(m_parentElement).validateAfterChildren();
 						return;
 					}
 					else
 					{
-	//					trace("w no parentreflow needed in " + 
+	//					log("w no parentreflow needed in " + 
 	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
 						UIComponent(m_parentElement).applyOutOfFlowChildPositions();
 					}

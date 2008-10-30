@@ -50,7 +50,7 @@ package reprise.external
 		
 		protected function sound_ioError(e:IOErrorEvent):void
 		{
-			trace('An error occured with the soundfile "' + url() + '"\n' + e);
+			log('w An error occured with the soundfile "' + url() + '"\n' + e);
 		}
 	}
 }

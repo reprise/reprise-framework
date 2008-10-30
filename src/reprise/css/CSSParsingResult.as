@@ -69,7 +69,7 @@ package reprise.css
 				if ( !( prop is CSSProperty ) || 
 						typeof( key ) != 'string' )
 				{
-					trace( 'WARNING! Wrong type of parameters in ResultWithPropertiesAndKeys. Please make sure ' +
+					log( 'WARNING! Wrong type of parameters in ResultWithPropertiesAndKeys. Please make sure ' +
 						' you\'re passing instances of CSSProperty and String in alternating order' );
 					//com.nesium.utils.ObjUtils.dump( arguments );
 					continue;

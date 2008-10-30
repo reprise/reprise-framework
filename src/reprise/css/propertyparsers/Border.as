@@ -161,7 +161,6 @@ package reprise.css.propertyparsers
 			var extractionResult : Object = extractBorderStyleFromString(val, file);
 			var borderStyle : CSSProperty = extractionResult.borderStyle;
 			val = extractionResult.filteredString;
-			trace('after style: ' + val);
 			if (side == '')
 			{
 				res.addPropertyForKey(borderStyle, 'borderTopStyle');
@@ -277,7 +276,7 @@ package reprise.css.propertyparsers
 					break;
 					
 				default:
-					trace("Border::parseBorderWidth: wrong number of " +
+					log("w Border::parseBorderWidth: wrong number of " +
 						"parameters in: " + val);
 					return null;
 			}

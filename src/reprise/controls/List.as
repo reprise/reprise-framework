@@ -177,7 +177,7 @@ package reprise.controls
 				// should we allow display objects other than list items below us?
 				if (childNode.localName().toLowerCase() != 'option')
 				{
-					trace('Unsupported tag ' + childNode.localName() + 'below <list>');
+					log('Unsupported tag ' + childNode.localName() + 'below <list>');
 				}
 				var item:ListItem = new itemRenderer() as ListItem;
 				item.setLabel(childNode.text());

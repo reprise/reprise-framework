@@ -101,7 +101,7 @@ package reprise.utils
 				}
 				default:
 				{
-					trace('w Wrong number of parameters (radius) in drawRoundRect!');
+					log('w Wrong number of parameters (radius) in drawRoundRect!');
 					return;
 				}
 			}

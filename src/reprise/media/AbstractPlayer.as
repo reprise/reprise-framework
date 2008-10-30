@@ -704,7 +704,7 @@ package reprise.media
 					MathUtil.round(bufferStatus(), 1) + '% | ' +
 					MathUtil.round(m_buffer.remainingBufferingDuration()) + ' s\n';
 				str += 'state: ' + stateToString();
-				trace('>>>\n' + str + '\n<<<');
+				log('>>>\n' + str + '\n<<<');
 			}
 			
 			if (bytesLoaded() >= bytesTotal())

@@ -144,7 +144,7 @@ package reprise.css
 //			var matches : Boolean = m_selectorRegexp.test(path);
 //			if (matches)
 //			{
-//				trace(['match ', m_selectorRegexp, path, ''].join('\n'));
+//				log(['match ', m_selectorRegexp, path, ''].join('\n'));
 //				return true;
 //			}
 //			return false;

@@ -245,7 +245,7 @@ package reprise.css
 					break;
 					
 				default:
-					trace('w Wrong number of parameters for CSSProperty rect with name"' + prefix + '"');
+					log('w Wrong number of parameters for CSSProperty rect with name"' + prefix + '"');
 					return res;
 			}
 			rectTop.setImportant(important);

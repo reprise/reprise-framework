@@ -144,7 +144,7 @@ package reprise.media
 		
 		public function onCuePoint(info:Object):void 
 		{
-			trace("cuepoint: time=" + info.time + " name=" + info.name + " type=" + info.type);
+			log("i cuepoint: time=" + info.time + " name=" + info.name + " type=" + info.type);
 		}
 		
 		

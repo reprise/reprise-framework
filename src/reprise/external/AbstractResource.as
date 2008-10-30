@@ -306,7 +306,7 @@ package reprise.external
 						errMsg += 'There was an unknown error. ' + 
 							'Make sure that the file exists!';
 				}
-				trace(errMsg);
+				log(errMsg);
 			}
 			
 			m_didSucceed = success;
