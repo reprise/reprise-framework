@@ -55,6 +55,7 @@ package reprise.css.propertyparsers
 			blendMode : {parser : strToStringProperty},
 			opacity : {parser : strToFloatProperty},
 			frameRate : {parser : strToIntProperty},
+			rotation : {parser : strToFloatProperty},
 			transform : {parser : parseTransform},
 			transformOrigin : {parser : parseTransformOrigin},
 			transformOriginX : {parser : strToIntProperty},
