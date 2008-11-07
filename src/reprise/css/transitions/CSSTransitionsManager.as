@@ -30,6 +30,9 @@ package reprise.css.transitions
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
+		protected static const DEFAULT_DURATION : Array = initDefaultDuration();
+		protected static const DEFAULT_DELAY : Array = initDefaultDelay();
+		protected static const DEFAULT_EASING : Array = [Linear.easeNone];
 		protected static var g_transitionShortcuts : Object = {};
 		
 		protected var m_activeTransitions : Object;
@@ -58,18 +61,25 @@ package reprise.css.transitions
 			oldStyles : CSSDeclaration, newStyles : CSSDeclaration) : CSSDeclaration
 		{
 			var transitionPropName : String;
+			var transitionDuration : CSSProperty;
+			var transitionDelay : CSSProperty;
+			var transitionEasing : Function;
 			var transition : CSSPropertyTransition;
 			var startTime : int = getTimer();
 			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
 			{
 				var transitionProperties : Array = 
 					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
-				var transitionDurations : Array = 
-					newStyles.getStyle('RepriseTransitionDuration').specifiedValue();
-				var transitionDelays : Array = 
-					newStyles.getStyle('RepriseTransitionDelay').specifiedValue();
-				var transitionEasings : Array = newStyles.getStyle(
-					'RepriseTransitionTimingFunction').specifiedValue();
+				var transitionDurations : Array = newStyles.hasStyle('RepriseTransitionDuration') 
+					? newStyles.getStyle('RepriseTransitionDuration').specifiedValue() 
+					: DEFAULT_DURATION;
+				var transitionDelays : Array = newStyles.hasStyle('RepriseTransitionDelay') 
+					? newStyles.getStyle('RepriseTransitionDelay').specifiedValue() 
+					: DEFAULT_DELAY;
+				var transitionEasings : Array = 
+					newStyles.hasStyle('RepriseTransitionTimingFunction') 
+					? newStyles.getStyle('RepriseTransitionTimingFunction').specifiedValue() 
+					: DEFAULT_EASING;
 				var defaultValues : Array = newStyles.getStyle(
 					'RepriseTransitionDefaultValue').specifiedValue();
 				
@@ -146,22 +156,14 @@ package reprise.css.transitions
 					{
 						return;
 					}
-					if (transitionEasings[i])
-					{ 
-						var easing : Function = transitionEasings[i];
-					}
-					else
-					{
-						easing = Linear.easeNone;
-					}
 					transition = m_activeTransitions[transitionPropName];
 					if (!transition)
 					{
 						transition = new CSSPropertyTransition(
 							transitionPropName, shortcut);
-						transition.duration = transitionDurations[i];
-						transition.delay = transitionDelays[i];
-						transition.easing = easing;
+						transition.duration = transitionDuration;
+						transition.delay = transitionDelay;
+						transition.easing = transitionEasing;
 						transition.startTime = startTime;
 						transition.startValue = oldValue;
 						transition.endValue = targetValue;
@@ -169,16 +171,21 @@ package reprise.css.transitions
 					}
 					else if (transition.endValue != targetValue)
 					{
-						transition.easing = easing;
-						transition.updateValues(targetValue, transitionDurations[i], 
-							transitionDelays[i], startTime, this);
+						transition.easing = transitionEasing;
+						transition.updateValues(targetValue, transitionDuration, 
+							transitionDelay, startTime, this);
 					}
 				}
 				
 				//add all new properties and update already active ones
-				for (var i : int = transitionProperties.length; i--;)
+				for (var i : int = 0; i < transitionProperties.length; i++)
 				{
 					transitionPropName = transitionProperties[i];
+					transitionDuration = transitionDurations[i] || 
+						transitionDuration || DEFAULT_DURATION[0];
+					transitionDelay = transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
+					transitionEasing = transitionEasings[i] || 
+						transitionEasing || DEFAULT_EASING[0];
 					var defaultValue : *;
 					if (defaultValues[i] && defaultValues[i] != 'none')
 					{
@@ -268,6 +275,25 @@ package reprise.css.transitions
 			name : String, properties : Array) : void
 		{
 			g_transitionShortcuts[name] = properties;
+		}
+		
+		
+		/***************************************************************************
+		*							protected methods							   *
+		***************************************************************************/
+		protected static function initDefaultDuration() : Array
+		{
+			var property : CSSProperty = new CSSProperty();
+			property.setUnit('ms');
+			property.setSpecifiedValue(250);
+			return [property];
+		}
+		protected static function initDefaultDelay() : Array
+		{
+			var property : CSSProperty = new CSSProperty();
+			property.setUnit('ms');
+			property.setSpecifiedValue(0);
+			return [property];
 		}
 	}
 }

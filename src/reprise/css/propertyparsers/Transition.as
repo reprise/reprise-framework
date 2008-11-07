@@ -38,7 +38,7 @@ package reprise.css.propertyparsers
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			RepriseTransition : {parser : parseRepriseTransition},
-			RepriseTransitionProperty : {parser : parseRepriseTransitionPart},
+			RepriseTransitionProperty : {parser : parseRepriseTransitionProperty},
 			RepriseTransitionDuration : {parser : parseRepriseTransitionDuration},
 			RepriseTransitionDelay : {parser : parseRepriseTransitionDelay},
 			RepriseTransitionTimingFunction : {parser : parseRepriseTransitionTimingFunction},
@@ -220,10 +220,14 @@ package reprise.css.propertyparsers
 			var matchResult : Array = regExp.exec(easingName);
 			if (!matchResult)
 			{
-				return EASINGS.linear;
+				return null;
 			}
-			var easingType : Class = EASINGS[matchResult[2]] || Linear;
-			return easingType['ease' + matchResult[1]] || EASINGS.linear;
+			var easingType : Class = EASINGS[matchResult[2]];
+			if (!easingType)
+			{
+				return null;
+			}
+			return easingType['ease' + matchResult[1]];
 		}
 		public static function parseRepriseTransitionDefaultValue(
 			val:String, file : String) : CSSProperty
