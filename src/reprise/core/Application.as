@@ -156,16 +156,15 @@ package reprise.core
 		}
 		protected function loadDefaultResources() : void
 		{
-			if (hasOwnProperty('cssURL') && this['cssURL'] == null)
+			//don't load default stylesheet if the actual application class has a CSS_URL property
+			//that's set to null or an empty string
+			if (Object(this).constructor.hasOwnProperty('CSS_URL') && 
+				!Object(this).constructor['CSS_URL'])
 			{
 				return;
 			}
-			var cssURL:String = CSS_URL;
-			if (hasOwnProperty('cssURL'))
-			{
-				cssURL = this['cssURL'];
-			}
-			cssURL = stage.loaderInfo.parameters.css_url || cssURL;
+			var cssURL:String = stage.loaderInfo.parameters.css_url || 
+				Object(this).constructor['CSS_URL'] || CSS_URL;
 			m_css = new CSS(cssURL);
 			m_css.setBaseURL(applicationURL());
 			addResource(m_css);
