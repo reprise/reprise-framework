@@ -2135,7 +2135,7 @@ package reprise.ui
 				}
 				else
 				{
-					trace ("f No handler found for node: " + childNode.toXMLString());
+					log("f No handler found for node: " + childNode.toXMLString());
 				}
 			}
 		}
