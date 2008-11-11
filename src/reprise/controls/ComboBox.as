@@ -48,7 +48,6 @@ package reprise.controls
 		public function set options(options : Array) : void
 		{
 			m_list.options = options;
-			setValue(m_list.selectedIndex());
 		}
 
 		public function get options() : Array
@@ -63,18 +62,9 @@ package reprise.controls
 		
 		public override function setValue(value:*):void
 		{
-			var numericValue : Number;
-			if (value is String)
-			{
-				numericValue = parseInt(value);
-			}
-			else
-			{
-				numericValue = value;
-			}
 			if (m_list.options.length)
 			{
-				m_list.setSelectedIndex(value);
+				m_list.setValue(value);
 				m_label.setLabel(m_list.selectedLabel());
 			}
 		}
