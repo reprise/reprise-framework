@@ -28,7 +28,7 @@ package reprise.controls
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_items:Array;
-		protected var m_selectedIndex:Number = -1;
+		protected var m_selectedIndex:Number = 0;
 		
 		
 		
