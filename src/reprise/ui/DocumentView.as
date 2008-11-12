@@ -11,6 +11,8 @@
 
 package reprise.ui
 {
+	import flash.geom.Rectangle;	
+	
 	import reprise.core.ApplicationContext;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
@@ -400,11 +402,10 @@ package reprise.ui
 		}
 		protected function debugMarkElement(element : UIComponent) : void
 		{
-			var output : String = 'Element: ' + element + '\n';
+			var output : String = '\nElement: ' + element + 
+				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n';
 			
-			var display : Sprite = element.valueForKey('m_contentDisplay');
-			var position : Point = new Point(display.x, display.y);
-			position = element.localToGlobal(position);
+			var position : Point = element.getPositionRelativeToDisplayObject(this);
 			m_debugInterface.x = position.x;
 			m_debugInterface.y = position.y;
 			
