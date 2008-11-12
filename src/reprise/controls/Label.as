@@ -49,7 +49,6 @@ package reprise.controls
 		
 		protected var m_labelDisplay : TextField;
 		protected var m_textSetExternally : Boolean;
-		protected var m_selectable : Boolean;
 		
 		protected var m_textLinkHrefs : Array;
 		
@@ -138,7 +137,7 @@ package reprise.controls
 		
 		public function get enabled () : Boolean
 		{
-			return m_selectable;
+			return m_currentStyles.selectable;
 		}
 		
 		public function get textWidth() : Number
@@ -214,19 +213,34 @@ package reprise.controls
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
-			m_selectable = m_currentStyles.selectable;
 			
-			var fmt : TextFormat = new TextFormat();
-			if (m_currentStyles.tabStops)
+			//TODO: find a way to re-enable tab stops
+//			var fmt : TextFormat = new TextFormat();
+//			if (m_currentStyles.tabStops)
+//			{
+//				var tabStops : Array = 
+//					m_currentStyles.tabStops.split(", ").join(",").split(",");
+//				fmt.tabStops = tabStops;
+//			}
+//			else
+//			{
+//				fmt.tabStops = null;
+//			}
+			
+			m_labelDisplay.selectable = m_currentStyles.selectable;
+			
+			m_labelDisplay.embedFonts = m_currentStyles.embedFonts;
+			m_labelDisplay.antiAliasType = m_currentStyles.antiAliasType || 
+				AntiAliasType.NORMAL;
+			if (m_labelDisplay.antiAliasType == AntiAliasType.ADVANCED)
 			{
-				var tabStops : Array = 
-					m_currentStyles.tabStops.split(", ").join(",").split(",");
-				fmt.tabStops = tabStops;
+				m_labelDisplay.gridFitType = 
+					m_currentStyles.gridFitType || GridFitType.PIXEL;
+				m_labelDisplay.sharpness = m_currentStyles.sharpness || 0;
+				m_labelDisplay.thickness = m_currentStyles.thickness || 0;
 			}
-			else
-			{
-				fmt.tabStops = null;
-			}
+			m_labelDisplay.wordWrap = m_currentStyles.wordWrap == 'wrap';
+			m_labelDisplay.multiline = m_currentStyles.multiline;
 		}
 		
 		/**
@@ -263,26 +277,6 @@ package reprise.controls
 		
 		protected function renderLabel() : void
 		{
-			if (m_stylesInvalidated)
-			{
-				if (m_selectorPathChanged)
-				{
-					m_labelDisplay.selectable = m_selectable;
-					
-					m_labelDisplay.embedFonts = m_currentStyles.embedFonts;
-					m_labelDisplay.antiAliasType = m_currentStyles.antiAliasType || 
-						AntiAliasType.NORMAL;
-					if (m_labelDisplay.antiAliasType == AntiAliasType.ADVANCED)
-					{
-						m_labelDisplay.gridFitType = 
-							m_currentStyles.gridFitType || GridFitType.PIXEL;
-						m_labelDisplay.sharpness = m_currentStyles.sharpness || 0;
-						m_labelDisplay.thickness = m_currentStyles.thickness || 0;
-					}
-					m_labelDisplay.wordWrap = m_currentStyles.wordWrap == 'wrap';
-					m_labelDisplay.multiline = m_currentStyles.multiline;
-				}
-			}
 			if (m_stylesInvalidated || m_textSetExternally)
 			{
 				m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
@@ -574,12 +568,12 @@ package reprise.controls
 			var target:String = hrefArr[1];
 			
 			var labelEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, true);
-			labelEvent.url = href;
+			labelEvent.href = href;
 			labelEvent.linkTarget = target;
 			dispatchEvent(labelEvent);
 			if (!labelEvent.isDefaultPrevented())
 			{
-				var request:URLRequest = new URLRequest(labelEvent.url);
+				var request:URLRequest = new URLRequest(labelEvent.href);
 				navigateToURL(request, labelEvent.linkTarget || '_self');
 			}
 			event.stopImmediatePropagation();

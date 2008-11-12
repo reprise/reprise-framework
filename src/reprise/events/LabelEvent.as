@@ -23,7 +23,7 @@ package reprise.events
 		***************************************************************************/
 		public static const LINK_CLICK : String = "linkClick";
 		
-		public var url : String;
+		public var href : String;
 		public var linkTarget : String;
 		
 		/***************************************************************************
