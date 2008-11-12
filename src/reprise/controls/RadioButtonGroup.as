@@ -96,6 +96,11 @@ package reprise.controls
 			}
 		}
 		
+		public function selectedRadioButton():RadioButton
+		{
+			return m_radioButtons[m_selectedIndex];
+		}
+		
 		public function selectedData():*
 		{
 			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
