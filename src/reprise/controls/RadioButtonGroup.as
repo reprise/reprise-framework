@@ -52,11 +52,6 @@ package reprise.controls
 			return g_radioGroups[name];
 		}
 		
-		public function addRadioButton(btn:RadioButton):void
-		{
-			m_radioButtons.push(btn);
-		}
-		
 		public function removeRadioButton(btn:RadioButton):void
 		{
 			m_radioButtons.splice(m_radioButtons.indexOf(btn), 1);
@@ -124,6 +119,16 @@ package reprise.controls
 				currentButton.document.setFocusedElement(RadioButton(m_radioButtons[0]), 
 					DocumentView.FOCUS_METHOD_KEYBOARD);
 			}
+		}
+		
+		
+		
+		//*****************************************************************************************
+		//*                                    Internal Methods                                   *
+		//*****************************************************************************************
+		internal public function addRadioButton(btn:RadioButton):void
+		{
+			m_radioButtons.push(btn);
 		}
 	}
 }
