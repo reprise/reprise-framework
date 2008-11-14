@@ -228,6 +228,14 @@ package reprise.controls
 //			}
 			
 			m_labelDisplay.selectable = m_currentStyles.selectable;
+			if (m_currentStyles.color)
+			{
+				m_labelDisplay.alpha = m_currentStyles.color.opacity;
+			}
+			else
+			{
+				m_labelDisplay.alpha = 1;
+			}
 			
 			m_labelDisplay.embedFonts = m_currentStyles.embedFonts;
 			m_labelDisplay.antiAliasType = m_currentStyles.antiAliasType || 
