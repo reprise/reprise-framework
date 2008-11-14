@@ -230,7 +230,7 @@ package reprise.controls
 			m_labelDisplay.selectable = m_currentStyles.selectable;
 			if (m_currentStyles.color)
 			{
-				m_labelDisplay.alpha = m_currentStyles.color.opacity;
+				m_labelDisplay.alpha = m_currentStyles.color.opacity();
 			}
 			else
 			{
