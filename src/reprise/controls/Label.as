@@ -304,7 +304,15 @@ package reprise.controls
 				
 				var labelString : String = m_labelXML.toXMLString();
 				labelString = resolveBindings(labelString);
-				var labelXML : XML = new XML(labelString);
+				var labelXML : XML;
+				try
+				{
+					labelXML = new XML(labelString);
+				}
+				catch (error : Error)
+				{
+					labelXML = new XML('<p style="color: red;">malformed content</p>');
+				}
 				labelXML.normalize();
 				cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
 				//TODO: check if condenseWhite = true is ok to use!
