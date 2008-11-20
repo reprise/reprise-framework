@@ -103,6 +103,7 @@ package reprise.controls.html
 			event = new FormEvent(FormEvent.FORM_CHANGE);
 			event.oldIndex = oldIndex;
 			event.newIndex = newIndex;
+			invalidate();
 			dispatchEvent(event);
 		}
 		
