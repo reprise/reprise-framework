@@ -56,7 +56,7 @@ package reprise.utils {
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function Gradient(fillType:String, colors:Array = null, alphas:Array = null, 
+		public function Gradient(fillType:String = LINEAR, colors:Array = null, alphas:Array = null, 
 			ratios:Array = null, matrix:Matrix = null, spreadMethod:String = null, 
 			interpolationMethod:String = null, focalPointRatio:Number = 1)
 		{
@@ -113,7 +113,6 @@ package reprise.utils {
 				matrix.createGradientBox(width, height, (m_rotation / 180) * Math.PI,
 					m_origin.x, m_origin.y);
 			}
-			
 			target.lineGradientStyle(m_fillType, m_colors, m_alphas, m_ratios, matrix, m_spreadMethod,
 				m_interpolationMethod, m_focalPointRatio);		
 		}
@@ -149,7 +148,7 @@ package reprise.utils {
 				else
 				{
 					m_colors.push(color);
-					m_alphas.push(100);
+					m_alphas.push(1);
 				}
 			}
 		}
@@ -287,7 +286,7 @@ package reprise.utils {
 			var len:Number = m_colors.length;
 			while (len--)
 			{
-				m_alphas.push(100);
+				m_alphas.push(1);
 			}
 		}
 		
