@@ -54,9 +54,21 @@ package reprise.external
 			m_stream.play(url());
 		}
 		
+		protected override function checkProgress(...rest : Array) : void
+		{
+			if (m_stream.bytesLoaded >= m_stream.bytesTotal)
+			{
+				onData(true);
+			}
+			super.checkProgress(rest);
+		}
+		
 		protected function stream_status(e:NetStatusEvent):void
 		{
-			
+			if (e.info.level == 'error')
+			{
+				onData(false);
+			}
 		}
 		
 		public function onMetaData(info:Object):void 
