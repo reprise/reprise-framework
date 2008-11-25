@@ -42,12 +42,12 @@ package reprise.core
 		protected var m_rootElement : DocumentView;
 		protected var m_currentView : UIObject;
 		protected var m_lastView : UIObject;
-		protected var m_stageCheckTimer : Timer;
-		protected var m_tooltipManager : TooltipManager;
+		
 		protected var m_appContext:ApplicationContext;
 		
-		protected var m_resourceLoader : ResourceLoader;
 		protected var m_css : CSS;
+		
+		protected var m_tooltipManager : TooltipManager;
 		protected var m_tooltipContainer : Sprite;
 
 		
