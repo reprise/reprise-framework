@@ -56,7 +56,7 @@ package reprise.utils {
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function Gradient(fillType:String = LINEAR, colors:Array = null, alphas:Array = null, 
+		public function Gradient(fillType:String = null, colors:Array = null, alphas:Array = null, 
 			ratios:Array = null, matrix:Matrix = null, spreadMethod:String = null, 
 			interpolationMethod:String = null, focalPointRatio:Number = 1)
 		{
