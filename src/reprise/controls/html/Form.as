@@ -79,6 +79,31 @@ package reprise.controls.html
 			m_customValidators.push(validator);
 		}
 		
+		public function failedValidators() : Array
+		{
+			var validators : Array = [];
+			var i:int = 0;
+			for (; i < m_fields.length; i++)
+			{
+				var input:IInput = m_fields[i] as IInput;
+				if (input.didSucceed() || (!input.fieldName() && !input.required()))
+				{
+					continue;
+				}
+				validators.push(input);
+			}
+			for (i = 0; i < m_customValidators.length; i++)
+			{
+				var validator:IValidator = IValidator(m_customValidators[i]);
+				if (!validator.didSucceed())
+				{
+					validators.push(validator);
+				}
+			}
+			
+			return validators;
+		}
+		
 		public function fields():Array
 		{
 			// don't let anyone modify our fields
