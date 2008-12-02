@@ -49,6 +49,14 @@ package reprise.commands
 		* An internal counter used to have a reliable sorting.
 		*/
 		protected var m_nextResourceId : int;
+		/**
+		* The number of commands which failed execution
+		*/
+		protected var m_numCommandsFailed : int;
+		/**
+		* The number of commands which were executed in total
+		*/
+		protected var m_numCommandsExecuted : int;
 		
 		
 		
@@ -180,6 +188,23 @@ package reprise.commands
 		{
 			return m_isExecutingAsynchronously;
 		}
+		
+		/**
+		* Returns the number of commands executed in total. This number is increased not until 
+		* a command completely finished its execution.
+		*/
+		public function numExecutedCommands():int
+		{
+			return m_numCommandsExecuted;
+		}
+		
+		/**
+		* Returns the number of commands which failed execution.
+		*/
+		public function numFailedCommands():int
+		{
+			return m_numCommandsFailed;
+		}
 
 		/**
 		* @inheritDoc
@@ -191,6 +216,8 @@ package reprise.commands
 			m_isExecutingAsynchronously = false;
 			m_didSucceed = true;
 			m_nextResourceId = 0;
+			m_numCommandsExecuted = 0;
+			m_numCommandsFailed = 0;
 			super.reset();
 		}
 		
@@ -244,8 +271,10 @@ package reprise.commands
 			else
 			{
 				currentCommand.execute();
+				m_numCommandsExecuted++;
 				if (!currentCommand.didSucceed())
 				{
+					m_numCommandsFailed++;
 					m_didSucceed = false;
 					if (m_abortOnFailure)
 					{
@@ -347,9 +376,11 @@ package reprise.commands
 			var completedCommand:IAsynchronousCommand = 
 				IAsynchronousCommand(e.target);
 			unregisterListenersForAsynchronousCommand(completedCommand);
-			m_currentCommands.remove(e.target);			
+			m_currentCommands.remove(e.target);
+			m_numCommandsExecuted++;
 			if (!e.success)
 			{
+				m_numCommandsFailed++;
 				if (m_abortOnFailure)
 				{
 					failGracefully(false);
@@ -370,6 +401,9 @@ package reprise.commands
 			// cancel makes no difference to us to a unsuccessful command
 			var completeEvent : CommandEvent = new CommandEvent(Event.COMPLETE, true);
 			command_complete(completeEvent);
+			// since execution is counted after a command completed its execution, cancelled
+			// commands don't fall into this category
+			m_numCommandsExecuted--;
 		}
 	}
 }
