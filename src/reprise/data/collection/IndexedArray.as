@@ -29,6 +29,14 @@ package reprise.data.collection
 			AS3::splice(0, this.length);
 		}
 		
+		public function addObjectsFromArray(arr:Array):void
+		{
+			for (var i:int = 0; i < arr.length; i++)
+			{
+				push(arr[i]);
+			}
+		}
+		
 		public function getIndex(o : Object) : int
 		{
 			return indexOf(o);
