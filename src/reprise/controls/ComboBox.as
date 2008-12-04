@@ -23,7 +23,7 @@ package reprise.controls
 		***************************************************************************/
 		protected var m_label:Label;
 		protected var m_toggleBtn:SimpleButton;
-		protected var m_listContainer:Sprite;
+		protected var m_backgroundCell:UIComponent;
 		protected var m_list : List;
 		
 		
@@ -91,12 +91,18 @@ package reprise.controls
 		
 		protected override function createChildren():void
 		{
+			m_backgroundCell = new UIComponent();
+			addChild(m_backgroundCell);
+			m_backgroundCell.addCSSClass('backgroundCell');
+			m_backgroundCell.setStyle('position', 'absolute');
+			
 			m_label = new Label();
 			addChild(m_label);
 			
 			m_list = new List();
 			addChild(m_list);
 			m_list.addCSSClass('hidden');
+			m_list.addEventListener(Event.CHANGE, list_change);
 		}
 		
 		protected override function parseXMLContent(node:XML):void
