@@ -2522,10 +2522,11 @@ package reprise.ui
 			}
 		}
 		
-		protected function i18n(key : String) : *
+		protected function i18n(key : String, defaultReturnValue : * = '') : *
 		{
-			return m_rootElement.applicationContext().i18n(key);
+			return m_rootElement.applicationContext().i18n(key, defaultReturnValue);
 		}
+
 		protected function track(trackingId : String) : void
 		{
 			m_rootElement.applicationContext().track(trackingId);
