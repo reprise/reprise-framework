@@ -28,7 +28,7 @@ package reprise.controls
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_items:Array;
-		protected var m_selectedIndex:Number = 0;
+		protected var m_selectedIndex:Number = -1;
 		
 		
 		
@@ -185,10 +185,10 @@ package reprise.controls
 			}
 		}
 		
-		protected function item_click(e:MouseEvent):void
+		protected function item_click(e:Event):void
 		{
 			selectItem(e.target as ListItem);
-			dispatchEvent(new Event(Event.CHANGE, true));
+			dispatchEvent(new Event(Event.CHANGE));
 		}
 		
 		protected function self_mouseDown(e:MouseEvent):void

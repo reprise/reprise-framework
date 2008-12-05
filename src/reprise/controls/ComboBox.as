@@ -24,6 +24,7 @@ package reprise.controls
 		protected var m_label:Label;
 		protected var m_toggleBtn:SimpleButton;
 		protected var m_backgroundCell:UIComponent;
+		protected var m_placeholder:String = null;
 		protected var m_list : List;
 		
 		
@@ -38,7 +39,7 @@ package reprise.controls
 		public function addItemWithTitleAndValue(title:String, value:*):void
 		{
 			m_list.addItemWithTitleAndValue(title, value);
-			if (m_list.selectedIndex() == -1)
+			if (m_list.selectedIndex() == -1 && m_placeholder == null)
 			{
 				m_list.setSelectedIndex(0);
 				m_label.setLabel(m_list.selectedLabel());
@@ -66,6 +67,7 @@ package reprise.controls
 			{
 				m_list.setValue(value);
 				m_label.setLabel(m_list.selectedLabel());
+				removeCSSClass('placeholder');
 			}
 		}
 		
@@ -75,6 +77,16 @@ package reprise.controls
 		public function setValueAttribute(value : String) : void
 		{
 			setValue(value);
+		}
+		
+		public function setPlaceholderAttribute(value : String):void
+		{
+			m_placeholder = value;
+			if (m_list.selectedIndex() == -1)
+			{
+				m_label.setLabel(value);
+				addCSSClass('placeholder');
+			}
 		}
 		
 		
@@ -157,6 +169,7 @@ package reprise.controls
 		protected function list_change(e:Event):void
 		{
 			m_label.setLabel(m_list.selectedLabel());
+			removeCSSClass('placeholder');
 			hideList();
 		}
 	}
