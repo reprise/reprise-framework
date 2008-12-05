@@ -2522,7 +2522,7 @@ package reprise.ui
 			}
 		}
 		
-		protected function i18n(key : String, defaultReturnValue : * = '') : *
+		protected function i18n(key : String, defaultReturnValue : * = null) : *
 		{
 			return m_rootElement.applicationContext().i18n(key, defaultReturnValue);
 		}

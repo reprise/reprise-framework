@@ -76,7 +76,7 @@ package reprise.core
 		{
 			if (!m_i18nService)
 			{
-				return key;
+				return defaultReturnValue == null ? key : defaultReturnValue;
 			}
 			var result : *;
 			if (m_i18nService.keyExists(key))
@@ -89,7 +89,7 @@ package reprise.core
 			}
 			if (result == null)
 			{
-				return defaultReturnValue;
+				return defaultReturnValue == null ? key : defaultReturnValue;
 			}
 			return result;
 		}
