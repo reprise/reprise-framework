@@ -134,6 +134,7 @@ package reprise.css
 			}
 	
 			var host : String = sourceURL.host() || '';
+			if (sourceURL.port()) host += ':' + sourceURL.port();
 			return (sourceURL.scheme() || '') + host + absolutePath;
 		}
 		
