@@ -25,8 +25,7 @@ package reprise.controls
 		protected var m_toggleBtn:SimpleButton;
 		protected var m_backgroundCell:UIComponent;
 		protected var m_placeholder:String = null;
-		protected var m_list : List;
-		
+		protected var m_list : List;		
 		
 		
 		/***************************************************************************
@@ -139,7 +138,7 @@ package reprise.controls
 		}
 		
 		protected function showList():void
-		{
+		{			
 			removeEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDown);
 			m_list.removeCSSClass('hidden');
@@ -171,6 +170,7 @@ package reprise.controls
 			m_label.setLabel(m_list.selectedLabel());
 			removeCSSClass('placeholder');
 			hideList();
+			dispatchEvent(new Event(Event.CHANGE));
 		}
 	}
 }
