@@ -1982,14 +1982,14 @@ package reprise.ui
 		protected function applyOutOfFlowChildPositions() : void
 		{
 			m_layoutManager.applyAbsolutePositions(this, m_children);
-			for each (var child : UIComponent in m_children)
+			for each (var child : UIObject in m_children)
 			{
-				if (!child || !child.isRendered())
+				//only deal with rendered children that derive from UIComponent
+				if (!(child is UIComponent) || !UIComponent(child).isRendered())
 				{
-					//only deal with children that derive from UIComponent
 					continue;
 				}
-				child.applyOutOfFlowChildPositions();
+				UIComponent(child).applyOutOfFlowChildPositions();
 			}
 			super.calculateKeyLoop();
 		}
