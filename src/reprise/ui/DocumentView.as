@@ -403,7 +403,8 @@ package reprise.ui
 		protected function debugMarkElement(element : UIComponent) : void
 		{
 			var output : String = '\nElement: ' + element + 
-				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n';
+				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n' + 
+				'position: ' + (element.style.position || 'static') + '\n';
 			
 			var position : Point = element.getPositionRelativeToDisplayObject(this);
 			m_debugInterface.x = position.x;
