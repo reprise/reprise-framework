@@ -12,6 +12,7 @@
 package reprise.utils
 { 
 	import flash.display.BitmapData;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -284,6 +285,45 @@ package reprise.utils
 			mat.scale(scale.x, scale.y);
 			tmp2.draw(tmp, mat, null, null, null, smooth);
 			target.copyPixels(tmp2, tmp2.rect, destPoint, null, null, true);
+		}
+		
+		public static function drawWedge(graphics:Graphics, x:Number, y:Number, startAngle:Number, 
+			arc:Number, radius:Number, yRadius:Number = -1):void
+		{
+			if (yRadius == -1) 
+			{
+				yRadius = radius;
+			}
+			graphics.moveTo(x, y);
+			// Init vars
+			var segAngle:Number, theta:Number, angle:Number, angleMid:Number, segs:Number, 
+				ax:Number, ay:Number, bx:Number, by:Number, cx:Number, cy:Number;
+
+			if (Math.abs(arc) > 360) 
+			{
+				arc = 360;
+			}
+			segs = Math.ceil(Math.abs(arc)/45);
+			segAngle = arc/segs;
+			theta = -(segAngle/180)*Math.PI;
+			angle = -(startAngle/180)*Math.PI;
+			if (segs > 0) 
+			{
+				ax = x+Math.cos(startAngle/180*Math.PI)*radius;
+				ay = y+Math.sin(-startAngle/180*Math.PI)*yRadius;
+				graphics.lineTo(ax, ay);
+				for (var i:Number = 0; i<segs; i++) 
+				{
+					angle += theta;
+					angleMid = angle-(theta/2);
+					bx = x+Math.cos(angle)*radius;
+					by = y+Math.sin(angle)*yRadius;
+					cx = x+Math.cos(angleMid)*(radius/Math.cos(theta/2));
+					cy = y+Math.sin(angleMid)*(yRadius/Math.cos(theta/2));
+					graphics.curveTo(cx, cy, bx, by);
+				}
+				graphics.lineTo(x, y);
+			}
 		}
 		
 		public static function copyPixelsTiled(
