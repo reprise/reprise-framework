@@ -11,6 +11,8 @@
 
 package reprise.ui
 {
+	import reprise.css.ComputedStyles;	
+	
 	import flash.geom.Rectangle;	
 	
 	import reprise.core.ApplicationContext;
@@ -402,9 +404,14 @@ package reprise.ui
 		}
 		protected function debugMarkElement(element : UIComponent) : void
 		{
+			var style : ComputedStyles = element.style;
 			var output : String = '\nElement: ' + element + 
 				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n' + 
-				'position: ' + (element.style.position || 'static') + '\n';
+				'position: ' + (style.position || 'static') + '\n';
+			output += 'left: ' + style.left + 'px, right: ' + style.right + 'px\n';
+			output += 'top: ' + style.top + 'px, bottom: ' + style.bottom + 'px\n';
+			output += 'margin: ' + style.marginTop + 'px ' + style.marginRight + 'px ' + 
+				style.marginBottom + 'px ' + style.marginLeft + 'px\n';
 			
 			var position : Point = element.getPositionRelativeToDisplayObject(this);
 			m_debugInterface.x = position.x;
@@ -416,25 +423,25 @@ package reprise.ui
 			var boxWidth : Number = element.borderBoxWidth;
 			var boxHeight : Number = element.borderBoxHeight;
 			output += 'Border Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.drawRect(-element.style.borderLeftWidth, 
-				-element.style.borderTopWidth, boxWidth, boxHeight);
+			m_debugInterface.graphics.drawRect(-style.borderLeftWidth, 
+				-style.borderTopWidth, boxWidth, boxHeight);
 			
-			boxWidth -= element.style.borderLeftWidth;
-			boxWidth -= element.style.borderRightWidth;
-			boxHeight -= element.style.borderTopWidth;
-			boxHeight -= element.style.borderBottomWidth;
+			boxWidth -= style.borderLeftWidth;
+			boxWidth -= style.borderRightWidth;
+			boxHeight -= style.borderTopWidth;
+			boxHeight -= style.borderBottomWidth;
 			output += 'Padding Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
 			m_debugInterface.graphics.endFill();
 			m_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
 			
-			boxWidth -= element.style.paddingLeft;
-			boxWidth -= element.style.paddingRight;
-			boxHeight -= element.style.paddingTop;
-			boxHeight -= element.style.paddingBottom;
+			boxWidth -= style.paddingLeft;
+			boxWidth -= style.paddingRight;
+			boxHeight -= style.paddingTop;
+			boxHeight -= style.paddingBottom;
 			output += 'Content Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
 			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(element.style.paddingLeft, 
-				element.style.paddingTop, boxWidth, boxHeight);
+			m_debugInterface.graphics.drawRect(style.paddingLeft, 
+				style.paddingTop, boxWidth, boxHeight);
 			
 			log(output);
 		}
