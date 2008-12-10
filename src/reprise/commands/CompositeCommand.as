@@ -400,7 +400,7 @@ package reprise.commands
 		{
 			// cancel makes no difference to us to a unsuccessful command
 			var completeEvent : CommandEvent = new CommandEvent(Event.COMPLETE, true);
-			command_complete(completeEvent);
+			IAsynchronousCommand(event.target).dispatchEvent(completeEvent);
 			// since execution is counted after a command completed its execution, cancelled
 			// commands don't fall into this category
 			m_numCommandsExecuted--;
