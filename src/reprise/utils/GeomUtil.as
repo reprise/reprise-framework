@@ -67,7 +67,7 @@ package reprise.utils
 				{
 					return;
 				}
-				ratio = Math.max(targetRect.width / sourceRect.width, 
+				ratio = Math.min(targetRect.width / sourceRect.width, 
 					targetRect.height / sourceRect.height);
 				sourceRect.width *= ratio;
 				sourceRect.height *= ratio;
