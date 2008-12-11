@@ -10,18 +10,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.external
-{ 
-	import flash.events.Event;
-	import flash.net.URLRequest;
-	import flash.utils.getTimer;
-	
-	import mx.events.ResourceEvent;
-	
+{
 	import reprise.commands.AbstractAsynchronousCommand;
 	import reprise.commands.TimeCommandExecutor;
-	import reprise.events.CommandEvent;
-	import reprise.events.ResourceEvent;
 	import reprise.utils.Delegate;
+	import reprise.events.ResourceEvent;
+	
+	import flash.events.Event;
+	import flash.net.URLRequest;
+	import flash.utils.getTimer; 
+
 	public class AbstractResource extends AbstractAsynchronousCommand
 		implements IResource
 	{
