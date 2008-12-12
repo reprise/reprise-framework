@@ -20,7 +20,7 @@ package reprise.ui
 	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.getQualifiedClassName;
+	import flash.utils.getQualifiedClassName;	
 	
 	use namespace reprise;
 	
@@ -49,6 +49,7 @@ package reprise.ui
 		
 		protected var m_firstDraw : Boolean;
 		protected var m_visible : Boolean = true;
+		protected var m_isRendered : Boolean;
 		protected var m_isInvalidated : Boolean;
 		protected var m_isValidating : Boolean;
 	
@@ -531,6 +532,23 @@ package reprise.ui
 		}
 		
 		/**
+		 * Returns true if the element is rendered.
+		 * <p>
+		 * Right now, the only circumstance under which this method returns false is if the element 
+		 * has the CSS property display: none applied to it, causing all validation of the element 
+		 * itself and its children to be stopped right after style calculation.
+		 * <p>
+		 * If this value is false, all other values that depend on the element being valid might be 
+		 * outdated or not even set at all.
+		 * 
+		 * @return A boolean indicating if the element is rendered to the screen or not
+		 */
+		public function isRendered() : Boolean
+		{
+			return m_isRendered;
+		}
+		
+		/**
 		 * Returns the actual display state of the element taking the visibility of its ancestors 
 		 * in the display list into account.
 		 * 
@@ -735,6 +753,11 @@ package reprise.ui
 			m_isValidating = true;
 			
 			validateBeforeChildren();
+			if (!m_isRendered)
+			{
+				visible = false;
+				return;
+			}
 			validateChildren();
 			validateAfterChildren();
 			

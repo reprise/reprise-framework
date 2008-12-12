@@ -11,8 +11,6 @@
 
 package reprise.ui
 {
-	import flash.geom.Matrix;	
-	
 	import reprise.controls.Scrollbar;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
@@ -28,13 +26,16 @@ package reprise.ui
 	import reprise.utils.GfxUtil;
 	import reprise.utils.StringUtil;
 	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
+	import flash.geom.Rectangle;		
 	
 	use namespace reprise;
 
@@ -102,6 +103,8 @@ package reprise.ui
 		protected var m_autoFlags : Object = {};
 		protected var m_positionInFlow : int = 1;
 		protected var m_positioningType : String;
+		protected var m_freezeDisplay : Boolean;
+		protected var m_isFrozen : Boolean;
 		
 		//validation properties
 		protected var m_stylesInvalidated : Boolean;
@@ -136,6 +139,8 @@ package reprise.ui
 		protected var m_bordersDisplay : Sprite;
 		protected var m_upperContentMask : Sprite;
 		protected var m_lowerContentMask : Sprite;
+		protected var m_frozenContent : BitmapData;
+		protected var m_frozenContentDisplay : Bitmap;
 		
 		protected var m_vScrollbar : Scrollbar;
 		protected var m_hScrollbar : Scrollbar;
@@ -900,24 +905,7 @@ package reprise.ui
 			m_currentStyles.visibility = visibilityProperty;
 			super.setVisibility(visible);
 		}
-		
-		/**
-		 * Returns true if the element is rendered.
-		 * <p>
-		 * Right now, the only circumstance under which this method returns false is if the element 
-		 * has the CSS property display: none applied to it, causing all validation of the element 
-		 * itself and its children to be stopped right after style calculation.
-		 * <p>
-		 * If this value is false, all other values that depend on the element being valid might be 
-		 * outdated or not even set at all.
-		 * 
-		 * @return A boolean indicating if the element is rendered to the screen or not
-		 */
-		public function isRendered() : Boolean
-		{
-			return !(m_currentStyles.display && m_currentStyles.display == 'none');
-		}
-		
+
 		/**
 		* Sets the elements alpha property immediately and without invalidating the element
 		* 
@@ -1395,9 +1383,13 @@ package reprise.ui
 			{
 				calculateStyles();
 				
-				if (!isRendered())
+				if (!m_isRendered)
 				{
 					visible = false;
+					return;
+				}
+				if (m_isFrozen)
+				{
 					return;
 				}
 				
@@ -1442,7 +1434,7 @@ package reprise.ui
 		 */
 		protected override function validateAfterChildren() : void
 		{
-			if (!isRendered())
+			if (!m_isRendered || m_isFrozen)
 			{
 				return;
 			}
@@ -1576,7 +1568,7 @@ package reprise.ui
 
 		protected override function validateChildren() : void
 		{
-			if (!isRendered())
+			if (!m_isRendered || m_isFrozen)
 			{
 				return;
 			}
@@ -1670,6 +1662,25 @@ package reprise.ui
 			}
 			
 			styles.mergeCSSDeclaration(m_instanceStyles);
+			
+			m_freezeDisplay = (styles.hasStyle('freezeDisplay') && 
+				styles.getStyle('freezeDisplay').specifiedValue() == true);
+			if (m_isFrozen && !m_freezeDisplay)
+			{
+				log('unfreezing ' + this);
+				m_frozenContent.dispose();
+				m_frozenContent = null;
+				removeChild(m_frozenContentDisplay);
+				m_frozenContentDisplay = null;
+				m_contentDisplay.visible = true;
+				m_isFrozen = false;
+			}
+			m_isRendered = !(styles.hasStyle('display') && 
+				styles.getStyle('display').specifiedValue() == 'none');
+			if (!m_isRendered)
+			{
+				return;
+			}
 			
 			//check if styles or other relevant factors have changed and stop validation 
 			//if not.
@@ -1981,6 +1992,10 @@ package reprise.ui
 		
 		protected function applyOutOfFlowChildPositions() : void
 		{
+			if (!m_isRendered || m_isFrozen)
+			{
+				return;
+			}
 			m_layoutManager.applyAbsolutePositions(this, m_children);
 			for each (var child : UIObject in m_children)
 			{
@@ -1992,6 +2007,18 @@ package reprise.ui
 				UIComponent(child).applyOutOfFlowChildPositions();
 			}
 			super.calculateKeyLoop();
+			
+			if (m_freezeDisplay)
+			{
+				log('freezing ' + this);
+				m_frozenContent = new BitmapData(m_borderBoxWidth, m_borderBoxHeight, true, 0x0);
+				m_frozenContent.draw(this, null, null, null, new Rectangle(0 - m_currentStyles.borderLeftWidth, 
+					0 - m_currentStyles.borderTopWidth, m_borderBoxWidth, m_borderBoxHeight), true);
+				m_contentDisplay.visible = false;
+				m_frozenContentDisplay = new Bitmap(m_frozenContent, 'auto', true);
+				addChild(m_frozenContentDisplay);
+				m_isFrozen = true;
+			}
 		}
 		
 		/**

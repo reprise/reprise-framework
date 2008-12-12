@@ -11,16 +11,13 @@
 
 package reprise.css.propertyparsers
 {
-	import reprise.utils.GeomUtil;	
-	
-	import flash.geom.Matrix;	
-	
 	import reprise.core.reprise;
 	import reprise.css.CSSParsingResult;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyParser;
 	import reprise.css.transitions.VisibilityTransitionVO;
-	import reprise.utils.StringUtil;	
+	import reprise.utils.GeomUtil;
+	import reprise.utils.StringUtil;		
 	
 	use namespace reprise;
 	
@@ -61,7 +58,8 @@ package reprise.css.propertyparsers
 			transform : {parser : parseTransform},
 			transformOrigin : {parser : parseTransformOrigin},
 			transformOriginX : {parser : strToIntProperty},
-			transformOriginY : {parser : strToIntProperty}
+			transformOriginY : {parser : strToIntProperty},
+			freezeDisplay : {parser : strToBoolProperty}
 		};
 		public static var TRANSITION_SHORTCUTS : Object	=
 		{
