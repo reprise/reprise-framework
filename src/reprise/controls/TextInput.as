@@ -31,7 +31,7 @@ package reprise.controls
 		
 		
 		/***************************************************************************
-		*							protected properties							   *
+		*							protected properties						   *
 		***************************************************************************/
 		protected var m_enabled : Boolean;
 		protected var m_labelStr : String;
