@@ -85,6 +85,9 @@ package reprise.ui
 		
 		protected static const DEFAULT_SCROLLBAR_WIDTH : int = 16;
 		
+		protected static const IDENTITY_MATRIX : Matrix = new Matrix();
+		protected static const TRANSFORM_MATRIX : Matrix = new Matrix();
+		
 		
 		//attribute properties
 		protected var m_xmlDefinition : XML;
@@ -1366,7 +1369,7 @@ package reprise.ui
 		 */
 		protected override function validateBeforeChildren() : void
 		{
-			m_contentDisplay.transform.matrix = new Matrix();
+			m_contentDisplay.transform.matrix = IDENTITY_MATRIX;
 			if (m_scrollbarsDisplay)
 			{
 				m_scrollbarsDisplay.transform.matrix = m_contentDisplay.transform.matrix;
@@ -2633,7 +2636,8 @@ package reprise.ui
 				}
 				
 				var transformations : Array = m_currentStyles.transform;
-				var matrix : Matrix = new Matrix();
+				var matrix : Matrix = TRANSFORM_MATRIX;
+				matrix.identity();
 				
 				matrix.translate(-originX, -originY);
 				var length : int = transformations.length;
