@@ -10,7 +10,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.ui.renderers
-{ 
+{
+	import reprise.commands.CompositeCommand;	
+	import reprise.commands.MovieClipController;	
+	
+	import flash.display.MovieClip; 
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -44,7 +48,8 @@ package reprise.ui.renderers
 		
 		protected var m_lastBackgroundImageType : String;
 		protected var m_lastBackgroundImageURL : String;
-		
+		protected var m_animationControls : CompositeCommand;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -509,6 +514,13 @@ package reprise.ui.renderers
 			
 			var imgContainer : Sprite = m_activeBackgroundAnimationContainer;
 			imgContainer.addChild(m_backgroundImageLoader.content());
+			
+			if (m_backgroundImageLoader.content() is MovieClip && 
+				m_styles.backgroundAnimationControl)
+			{
+				applyAnimationControls();
+			}
+			
 			var imgWidth : Number = imgContainer.width;
 			var imgHeight : Number = imgContainer.height;
 					
@@ -547,6 +559,26 @@ package reprise.ui.renderers
 			m_backgroundImageContainer.graphics.clear();
 		}
 		
+		protected function applyAnimationControls() : void
+		{
+			if (m_animationControls)
+			{
+				m_animationControls.cancel();
+			}
+			m_animationControls = new CompositeCommand();
+			var controls : Array = m_styles.backgroundAnimationControl;
+			var animation : MovieClip = m_backgroundImageLoader.content();
+			for (var i : int = 0; i < controls.length; i++)
+			{
+				var operation : Object = controls[i];
+				var mcController : MovieClipController = 
+					new MovieClipController(animation);
+				mcController.setOperation(operation.type, operation.parameters);
+				m_animationControls.addCommand(mcController);
+			}
+			m_animationControls.execute();
+		}
+
 		protected function constructScale9Rect(
 			imgWidth : Number, imgHeight : Number) : Rectangle
 		{

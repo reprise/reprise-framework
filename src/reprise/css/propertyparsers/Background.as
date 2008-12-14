@@ -385,12 +385,12 @@ package reprise.css.propertyparsers
 		
 		public static function parseBackgroundAnimationControl(val:String, file:String) : CSSProperty
 		{
-			log(val);
 			var obj : Object = strToProperty(val, file);
 			var property : CSSProperty = obj.property;
 			val = obj.filteredString;
 			var controlExtractor : RegExp = /\s*(play|stop|loop|marquee)\s*\((.*?)\)/g;
 			var paramSplitter : RegExp = /\s*,\s*/;
+			var numericMatcher : RegExp = /^\d+$/;
 			var playControls : Array = [];
 			while(true)
 			{
@@ -399,14 +399,16 @@ package reprise.css.propertyparsers
 				{
 					break;
 				}
-				var control : Object = {type : match[1]};
-				
 				var parameters : Array = (match[2] as String).split(paramSplitter);
+				var control : Object = {type : match[1], parameters : parameters};
+				
 				for (var i : int = parameters.length; i--;)
 				{
-					
+					if (numericMatcher.test(parameters[i]))
+					{
+						parameters[i] = int(parseInt(parameters[i]));
+					}
 				}
-				log('"', parameters);
 				
 				playControls.push(control);
 			}
