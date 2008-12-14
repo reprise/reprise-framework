@@ -47,6 +47,7 @@ package reprise.ui
 		protected var m_isFirstChild : Boolean;
 		protected var m_isLastChild : Boolean;
 		
+		protected var m_initialized : Boolean;
 		protected var m_firstDraw : Boolean;
 		protected var m_visible : Boolean = true;
 		protected var m_isRendered : Boolean;
@@ -119,7 +120,11 @@ package reprise.ui
 			m_parentElement = parent;
 			m_rootElement = parent.m_rootElement;
 			
-			initialize();
+			if (!m_initialized)
+			{
+				initialize();
+			}
+			invalidate();
 			
 			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
 			
@@ -144,6 +149,14 @@ package reprise.ui
 			if (child is UIObject)
 			{
 				var element : UIObject = UIObject(child);
+				if (element.m_parentElement == this)
+				{
+					return element;
+				}
+				if (element.m_parentElement)
+				{
+					element.m_parentElement.unregisterChildView(element);
+				}
 				m_contentDisplay.addChildAt(
 					child, Math.min(m_contentDisplay.numChildren, index));
 				element.setParent(this);
@@ -716,6 +729,7 @@ package reprise.ui
 		***************************************************************************/
 		protected function initialize() : void
 		{
+			m_initialized = true;
 			name = m_elementType + '_' + g_elementIDCounter++;
 			m_delayedMethods = [];
 			createDisplayClips();
@@ -724,7 +738,6 @@ package reprise.ui
 			visible = false;
 			m_keyOrder = [];
 			createChildren();
-			invalidate();
 		}
 		
 		/**
