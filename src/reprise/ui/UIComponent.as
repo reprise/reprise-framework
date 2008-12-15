@@ -1703,6 +1703,12 @@ package reprise.ui
 			
 			m_specifiedStyles = styles;
 			styles = m_transitionsManager.processTransitions(oldStyles, styles);
+			//this element might have been removed in a transitions event handler. Return if so.
+			if (!m_rootElement)
+			{
+				m_isRendered = false;
+				return;
+			}
 			m_complexStyles = styles;
 			m_currentStyles = styles.toComputedStyles();
 			
