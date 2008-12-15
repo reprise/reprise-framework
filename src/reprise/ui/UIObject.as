@@ -88,6 +88,7 @@ package reprise.ui
 				var className : String = getQualifiedClassName(this);
 				m_elementType =  className.substr(className.indexOf('::') + 2);
 			}
+			preinitialize();
 		}
 		
 		/**
@@ -118,7 +119,7 @@ package reprise.ui
 		public function setParent(parent:UIObject) : UIObject
 		{
 			m_parentElement = parent;
-			m_rootElement = parent.m_rootElement;
+			setRootElement(parent.m_rootElement);
 			
 			if (!m_initialized)
 			{
@@ -131,6 +132,15 @@ package reprise.ui
 			return this;
 		}
 		
+		protected function setRootElement(rootElement : DocumentView) : void
+		{
+			m_rootElement = rootElement;
+			for each (var child : UIObject in m_children)
+			{
+				child.setRootElement(rootElement);
+			}
+		}
+
 		public override function addChild(child : DisplayObject) : DisplayObject
 		{
 			if (child is UIObject)
@@ -142,7 +152,28 @@ package reprise.ui
 				return super.addChild(child);
 			}
 		}
-		
+
+		override public function removeChild(child : DisplayObject) : DisplayObject
+		{
+			if (child is UIObject)
+			{
+				unregisterChildView(UIObject(child));
+				return child;
+			}
+			return super.removeChild(child);
+		}
+
+		override public function removeChildAt(index : int) : DisplayObject
+		{
+			var child : UIObject = m_children[index];
+			if (child)
+			{
+				unregisterChildView(child);
+				return child;
+			}
+			return super.removeChildAt(index);
+		}
+
 		public override function addChildAt(
 			child : DisplayObject, index : int) : DisplayObject
 		{
@@ -720,23 +751,27 @@ package reprise.ui
 			{
 				return name;
 			}
-			return m_parentElement.toString() + '.' + name;
+			return (m_parentElement && (m_parentElement.toString() + '.') || '') + name;
 		}
 		
 		
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function initialize() : void
+		protected function preinitialize() : void
 		{
-			m_initialized = true;
 			name = m_elementType + '_' + g_elementIDCounter++;
 			m_delayedMethods = [];
 			createDisplayClips();
-			m_firstDraw = true;
-			m_tabIndex = 0;
-			visible = false;
 			m_keyOrder = [];
+			m_tabIndex = 0;
+		}
+		
+		protected function initialize() : void
+		{
+			m_initialized = true;
+			m_firstDraw = true;
+			visible = false;
 			createChildren();
 		}
 		
@@ -804,14 +839,16 @@ package reprise.ui
 		
 		protected function unregisterChildView(child:UIObject) : void
 		{
-			if (child.parent == this)
+			if (child.m_parentElement != this)
 			{
-				m_children.splice(m_children.indexOf(child), 1);
-				removeChild(child);
-				child.dispatchEvent(
-					new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
-				invalidate();
+				return;
 			}
+			m_children.splice(m_children.indexOf(child), 1);
+			child.parent.removeChild(child);
+			child.m_parentElement = null;
+			child.setRootElement(null);
+			child.dispatchEvent(new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
+			invalidate();
 		}
 		
 		protected function show_complete(event : Event = null) : void

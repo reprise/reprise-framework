@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  Fork unstable media GmbH
@@ -1287,6 +1288,12 @@ package reprise.ui
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
+		override protected function preinitialize() : void
+		{
+			super.preinitialize();
+			m_instanceStyles = new CSSDeclaration();
+		}
+		
 		protected override function initialize() : void
 		{
 			if (!m_class.basicStyles)
@@ -1300,7 +1307,6 @@ package reprise.ui
 			{
 				m_elementDefaultStyles = m_class.basicStyles;
 			}
-			m_instanceStyles = new CSSDeclaration();
 			m_transitionsManager = new CSSTransitionsManager(this);
 			m_layoutManager = new CSSBoxModelLayoutManager();
 			m_currentStyles = new ComputedStyles();
@@ -1670,7 +1676,6 @@ package reprise.ui
 				styles.getStyle('freezeDisplay').specifiedValue() == true);
 			if (m_isFrozen && !m_freezeDisplay)
 			{
-				log('unfreezing ' + this);
 				m_frozenContent.dispose();
 				m_frozenContent = null;
 				removeChild(m_frozenContentDisplay);
@@ -2013,7 +2018,6 @@ package reprise.ui
 			
 			if (m_freezeDisplay)
 			{
-				log('freezing ' + this);
 				m_frozenContent = new BitmapData(m_borderBoxWidth, m_borderBoxHeight, true, 0x0);
 				m_frozenContent.draw(this, null, null, null, new Rectangle(0 - m_currentStyles.borderLeftWidth, 
 					0 - m_currentStyles.borderTopWidth, m_borderBoxWidth, m_borderBoxHeight), true);
@@ -2571,23 +2575,6 @@ package reprise.ui
 		 */
 		protected function measure() : void
 		{
-		}
-		
-		protected override function unregisterChildView(child:UIObject) : void
-		{
-			if (child is UIComponent)
-			{
-				if (m_children.indexOf(child) != -1)
-				{
-					child.parent.removeChild(child);
-					m_children.splice(m_children.indexOf(child), 1);
-					invalidate();
-				}
-			}
-			else
-			{
-				super.unregisterChildView(child);
-			}
 		}
 		
 		internal function valueForKey(key : String) : *
