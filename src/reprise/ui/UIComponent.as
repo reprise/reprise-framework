@@ -1402,9 +1402,9 @@ package reprise.ui
 					return;
 				}
 				
+				visible = m_visible;
 				if (m_stylesInvalidated)
 				{
-					visible = m_visible;
 					
 					if (m_currentStyles.overflowY == 'scroll')
 					{
@@ -1448,10 +1448,11 @@ package reprise.ui
 				return;
 			}
 			
-			applyInFlowChildPositions();
 			
 			var oldIntrinsicHeight : Number = m_intrinsicHeight;
 			var oldIntrinsicWidth : Number = m_intrinsicWidth;
+			
+			applyInFlowChildPositions();
 			
 			measure();
 			
@@ -2385,7 +2386,6 @@ package reprise.ui
 		
 		protected function applyScrollbars() : void
 		{
-			//TODO: ask Marc 'say what???'
 			function childWidth():Number
 			{
 				var widestChildWidth:Number = 0;
@@ -2462,6 +2462,7 @@ package reprise.ui
 				m_vScrollbar.left = m_currentStyles.width - m_vScrollbar.outerWidth + 
 					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
 				m_vScrollbar.validateElement(true, true);
+				verticalScrollbar_change();
 			}
 			else
 			{
@@ -2480,6 +2481,7 @@ package reprise.ui
 				m_hScrollbar.height = innerWidth() + 
 					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
 				m_hScrollbar.validateElement(true, true);
+				horizontalScrollbar_change();
 			}
 			else
 			{
@@ -2529,13 +2531,13 @@ package reprise.ui
 			event.stopPropagation();
 		}
 		
-		protected function verticalScrollbar_change(event : Event) : void
+		protected function verticalScrollbar_change(event : Event = null) : void
 		{
 			m_upperContentDisplay.y = m_lowerContentDisplay.y = 
 				-m_vScrollbar.scrollPosition;
 		}
 		
-		protected function horizontalScrollbar_change(event : Event) : void
+		protected function horizontalScrollbar_change(event : Event = null) : void
 		{
 			m_upperContentDisplay.x = m_lowerContentDisplay.x = 
 				-m_hScrollbar.scrollPosition;
