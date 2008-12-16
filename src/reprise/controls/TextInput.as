@@ -157,6 +157,17 @@ package reprise.controls
 				setLabel(value);
 			}
 		}
+		public override function didSucceed():Boolean
+		{
+			if (m_validator || !m_required || !m_placeholder)
+			{
+				return super.didSucceed();
+			}
+			
+			var success:Boolean = value() != m_placeholder;
+			success ? markAsValid() : markAsInvalid();
+			return success;
+		}
 		
 		
 		/***************************************************************************
