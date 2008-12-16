@@ -42,7 +42,8 @@ package reprise.css.propertyparsers
 			RepriseTransitionDuration : {parser : parseRepriseTransitionDuration},
 			RepriseTransitionDelay : {parser : parseRepriseTransitionDelay},
 			RepriseTransitionTimingFunction : {parser : parseRepriseTransitionTimingFunction},
-			RepriseTransitionDefaultValue : {parser : parseRepriseTransitionDefaultValue}
+			RepriseTransitionDefaultValue : {parser : parseRepriseTransitionDefaultValue},
+			transitionFrameDropping : {parser : strToStringProperty, inheritable : true}
 		};
 		public static const EASINGS : Object = 
 		{

@@ -57,8 +57,8 @@ package reprise.css.transitions
 			return m_activeTransitions && m_activeTransitions[style] != null;
 		}
 
-		public function processTransitions(
-			oldStyles : CSSDeclaration, newStyles : CSSDeclaration) : CSSDeclaration
+		public function processTransitions(oldStyles : CSSDeclaration, newStyles : CSSDeclaration, 
+			frameRate : int) : CSSDeclaration
 		{
 			var transitionPropName : String;
 			var transitionDuration : CSSProperty;
@@ -66,6 +66,17 @@ package reprise.css.transitions
 			var transitionEasing : Function;
 			var transition : CSSPropertyTransition;
 			var startTime : int = getTimer();
+			var frameDuration : int;
+			
+			if (newStyles.hasStyle('transitionFrameDropping') && 
+				newStyles.getStyle('transitionFrameDropping').specifiedValue() == 'prevent')
+			{
+				frameDuration = 1000 / frameRate;
+			}
+			else
+			{
+				frameDuration = 10000;
+			}
 			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
 			{
 				var transitionProperties : Array = 
@@ -173,7 +184,7 @@ package reprise.css.transitions
 					{
 						transition.easing = transitionEasing;
 						transition.updateValues(targetValue, transitionDuration, 
-							transitionDelay, startTime, this);
+							transitionDelay, startTime, frameDuration, this);
 					}
 				}
 				
@@ -234,7 +245,7 @@ package reprise.css.transitions
 			{
 				transition = m_activeTransitions[transitionPropName];
 				var previousRatio : Number = transition.currentRatio;
-				transition.setValueForTimeInContext(startTime, this);
+				transition.setValueForTimeInContext(startTime, frameDuration, this);
 				if (previousRatio == 0 && transition.currentRatio != 0)
 				{
 					var startEvent : TransitionEvent = 

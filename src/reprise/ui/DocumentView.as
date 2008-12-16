@@ -285,6 +285,7 @@ package reprise.ui
 			m_elementDefaultStyles.setStyle('position', 'absolute');
 			m_elementDefaultStyles.setStyle('fontFamily', '_sans');
 			m_elementDefaultStyles.setStyle('fontSize', '12px');
+			m_elementDefaultStyles.setStyle('frameRate', stage.frameRate.toString());
 		}
 		protected override function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
@@ -296,7 +297,10 @@ package reprise.ui
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
-			stage.frameRate = m_currentStyles.frameRate;
+			if (m_currentStyles.frameRate)
+			{
+				stage.frameRate = m_currentStyles.frameRate;
+			}
 			m_heightIsRelative = m_complexStyles.getStyle('height').isRelativeValue();
 			m_widthIsRelative = m_complexStyles.getStyle('width').isRelativeValue();
 		}

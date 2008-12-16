@@ -1702,7 +1702,7 @@ package reprise.ui
 			}
 			
 			m_specifiedStyles = styles;
-			styles = m_transitionsManager.processTransitions(oldStyles, styles);
+			styles = m_transitionsManager.processTransitions(oldStyles, styles, stage.frameRate);
 			//this element might have been removed in a transitions event handler. Return if so.
 			if (!m_rootElement)
 			{
