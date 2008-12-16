@@ -159,7 +159,6 @@ package reprise.css.transitions
 			{
 				var bak : int = m_startTime;
 				m_startTime += time - m_lastUpdateTime - frameDuration;
-				log("adjust: " + (m_startTime - bak));
 			}
 			m_lastUpdateTime = time;
 			var currentTime : int = time - m_startTime - delayValue;
