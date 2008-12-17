@@ -2144,8 +2144,15 @@ package reprise.ui
 						selectorPath = bindingParts.shift();
 					}
 					var propertyParts : Array = bindingParts[0].split(/\s*:\s*/);
-					valueParts[i] = valueBySelectorProperty.
-						apply(this, [selectorPath].concat(propertyParts));
+					try
+					{
+						valueParts[i] = valueBySelectorProperty.
+							apply(this, [selectorPath].concat(propertyParts));
+					}
+					catch (error : Error)
+					{
+						valueParts[i] = '{' + valueParts[i] + '}';
+					}
 				}
 				if (valueParts.length > 3 || valueParts[0] != '' || valueParts[2] != '')
 				{
