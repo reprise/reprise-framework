@@ -76,6 +76,7 @@ package reprise.core
 		{
 			if (!m_i18nService)
 			{
+				log('w No i18n service set, can\'t resolve key "' + key + '"');
 				return defaultReturnValue == null ? key : defaultReturnValue;
 			}
 			var result : *;
@@ -89,6 +90,7 @@ package reprise.core
 			}
 			if (result == null)
 			{
+				log('w No i18n result found for key "' + key + '"');
 				return defaultReturnValue == null ? key : defaultReturnValue;
 			}
 			return result;
