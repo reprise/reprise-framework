@@ -77,6 +77,7 @@ package reprise.ui
 		protected var m_focus:UIObject;
 		
 		protected var m_debuggingMode : Boolean;
+		protected var m_currentDebugElement : UIComponent;
 		protected var m_debugInterface : Sprite;
 		protected var m_validatedElementsCount : int;
 
@@ -403,17 +404,19 @@ package reprise.ui
 			
 			removeChild(m_debugInterface);
 			m_debugInterface = null;
+			m_currentDebugElement = null;
 			
 			stage.removeEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true);
 		}
 		protected function debugMarkElement(element : UIComponent) : void
 		{
+			m_currentDebugElement = element;
 			var style : ComputedStyles = element.style;
 			var output : String = '\nElement: ' + element + 
 				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n' + 
-				'position: ' + (style.position || 'static') + '\n';
-			output += 'left: ' + style.left + 'px, right: ' + style.right + 'px\n';
-			output += 'top: ' + style.top + 'px, bottom: ' + style.bottom + 'px\n';
+				'position: ' + (style.position || 'static') + ', ';
+			output += 'top: ' + style.top + 'px, right: ' + style.right + 
+				'px, bottom: ' + style.bottom + 'px, left: ' + style.left + 'px\n';
 			output += 'margin: ' + style.marginTop + 'px ' + style.marginRight + 'px ' + 
 				style.marginBottom + 'px ' + style.marginLeft + 'px\n';
 			
@@ -510,6 +513,11 @@ package reprise.ui
 					toggleDebuggingMode();
 					return;
 				}
+				if (event.keyCode == 19 && m_currentDebugElement) //'s'
+				{
+					log('Complex styles:\n' + m_currentDebugElement.valueForKey('m_complexStyles'));
+					return;
+				}
 				if (event.keyCode == 18) //'r'
 				{
 					reloadStyles();
@@ -522,7 +530,7 @@ package reprise.ui
 				}
 			}
 		}
-		
+
 		protected function startWatchingStylesheets() : void
 		{
 			FileMonitor.instance().removeEventListener(
@@ -581,6 +589,9 @@ package reprise.ui
 			}
 			if (!element)
 			{
+				removeChild(m_debugInterface);
+				m_debugInterface = null;
+				m_currentDebugElement = null;
 				return;
 			}
 			debugMarkElement(element);
