@@ -308,7 +308,8 @@ package reprise.ui.renderers
 			clearBackgroundImage();
 			
 			if (!e.success || m_styles.backgroundImage == null || 
-				m_styles.backgroundImage == Background.IMAGE_NONE)
+				m_styles.backgroundImage == Background.IMAGE_NONE || 
+				!m_backgroundImageLoader.content())
 			{
 				return;
 			}
