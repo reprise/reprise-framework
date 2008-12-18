@@ -1684,12 +1684,6 @@ package reprise.ui
 				m_contentDisplay.visible = true;
 				m_isFrozen = false;
 			}
-			m_isRendered = !(styles.hasStyle('display') && 
-				styles.getStyle('display').specifiedValue() == 'none');
-			if (!m_isRendered)
-			{
-				return;
-			}
 			
 			//check if styles or other relevant factors have changed and stop validation 
 			//if not.
@@ -1704,11 +1698,13 @@ package reprise.ui
 			m_specifiedStyles = styles;
 			styles = m_transitionsManager.processTransitions(oldStyles, styles, stage.frameRate);
 			//this element might have been removed in a transitions event handler. Return if so.
-			if (!m_rootElement)
+			m_isRendered = !(styles.hasStyle('display') && 
+				styles.getStyle('display').specifiedValue() == 'none') && m_rootElement;
+			if (!m_isRendered)
 			{
-				m_isRendered = false;
 				return;
 			}
+			
 			m_complexStyles = styles;
 			m_currentStyles = styles.toComputedStyles();
 			
