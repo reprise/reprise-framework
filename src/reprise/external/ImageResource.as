@@ -43,7 +43,7 @@ package reprise.external
 			return m_resource;
 		}		
 		
-		public function bitmap(backgroundColor:Number = NaN) : BitmapData
+		public function bitmap(backgroundColor:Number = NaN, smoothing : Boolean = false) : BitmapData
 		{
 			var transparent : Boolean = false;
 			if (isNaN(backgroundColor))
@@ -53,7 +53,7 @@ package reprise.external
 			}
 			var bmp : BitmapData = new BitmapData(m_loader.width, m_loader.height, 
 				transparent, backgroundColor);
-			bmp.draw(m_loader);
+			bmp.draw(m_loader, null, null, null, null, smoothing);
 			return bmp;
 		}
 		
