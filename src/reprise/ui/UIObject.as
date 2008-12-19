@@ -654,6 +654,14 @@ package reprise.ui
 		}
 		
 		/**
+		 * Returns the UIObjects' validation state
+		 */
+		public function isValid() : Boolean
+		{
+			return m_isInvalidated;
+		}
+
+		/**
 		 * Returns all descentant elements that have the supplied tag name
 		 * 
 		 * @param tagName The CSS tag name to match descendant elements against
