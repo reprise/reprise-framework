@@ -78,11 +78,12 @@ package reprise.tweens {
 			default tweenFunction without any easing, can be replaced by any function with the same signature
 		*/
 		public function tweenFunction(
-			time:Number, start:Number, change:Number, duration:Number) : Number
+			time:Number, start:Number, change:Number, duration:Number, ...rest) : Number
 		{
 			if (m_easingFunction != null)
 			{
-				return m_easingFunction(time, start, change, duration);
+				return m_easingFunction.apply(null, [time, start, change, duration].concat(rest));
+				//return m_easingFunction(time, start, change, duration);
 			}
 			return change * time / duration + start;
 		}

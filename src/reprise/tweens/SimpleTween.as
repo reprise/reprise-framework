@@ -38,6 +38,7 @@ package reprise.tweens
 		protected var m_currentTime:int;
 		protected var m_duration : int;
 		protected var m_delay : int;
+		protected var m_isPaused : Boolean = false;
 	
 		protected var m_tweenedProperties : Array;
 		protected var m_preventFrameDropping : Boolean;
@@ -203,12 +204,36 @@ package reprise.tweens
 		{
 			return m_isExecuting;
 		}
+		
+		public function setIsPaused(bFlag:Boolean):void
+		{
+			if (m_isExecuting)
+			{
+				return;
+			}
+			if (bFlag)
+			{
+				g_frameEventDispatcher.removeEventListener(
+					Event.ENTER_FRAME, executeTick);
+				m_currentTime = m_duration - m_currentTime;
+			}
+			else
+			{
+				startTween();
+			}
+		}
+		
+		public function isPaused():Boolean
+		{
+			return m_isPaused;
+		}
 
 		/**
 		 * starts the tween
 		 */
 		public function startTween(executeFirstTickImmediately:Boolean = false) : void
 		{
+			m_isPaused = false;
 			m_isCancelled = false;
 			if (!m_isExecuting && m_currentTime < m_duration)
 			{
@@ -255,6 +280,7 @@ package reprise.tweens
 		 */
 		public function stopTween() : void
 		{
+			m_isPaused = false;
 			g_frameEventDispatcher.removeEventListener(
 				Event.ENTER_FRAME, executeTick);
 			m_isExecuting = false;
