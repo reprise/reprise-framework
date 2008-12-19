@@ -75,6 +75,7 @@ package reprise.ui
 		protected var m_stageInvalidationTimeout : int;
 		
 		protected var m_focus:UIObject;
+		protected var m_lastTabPress : int;
 		
 		protected var m_debuggingMode : Boolean;
 		protected var m_currentDebugElement : UIComponent;
@@ -470,8 +471,14 @@ package reprise.ui
 		
 		protected function stage_keyFocusChange(e:FocusEvent):void
 		{
-	        if (e.keyCode == Keyboard.TAB && !e.isDefaultPrevented())
-	        {
+			if (e.keyCode == Keyboard.TAB && !e.isDefaultPrevented())
+			{
+				if (getTimer() - m_lastTabPress < 15)
+				{
+					e.preventDefault();
+					return;
+				}
+				m_lastTabPress = getTimer();
 				var focusView:UIObject;
 				if (e.shiftKey)
 				{
