@@ -39,13 +39,18 @@ package reprise.tweens
 		protected var m_duration : int;
 		protected var m_delay : int;
 	
-		protected var m_tweenedProperties:Array;
-		
+		protected var m_tweenedProperties : Array;
+		protected var m_preventFrameDropping : Boolean;
+		protected var m_frameDuration : int;
+		protected var m_lastFrameTime : int;
+		protected var m_timeAdjust : int;
+
 		
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function SimpleTween(duration:Number = 1, delay : uint = 0)
+		public function SimpleTween(
+			duration:Number = 1, delay : uint = 0, normalizeToFrameRate : uint = 0)
 		{
 			m_duration = duration;
 			if (m_duration <= 0 || isNaN(m_duration))
@@ -54,6 +59,11 @@ package reprise.tweens
 			}
 			
 			m_delay = delay;
+			if (normalizeToFrameRate != 0)
+			{
+				m_preventFrameDropping = true;
+				m_frameDuration = 1000 / normalizeToFrameRate;
+			}
 			
 			m_currentTime = 0;
 			m_direction = DIRECTION_FORWARD;
@@ -205,7 +215,8 @@ package reprise.tweens
 				g_frameEventDispatcher.addEventListener(
 					Event.ENTER_FRAME, executeTick);
 				m_isExecuting = true;
-				m_startTime = getTimer() + m_currentTime;
+				m_startTime = m_lastFrameTime = getTimer() + m_currentTime;
+				m_timeAdjust = 0;
 				dispatchEvent(new TweenEvent(TweenEvent.START, true));
 				if (executeFirstTickImmediately)
 				{
@@ -286,7 +297,16 @@ package reprise.tweens
 		 */
 		protected function executeTick(event : Event = null) : void
 		{
-			m_currentTime = getTimer() - m_startTime - m_delay;
+			var time : int = getTimer();
+			if (m_preventFrameDropping)
+			{
+				if (time - m_lastFrameTime > m_frameDuration)
+				{
+					m_timeAdjust += time - m_lastFrameTime - m_frameDuration;
+				}
+				m_lastFrameTime = time;
+			}
+			m_currentTime = time - m_startTime - m_timeAdjust - m_delay;
 			if (m_currentTime < 0)
 			{
 				return;
