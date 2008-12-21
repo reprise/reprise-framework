@@ -237,9 +237,10 @@ package reprise.ui.layoutmanagers
 				applyVerticalPositionsInLineBox(
 					currentLineBoxTop, currentLineBoxHeight, currentLineBoxChildren);
 			}
-			element.style.intrinsicHeight = currentLineBoxTop + currentLineBoxHeight + 
-				collapsibleMargin - element.style.paddingTop;
-			element.style.intrinsicWidth = widestChildWidth - element.style.paddingLeft;
+			element.style.intrinsicHeight = Math.max(currentLineBoxTop + currentLineBoxHeight + 
+				collapsibleMargin - element.style.paddingTop, 0);
+			element.style.intrinsicWidth = 
+				Math.max(widestChildWidth - element.style.paddingLeft, 0);
 		}
 		
 		public function applyAbsolutePositions(
