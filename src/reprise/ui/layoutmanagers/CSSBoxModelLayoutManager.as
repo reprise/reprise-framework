@@ -211,7 +211,7 @@ package reprise.ui.layoutmanagers
 						{
 							closeLineBox();
 						}
-						child.y = currentLineBoxTop + child.style.marginTop;
+						child.y = currentLineBoxTop + collapsibleMargin + child.style.marginTop;
 					}
 				}
 				//add to displaystack for later sorting
