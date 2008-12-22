@@ -909,6 +909,37 @@ package reprise.ui
 			m_currentStyles.visibility = visibilityProperty;
 			super.setVisibility(visible);
 		}
+		
+		/**
+		 * Freezes the components' display by making a bitmap copy of its current state and showing 
+		 * that instead of the actual content.
+		 * 
+		 * As long as the component is frozen using this method, it is not validated at all, not 
+		 * even to check for style changes - it simply can't have any other state than being frozen.
+		 */
+		public function freezeDisplay() : void
+		{
+			m_instanceStyles.setStyle('freezeDisplay', 'freeze !important');
+			applyDisplayFreezing();
+		}
+
+		/**
+		 * Unfreezes the component, reactivating its interactive display.
+		 * 
+		 * Note that this method only reverts the effects of #freezeDisplay. It doesn't actually 
+		 * set any styles but only removes the one set by #freezeDisplay.
+		 */
+		public function unfreezeDisplay() : void
+		{
+			if (!m_instanceStyles.hasStyle('freezeDisplay') || 
+				m_instanceStyles.getStyle('freezeDisplay').specifiedValue() != true ||
+				!m_instanceStyles.getStyle('freezeDisplay').important())
+			{
+				return;
+			}
+			m_instanceStyles.setStyle('freezeDisplay', null);
+			removeDisplayFreezing();
+		}
 
 		/**
 		* Sets the elements alpha property immediately and without invalidating the element
@@ -1359,6 +1390,14 @@ package reprise.ui
 		protected override function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
+			if (m_instanceStyles.hasStyle('freezeDisplay') && 
+				m_instanceStyles.getStyle('freezeDisplay').specifiedValue() == true &&
+				m_instanceStyles.getStyle('freezeDisplay').important())
+			{
+				//completely ignore element validation if it is frozen. The element is left marked 
+				//as invalid to allow for immediate validation after un-freezing.
+				return;
+			}
 			m_rootElement.increaseValidatedElementsCount();
 			if (validateStyles)
 			{
@@ -1677,12 +1716,7 @@ package reprise.ui
 				styles.getStyle('freezeDisplay').specifiedValue() == true);
 			if (m_isFrozen && !m_freezeDisplay)
 			{
-				m_frozenContent.dispose();
-				m_frozenContent = null;
-				removeChild(m_frozenContentDisplay);
-				m_frozenContentDisplay = null;
-				m_contentDisplay.visible = true;
-				m_isFrozen = false;
+				removeDisplayFreezing();
 			}
 			
 			//check if styles or other relevant factors have changed and stop validation 
@@ -1717,7 +1751,7 @@ package reprise.ui
 			resolveContainingBlock();
 			resolveRelativeStyles(styles);
 		}
-		
+
 		/**
 		 * Applies a wide array of style settings.
 		 * When implementing components, this method should be overridden to implement 
@@ -2021,16 +2055,10 @@ package reprise.ui
 			
 			if (m_freezeDisplay)
 			{
-				m_frozenContent = new BitmapData(m_borderBoxWidth, m_borderBoxHeight, true, 0x0);
-				m_frozenContent.draw(this, null, null, null, new Rectangle(0 - m_currentStyles.borderLeftWidth, 
-					0 - m_currentStyles.borderTopWidth, m_borderBoxWidth, m_borderBoxHeight), true);
-				m_contentDisplay.visible = false;
-				m_frozenContentDisplay = new Bitmap(m_frozenContent, 'auto', true);
-				addChild(m_frozenContentDisplay);
-				m_isFrozen = true;
+				applyDisplayFreezing();
 			}
 		}
-		
+
 		/**
 		 * this override prevents key loop calculation from happening before all 
 		 * relevant data is gathered. Specifically, element positions aren't finalized 
@@ -2499,6 +2527,51 @@ package reprise.ui
 					m_hScrollbar.setVisibility(false);
 				}
 			}
+		}
+
+		protected function applyDisplayFreezing() : void
+		{
+			var bounds : Rectangle;
+			if (!m_currentStyles.overflow || m_currentStyles.overflow == 'visible')
+			{
+				bounds = this.getBounds(this);
+			}
+			else
+			{
+				bounds = new Rectangle(m_positionOffset.x, m_positionOffset.y, 
+					m_borderBoxWidth, m_borderBoxHeight);
+			}
+			m_frozenContent = new BitmapData(bounds.width, bounds.height, true, 0x0);
+			m_contentDisplay.x -= bounds.left;
+			m_contentDisplay.y -= bounds.top;
+			m_frozenContent.draw(this, null, null, null, 
+				new Rectangle(0, 0, bounds.width, bounds.height), true);
+			m_contentDisplay.visible = false;
+			m_frozenContentDisplay = new Bitmap(m_frozenContent, 'auto', true);
+			m_frozenContentDisplay.x = bounds.left;
+			m_frozenContentDisplay.y = bounds.top;
+			m_contentDisplay.x += bounds.left;
+			m_contentDisplay.y += bounds.top;
+			addChild(m_frozenContentDisplay);
+			m_isFrozen = true;
+		}
+		
+		protected function removeDisplayFreezing() : void
+		{
+			if (m_isInvalidated)
+			{
+				//force revalidation of this component. It might have been ignored during the last 
+				//validation cycle due to freezing.
+				m_isInvalidated = false;
+				invalidate();
+				return;
+			}
+			m_frozenContent.dispose();
+			m_frozenContent = null;
+			removeChild(m_frozenContentDisplay);
+			m_frozenContentDisplay = null;
+			m_contentDisplay.visible = true;
+			m_isFrozen = false;
 		}
 		
 		protected function createScrollbar(
