@@ -135,5 +135,40 @@ package reprise.css
 //		public var RepriseTransitionTimingFunction : Array;
 //		
 //		public var color : AdvancedColor;
+
+//		public function diff(otherStyles : ComputedStyles) : Array
+//		{
+//			var changes : Array = [];
+//			var ownProperties:Object = this;
+//			var key : String;
+//			if (!otherStyles)
+//			{
+//				for (key in ownProperties)
+//				{
+//					changes.push(key);
+//					changes[key] = true;
+//				}
+//				return changes;
+//			}
+//			for (key in ownProperties)
+//			{
+//				if (ownProperties[key] != otherStyles[key])
+//				{
+//					changes.push(key);
+//					changes[key] = true;
+//				}
+//			}
+//			//we have to compare in both direction as for .. in doesn't allow us 
+//			//to know if the other object has more properties
+//			for (key in otherStyles)
+//			{
+//				if (!changes[key] && ownProperties[key] != otherStyles[key])
+//				{
+//					changes.push(key);
+//					changes[key] = true;
+//				}
+//			}
+//			return changes;
+//		}
 	}
 }
