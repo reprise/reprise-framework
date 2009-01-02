@@ -22,8 +22,9 @@ package reprise.css
 		***************************************************************************/
 		protected var m_items : Array;
 		protected var m_declarationIndex : Number = 0;
-		protected var m_declarationCache : Array;	
-		
+		protected var m_declarationCache : Array;
+		protected var m_selectorHeadParts : Object = {};	
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -31,20 +32,36 @@ package reprise.css
 		public function CSSDeclarationList()
 		{
 			m_items = [];
-			m_declarationCache = [];		
+			m_declarationCache = [];
 		}
 		
 		reprise function addDeclaration(
 			declaration : CSSDeclaration, selector : String) : void
 		{
-			m_items.push(
-				new CSSDeclarationListItem(selector, declaration, m_declarationIndex++));
+			var item : CSSDeclarationListItem = 
+				new CSSDeclarationListItem(selector, declaration, m_declarationIndex++);
+			var selectorHead : String = selector.split(' ').pop().
+				split('#').join('@#').split('.').join('@.').split(':').join('@:');
+			var parts : Array = selectorHead.split('@');
+			for each (var part : String in parts)
+			{
+				if (!part)
+				{
+					continue;
+				}
+				if (!m_selectorHeadParts[part])
+				{
+					m_selectorHeadParts[part] = [];
+				}
+				m_selectorHeadParts[part].push(item);
+			}
+			m_items.push(item);
 		}
 		
 		reprise function getStyleForSelectorsPath(sp:String) : CSSDeclaration
 		{
 			// prefer cached results
-			var decl : CSSDeclaration = CSSDeclaration(m_declarationCache[ sp ]);
+			var decl : CSSDeclaration = m_declarationCache[ sp ];
 			if (decl)
 			{
 				return decl;
@@ -54,27 +71,56 @@ package reprise.css
 			var i : int = m_items.length;
 			var item : CSSDeclarationListItem;
 	 		decl = new CSSDeclaration();
+	 		var endParts : Array = sp.split(' ').pop().split('@');
 			
+			i = endParts.length;
 			while (i--)
 			{
-				item = m_items[i];
-				if (item.matchesSubjectPath(sp))
+				var items : Array = m_selectorHeadParts[endParts[i]];
+				if (!items)
 				{
-					matches.push(item);
+					continue;
+				}
+				for (var j : int = items.length; j--;)
+				{
+					item = items[j];
+					if (item && !matches[item])
+					{
+						matches[item] = true;
+						if (item.matchesSubjectPath(sp))
+						{
+							matches.push(item);
+						}
+					}
 				}
 			}
 	
 			matches.sortOn(['declarationSpecificity', 'declarationIndex'], 
 				Array.NUMERIC | Array.DESCENDING);
 			i = matches.length;
+			var matchesHash : String = matches.toString();
 			
-			while (i--)
+			if (m_declarationCache[matchesHash])
 			{
-				decl.mergeCSSDeclaration(CSSDeclarationListItem(matches[i]).declaration());
+				decl = m_declarationCache[matchesHash];
+				m_declarationCache[sp] = decl;
+				return CSSDeclaration(decl);
+			}
+			if (i == 1)
+			{
+				decl = CSSDeclarationListItem(matches[0]).declaration();
+			}
+			else
+			{
+				while (i--)
+				{
+					decl.mergeCSSDeclaration(CSSDeclarationListItem(matches[i]).declaration());
+				}
 			}
 			
 			// cache result
 			m_declarationCache[sp] = decl;
+			m_declarationCache[matchesHash] = decl;
 			
 			return decl;
 		}

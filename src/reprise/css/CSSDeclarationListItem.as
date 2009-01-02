@@ -60,6 +60,11 @@ package reprise.css
 			m_declaration = CSSDeclaration(declaration);
 		}
 		
+		public function toString() : String
+		{
+			return m_selector + declarationIndex;
+		}
+
 		reprise function declaration() : CSSDeclaration
 		{
 			return m_declaration;
