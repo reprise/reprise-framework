@@ -109,6 +109,7 @@ package reprise.css
 			setURL(m_url);
 			m_cssFile.setURL(CSSParsingHelper.resolvePathAgainstPath(url(), baseURL()));
 			m_stylesheetURLs.push(m_cssFile.url());
+			m_loader.addResource(m_cssFile);
 			m_loader.execute();
 		}
 		
@@ -211,7 +212,6 @@ package reprise.css
 			m_url = src;
 			m_cssFile = cssImportWithURL(src);
 			m_cssSegments[0] = m_cssFile;
-			m_loader.addResource(m_cssFile);
 		}	
 		public override function content() : *
 		{
