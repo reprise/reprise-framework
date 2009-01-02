@@ -157,7 +157,6 @@ package reprise.css.transitions
 			var delayValue : int = (delay && delay.specifiedValue()) || 0;
 			if (time - m_lastUpdateTime > frameDuration)
 			{
-				var bak : int = m_startTime;
 				m_startTime += time - m_lastUpdateTime - frameDuration;
 			}
 			m_lastUpdateTime = time;
