@@ -117,16 +117,16 @@ package reprise.ui
 		protected var m_selectorPathChanged : Boolean;
 		
 		//dimensions and position
-		protected var m_contentBoxWidth : Number = 0;
-		protected var m_contentBoxHeight : Number = 0;
-		protected var m_borderBoxHeight : Number = 0;
-		protected var m_borderBoxWidth : Number = 0;
-		protected var m_paddingBoxHeight : Number = 0;
-		protected var m_paddingBoxWidth : Number = 0;
-		
-		protected var m_intrinsicWidth : Number = -1;
-		protected var m_intrinsicHeight : Number = -1;
-		
+		protected var m_contentBoxWidth : int = 0;
+		protected var m_contentBoxHeight : int = 0;
+		protected var m_borderBoxHeight : int = 0;
+		protected var m_borderBoxWidth : int = 0;
+		protected var m_paddingBoxHeight : int = 0;
+		protected var m_paddingBoxWidth : int = 0;
+
+		protected var m_intrinsicWidth : int = -1;
+		protected var m_intrinsicHeight : int = -1;
+
 		protected var m_positionOffset : Point;
 		
 		//managers and renderers
@@ -241,7 +241,8 @@ package reprise.ui
 		 * 
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details formal definition of containing block
+		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details 
+		 * for a formal definition of containing block
 		 */
 		public function get containingBlock() : UIComponent
 		{
@@ -255,7 +256,7 @@ package reprise.ui
 		 */
 		public override function set width(value : Number) : void
 		{
-			setStyle('width', value + "px");
+			setStyle('width', int(value) + "px");
 		}
 		/**
 		 * Returns the elements width excluding padding and borders.
@@ -271,7 +272,7 @@ package reprise.ui
 		 * 
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 */
-		public function get outerWidth() : Number
+		public function get outerWidth() : int
 		{
 			return m_borderBoxWidth;
 		}
@@ -283,7 +284,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 */
-		public function get intrinsicWidth() : Number
+		public function get intrinsicWidth() : int
 		{
 			return m_intrinsicWidth;
 		}
@@ -293,9 +294,9 @@ package reprise.ui
 		 * 
 		 * @param value The height to apply
 		 */
-		public override function set height(value:Number) : void
+		public override function set height(value : Number) : void
 		{
-			setStyle('height', value + "px");
+			setStyle('height', int(value) + "px");
 		}
 		/**
 		 * Returns the elements height excluding padding and borders.
@@ -311,7 +312,7 @@ package reprise.ui
 		 * 
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 */
-		public function get outerHeight() : Number
+		public function get outerHeight() : int
 		{
 			return m_borderBoxHeight;
 		}
@@ -323,7 +324,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 */
-		public function get intrinsicHeight() : Number
+		public function get intrinsicHeight() : int
 		{
 			return m_intrinsicHeight;
 		}
@@ -336,10 +337,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top 
+		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public function get top() : Number
+		public function get top() : int
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -364,10 +366,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top CSS documentation for top
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top 
+		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public function set top(value:Number) : void
+		public function set top(value : int) : void
 		{
 			if (isNaN(value))
 			{
@@ -378,13 +381,13 @@ package reprise.ui
 			m_autoFlags.top = false;
 			if (!m_positionInFlow)
 			{
-				var absolutePosition:Point = 
+				var absolutePosition : Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.y -= y;
 				y = value + m_currentStyles.marginTop - absolutePosition.y;
 			}
 		}
-		
+
 		/**
 		 * Returns the elements left position.
 		 * 
@@ -393,10 +396,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left 
+		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public function get left() : Number
+		public function get left() : int
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -421,10 +425,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left CSS documentation for left
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left 
+		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public function set left(value:Number) : void
+		public function set left(value : int) : void
 		{
 			if (isNaN(value))
 			{
@@ -435,7 +440,7 @@ package reprise.ui
 			m_autoFlags.left = false;
 			if (!m_positionInFlow)
 			{
-				var absolutePosition:Point = 
+				var absolutePosition : Point = 
 					getPositionRelativeToContext(m_containingBlock);
 				absolutePosition.x -= x;
 				x = value + m_currentStyles.marginLeft - absolutePosition.x;
@@ -450,10 +455,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right CSS documentation for right
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right 
+		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
-		public function get right() : Number
+		public function get right() : int
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -477,10 +483,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right CSS documentation for right
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right 
+		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
-		public function set right(value:Number) : void
+		public function set right(value : int) : void
 		{
 			if (isNaN(value))
 			{
@@ -507,10 +514,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom CSS documentation for bottom
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom 
+		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
-		public function get bottom() : Number
+		public function get bottom() : int
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -534,10 +542,11 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom CSS documentation for bottom
+		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom 
+		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
-		public function set bottom(value:Number) : void
+		public function set bottom(value : int) : void
 		{
 			if (isNaN(value))
 			{
@@ -561,7 +570,8 @@ package reprise.ui
 		 * 
 		 * This value is only defined for elements that were created by parsing an XML structure.
 		 * 
-		 * @return An untyped object containing the elements attributes. Changing the values doesn't update the element.
+		 * @return An untyped object containing the elements attributes. 
+		 * 		   Changing the values doesn't update the element.
 		 */
 		public function get attributes() : Object
 		{
@@ -578,8 +588,7 @@ package reprise.ui
 		 */
 		public function clientRect() : Rectangle
 		{
-			return new Rectangle(
-				x, y, m_borderBoxWidth, m_borderBoxHeight);
+			return new Rectangle(x, y, m_borderBoxWidth, m_borderBoxHeight);
 		}
 		
 		/**
@@ -589,7 +598,7 @@ package reprise.ui
 		 * 
 		 * @return The width of the element including paddings and borders
 		 */
-		public function get contentBoxWidth() : Number
+		public function get contentBoxWidth() : int
 		{
 			return m_contentBoxWidth;
 		}
@@ -600,7 +609,7 @@ package reprise.ui
 		 * 
 		 * @return The height of the element including paddings and borders
 		 */
-		public function get contentBoxHeight() : Number
+		public function get contentBoxHeight() : int
 		{
 			return m_contentBoxHeight;
 		}
@@ -611,7 +620,7 @@ package reprise.ui
 		 * 
 		 * @return The width of the element including paddings and borders
 		 */
-		public function get paddingBoxWidth() : Number
+		public function get paddingBoxWidth() : int
 		{
 			return m_paddingBoxWidth;
 		}
@@ -622,7 +631,7 @@ package reprise.ui
 		 * 
 		 * @return The height of the element including paddings and borders
 		 */
-		public function get paddingBoxHeight() : Number
+		public function get paddingBoxHeight() : int
 		{
 			return m_paddingBoxHeight;
 		}
@@ -633,7 +642,7 @@ package reprise.ui
 		 * 
 		 * @return The width of the element including paddings and borders
 		 */
-		public function get borderBoxWidth() : Number
+		public function get borderBoxWidth() : int
 		{
 			return m_borderBoxWidth;
 		}
@@ -644,7 +653,7 @@ package reprise.ui
 		 * 
 		 * @return The height of the element including paddings and borders
 		 */
-		public function get borderBoxHeight() : Number
+		public function get borderBoxHeight() : int
 		{
 			return m_borderBoxHeight;
 		}
@@ -682,7 +691,7 @@ package reprise.ui
 		 * 
 		 * @param id The CSS ID to set for the element
 		 */
-		public function set cssID(id:String) : void
+		public function set cssID(id : String) : void
 		{
 			if (m_cssId)
 			{
@@ -710,7 +719,7 @@ package reprise.ui
 		 * 
 		 * @param classes A space separated list of CSS classes to associate the element with
 		 */
-		public function set cssClasses(classes:String) : void
+		public function set cssClasses(classes : String) : void
 		{
 			m_cssClasses = classes;
 			invalidateStyles();
@@ -733,8 +742,7 @@ package reprise.ui
 		 */
 		public function addCSSClass(name : String) : void
 		{
-			if (StringUtil.delimitedStringContainsSubstring(
-				m_cssClasses, name, ' '))
+			if (StringUtil.delimitedStringContainsSubstring(m_cssClasses, name, ' '))
 			{
 				return;
 			}
@@ -752,8 +760,7 @@ package reprise.ui
 		 */
 		public function removeCSSClass(name : String) : void
 		{
-			if (!StringUtil.delimitedStringContainsSubstring(
-				m_cssClasses, name, ' '))
+			if (!StringUtil.delimitedStringContainsSubstring(m_cssClasses, name, ' '))
 			{
 				return;
 			}
@@ -769,8 +776,7 @@ package reprise.ui
 		 */
 		public function hasCSSClass(className : String) : Boolean
 		{
-			return StringUtil.delimitedStringContainsSubstring(
-				m_cssClasses, className, ' ');
+			return StringUtil.delimitedStringContainsSubstring(m_cssClasses, className, ' ');
 		}
 		
 		/**
@@ -781,7 +787,7 @@ package reprise.ui
 		 * 
 		 * @param classes A space separated list of CSS classes to associate the element with
 		 */
-		public function set cssPseudoClasses(classes:String) : void
+		public function set cssPseudoClasses(classes : String) : void
 		{
 			m_cssPseudoClasses = classes;
 			invalidateStyles();
@@ -802,7 +808,7 @@ package reprise.ui
 		 * 
 		 * @param name The CSS pseudo class to add to the element
 		 */
-		public function addCSSPseudoClass(name:String) : void
+		public function addCSSPseudoClass(name : String) : void
 		{
 			if (StringUtil.delimitedStringContainsSubstring(
 				m_cssPseudoClasses, ':' + name, ' '))
@@ -853,14 +859,14 @@ package reprise.ui
 		/**
 		 * @inheritDoc
 		 */
-		public override function tooltipDelay() : Number
+		public override function tooltipDelay() : int
 		{
 			return m_currentStyles.tooltipDelay || 0;
 		}
 		/**
 		 * @inheritDoc
 		 */
-		public override function setTooltipDelay(delay : Number) : void
+		public override function setTooltipDelay(delay : int) : void
 		{
 			// we don't need no invalidation
 			m_instanceStyles.setStyle('tooltipDelay', delay.toString());
@@ -904,7 +910,7 @@ package reprise.ui
 		 */
 		public override function setVisibility(visible : Boolean) : void
 		{
-			var visibilityProperty:String = (visible ? 'visible' : 'hidden');
+			var visibilityProperty : String = (visible ? 'visible' : 'hidden');
 			m_instanceStyles.setStyle('visibility', visibilityProperty);
 			m_currentStyles.visibility = visibilityProperty;
 			super.setVisibility(visible);
@@ -952,31 +958,32 @@ package reprise.ui
 			opacity = value;
 		}
 		/**
-		* Returns the elements alpha as a fraction between 0 and 1
-		* 
-		* @return The elements alpha as a fraction between 0 and 1
-		*/
+		 * Returns the elements alpha as a fraction between 0 and 1
+		 * 
+		 * @return The elements alpha as a fraction between 0 and 1
+		 */
 		public override function get alpha() : Number
 		{
 			return opacity;
 		}
 		
 		/**
-		* Sets the elements opacity property immediately and without invalidating the element
-		* 
-		* @param value The elements opacity as a fraction between 0 and 1
-		*/
-		public function set opacity(value:Number) : void
+		 * Sets the elements opacity property immediately and without invalidating the element
+		 * 
+		 * @param value The elements opacity as a fraction between 0 and 1
+		 */
+		public function set opacity(value : Number) : void
 		{
 			super.alpha = value;
 			m_currentStyles.opacity = value;
 			m_instanceStyles.setStyle('opacity', value.toString());
 		}
+
 		/**
-		* Returns the elements opacity as a fraction between 0 and 1
-		* 
-		* @return The value to set opacity to as a fraction between 0 and 1
-		*/
+		 * Returns the elements opacity as a fraction between 0 and 1
+		 * 
+		 * @return The value to set opacity to as a fraction between 0 and 1
+		 */
 		public function get opacity() : Number
 		{
 			if (m_currentStyles.opacity != null)
@@ -985,13 +992,13 @@ package reprise.ui
 			}
 			return 1;
 		}
-	
+		
 		/**
-		* Sets the elements rotation as a Number between 0 and 360
-		* 
-		* @return The value to set rotation to as a Number. Value below 0 and above 360 get 
-		* normalized by applying modulo 360.
-		*/
+		 * Sets the elements rotation as a Number between 0 and 360
+		 * 
+		 * @return The value to set rotation to as a Number. Value below 0 and above 360 get 
+		 * normalized by applying modulo 360.
+		 */
 		public override function set rotation(value : Number) : void
 		{
 			super.rotation = value;
@@ -999,10 +1006,10 @@ package reprise.ui
 			m_instanceStyles.setStyle('rotation', value.toString());
 		}
 		/**
-		* Returns the elements rotation as a value between 0 and 360
-		* 
-		* @return The elements rotation as a value between 0 and 360
-		*/
+		 * Returns the elements rotation as a value between 0 and 360
+		 * 
+		 * @return The elements rotation as a value between 0 and 360
+		 */
 		public override function get rotation() : Number
 		{
 			return m_currentStyles.rotation || 0;
@@ -1028,7 +1035,7 @@ package reprise.ui
 		 */
 		public function getElementsByClassName(className : String) : Array
 		{
-			var elements:Array = [];
+			var elements : Array = [];
 			
 			var len : int = m_children.length;
 			for (var i : int = 0; i < len; i++)
@@ -1137,7 +1144,6 @@ package reprise.ui
 						}
 					}
 				}
-				
 			}
 			
 			matches = candidates;
@@ -1219,6 +1225,7 @@ package reprise.ui
 			m_instanceStyles = 
 				CSSParsingHelper.parseDeclarationString(value, applicationURL());
 		}
+
 		/**
 		 * @private
 		 */
@@ -1262,8 +1269,8 @@ package reprise.ui
 		
 		
 		/***************************************************************************
-		*							reprise methods								   *
-		***************************************************************************/
+		 *							reprise methods								   *
+		 ***************************************************************************/
 		/**
 		 * Allows to explicitly specify a containing block for the element.
 		 * 
@@ -1271,7 +1278,8 @@ package reprise.ui
 		 * for resolving relative properties in the CSS box model.
 		 * 
 		 * @param containingBlock The element to use as the containing block for this element
-		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details formal definition of containing block
+		 * @see http://www.w3.org/TR/CSS21/visudet.html#containing-block-details 
+		 * 		formal definition of containing block
 		 */
 		reprise function overrideContainingBlock(
 			containingBlock : UIComponent) : void
@@ -1282,7 +1290,7 @@ package reprise.ui
 		/**
 		 * Returns the width that is available to child elements.
 		 */
-		reprise function innerWidth() : Number
+		reprise function innerWidth() : int
 		{
 			if (m_vScrollbar && m_vScrollbar.visibility())
 			{
@@ -1294,7 +1302,7 @@ package reprise.ui
 		/**
 		 * Returns the height that is available to child elements.
 		 */
-		reprise function innerHeight() : Number
+		reprise function innerHeight() : int
 		{
 			if (m_hScrollbar && m_hScrollbar.visibility())
 			{
@@ -1388,7 +1396,7 @@ package reprise.ui
 		 * overriding.
 		 */
 		protected override function validateElement(
-			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
+			forceValidation : Boolean = false, validateStyles : Boolean = false) : void
 		{
 			if (m_instanceStyles.hasStyle('freezeDisplay') && 
 				m_instanceStyles.getStyle('freezeDisplay').specifiedValue() == true &&
@@ -1424,8 +1432,8 @@ package reprise.ui
 				m_borderBoxHeight + m_currentStyles.marginTop + m_currentStyles.marginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
 			
-			var oldWidth : Number = m_currentStyles.width;
-			var oldHeight : Number = m_currentStyles.height;
+			var oldWidth : int = m_currentStyles.width;
+			var oldHeight : int = m_currentStyles.height;
 			
 			if (m_stylesInvalidated)
 			{
@@ -1444,7 +1452,6 @@ package reprise.ui
 				visible = m_visible;
 				if (m_stylesInvalidated)
 				{
-					
 					if (m_currentStyles.overflowY == 'scroll')
 					{
 						if (!m_vScrollbar)
@@ -1487,9 +1494,8 @@ package reprise.ui
 				return;
 			}
 			
-			
-			var oldIntrinsicHeight : Number = m_intrinsicHeight;
-			var oldIntrinsicWidth : Number = m_intrinsicWidth;
+			var oldIntrinsicHeight : int = m_intrinsicHeight;
+			var oldIntrinsicWidth : int = m_intrinsicWidth;
 			
 			applyInFlowChildPositions();
 			
@@ -1524,13 +1530,11 @@ package reprise.ui
 				m_borderBoxHeight + 
 				m_currentStyles.marginTop + m_currentStyles.marginBottom));
 			
-			var parentReflowNeeded:Boolean = false;
+			var parentReflowNeeded : Boolean = false;
 			
 			//apply final relative position/borderWidths to content
-			m_contentDisplay.y = m_positionOffset.y + 
-				m_currentStyles.borderTopWidth;
-			m_contentDisplay.x = m_positionOffset.x + 
-				m_currentStyles.borderLeftWidth;
+			m_contentDisplay.y = m_positionOffset.y + m_currentStyles.borderTopWidth;
+			m_contentDisplay.x = m_positionOffset.x + m_currentStyles.borderLeftWidth;
 			
 			if (m_dimensionsChanged || m_stylesInvalidated)
 			{
@@ -1551,8 +1555,7 @@ package reprise.ui
 			if (!(m_parentElement is UIComponent && m_parentElement != this && 
 				UIComponent(m_parentElement).m_isValidating))
 			{
-				if ((m_oldInFlowStatus == -1 || m_dimensionsChanged) && 
-					!m_positionInFlow)
+				if ((m_oldInFlowStatus == -1 || m_dimensionsChanged) && !m_positionInFlow)
 				{
 					//The element is positioned absolutely or fixed.
 					//check if at least one of the vertical and one of the 
@@ -1573,17 +1576,17 @@ package reprise.ui
 				}
 				if (m_parentElement && m_parentElement != this)
 				{
-					if (parentReflowNeeded)
+					if (parentReflowNeeded && !UIComponent(m_parentElement).m_isValidating)
 					{
-	//					log("w parentreflow needed in " + 
-	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
+//						log("w parentreflow needed in " + 
+//							m_elementType + "#"+m_cssId + "."+m_cssClasses);
 						UIComponent(m_parentElement).validateAfterChildren();
 						return;
 					}
-					else
+					else if (!UIComponent(m_parentElement).m_isValidating)
 					{
-	//					log("w no parentreflow needed in " + 
-	//						m_elementType + "#"+m_cssId + "."+m_cssClasses);
+//						log("w no parentreflow needed in " + 
+//							m_elementType + "#"+m_cssId + "."+m_cssClasses);
 						UIComponent(m_parentElement).applyOutOfFlowChildPositions();
 					}
 				}
@@ -1645,7 +1648,7 @@ package reprise.ui
 		
 		protected function refreshSelectorPath() : void
 		{
-			var oldPath:String = m_selectorPath;
+			var oldPath : String = m_selectorPath;
 			var path : String;
 			if (m_parentElement)
 			{
@@ -1684,7 +1687,7 @@ package reprise.ui
 			}
 			m_selectorPathChanged = false;
 		}
-	
+		
 		/**
 		 * parses all styles associated with this element and its classes and creates a 
 		 * combined style object.
@@ -1695,8 +1698,8 @@ package reprise.ui
 		{
 			refreshSelectorPath();
 			
-			var styles:CSSDeclaration = m_elementDefaultStyles.clone();
-			var oldStyles:CSSDeclaration = m_specifiedStyles;
+			var styles : CSSDeclaration = m_elementDefaultStyles.clone();
+			var oldStyles : CSSDeclaration = m_specifiedStyles;
 			
 			if (m_parentElement != this && m_parentElement is UIComponent)
 			{
@@ -1829,8 +1832,8 @@ package reprise.ui
 				m_currentStyles.float = null;
 			}
 			
-			var positioning:String = m_positioningType = 
-				m_currentStyles.position || 'static';
+			var positioning : String = m_positioningType = 
+				m_currentStyles.position ||  'static';
 			
 			if (!m_currentStyles.float && 
 				(positioning == 'static' || positioning == 'relative'))
@@ -1858,20 +1861,20 @@ package reprise.ui
 		 */
 		protected function resolveContainingBlock() : void
 		{
-			 if (m_explicitContainingBlock)
-			 {
+			if (m_explicitContainingBlock)
+			{
 				m_containingBlock = m_explicitContainingBlock;
 			}
 			else
 			{
-				var parentComponent:UIComponent = UIComponent(m_parentElement);
+				var parentComponent : UIComponent = UIComponent(m_parentElement);
 				if (m_positioningType == 'fixed')
 				{
 					m_containingBlock = m_rootElement;
 				}
 				else if (m_positioningType == 'absolute')
 				{
-					var inspectedBlock:UIComponent = parentComponent;
+					var inspectedBlock : UIComponent = parentComponent;
 					while (inspectedBlock && 
 						inspectedBlock.m_positioningType == 'static')
 					{
@@ -1886,8 +1889,8 @@ package reprise.ui
 			}
 		}
 		
-		protected function resolveRelativeStyles(styles:CSSDeclaration, 
-			parentW:Number = -1, parentH:Number = -1) : void
+		protected function resolveRelativeStyles(styles : CSSDeclaration, 
+			parentW : int = -1, parentH : int = -1) : void
 		{
 			var borderBoxSizing : Boolean = 
 				m_currentStyles.boxSizing && m_currentStyles.boxSizing == 'border-box';
@@ -1908,15 +1911,14 @@ package reprise.ui
 			for each (var borderName : String in EDGE_NAMES)
 			{
 				var style : String = 
-					m_currentStyles['border' + borderName + 'Style'] || 'none';
-				var width : Number;
+					m_currentStyles['border' + borderName + 'Style'] ||  'none';
 				if (style == 'none')
 				{
 					m_currentStyles['border' + borderName + 'Width'] = 0;
 				}
 				else
 				{
-					m_currentStyles['border' + borderName + 'Width'] ||= 0;
+					m_currentStyles['border' + borderName + 'Width'] ||=  0;
 				}
 			}
 			
@@ -1946,7 +1948,7 @@ package reprise.ui
 				m_autoFlags.width = false;
 				if (wProp.isRelativeValue())
 				{
-					var relevantWidth : Number = parentW;
+					var relevantWidth : int = parentW;
 					if (m_positioningType == 'absolute')
 					{
 						relevantWidth += 
@@ -1993,8 +1995,8 @@ package reprise.ui
 		{
 			for (var i : int = props.length; i--;)
 			{
-				var propName:String = props[i][0];
-				var cssProperty:CSSProperty = styles.getStyle(propName);
+				var propName : String = props[i][0];
+				var cssProperty : CSSProperty = styles.getStyle(propName);
 				if (cssProperty)
 				{
 					if (cssProperty.isRelativeValue())
@@ -2015,15 +2017,15 @@ package reprise.ui
 		/**
 		 * calculates the vertical space taken by this elements' content
 		 */
-		protected function calculateContentHeight() : Number
+		protected function calculateContentHeight() : int
 		{
 			return m_contentBoxHeight;
 		}
-	
+		
 		/**
 		 * calculates the horizontal space taken by this elements' content
 		 */
-		protected function calculateContentWidth() : Number
+		protected function calculateContentWidth() : int
 		{
 			return m_contentBoxWidth;
 		}
@@ -2068,10 +2070,9 @@ package reprise.ui
 		 */
 		protected override function calculateKeyLoop() : void
 		{
-			
 		}
-	
-	
+		
+		
 		/**
 		 * parses the elements' xmlDefinition as set through innerHTML
 		 */
@@ -2142,7 +2143,7 @@ package reprise.ui
 					attribute.charAt(0).toUpperCase() + attribute.substr(1) + 'Attribute';
 				this[attributeSetterName](usedValue);
 			}
-			catch (error: Error)
+			catch (error : Error)
 			{
 				try
 				{
@@ -2189,7 +2190,7 @@ package reprise.ui
 			}
 			return result;
 		}
-	
+		
 		/**
 		 * parses and displays the elements' childNodes
 		 */
@@ -2198,7 +2199,7 @@ package reprise.ui
 			for each (var childNode:XML in node.children())
 			{
 				preprocessTextNode(childNode);
-				var child:UIComponent = 
+				var child : UIComponent = 
 					m_rootElement.uiRendererFactory().rendererByNode(childNode);
 				if (child)
 				{
@@ -2241,7 +2242,7 @@ package reprise.ui
 				siblings[node.childIndex()] = xmlParser;
 			}
 		}
-	
+		
 		
 		/**
 		 * draws the background rect and borders according to the styles 
@@ -2253,7 +2254,7 @@ package reprise.ui
 				(m_currentStyles.backgroundGradientColors && 
 				m_currentStyles.backgroundGradientType))
 			{
-				var backgroundRendererId:String = 
+				var backgroundRendererId : String = 
 					m_currentStyles.backgroundRenderer || "";
 				if (!m_backgroundRenderer || 
 					m_backgroundRenderer.id() != backgroundRendererId)
@@ -2293,7 +2294,7 @@ package reprise.ui
 			if (m_currentStyles.borderTopStyle || m_currentStyles.borderRightStyle || 
 				m_currentStyles.borderBottomStyle || m_currentStyles.borderLeftStyle)
 			{
-				var borderRendererId:String = m_currentStyles.borderRenderer || "";
+				var borderRendererId : String = m_currentStyles.borderRenderer || "";
 				if (!m_borderRenderer || m_borderRenderer.id() != borderRendererId)
 				{
 					if (m_bordersDisplay)
@@ -2329,11 +2330,11 @@ package reprise.ui
 		}
 		protected function applyOverflowProperty() : void
 		{
-			var maskNeeded:Boolean = false;
-			var scrollersNeeded:Boolean = false;
+			var maskNeeded : Boolean = false;
+			var scrollersNeeded : Boolean = false;
 			
-			var ofx:* = m_currentStyles.overflowX;
-			var ofy:* = m_currentStyles.overflowY;
+			var ofx : * = m_currentStyles.overflowX;
+			var ofy : * = m_currentStyles.overflowY;
 			
 			if (ofx == 'visible' || ofx == null || ofx == 'hidden')
 			{
@@ -2370,17 +2371,17 @@ package reprise.ui
 				m_lowerContentDisplay.mask = null;
 			}
 		}
-		
+
 		protected function applyMask() : void
 		{
-			var maskW:Number = (m_currentStyles.overflowX == 'visible' || 
-				m_currentStyles.overflowX == null) 
-				? m_borderBoxWidth
-				: innerWidth() + m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
-			var maskH:Number = (m_currentStyles.overflowY == 'visible' || 
-				m_currentStyles.overflowY == null)
-				? m_borderBoxHeight
-				: innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+			var maskW : int = 
+				(m_currentStyles.overflowX == 'visible' || m_currentStyles.overflowX == null) 
+					? m_borderBoxWidth 
+					: innerWidth() + m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+			var maskH : int = 
+				(m_currentStyles.overflowY == 'visible' || m_currentStyles.overflowY == null) 
+					? m_borderBoxHeight 
+					: innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
 			
 			if (!m_lowerContentMask)
 			{
@@ -2394,18 +2395,15 @@ package reprise.ui
 				m_lowerContentMask.visible = false;
 			}
 			
-			m_upperContentMask.x = m_lowerContentMask.x = 
-				m_currentStyles.borderLeftWidth;
-			m_upperContentMask.y = m_lowerContentMask.y = 
-				m_currentStyles.borderTopWidth;
+			m_upperContentMask.x = m_lowerContentMask.x = m_currentStyles.borderLeftWidth;
+			m_upperContentMask.y = m_lowerContentMask.y = m_currentStyles.borderTopWidth;
 			var radii : Array = [];
 			var order : Array = 
 				['borderTopLeftRadius', 'borderTopRightRadius', 
 				'borderBottomRightRadius', 'borderBottomLeftRadius'];
 			
-			var i : Number;
-			var radiusItem : Number;
-			for (i = 0; i < order.length; i++)
+			var i : int;
+			for (i = 0;i < order.length; i++)
 			{
 				radii.push(m_currentStyles[order[i]] || 0);
 			}
@@ -2413,36 +2411,34 @@ package reprise.ui
 			m_lowerContentMask.graphics.clear();
 			m_upperContentMask.graphics.beginFill(0x00ff00, 50);
 			m_lowerContentMask.graphics.beginFill(0x00ff00, 50);
-			GfxUtil.drawRoundRect(m_upperContentMask, 0, 0, 
-				maskW, maskH, radii);
-			GfxUtil.drawRoundRect(m_lowerContentMask, 0, 0, 
-				maskW, maskH, radii);
+			GfxUtil.drawRoundRect(m_upperContentMask, 0, 0, maskW, maskH, radii);
+			GfxUtil.drawRoundRect(m_lowerContentMask, 0, 0, maskW, maskH, radii);
 			m_upperContentDisplay.mask = m_upperContentMask;
 			m_lowerContentDisplay.mask = m_lowerContentMask;
 		}
 		
 		protected function applyScrollbars() : void
 		{
-			function childWidth():Number
+			function childWidth() : int
 			{
-				var widestChildWidth:Number = 0;
-				var childCount:Number = m_children.length;
+				var widestChildWidth : int = 0;
+				var childCount : int = m_children.length;
 				while (childCount--)
 				{
-					var child:UIComponent = m_children[childCount] as UIComponent;
-					var childX:Number = child.m_currentStyles.position == 'absolute' ? 
-						child.x : 0;
-					widestChildWidth = Math.max(childX + child.m_borderBoxWidth + 
-						child.m_currentStyles.marginRight - m_currentStyles.paddingLeft, 
-						widestChildWidth);
+					var child : UIComponent = m_children[childCount] as UIComponent;
+					var childX : int = 
+						child.m_currentStyles.position == 'absolute' ? child.x : 0;
+					widestChildWidth = Math.max(
+						childX + child.m_borderBoxWidth + child.m_currentStyles.marginRight - 
+						m_currentStyles.paddingLeft, widestChildWidth);
 				}
 				return widestChildWidth;
 			}
 			
-			var vScrollerNeeded:Boolean, hScrollerNeeded:Boolean = false;
+			var vScrollerNeeded : Boolean;
+			var hScrollerNeeded : Boolean;
 			
-			if (m_currentStyles.overflowY == 0 && 
-				m_intrinsicHeight > m_currentStyles.height)
+			if (m_currentStyles.overflowY == 0 && m_intrinsicHeight > m_currentStyles.height)
 			{
 				if (!m_vScrollbar)
 				{
@@ -2450,8 +2446,7 @@ package reprise.ui
 					addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel_turn);
 				}
 				m_vScrollbar.setVisibility(true);
-				if (m_currentStyles.overflowX == 'scroll' || 
-					m_currentStyles.overflowX == 0)
+				if (m_currentStyles.overflowX == 'scroll' || m_currentStyles.overflowX == 0)
 				{
 					validateChildren();
 					applyInFlowChildPositions();
@@ -2465,8 +2460,7 @@ package reprise.ui
 				vScrollerNeeded == true;
 			}
 			
-			if (m_currentStyles.overflowX == 0 && 
-				m_intrinsicWidth > m_currentStyles.width)
+			if (m_currentStyles.overflowX == 0 && m_intrinsicWidth > m_currentStyles.width)
 			{
 				if (!m_hScrollbar)
 				{
@@ -2475,7 +2469,7 @@ package reprise.ui
 				m_hScrollbar.setVisibility(true);
 				if (vScrollerNeeded)
 				{
-					var oldIntrinsicWidth:Number = m_intrinsicWidth;
+					var oldIntrinsicWidth : int = m_intrinsicWidth;
 					validateChildren();
 					applyInFlowChildPositions();
 					applyOutOfFlowChildPositions();
@@ -2494,8 +2488,8 @@ package reprise.ui
 				m_vScrollbar.setScrollProperties(innerHeight(), 0, 
 					m_intrinsicHeight - innerHeight());
 				m_vScrollbar.top = 0;
-				m_vScrollbar.height = innerHeight() + 
-					m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
+				m_vScrollbar.height = 
+					innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
 				m_vScrollbar.left = m_currentStyles.width - m_vScrollbar.outerWidth + 
 					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
 				m_vScrollbar.validateElement(true, true);
@@ -2511,12 +2505,12 @@ package reprise.ui
 			
 			if (hScrollerNeeded)
 			{
-				m_hScrollbar.setScrollProperties(innerWidth(), 0, 
-					m_intrinsicWidth - innerWidth());
+				m_hScrollbar.setScrollProperties(
+					innerWidth(), 0, m_intrinsicWidth - innerWidth());
 				m_hScrollbar.top = m_currentStyles.height + 
 					m_currentStyles.paddingTop + m_currentStyles.paddingRight;
-				m_hScrollbar.height = innerWidth() + 
-					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
+				m_hScrollbar.height = 
+					innerWidth() + m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
 				m_hScrollbar.validateElement(true, true);
 				horizontalScrollbar_change();
 			}
@@ -2575,7 +2569,7 @@ package reprise.ui
 		}
 		
 		protected function createScrollbar(
-			orientation:String, skipListenerRegistration : Boolean = false) : Scrollbar
+			orientation : String, skipListenerRegistration : Boolean = false) : Scrollbar
 		{
 			if (!m_scrollbarsDisplay)
 			{
@@ -2583,7 +2577,7 @@ package reprise.ui
 				m_scrollbarsDisplay.name = 'scrollbars_display';
 				addChild(m_scrollbarsDisplay);
 			}
-			var scrollbar:Scrollbar = new Scrollbar();
+			var scrollbar : Scrollbar = new Scrollbar();
 			scrollbar.setParent(this);
 			scrollbar.overrideContainingBlock(this);
 			m_scrollbarsDisplay.addChild(scrollbar);
@@ -2591,16 +2585,16 @@ package reprise.ui
 			scrollbar.setStyle('position', 'absolute');
 			scrollbar.setStyle('autoHide', 'false');
 			//TODO: remove scrollbarWidth property
-			scrollbar.setStyle('width', 
-				(m_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH) + 'px');
+			scrollbar.setStyle(
+				'width', (m_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH) + 'px');
 			if (orientation == Scrollbar.ORIENTATION_HORIZONTAL)
 			{
 				scrollbar.rotation = -90;
 			}
 			if (!skipListenerRegistration)
 			{
-				scrollbar.addEventListener(Event.CHANGE, 
-					this[orientation + 'Scrollbar_change']);
+				scrollbar.addEventListener(
+					Event.CHANGE, this[orientation + 'Scrollbar_change']);
 			}
 			scrollbar.addEventListener(MouseEvent.CLICK, scrollbar_click);
 			scrollbar.validateElement(true, true);
@@ -2615,14 +2609,12 @@ package reprise.ui
 		
 		protected function verticalScrollbar_change(event : Event = null) : void
 		{
-			m_upperContentDisplay.y = m_lowerContentDisplay.y = 
-				-m_vScrollbar.scrollPosition;
+			m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
 		}
 		
 		protected function horizontalScrollbar_change(event : Event = null) : void
 		{
-			m_upperContentDisplay.x = m_lowerContentDisplay.x = 
-				-m_hScrollbar.scrollPosition;
+			m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
 		}
 		
 		protected function mouseWheel_turn(event : MouseEvent) : void
@@ -2665,13 +2657,13 @@ package reprise.ui
 		{
 			return this[key];
 		}
+
 		internal function setValueForKey(key : String, value : *) : void
 		{
 			//try to assign to a setter method by prepending 'set'
 			try
 			{
-				var setterName : String = 
-					'set' + key.charAt(0).toUpperCase() + key.substr(1);
+				var setterName : String = 'set' + key.charAt(0).toUpperCase() + key.substr(1);
 				this[setterName](value);
 			}
 			catch (error : Error)
@@ -2715,7 +2707,7 @@ package reprise.ui
 				for (var i : int = length; i--;)
 				{
 					var transformation : Object = transformations[i];
-					var parameters :Array = transformation.parameters;
+					var parameters : Array = transformation.parameters;
 					switch (transformation.type)
 					{
 						case 'translate' : 

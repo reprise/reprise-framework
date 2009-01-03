@@ -11,6 +11,7 @@
 
 package reprise.ui.layoutmanagers 
 {
+	import reprise.css.ComputedStyles;	
 	import reprise.core.reprise;
 	import reprise.ui.UIComponent;
 	
@@ -43,20 +44,22 @@ package reprise.ui.layoutmanagers
 			}
 			
 			m_displayStack = [];
+			var elementStyle : ComputedStyles = element.style;
 			
-			var widestChildWidth:Number = 0;
-			var collapsibleMargin:Number = 0;
-			var topMarginCollapsible:Boolean = !element.style.borderTopWidth && 
-				!element.style.paddingTop && element.positionInFlow;
+			var widestChildWidth:int = 0;
+			var collapsibleMargin:int = 0;
+			var topMarginCollapsible:Boolean = !elementStyle.borderTopWidth && 
+				!elementStyle.paddingTop && element.positionInFlow;
 			if (topMarginCollapsible)
 			{
-				collapsibleMargin = element.style.marginTop;
+				collapsibleMargin = elementStyle.marginTop;
 			}
-			var totalAvailableWidth:Number = element.innerWidth();
-			var currentLineBoxTop:Number = element.style.paddingTop;
-			var currentLineBoxHeight:Number = 0;
-			var currentLineBoxLeftBoundary:Number = element.style.paddingLeft;
-			var currentLineBoxRightBoundary:Number = totalAvailableWidth;
+			var totalAvailableWidth:int = element.innerWidth();
+			var currentLineBoxTop:int = elementStyle.paddingTop;
+			var currentLineBoxHeight:int = 0;
+			var initialLineBoxLeftBoundary : int = elementStyle.paddingLeft;
+			var currentLineBoxLeftBoundary:int = initialLineBoxLeftBoundary;
+			var currentLineBoxRightBoundary:int = totalAvailableWidth;
 			var currentLineBoxChildren : Array = [];
 			
 			function closeLineBox() : void
@@ -66,7 +69,7 @@ package reprise.ui.layoutmanagers
 					currentLineBoxTop += currentLineBoxHeight + collapsibleMargin;
 					collapsibleMargin = 0;
 					currentLineBoxHeight = 0;
-					currentLineBoxLeftBoundary = element.style.paddingLeft;
+					currentLineBoxLeftBoundary = initialLineBoxLeftBoundary;
 					currentLineBoxRightBoundary = totalAvailableWidth;
 					currentLineBoxChildren = [];
 				}
@@ -82,16 +85,18 @@ package reprise.ui.layoutmanagers
 					continue;
 				}
 				
+				var childStyle : ComputedStyles = child.style;
+				
 				//apply horizontal position
-				if (child.style.float)
+				if (childStyle.float)
 				{
 					if (collapsibleMargin)
 					{
 						currentLineBoxTop += collapsibleMargin;
 						collapsibleMargin = 0;
 					}
-					var childWidth:Number = child.borderBoxWidth + 
-						child.style.marginLeft + child.style.marginRight;
+					var childWidth:int = child.borderBoxWidth + 
+						childStyle.marginLeft + childStyle.marginRight;
 					if (childWidth > currentLineBoxRightBoundary - 
 						currentLineBoxLeftBoundary)
 					{
@@ -103,25 +108,25 @@ package reprise.ui.layoutmanagers
 						}
 						closeLineBox();
 					}
-					if (child.style.float == 'left')
+					if (childStyle.float == 'left')
 					{
 						child.x = 
-							currentLineBoxLeftBoundary + child.style.marginLeft;
+							currentLineBoxLeftBoundary + childStyle.marginLeft;
 						currentLineBoxLeftBoundary = child.x + 
-							child.outerWidth + child.style.marginRight;
+							child.outerWidth + childStyle.marginRight;
 					}
-					else if (child.style.float == 'right')
+					else if (childStyle.float == 'right')
 					{
 						child.x = currentLineBoxRightBoundary - 
-							child.outerWidth - child.style.marginRight;
+							child.outerWidth - childStyle.marginRight;
 						currentLineBoxRightBoundary = 
-							child.x - child.style.marginLeft;
+							child.x - childStyle.marginLeft;
 					}
 					currentLineBoxHeight = Math.max(currentLineBoxHeight, 
 						child.outerHeight + 
-						child.style.marginTop + child.style.marginBottom);
+						childStyle.marginTop + childStyle.marginBottom);
 					var childVAlign : String = 
-						child.style.verticalAlign || 'top';
+						childStyle.verticalAlign || 'top';
 					if (childVAlign != 'top')
 					{
 						currentLineBoxChildren.push(child);
@@ -142,25 +147,25 @@ package reprise.ui.layoutmanagers
 						{
 							//align right
 							child.x = totalAvailableWidth - child.outerWidth - 
-								child.style.marginRight - element.style.paddingRight;
+								childStyle.marginRight - elementStyle.paddingRight;
 						}
 					}
 					else
 					{
 						//align left
-						child.x = child.style.marginLeft + element.style.paddingLeft;
+						child.x = childStyle.marginLeft + elementStyle.paddingLeft;
 					}
 				}
 				widestChildWidth = Math.max(child.x + 
-					child.outerWidth + child.style.marginRight, 
+					child.outerWidth + childStyle.marginRight, 
 					widestChildWidth);
 				
 				//apply vertical position including margin collapsing
 				if (child.positionInFlow)
 				{
 					closeLineBox();
-					var childMarginTop:Number = child.style.marginTop;
-					var collapsedMargin:Number;
+					var childMarginTop:int = childStyle.marginTop;
+					var collapsedMargin:int;
 					if (collapsibleMargin >= 0 && childMarginTop >= 0)
 					{
 						collapsedMargin = 
@@ -183,7 +188,7 @@ package reprise.ui.layoutmanagers
 					if (topMarginCollapsible)
 					{
 						//TODO: wont work
-						element.style.marginTop = collapsedMargin;
+						elementStyle.marginTop = collapsedMargin;
 						collapsedMargin = 0;
 						topMarginCollapsible = false;
 					}
@@ -193,25 +198,25 @@ package reprise.ui.layoutmanagers
 					if (!child.outerHeight)
 					{
 						collapsibleMargin = 
-							Math.max(collapsedMargin, child.style.marginBottom);
+							Math.max(collapsedMargin, childStyle.marginBottom);
 					}
 					else
 					{
-						collapsibleMargin = child.style.marginBottom;
+						collapsibleMargin = childStyle.marginBottom;
 						topMarginCollapsible = false;
 						currentLineBoxTop = child.y + child.outerHeight;
 					}
 				}
 				else
 				{
-					if (child.style.float || 
+					if (childStyle.float || 
 						(child.autoFlags.top && child.autoFlags.bottom))
 					{
-						if (!child.style.float)
+						if (!childStyle.float)
 						{
 							closeLineBox();
 						}
-						child.y = currentLineBoxTop + collapsibleMargin + child.style.marginTop;
+						child.y = currentLineBoxTop + collapsibleMargin + childStyle.marginTop;
 					}
 				}
 				//add to displaystack for later sorting
@@ -219,16 +224,16 @@ package reprise.ui.layoutmanagers
 				{
 					element : child, 
 					index : i, 
-					zIndex : child.style.zIndex || 0
+					zIndex : childStyle.zIndex || 0
 				};
 				depthStackEntry.zIndex > 0 && depthStackEntry.zIndex++;
 				m_displayStack.push(depthStackEntry);
 			}
-			if (collapsibleMargin && !element.style.borderBottomWidth && 
-				!element.style.paddingBottom && element.positionInFlow)
+			if (collapsibleMargin && !elementStyle.borderBottomWidth && 
+				!elementStyle.paddingBottom && element.positionInFlow)
 			{
-				element.style.marginBottom = 
-					Math.max(element.style.marginBottom, collapsibleMargin);
+				elementStyle.marginBottom = 
+					Math.max(elementStyle.marginBottom, collapsibleMargin);
 				collapsibleMargin = 0;
 			}
 			
@@ -237,17 +242,17 @@ package reprise.ui.layoutmanagers
 				applyVerticalPositionsInLineBox(
 					currentLineBoxTop, currentLineBoxHeight, currentLineBoxChildren);
 			}
-			element.style.intrinsicHeight = Math.max(currentLineBoxTop + currentLineBoxHeight + 
-				collapsibleMargin - element.style.paddingTop, 0);
-			element.style.intrinsicWidth = 
-				Math.max(widestChildWidth - element.style.paddingLeft, 0);
+			elementStyle.intrinsicHeight = Math.max(currentLineBoxTop + currentLineBoxHeight + 
+				collapsibleMargin - elementStyle.paddingTop, 0);
+			elementStyle.intrinsicWidth = 
+				Math.max(widestChildWidth - elementStyle.paddingLeft, 0);
 		}
 		
 		public function applyAbsolutePositions(
 			element : UIComponent, children : Array) : void
 		{
 			var childCount : int = children.length;
-			for (var i:Number = 0; i < childCount; i++)
+			for (var i:int = 0; i < childCount; i++)
 			{
 				var child:UIComponent = children[i] as UIComponent;
 				if (!child || !child.isRendered())
@@ -255,7 +260,8 @@ package reprise.ui.layoutmanagers
 					//only deal with children that derive from UIComponent
 					continue;
 				}
-				if (!child.positionInFlow && !child.style.float)
+				var childStyle : ComputedStyles = child.style;
+				if (!child.positionInFlow && !childStyle.float)
 				{
 					var absolutePosition:Point = 
 						child.getPositionRelativeToContext(child.containingBlock);
@@ -269,22 +275,22 @@ package reprise.ui.layoutmanagers
 						{
 							//center horizontally if margin-left and margin-right 
 							//are both auto and left and right have values.
-							child.x = child.style.left + Math.round((
+							child.x = childStyle.left + Math.round((
 								child.containingBlock.paddingBoxWidth - 
-								child.style.right - child.style.left) / 2 - 
+								childStyle.right - childStyle.left) / 2 - 
 								child.borderBoxWidth /2);
 						}
 						else
 						{
-							child.x = child.style.left + 
-								child.style.marginLeft - absolutePosition.x;
+							child.x = childStyle.left + 
+								childStyle.marginLeft - absolutePosition.x;
 						}
 					}
 					else if (!child.autoFlags.right)
 					{
 						child.x = child.containingBlock.paddingBoxWidth - 
 							child.borderBoxWidth -  
-							child.style.right - child.style.marginRight - 
+							childStyle.right - childStyle.marginRight - 
 							absolutePosition.x;
 					}
 					
@@ -295,22 +301,22 @@ package reprise.ui.layoutmanagers
 						{
 							//center vertically if margin-top and margin-bottom 
 							//are both auto and top and bottom have values.
-							child.y = child.style.top + Math.round((
+							child.y = childStyle.top + Math.round((
 								child.containingBlock.paddingBoxHeight - 
-								child.style.bottom - child.style.top) / 2 - 
+								childStyle.bottom - childStyle.top) / 2 - 
 								child.borderBoxHeight /2);
 						}
 						else
 						{
-							child.y = child.style.top + 
-								child.style.marginTop - absolutePosition.y;
+							child.y = childStyle.top + 
+								childStyle.marginTop - absolutePosition.y;
 						}
 					}
 					else if (!child.autoFlags.bottom)
 					{
 						child.y = child.containingBlock.paddingBoxHeight - 
 							child.borderBoxHeight - 
-							child.style.bottom - child.style.marginBottom - 
+							childStyle.bottom - childStyle.marginBottom - 
 							absolutePosition.y;
 					}
 				}
@@ -331,7 +337,7 @@ package reprise.ui.layoutmanagers
 			for (var i : int = 0; i < m_displayStack.length; i++)
 			{
 				var element : DisplayObject = m_displayStack[i].element;
-				var zIndex : Number = m_displayStack[i].zIndex;
+				var zIndex : int = m_displayStack[i].zIndex;
 				
 				if (!inPositiveRange && zIndex >= 0)
 				{
@@ -362,9 +368,9 @@ package reprise.ui.layoutmanagers
 		*							protected methods								   *
 		***************************************************************************/
 		protected function applyVerticalPositionsInLineBox(
-			lineBoxTop : Number, lineBoxHeight : Number, lineBoxChildren : Array) : void
+			lineBoxTop : int, lineBoxHeight : int, lineBoxChildren : Array) : void
 		{
-			var i : Number = lineBoxChildren.length;
+			var i : int = lineBoxChildren.length;
 			while (i--)
 			{
 				var child : UIComponent = lineBoxChildren[i];

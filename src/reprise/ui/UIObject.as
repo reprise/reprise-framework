@@ -54,7 +54,7 @@ package reprise.ui
 		protected var m_isInvalidated : Boolean;
 		protected var m_isValidating : Boolean;
 	
-		protected var m_tabIndex : Number;
+		protected var m_tabIndex : int;
 	
 		protected var m_contentDisplay : DisplayObjectContainer;
 		protected var m_filters : Array;
@@ -68,7 +68,7 @@ package reprise.ui
 		
 		protected var m_tooltipData : Object = null;
 		protected var m_tooltipRenderer : String = null;
-		protected var m_tooltipDelay : Number = 0;
+		protected var m_tooltipDelay : int = 0;
 		
 		protected var m_delayedMethods : Array;
 		
@@ -382,7 +382,7 @@ package reprise.ui
 		 * @see AbstractTooltip
 		 * @see DefaultTooltipRenderer
 		 */
-		public function tooltipDelay() : Number
+		public function tooltipDelay() : int
 		{
 			return m_tooltipDelay;
 		}
@@ -395,7 +395,7 @@ package reprise.ui
 		 * @see AbstractTooltip
 		 * @see DefaultTooltipRenderer
 		 */
-		public function setTooltipDelay(delay:Number) : void
+		public function setTooltipDelay(delay:int) : void
 		{
 			m_tooltipDelay = delay;
 		}

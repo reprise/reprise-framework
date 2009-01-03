@@ -80,7 +80,7 @@ package reprise.controls
 		/**
 		 * calculates the horizontal space taken by this elements' content
 		 */
-		protected override function calculateContentWidth() : Number
+		protected override function calculateContentWidth() : int
 		{
 			if (m_currentStyles.display == 'inline')
 			{

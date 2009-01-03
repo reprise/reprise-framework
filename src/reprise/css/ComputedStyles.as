@@ -17,35 +17,35 @@ package reprise.css
 	 */
 	public dynamic class ComputedStyles 
 	{
-		public var top : Number;
-		public var right : Number;
-		public var bottom : Number;
-		public var left : Number;
+		public var top : int;
+		public var right : int;
+		public var bottom : int;
+		public var left : int;
 		
-		public var width : Number;
-		public var height : Number;
+		public var width : int;
+		public var height : int;
 		
-		public var marginTop : Number;
-		public var paddingTop : Number;
-		public var borderTopWidth : Number;
+		public var marginTop : int;
+		public var paddingTop : int;
+		public var borderTopWidth : int;
 //		public var borderTopStyle : String;
 //		public var borderTopColor : AdvancedColor;
 		
-		public var marginRight : Number;
-		public var paddingRight : Number;
-		public var borderRightWidth : Number;
+		public var marginRight : int;
+		public var paddingRight : int;
+		public var borderRightWidth : int;
 //		public var borderRightStyle : String;
 //		public var borderRightColor : AdvancedColor;
 		
-		public var marginBottom : Number;
-		public var paddingBottom : Number;
-		public var borderBottomWidth : Number;
+		public var marginBottom : int;
+		public var paddingBottom : int;
+		public var borderBottomWidth : int;
 //		public var borderBottomStyle : String;
 //		public var borderBottomColor : AdvancedColor;
 		
-		public var marginLeft : Number;
-		public var paddingLeft : Number;
-		public var borderLeftWidth : Number;
+		public var marginLeft : int;
+		public var paddingLeft : int;
+		public var borderLeftWidth : int;
 //		public var borderLeftStyle : String;
 //		public var borderLeftColor : AdvancedColor;
 		
@@ -57,23 +57,23 @@ package reprise.css
 		public var visibility : String;
 		public var display : String;
 		public var float : String;
-		public var zIndex : Number = 0;
+		public var zIndex : int = 0;
 //		public var tooltipDelay : Number;
 //		public var tooltipRenderer : String;
 //		public var opacity : Number;
 //		public var rotation : Number;
 //		public var overflowY : String;
 //		public var overflowX : String;
-//		public var tabIndex : Number;
+//		public var tabIndex : int;
 //		public var blendMode : String;
 //		public var textShadowColor : AdvancedColor;
 //		public var cursor : String;
 //		public var position : String;
 		
 		//TODO: remove need for these
-//		public var intrinsicWidth : Number;
-//		public var intrinsicHeight : Number;
-//		public var scrollbarWidth : Number;
+//		public var intrinsicWidth : int;
+//		public var intrinsicHeight : int;
+//		public var scrollbarWidth : int;
 		
 //		public var boxSizing : String;
 //		public var backgroundRenderer : String;
@@ -92,11 +92,11 @@ package reprise.css
 //		public var multiline : Boolean;
 //		public var cacheAsBitmap : Boolean;
 //		public var autoHide : Boolean;
-//		public var pageScrollSize : Number;
-//		public var lineScrollSize : Number;
+//		public var pageScrollSize : int;
+//		public var lineScrollSize : int;
 //		public var scaleScrollThumb : Boolean;
 //		public var inputCharRestrict : String;
-//		public var inputLengthRestrict : Number;
+//		public var inputLengthRestrict : int;
 //		public var backgroundColor : AdvancedColor;
 //		public var backgroundGradientType : String;
 //		public var backgroundGradientColors : Array;
@@ -106,13 +106,13 @@ package reprise.css
 //		public var backgroundShadowColor : AdvancedColor;
 //		public var backgroundImageType : String;
 //		public var backgroundRepeat : String;
-//		public var backgroundPositionX : Number = 0;
-//		public var backgroundPositionY : Number = 0;
+//		public var backgroundPositionX : int = 0;
+//		public var backgroundPositionY : int = 0;
 //		public var backgroundScale9Type : String;
-//		public var backgroundScale9RectTop : Number;
-//		public var backgroundScale9RectLeft : Number;
-//		public var backgroundScale9RectRight : Number;
-//		public var backgroundScale9RectBottom : Number;
+//		public var backgroundScale9RectTop : int;
+//		public var backgroundScale9RectLeft : int;
+//		public var backgroundScale9RectRight : int;
+//		public var backgroundScale9RectBottom : int;
 //		public var fontSize : Number;
 //		public var fontFamily : String;
 //		public var textTransform : String;
@@ -120,8 +120,8 @@ package reprise.css
 //		public var textAlign : String;
 //		public var textShadowYBlur : Number;
 //		public var textShadowXBlur : Number;
-//		public var textShadowXOffset : Number;
-//		public var textShadowYOffset : Number;
+//		public var textShadowXOffset : int;
+//		public var textShadowYOffset : int;
 //		public var textShadowStrength : Number;
 //		public var textShadowQuality : Number;
 //		public var textShadowInner : Boolean;
