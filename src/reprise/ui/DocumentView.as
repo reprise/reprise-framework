@@ -307,7 +307,7 @@ package reprise.ui
 			m_widthIsRelative = m_complexStyles.getStyle('width').isRelativeValue();
 		}
 		protected override function resolveRelativeStyles(styles:CSSDeclaration, 
-			parentW:Number = -1, parentH:Number = -1) : void
+			parentW : int = -1, parentH : int = -1) : void
 		{
 			super.resolveRelativeStyles(styles, stage.stageWidth, stage.stageHeight);
 		}
