@@ -25,6 +25,10 @@ package reprise.css
 		public var width : int;
 		public var height : int;
 		
+		public var intrinsicWidth : int;
+		public var intrinsicHeight : int;
+		
+		public var collapsedMarginTop : int;
 		public var marginTop : int;
 		public var paddingTop : int;
 		public var borderTopWidth : int;
@@ -37,6 +41,7 @@ package reprise.css
 //		public var borderRightStyle : String;
 //		public var borderRightColor : AdvancedColor;
 		
+		public var collapsedMarginBottom : int;
 		public var marginBottom : int;
 		public var paddingBottom : int;
 		public var borderBottomWidth : int;
