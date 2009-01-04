@@ -1988,6 +1988,10 @@ package reprise.ui
 			//TODO: verify that we should really resolve the border-radii this way
 			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
 				m_contentBoxWidth + m_currentStyles.borderTopWidth);
+			
+			//reset collapsed margins to be identical with initial margins
+			m_currentStyles.collapsedMarginTop = m_currentStyles.marginTop;
+			m_currentStyles.collapsedMarginBottom =  m_currentStyles.marginBottom;
 		}
 		
 		protected function resolvePropsToValue(styles : CSSDeclaration, 

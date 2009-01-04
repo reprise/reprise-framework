@@ -43,6 +43,9 @@ package reprise.ui.layoutmanagers
 				return;
 			}
 			
+			element.style.collapsedMarginTop = element.style.marginTop;
+			element.style.collapsedMarginBottom = element.style.marginBottom;
+			
 			m_displayStack = [];
 			var elementStyle : ComputedStyles = element.style;
 			
@@ -54,6 +57,7 @@ package reprise.ui.layoutmanagers
 			{
 				collapsibleMargin = elementStyle.marginTop;
 			}
+			
 			var totalAvailableWidth:int = element.innerWidth();
 			var currentLineBoxTop:int = elementStyle.paddingTop;
 			var currentLineBoxHeight:int = 0;
@@ -124,7 +128,7 @@ package reprise.ui.layoutmanagers
 					}
 					currentLineBoxHeight = Math.max(currentLineBoxHeight, 
 						child.outerHeight + 
-						childStyle.marginTop + childStyle.marginBottom);
+						childStyle.collapsedMarginTop + childStyle.collapsedMarginBottom);
 					var childVAlign : String = 
 						childStyle.verticalAlign || 'top';
 					if (childVAlign != 'top')
@@ -164,18 +168,19 @@ package reprise.ui.layoutmanagers
 				if (child.positionInFlow)
 				{
 					closeLineBox();
-					var childMarginTop:int = childStyle.marginTop;
+					var childMarginTop:int = childStyle.collapsedMarginTop;
+					if (childMarginTop != childStyle.marginTop)
+					{
+						log('w nonmatch: ' + child);
+					}
 					var collapsedMargin:int;
 					if (collapsibleMargin >= 0 && childMarginTop >= 0)
 					{
 						collapsedMargin = 
 							Math.max(collapsibleMargin, childMarginTop);
 					}
-					else if (collapsibleMargin >= 0 && childMarginTop < 0)
-					{
-						collapsedMargin = collapsibleMargin + childMarginTop;
-					}
-					else if (collapsibleMargin < 0 && childMarginTop >= 0)
+					else if (collapsibleMargin >= 0 && childMarginTop < 0 ||
+						collapsibleMargin < 0 && childMarginTop >= 0)
 					{
 						collapsedMargin = collapsibleMargin + childMarginTop;
 					}
@@ -187,8 +192,7 @@ package reprise.ui.layoutmanagers
 					
 					if (topMarginCollapsible)
 					{
-						//TODO: wont work
-						elementStyle.marginTop = collapsedMargin;
+						elementStyle.collapsedMarginTop = collapsedMargin;
 						collapsedMargin = 0;
 						topMarginCollapsible = false;
 					}
@@ -197,12 +201,12 @@ package reprise.ui.layoutmanagers
 					//collapse margins through empty elements 
 					if (!child.outerHeight)
 					{
-						collapsibleMargin = 
-							Math.max(collapsedMargin, childStyle.marginBottom);
+						collapsibleMargin = Math.max(collapsedMargin, 
+							childStyle.collapsedMarginBottom);
 					}
 					else
 					{
-						collapsibleMargin = childStyle.marginBottom;
+						collapsibleMargin = childStyle.collapsedMarginBottom;
 						topMarginCollapsible = false;
 						currentLineBoxTop = child.y + child.outerHeight;
 					}
@@ -216,7 +220,10 @@ package reprise.ui.layoutmanagers
 						{
 							closeLineBox();
 						}
-						child.y = currentLineBoxTop + collapsibleMargin + childStyle.marginTop;
+						child.y = currentLineBoxTop + 
+							//ignore the upper outer margin
+							(topMarginCollapsible ? 0 : collapsibleMargin) + 
+							childStyle.marginTop;
 					}
 				}
 				//add to displaystack for later sorting
@@ -232,7 +239,7 @@ package reprise.ui.layoutmanagers
 			if (collapsibleMargin && !elementStyle.borderBottomWidth && 
 				!elementStyle.paddingBottom && element.positionInFlow)
 			{
-				elementStyle.marginBottom = 
+				elementStyle.collapsedMarginBottom = 
 					Math.max(elementStyle.marginBottom, collapsibleMargin);
 				collapsibleMargin = 0;
 			}
@@ -380,7 +387,7 @@ package reprise.ui.layoutmanagers
 					{
 						child.y = lineBoxTop + Math.round(
 							lineBoxHeight / 2 - (child.outerHeight + 
-							child.style.marginTop + child.style.marginBottom) / 2);
+							child.style.collapsedMarginTop + child.style.collapsedMarginBottom) / 2);
 						break;
 					}
 					case 'bottom':
@@ -388,7 +395,7 @@ package reprise.ui.layoutmanagers
 					{
 						child.y = lineBoxTop + Math.round(
 							lineBoxHeight - (child.outerHeight + 
-							child.style.marginTop + child.style.marginBottom));
+							child.style.collapsedMarginTop + child.style.collapsedMarginBottom));
 						break;
 					}
 					default:
