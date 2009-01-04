@@ -11,6 +11,8 @@
 
 package reprise.css
 {
+	import flash.utils.Dictionary;	
+	
 	import reprise.core.reprise;
 	
 	use namespace reprise;
@@ -68,6 +70,7 @@ package reprise.css
 			}
 			
 			var matches : Array = [];
+			var checks : Dictionary = new Dictionary(true);
 			var i : int = m_items.length;
 			var item : CSSDeclarationListItem;
 	 		decl = new CSSDeclaration();
@@ -84,9 +87,9 @@ package reprise.css
 				for (var j : int = items.length; j--;)
 				{
 					item = items[j];
-					if (item && !matches[item])
+					if (item && !checks[item])
 					{
-						matches[item] = true;
+						checks[item] = true;
 						if (item.matchesSubjectPath(sp))
 						{
 							matches.push(item);
