@@ -179,20 +179,20 @@ package reprise.controls.html
 
 			if (!m_validationCommand.isExecuting())
 			{
-				m_validationCommand.didSucceed() 
-					? dispatchSubmitEvent()
-					: dispatchEvent(new FormEvent(FormEvent.VALIDATION_FAILURE));
+				validation_complete(
+					new CommandEvent(Event.COMPLETE, m_validationCommand.didSucceed()));
 			}
 		}
 		
 		protected function validation_complete(e:CommandEvent):void
 		{
-			log('validation complete, success ' + e.success);
 			if (!e.success)
 			{
+				addCSSPseudoClass('error');
 				dispatchEvent(new FormEvent(FormEvent.VALIDATION_FAILURE));
 				return;
 			}
+			removeCSSPseudoClass('error');
 			dispatchEvent(new FormEvent(FormEvent.SUBMIT));
 		}
 		
