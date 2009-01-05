@@ -2539,7 +2539,19 @@ package reprise.ui
 				bounds = new Rectangle(m_positionOffset.x, m_positionOffset.y, 
 					m_borderBoxWidth, m_borderBoxHeight);
 			}
-			m_frozenContent = new BitmapData(bounds.width, bounds.height, true, 0x0);
+			try
+			{
+				m_frozenContent = new BitmapData(bounds.width, bounds.height, true, 0x0);
+			}
+			catch(error : Error)
+			{
+				log('f aha, got the display freezing bug! More information:\nbounds: ' + bounds, 
+					'\n!m_currentStyles.overflow || m_currentStyles.overflow == "visible": ' + 
+					(!m_currentStyles.overflow || m_currentStyles.overflow == 'visible'));
+				log("m_borderBoxWidth: " + (m_borderBoxWidth));
+				log("m_borderBoxHeight: " + (m_borderBoxHeight));
+				throw(error);
+			}
 			m_contentDisplay.x -= bounds.left;
 			m_contentDisplay.y -= bounds.top;
 			m_frozenContent.draw(this, null, null, null, 
