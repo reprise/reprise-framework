@@ -587,7 +587,6 @@ package reprise.css
 				split("> ").join(">").						// remove spaces around child selector
 				split(" >").join(">").						// remove spaces around child selector
 				split(">").join("> ").						// bring child selector into defined state
-				split(" :").join(":").						// remove spaces before colons
 				split(" ,").join(",").						// remove spaces before commas
 				split(", ").join(",").						// remove spaces after commas
 				split(" ;").join(";").						// remove spaces before semicolons
