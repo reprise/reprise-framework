@@ -25,7 +25,8 @@ package reprise.css
 		protected var m_items : Array;
 		protected var m_declarationIndex : Number = 0;
 		protected var m_declarationCache : Array;
-		protected var m_selectorHeadParts : Object = {};	
+		protected var m_selectorHeadParts : Object = {};
+		protected var m_starSelectors : Array = [];
 
 		
 		/***************************************************************************
@@ -51,6 +52,11 @@ package reprise.css
 				{
 					continue;
 				}
+				if (part == '*')
+				{
+					m_starSelectors.push(item);
+					continue;
+				}
 				if (!m_selectorHeadParts[part])
 				{
 					m_selectorHeadParts[part] = [];
@@ -71,13 +77,11 @@ package reprise.css
 			
 			var matches : Array = [];
 			var checks : Dictionary = new Dictionary(true);
-			var i : int = m_items.length;
 			var item : CSSDeclarationListItem;
 	 		decl = new CSSDeclaration();
 	 		var endParts : Array = sp.split(' ').pop().split('@');
 			
-			i = endParts.length;
-			while (i--)
+			for (var i : int = endParts.length; i--;)
 			{
 				var items : Array = m_selectorHeadParts[endParts[i]];
 				if (!items)
@@ -94,6 +98,18 @@ package reprise.css
 						{
 							matches.push(item);
 						}
+					}
+				}
+			}
+			for (j = m_starSelectors.length; j--;)
+			{
+				item = m_starSelectors[j];
+				if (item && !checks[item])
+				{
+					checks[item] = true;
+					if (item.matchesSubjectPath(sp))
+					{
+						matches.push(item);
 					}
 				}
 			}
