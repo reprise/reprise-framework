@@ -169,10 +169,6 @@ package reprise.ui.layoutmanagers
 				{
 					closeLineBox();
 					var childMarginTop:int = childStyle.collapsedMarginTop;
-					if (childMarginTop != childStyle.marginTop)
-					{
-						log('w nonmatch: ' + child);
-					}
 					var collapsedMargin:int;
 					if (collapsibleMargin >= 0 && childMarginTop >= 0)
 					{
