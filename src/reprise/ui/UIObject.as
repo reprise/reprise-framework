@@ -812,6 +812,7 @@ package reprise.ui
 			if (!m_isRendered)
 			{
 				visible = false;
+				m_isValidating = false;
 				return;
 			}
 			validateChildren();
