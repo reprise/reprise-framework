@@ -413,11 +413,14 @@ package reprise.ui
 		{
 			m_currentDebugElement = element;
 			var style : ComputedStyles = element.style;
+			var autoFlags : Object = element.autoFlags;
 			var output : String = '\nElement: ' + element + 
 				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n' + 
 				'position: ' + (style.position || 'static') + ', ';
-			output += 'top: ' + style.top + 'px, right: ' + style.right + 
-				'px, bottom: ' + style.bottom + 'px, left: ' + style.left + 'px\n';
+			output += 'top: ' + (autoFlags.top ? 'auto' : style.top + 'px') + 
+				', right: ' + (autoFlags.right ? 'auto' : style.right + 'px') + 
+				', bottom: ' + (autoFlags.bottom ? 'auto' : style.bottom + 'px') + 
+				', left: ' + (autoFlags.left ? 'auto' : style.left + 'px') + '\n';
 			output += 'margin: ' + style.marginTop + 'px ' + style.marginRight + 'px ' + 
 				style.marginBottom + 'px ' + style.marginLeft + 'px\n';
 			
