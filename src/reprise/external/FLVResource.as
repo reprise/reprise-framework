@@ -25,12 +25,12 @@ package reprise.external
 		
 		public override function bytesTotal():Number
 		{
-			return m_stream.bytesLoaded;
+			return m_stream.bytesTotal;
 		}
 		
 		public override function bytesLoaded():Number
 		{
-			return m_stream.bytesTotal;
+			return m_stream.bytesLoaded;
 		}
 		
 		public override function content():*
