@@ -2534,24 +2534,20 @@ package reprise.ui
 			{
 				bounds = this.getBounds(this);
 			}
-			else
+			if (!bounds || bounds.width < 0 || bounds.width > 2880 || 
+				bounds.height < 0 || bounds.height > 2880)
 			{
 				bounds = new Rectangle(m_positionOffset.x, m_positionOffset.y, 
 					m_borderBoxWidth, m_borderBoxHeight);
+				if (!m_currentStyles.overflow || m_currentStyles.overflow == 'visible')
+				{
+					log('f invalid DisplayObject bounds for element ' + this + 
+						', selectorPath: ' + m_selectorPath.split('@').join(''));
+					log('please send a reproducible test case to till@fork.de, if at all possible');
+				}
 			}
-			try
-			{
-				m_frozenContent = new BitmapData(bounds.width, bounds.height, true, 0x0);
-			}
-			catch(error : Error)
-			{
-				log('f aha, got the display freezing bug! More information:\nbounds: ' + bounds, 
-					'\n!m_currentStyles.overflow || m_currentStyles.overflow == "visible": ' + 
-					(!m_currentStyles.overflow || m_currentStyles.overflow == 'visible'));
-				log("m_borderBoxWidth: " + (m_borderBoxWidth));
-				log("m_borderBoxHeight: " + (m_borderBoxHeight));
-				throw(error);
-			}
+			m_frozenContent = new BitmapData(bounds.width, bounds.height, true, 0x0);
+			
 			m_contentDisplay.x -= bounds.left;
 			m_contentDisplay.y -= bounds.top;
 			m_frozenContent.draw(this, null, null, null, 
