@@ -78,11 +78,11 @@ package reprise.external
 		*/
 		override public function addCommand(cmd:ICommand):void
 		{
+			super.addCommand(cmd);
 			if (cmd is IResource)
 			{
 				m_numResourcesToLoad++;
 			}
-			super.addCommand(cmd);
 		}
 		
 		/**
@@ -92,7 +92,7 @@ package reprise.external
 		{
 			// we only decrement the resourcesToLoad count, if the command wasn't executed
 			// yet. If if was, our statistics should not be distorted
-			if (cmd is IResource && m_currentCommands.contains(cmd))
+			if (cmd is IResource && m_pendingCommands.contains(cmd))
 			{
 				m_numResourcesToLoad--;
 			}
@@ -133,12 +133,17 @@ package reprise.external
 		*/
 		public function progress():Number
 		{
-			var total:Number = m_numResourcesLoaded + 
-				m_numResourcesToLoad + m_pendingCommands.length;
-			var current:Number = m_numResourcesLoaded;
-			return Math.round(current / (total / 100) + 
-				(progressOfCurrentResources() / total));
-			return 0;
+			var total:Number = m_numResourcesLoaded + m_numResourcesToLoad;
+			var resourceCount : int = total;
+			for (var i : int = m_currentCommands.length; i--;)
+			{
+				if (m_currentCommands[i] is IResource)
+				{
+					total += IResource(m_currentCommands[i]).progress() / 100;
+					resourceCount++;
+				}
+			}
+			return total / resourceCount * 100;
 		}
 		
 		/**
@@ -204,6 +209,10 @@ package reprise.external
 		override protected function registerListenersForAsynchronousCommand(
 			cmd:IAsynchronousCommand):void
 		{
+			if (cmd is IResource)
+			{
+				m_numResourcesToLoad--;
+			}
 			super.registerListenersForAsynchronousCommand(cmd);
 			cmd.addEventListener(ResourceEvent.PROGRESS, resource_progress);
 		}
@@ -237,6 +246,8 @@ package reprise.external
 			if (e.target is IResource)
 			{
 				m_numBytesLoaded += IResource(e.target).bytesLoaded();
+				m_numResourcesLoaded++;
+				dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
 			}
 			super.command_complete(e);
 		}
