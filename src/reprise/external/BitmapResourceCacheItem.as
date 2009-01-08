@@ -44,9 +44,9 @@ package reprise.external {
 		public function BitmapResourceCacheItem(loader : ImageResource)
 		{
 			m_loader = loader;
-			m_loader.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.addEventListener(ResourceEvent.PROGRESS, loader_progress);
-			m_loader.addEventListener(Event.CANCEL, loader_cancel);
+			m_loader.addEventListener(Event.COMPLETE, loader_complete, false, 0, true);
+			m_loader.addEventListener(ResourceEvent.PROGRESS, loader_progress, false, 0, true);
+			m_loader.addEventListener(Event.CANCEL, loader_cancel, false, 0, true);
 		}
 		
 		public function loader() : ImageResource
@@ -62,6 +62,8 @@ package reprise.external {
 		public function destroy() : void
 		{
 			m_bitmapDataReference.dispose();
+			m_loader = null;
+			m_targets = null;
 		}
 		
 		public function addTarget(target : BitmapResource) : void
@@ -80,7 +82,7 @@ package reprise.external {
 			m_loader.setRetryTimes(Math.max(m_loader.retryTimes(), target.retryTimes()));
 			m_loader.setTimeout(Math.max(m_loader.timeout(), target.timeout()));
 			m_loader.setForceReload(m_loader.forceReload() || target.forceReload());
-			target.addEventListener(Event.CANCEL, target_cancel);
+			target.addEventListener(Event.CANCEL, target_cancel, false, 0, true);
 			
 			if (target.cacheBitmap() && !target.forceReload())
 			{
@@ -181,20 +183,19 @@ package reprise.external {
 			}
 			m_targets = null;
 			
-			dispatchEvent(e);		
+			dispatchEvent(e);
 		}
 		
 		protected function loader_progress(e:ResourceEvent) : void
 		{
-			if (!m_targets)
+			if (!m_targets || !m_loader)
 			{
 				return;
 			}
-			var i : Number = m_targets.length;
-			var target : BitmapResource;		
+			var i : int = m_targets.length;
 			while (i--)
 			{
-				target = BitmapResource(m_targets[i]);
+				var target : BitmapResource = BitmapResource(m_targets[i]);
 				target.setBytesLoaded(m_loader.bytesLoaded());
 				target.setBytesTotal(m_loader.bytesTotal());
 				target.updateProgress();
