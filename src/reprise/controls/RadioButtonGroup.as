@@ -25,7 +25,7 @@ package reprise.controls
 		protected static var g_radioGroups:Object;
 		protected var m_radioButtons:Array;
 		protected var m_name:String;
-		protected var m_selectedIndex:int;
+		protected var m_selectedIndex:int = -1;
 		
 		
 		
@@ -64,6 +64,7 @@ package reprise.controls
 		
 		public function setRadioButtonSelected(btn:RadioButton, bFlag:Boolean):void
 		{
+			var oldIndex : int = m_selectedIndex;
 			if (!bFlag)
 			{
 				btn.setSelected(false);
@@ -79,7 +80,10 @@ package reprise.controls
 					m_selectedIndex = i;
 				}
 			}
-			dispatchEvent(new Event(Event.CHANGE));
+			if (m_selectedIndex != oldIndex)
+			{
+				dispatchEvent(new Event(Event.CHANGE));
+			}
 		}
 		
 		public function selectRadioButtonWithData(data:*):void
