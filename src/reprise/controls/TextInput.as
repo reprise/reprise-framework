@@ -184,6 +184,7 @@ package reprise.controls
 		{
 			super.createChildren();
 			m_labelDisplay.type = "input";
+			m_labelDisplay.mouseEnabled = true;
 			m_labelDisplay.addEventListener(Event.CHANGE, label_change);
 		}
 

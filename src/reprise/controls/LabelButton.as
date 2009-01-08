@@ -11,10 +11,8 @@
 
 package reprise.controls
 {
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	import flash.text.TextField;
-	 
+	import flash.events.MouseEvent;	
+
 	/**
 	 * @author Marco
 	 */
@@ -69,7 +67,6 @@ package reprise.controls
 		protected override function initialize() : void
 		{
 			super.initialize();
-			mouseChildren = false;
 		}
 		protected override function createChildren() : void
 		{
@@ -117,15 +114,13 @@ package reprise.controls
 		
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
-			var objects : Array = 
-				stage.getObjectsUnderPoint(new Point(event.stageX, event.stageY));
-			if (objects[objects.length - 1] is TextField)
+			if (event.target != this)
 			{
-				if (m_labelDisplay.handleTextClick(event))
-				{
-					return;
-				}
+				event.stopImmediatePropagation();
+				dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, mouseX, mouseY));
+				return;
 			}
+			
 			super.buttonDisplay_click(event);
 		}
 	}

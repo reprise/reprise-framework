@@ -195,11 +195,12 @@ package reprise.controls
 		protected override function createChildren() : void
 		{
 			m_labelDisplay = new TextField();
-			m_labelDisplay = m_contentDisplay.addChild(m_labelDisplay) as TextField;
+			m_labelDisplay = TextField(m_contentDisplay.addChild(m_labelDisplay));
 			m_labelDisplay.name = 'labelDisplay';
 			m_labelDisplay.condenseWhite = true;
+			m_labelDisplay.mouseEnabled = false;
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
-			m_labelDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
+			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
 			m_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
 		}
 		protected override function initDefaultStyles() : void
@@ -565,8 +566,7 @@ package reprise.controls
 		 */
 		protected function labelDisplay_click(event : MouseEvent) : Boolean
 		{
-			var clickedChar : int = m_labelDisplay.getCharIndexAtPoint(
-				m_labelDisplay.mouseX, m_labelDisplay.mouseY);
+			var clickedChar : int = m_labelDisplay.getCharIndexAtPoint(m_labelDisplay.mouseX, m_labelDisplay.mouseY);
 			if (!m_labelDisplay.length || clickedChar == -1)
 			{
 				return false;
@@ -593,7 +593,6 @@ package reprise.controls
 				navigateToURL(request, labelEvent.linkTarget || '_self');
 			}
 			event.stopImmediatePropagation();
-			event.stopPropagation();
 			
 			return true;
 		}
