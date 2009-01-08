@@ -207,7 +207,7 @@ package reprise.tweens
 		
 		public function setIsPaused(bFlag:Boolean):void
 		{
-			if (m_isExecuting)
+			if (!m_isExecuting && bFlag)
 			{
 				return;
 			}
@@ -215,12 +215,16 @@ package reprise.tweens
 			{
 				g_frameEventDispatcher.removeEventListener(
 					Event.ENTER_FRAME, executeTick);
-				m_currentTime = m_duration - m_currentTime;
+				m_isExecuting = false;
 			}
 			else
 			{
-				startTween();
+				m_startTime = getTimer() - m_currentTime - m_delay - m_timeAdjust;
+				g_frameEventDispatcher.addEventListener(
+					Event.ENTER_FRAME, executeTick);
+				m_isExecuting = true;
 			}
+			m_isPaused = bFlag;
 		}
 		
 		public function isPaused():Boolean
