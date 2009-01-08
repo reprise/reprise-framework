@@ -63,6 +63,10 @@ package reprise.external
 			{
 				return 1;
 			}
+			if (!m_loader)
+			{
+				return 0;
+			}
 			return m_loader.contentLoaderInfo.bytesLoaded;
 		}
 		
@@ -71,6 +75,10 @@ package reprise.external
 			if (m_attachMode)
 			{
 				return 1;
+			}
+			if (!m_loader)
+			{
+				return 0;
 			}
 			return m_loader.contentLoaderInfo.bytesTotal;
 		}
