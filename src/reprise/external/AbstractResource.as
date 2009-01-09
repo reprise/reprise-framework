@@ -28,17 +28,17 @@ package reprise.external
 		***************************************************************************/
 		protected var m_url : String;
 		protected var m_request : URLRequest;
-		protected	var m_timeout : Number = 5000;
-		protected var m_retryTimes : Number = 3;
-		protected var m_failedTimes : Number;
+		protected	var m_timeout : int = 8000;
+		protected var m_retryTimes : int = 3;
+		protected var m_failedTimes : int;
 		protected var m_forceReload : Boolean;
 		protected var m_content : String;
 		protected var m_controlDelegate : Delegate;
-		protected var m_lastBytesLoaded : Number;
-		protected var m_lastCheckTime : Number;
+		protected var m_lastBytesLoaded : int;
+		protected var m_lastCheckTime : int;
 		protected var m_httpStatus : HTTPStatus;
 		protected var m_didFinishLoading : Boolean = false;		
-		private var m_failureReason : Number;
+		private var m_failureReason : int;
 		protected var m_checkPolicyFile : Boolean;
 
 		
