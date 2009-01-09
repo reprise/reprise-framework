@@ -7,15 +7,13 @@
 
 package reprise.controls
 {
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	
 	import reprise.ui.AbstractInput;
 	import reprise.ui.UIComponent;
 	
-	
+	import flash.display.DisplayObject;
+	import flash.events.Event;
+	import flash.events.MouseEvent;	
+
 	public class ComboBox extends AbstractInput
 	{
 		/***************************************************************************
@@ -55,6 +53,12 @@ package reprise.controls
 			return m_list.options;
 		}
 		
+		public function setSelectedIndex(index : int) : void
+		{
+			m_list.setSelectedIndex(index);
+			updateLabel();
+		}
+
 		public override function value():*
 		{
 			return m_list.value();
@@ -65,8 +69,7 @@ package reprise.controls
 			if (m_list.options.length)
 			{
 				m_list.setValue(value);
-				m_label.setLabel(m_list.selectedLabel());
-				removeCSSClass('placeholder');
+				updateLabel();
 			}
 		}
 		
@@ -81,11 +84,7 @@ package reprise.controls
 		public function setPlaceholderAttribute(value : String):void
 		{
 			m_placeholder = value;
-			if (m_list.selectedIndex() == -1)
-			{
-				m_label.setLabel(value);
-				addCSSClass('placeholder');
-			}
+			updateLabel();
 		}
 		
 		
@@ -137,6 +136,20 @@ package reprise.controls
 			m_list.addEventListener(Event.CHANGE, list_change);
 		}
 		
+		protected function updateLabel() : void
+		{
+			if (m_list.selectedIndex() == -1)
+			{
+				m_label.setLabel(m_placeholder);
+				addCSSClass('placeholder');
+			}
+			else
+			{
+				m_label.setLabel(m_list.selectedLabel());
+				removeCSSClass('placeholder');
+			}
+		}
+		
 		protected function showList():void
 		{			
 			removeEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
@@ -167,8 +180,7 @@ package reprise.controls
 		
 		protected function list_change(e:Event):void
 		{
-			m_label.setLabel(m_list.selectedLabel());
-			removeCSSClass('placeholder');
+			updateLabel();
 			hideList();
 			dispatchEvent(new Event(Event.CHANGE));
 		}
