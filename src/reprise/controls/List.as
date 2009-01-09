@@ -28,7 +28,7 @@ package reprise.controls
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_items:Array;
-		protected var m_selectedIndex:Number = -1;
+		protected var m_selectedIndex:int = -1;
 		
 		
 		
@@ -85,17 +85,7 @@ package reprise.controls
 		
 		public function selectItem(item:ListItem):void
 		{
-			var i:uint = m_items.length;
-			while (i--)
-			{
-				var curItem:ListItem = m_items[i] as ListItem;
-				var isSelectedItem:Boolean = curItem == item;
-				if (isSelectedItem)
-				{
-					m_selectedIndex = i;
-				}
-				curItem.selected = isSelectedItem;
-			}
+			setSelectedIndex(m_items.indexOf(item));
 		}
 		
 		public function selectItemWithValue(value:*):void
@@ -103,7 +93,7 @@ package reprise.controls
 			var i:int = m_items.length;
 			while (i--)
 			{
-				var entry:Object = (m_data as Array)[i];
+				var entry:Object = m_data[i];
 				if (entry.value == value)
 				{
 					setSelectedIndex(i);
@@ -122,18 +112,22 @@ package reprise.controls
 			return selectedItem().getLabel();
 		}
 		
-		public function selectedIndex():Number
+		public function selectedIndex():int
 		{
 			return m_selectedIndex;
 		}
 		
-		public function setSelectedIndex(index:uint):void
+		public function setSelectedIndex(index : int):void
 		{
-			if (index < 0 || index > m_items.length - 1)
+			if (m_items[m_selectedIndex] is ListItem)
 			{
-				return;
+				ListItem(m_items[m_selectedIndex]).selected = false;
 			}
-			selectItem(m_items[index] as ListItem);
+			m_selectedIndex = Math.min(Math.max(index, -1), m_items.length - 1);
+			if (m_items[m_selectedIndex] is ListItem)
+			{
+				ListItem(m_items[m_selectedIndex]).selected = true;
+			}
 		}
 		
 		public override function setValue(value:*):void
