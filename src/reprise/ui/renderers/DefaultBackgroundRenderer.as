@@ -112,6 +112,7 @@ package reprise.ui.renderers
 				{
 					m_backgroundImageLoader.cancel();
 				}
+				m_backgroundImageLoader = null;
 				clearBackgroundImage();	
 			}
 				
@@ -183,6 +184,10 @@ package reprise.ui.renderers
 						// we force redrawing here, due to the fact that our size or 
 						// the image position could have changed
 						//TODO: verify that this really calls bitmapLoader_complete
+						// @till: that is ugly. if you want to make sure that bitmapLoader_complete
+						// is called you should call it directly. furthermore since 
+						// bitmapLoader_complete is normally called via an event, the functionality
+						// of that method should be extracted and then called directly instead!
 						m_backgroundImageLoader.dispatchEvent(
 							new ResourceEvent(Event.COMPLETE, true));
 					}
@@ -212,6 +217,13 @@ package reprise.ui.renderers
 				m_backgroundImageLoader.removeEventListener(
 					Event.COMPLETE, bitmapLoader_complete);
 				m_backgroundImageLoader = null;
+			}
+			
+			if (!m_backgroundImageContainer)
+			{
+				m_backgroundImageContainer = Sprite(m_display.addChildAt(
+					new Sprite(), 0));
+				m_backgroundImageContainer.name = 'm_backgroundImageContainer';
 			}
 			
 			// if we're already loading the right animation, do nothing
@@ -512,7 +524,6 @@ package reprise.ui.renderers
 					m_inactiveBackgroundAnimationContainer);
 				m_inactiveBackgroundAnimationContainer = null;
 			}
-			
 			var imgContainer : Sprite = m_activeBackgroundAnimationContainer;
 			imgContainer.addChild(m_backgroundImageLoader.content());
 			
