@@ -380,6 +380,7 @@ package reprise.commands
 			m_numCommandsExecuted++;
 			if (!e.success)
 			{
+				m_didSucceed = false;
 				m_numCommandsFailed++;
 				if (m_abortOnFailure)
 				{
