@@ -119,6 +119,10 @@ package reprise.controls
 		
 		public override function setLabel(label:String) : void
 		{
+			if (label == null && m_placeholder)
+			{
+				label = m_placeholder;
+			}
 			if (label == m_placeholder)
 			{
 				addCSSClass('placeholder');
