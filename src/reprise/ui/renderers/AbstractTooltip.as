@@ -76,6 +76,14 @@ package reprise.ui.renderers
 				}
 				case DisplayPosition.POSITION_STATIC:
 				{
+					// there seems to be a problem with sprites which are freshly inserted into the
+					// view hierarchy. most probably it takes a sec before their stage attribute is 
+					// set, so we take care of this here. one frame later everything will be fine 
+					// again.
+					if (!m_mousedElement.stage)
+					{
+						return;
+					}
 					pos.x = m_mousedElement.stage.mouseX + style.left;
 					pos.y = m_mousedElement.stage.mouseY + style.top;
 					break;
