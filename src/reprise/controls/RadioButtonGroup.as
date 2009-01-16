@@ -62,6 +62,17 @@ package reprise.controls
 			m_radioButtons.splice(m_radioButtons.indexOf(btn), 1);
 		}
 		
+		public function reset():void
+		{
+			super.reset();
+			for (var i:int = 0; i < m_radioButtons.length; i++)
+			{
+				var rbtn:RadioButton = m_radioButtons[i] as RadioButton;
+				rbtn.setSelected(false);
+			}
+			m_selectedIndex = -1;
+		}
+		
 		public function setRadioButtonSelected(btn:RadioButton, bFlag:Boolean):void
 		{
 			var oldIndex : int = m_selectedIndex;
