@@ -64,7 +64,6 @@ package reprise.controls
 		
 		public function reset():void
 		{
-			super.reset();
 			for (var i:int = 0; i < m_radioButtons.length; i++)
 			{
 				var rbtn:RadioButton = m_radioButtons[i] as RadioButton;
