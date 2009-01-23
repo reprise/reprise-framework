@@ -112,6 +112,12 @@ package reprise.tweens
 			}
 		}
 		
+		public function addTweenPropertyVO(vo : TweenedPropertyVO) : void
+		{
+			m_tweenedProperties.push(vo);
+		}
+		
+		
 		/**
 		 * removes the given tweenPropertyVO from the tween
 		 */

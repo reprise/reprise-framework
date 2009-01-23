@@ -22,7 +22,7 @@ package reprise.tweens
 		public function ColorTweenPropertyVO(
 			scope:Object, property:String, startValue:Number, 
 			targetValue:Number, tweenFunction:Function, roundResults:Boolean, 
-			propertyIsMethod:Boolean, extraParams:Array)
+			propertyIsMethod:Boolean, extraParams:Array = null)
 		{
 			super(scope, property, startValue, targetValue, tweenFunction, 
 				roundResults, propertyIsMethod, extraParams);
