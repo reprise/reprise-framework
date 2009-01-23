@@ -100,14 +100,10 @@ package reprise.external
 	            {
 	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
 					m_resource = new symbolClass() as DisplayObject;
-					m_resource.addEventListener(Event.COMPLETE, 
-						function(event : Event) : void
-					{
-						m_httpStatus = new HTTPStatus(200, m_url);
-						onData(true);
-					}, false, 0, true);
+					m_httpStatus = new HTTPStatus(200, m_url);
+					onData(true);
 	            } 
-				catch (e_ : Error)
+				catch (e : Error)
 				{
 					log('w Unable to use attach:// procotol! Symbol ' + symbolId + ' not found!');
 					onData(false);
