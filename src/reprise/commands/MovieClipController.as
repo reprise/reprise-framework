@@ -241,10 +241,17 @@ package reprise.commands
 			return frame;
 		}
 		
-		protected function applyFrameRange():void
-		{
-			m_target.gotoAndStop(m_frameRange.location);
-		}
+        protected function applyFrameRange():void
+        {
+            if (currentFrame() < m_frameRange.location)
+            {
+                this.gotoAndStop(m_frameRange.location);
+            }
+            else if (currentFrame() > m_frameRange.location + m_frameRange.length - 1)
+            {
+                this.gotoAndStop(m_frameRange.location + m_frameRange.length - 1);
+            }
+        }
 		
 		protected function applyOperation() : void
 		{
