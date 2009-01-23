@@ -11,11 +11,8 @@
 
 package reprise.ui.renderers
 {
-	import reprise.commands.CompositeCommand;	
-	import reprise.commands.MovieClipController;	
-	
-	import flash.display.MovieClip; 
 	import flash.display.BitmapData;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.DropShadowFilter;
@@ -23,9 +20,11 @@ package reprise.ui.renderers
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	import reprise.commands.CompositeCommand;
 	import reprise.css.CSSProperty;
 	import reprise.css.propertyparsers.Background;
 	import reprise.css.propertyparsers.Filters;
+	import reprise.css.transitions.CSSMovieClipController;
 	import reprise.data.AdvancedColor;
 	import reprise.events.ResourceEvent;
 	import reprise.external.AbstractResource;
@@ -583,8 +582,8 @@ package reprise.ui.renderers
 			for (var i : int = 0; i < controls.length; i++)
 			{
 				var operation : Object = controls[i];
-				var mcController : MovieClipController = 
-					new MovieClipController(animation);
+				var mcController : CSSMovieClipController = 
+					new CSSMovieClipController(animation);
 				mcController.setOperation(operation.type, operation.parameters);
 				m_animationControls.addCommand(mcController);
 			}
