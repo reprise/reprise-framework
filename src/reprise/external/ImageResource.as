@@ -19,6 +19,7 @@ package reprise.external
 	import flash.events.IOErrorEvent;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;	
+	import flash.utils.getDefinitionByName;
 
 	public class ImageResource extends AbstractResource
 	{
@@ -93,21 +94,11 @@ package reprise.external
 			// asset from library
 			if (m_url.indexOf('attach://') == 0)
 			{
+				var symbolId:String = m_url.split('//')[1];
 				m_attachMode = true;
-				
-				if (ApplicationDomain.currentDomain.hasDefinition('Assets'))
-				{
-					var symbolHolder : Class = ApplicationDomain.currentDomain.
-						getDefinition('Assets') as Class;
-					var symbolId : String = m_url.split('//')[1];
-					var symbolClass : Class = symbolHolder[symbolId];
-					if (!symbolClass)
-					{
-						log('w Assets class doesn\'t contain a definition for ' + 
-							symbolId + ', unable to use "attach://" for that symbol!');
-						onData(false);
-						return;
-					}
+	            try
+	            {
+	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
 					m_resource = new symbolClass() as DisplayObject;
 					m_resource.addEventListener(Event.COMPLETE, 
 						function(event : Event) : void
@@ -115,13 +106,12 @@ package reprise.external
 						m_httpStatus = new HTTPStatus(200, m_url);
 						onData(true);
 					}, false, 0, true);
-				}
-				else
+	            } 
+				catch (e_ : Error)
 				{
-					log('w no Assets class found in default package, ' + 
-						'unable to use "attach://" protocol!');
+					log('w Unable to use attach:// procotol! Symbol ' + symbolId + ' not found!');
 					onData(false);
-				}
+	            }
 				return;
 			}
 			
