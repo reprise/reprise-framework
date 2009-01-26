@@ -2651,9 +2651,10 @@ package reprise.ui
 
 		protected function track(trackingId : String) : void
 		{
+			log('track: ' + (trackingId));
 			m_rootElement.applicationContext().track(trackingId);
 		}
-		
+
 		/**
 		 * Hook method. Measures the intrinsic dimensions of the component.
 		 * The default implementation calculates the intrinsic height based
