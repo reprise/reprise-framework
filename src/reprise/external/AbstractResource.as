@@ -28,7 +28,7 @@ package reprise.external
 		***************************************************************************/
 		protected var m_url : String;
 		protected var m_request : URLRequest;
-		protected	var m_timeout : int = 8000;
+		protected var m_timeout : int = 20000;
 		protected var m_retryTimes : int = 3;
 		protected var m_failedTimes : int;
 		protected var m_forceReload : Boolean;
