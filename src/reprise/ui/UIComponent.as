@@ -2651,6 +2651,7 @@ package reprise.ui
 
 		protected function track(trackingId : String) : void
 		{
+			log('track: ' + (track));
 			m_rootElement.applicationContext().track(trackingId);
 		}
 
