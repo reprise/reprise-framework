@@ -22,8 +22,8 @@ package reprise.commands
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_didSucceed : Boolean;
-		protected var m_id:Number;
-		protected var m_priority:Number;
+		protected var m_id:Number = 0;
+		protected var m_priority:Number = 0;
 		
 		
 		/***************************************************************************
