@@ -232,7 +232,7 @@ package reprise.commands
 		*/
 		protected function executeNext() : void
 		{
-			if (m_pendingCommands.length == 0 && m_currentCommands.length == 0)
+			if (!m_pendingCommands || m_pendingCommands.length == 0 && m_currentCommands.length == 0)
 			{
 				m_isExecuting = false;
 				// we only dispatch a event if we're executing asynchronously
