@@ -154,7 +154,7 @@ package reprise.tweens {
 		/**
 		 * event handler, invoked on each tick of the current tween
 		 */
-		protected function tween_tick() : void
+		protected function tween_tick(event : TweenEvent) : void
 		{
 			dispatchEvent(new Event(EVENT_TICK));
 		}
