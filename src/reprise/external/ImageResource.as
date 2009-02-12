@@ -101,9 +101,10 @@ package reprise.external
 					var pieces:Array = symbolId.split('.');
 					symbolId = pieces[0];
 	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
-					if (pieces.length > 1)
+					for (var i:int = 1; i < pieces.length; i++)
 					{
-						symbolClass = symbolClass[pieces[1]];
+						log('f ' + symbolClass, pieces[i]);
+						symbolClass = symbolClass[pieces[i]];
 					}
 					m_resource = new symbolClass() as DisplayObject;
 					m_httpStatus = new HTTPStatus(200, m_url);
