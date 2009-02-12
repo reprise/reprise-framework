@@ -33,10 +33,13 @@ package reprise.controls
 		protected var m_dragStartMousePosition:Number;
 		protected var m_isDragging:Boolean;
 		
+		protected var m_allowsTickMarkValuesOnly:Boolean = false;
+		protected var m_numTickMarks:int = 2;
 		
-		/*public function Silder()
+		
+		public function Slider()
 		{
-		}*/
+		}
 		
 		
 		/***************************************************************************
@@ -46,7 +49,7 @@ package reprise.controls
 		{
 			value = Math.min(value, m_maxValue);
 			value = Math.max(value, m_minValue);
-			m_value = value;
+			m_value = m_allowsTickMarkValuesOnly ? closestTickMarkValueToValue(value) : value;
 			if (!m_isDragging)
 			{
 				applyValue();
@@ -92,6 +95,31 @@ package reprise.controls
 		public function isContinuous():Boolean
 		{
 			return m_isContinuous;
+		}
+		
+		public function setAllowsTickMarkValuesOnly(bFlag:Boolean):void
+		{
+			m_allowsTickMarkValuesOnly = bFlag;
+		}
+		
+		public function allowsTickMarkValuesOnly():Boolean
+		{
+			return m_allowsTickMarkValuesOnly;
+		}
+		
+		public function setNumberOfTickMarks(num:int):void
+		{
+			m_numTickMarks = num;
+		}
+		
+		public function numberOfTickMarks():int
+		{
+			return m_numTickMarks;
+		}
+		
+		public function tickMarkValueAtIndex(index:int):Number
+		{
+			return (m_maxValue - m_minValue) / (m_numTickMarks - 1) * index;
 		}
 		
 		
@@ -163,6 +191,14 @@ package reprise.controls
 			setValue(positionToValue(m_dragStartThumbPosition + 
 				(m_track.mouseX - m_dragStartMousePosition)));
 			applyValue();
+		}
+		
+		protected function closestTickMarkValueToValue(val:Number):Number
+		{
+			var diff:Number = (m_maxValue - m_minValue) / (m_numTickMarks - 1);
+			var index:int = Math.floor(val / diff);
+			if (val % diff > diff / 2) index++;
+			return index * diff;
 		}
 		
 		
