@@ -103,7 +103,6 @@ package reprise.external
 	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
 					for (var i:int = 1; i < pieces.length; i++)
 					{
-						log('f ' + symbolClass, pieces[i]);
 						symbolClass = symbolClass[pieces[i]];
 					}
 					m_resource = new symbolClass() as DisplayObject;
