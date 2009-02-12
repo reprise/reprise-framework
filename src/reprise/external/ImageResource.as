@@ -98,7 +98,13 @@ package reprise.external
 				m_attachMode = true;
 	            try
 	            {
+					var pieces:Array = symbolId.split('.');
+					symbolId = pieces[0];
 	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
+					if (pieces.length > 1)
+					{
+						symbolClass = symbolClass[pieces[1]];
+					}
 					m_resource = new symbolClass() as DisplayObject;
 					m_httpStatus = new HTTPStatus(200, m_url);
 					onData(true);
