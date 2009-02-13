@@ -17,10 +17,10 @@ package reprise.css
 	 */
 	public dynamic class ComputedStyles 
 	{
-		public var top : int;
-		public var right : int;
-		public var bottom : int;
-		public var left : int;
+		public var top : Number;
+		public var right : Number;
+		public var bottom : Number;
+		public var left : Number;
 		
 		public var width : int;
 		public var height : int;

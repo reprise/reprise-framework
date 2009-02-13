@@ -341,7 +341,7 @@ package reprise.ui
 		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public function get top() : int
+		public function get top() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -370,7 +370,7 @@ package reprise.ui
 		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
-		public function set top(value : int) : void
+		public function set top(value : Number) : void
 		{
 			if (isNaN(value))
 			{
@@ -400,7 +400,7 @@ package reprise.ui
 		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public function get left() : int
+		public function get left() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -429,7 +429,7 @@ package reprise.ui
 		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
-		public function set left(value : int) : void
+		public function set left(value : Number) : void
 		{
 			if (isNaN(value))
 			{
@@ -459,7 +459,7 @@ package reprise.ui
 		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
-		public function get right() : int
+		public function get right() : Number
 		{
 			if (!isNaN(m_currentStyles.left))
 			{
@@ -487,7 +487,7 @@ package reprise.ui
 		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
-		public function set right(value : int) : void
+		public function set right(value : Number) : void
 		{
 			if (isNaN(value))
 			{
@@ -518,7 +518,7 @@ package reprise.ui
 		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
-		public function get bottom() : int
+		public function get bottom() : Number
 		{
 			if (!isNaN(m_currentStyles.top))
 			{
@@ -546,7 +546,7 @@ package reprise.ui
 		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
-		public function set bottom(value : int) : void
+		public function set bottom(value : Number) : void
 		{
 			if (isNaN(value))
 			{
