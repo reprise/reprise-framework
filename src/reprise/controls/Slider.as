@@ -20,6 +20,9 @@ package reprise.controls
 	public class Slider extends UIComponent
 	{
 		
+		//*****************************************************************************************
+		//*                                  Protected Properties                                 *
+		//*****************************************************************************************
 		protected var m_thumb:UIComponent;
 		protected var m_statusBar:UIComponent;
 		protected var m_track:UIComponent;
@@ -32,19 +35,21 @@ package reprise.controls
 		protected var m_dragStartThumbPosition:Number;
 		protected var m_dragStartMousePosition:Number;
 		protected var m_isDragging:Boolean;
+		protected var m_frameListenerActive:Boolean = false;
 		
 		protected var m_allowsTickMarkValuesOnly:Boolean = false;
 		protected var m_numTickMarks:int = 2;
+		protected var m_animatesChange:Boolean = false;
+		protected var m_animationFriction:Number = .35;
 		
 		
-		public function Slider()
-		{
-		}
+		
+		//*****************************************************************************************
+		//*                                     Public Methods                                    *
+		//*****************************************************************************************
+		public function Slider() {}
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
 		public function setValue(value:Number):void
 		{
 			value = Math.min(value, m_maxValue);
@@ -122,17 +127,40 @@ package reprise.controls
 			return (m_maxValue - m_minValue) / (m_numTickMarks - 1) * index;
 		}
 		
+		public function closestTickMarkValueToValue(val:Number):Number
+		{
+			var diff:Number = (m_maxValue - m_minValue) / (m_numTickMarks - 1);
+			var index:int = Math.floor(val / diff);
+			if (val % diff > diff / 2) index++;
+			return index * diff;
+		}
+		
+		public function setAnimatesChange(bFlag:Boolean):void
+		{
+			m_animatesChange = bFlag;
+		}
+		
+		protected function animatesChange():Boolean
+		{
+			return m_animatesChange;
+		}
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
-		protected override function createChildren():void
+		
+		//*****************************************************************************************
+		//*                                   Protected Methods                                   *
+		//*****************************************************************************************
+		override protected function createChildren():void
 		{
 			createTrack();
 			createStatusBar();
 			createThumb();
 			addListeners();
+		}
+		
+		override protected function beforeFirstDraw():void
+		{
+			applyValue();
 		}
 		
 		protected function createTrack():void
@@ -154,18 +182,26 @@ package reprise.controls
 		protected function addListeners():void
 		{
 			m_thumb.addEventListener(MouseEvent.MOUSE_DOWN, thumb_click);
-			addEventListener(MouseEvent.MOUSE_DOWN, self_click);
+			m_track.addEventListener(MouseEvent.MOUSE_DOWN, track_mouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUp);
-		}
-		
-		protected override function beforeFirstDraw():void
-		{
-			applyValue();
 		}
 		
 		protected function applyValue():void
 		{
 			var pos:Number = valueToPosition(m_value, m_minValue, m_maxValue);
+			if (m_animatesChange && (!m_isDragging || m_allowsTickMarkValuesOnly))
+			{
+				var diff:Number = (pos - m_thumb.left) * m_animationFriction;
+				if (Math.abs(diff) > 0.05)
+				{
+					pos = m_thumb.left + diff;
+					addFrameListener();
+				}
+				else 
+				{
+					removeFrameListener();
+				}
+			}
 			m_thumb.left = m_statusBar.width = pos;
 		}
 		
@@ -193,25 +229,35 @@ package reprise.controls
 			applyValue();
 		}
 		
-		protected function closestTickMarkValueToValue(val:Number):Number
+		protected function addFrameListener():void
 		{
-			var diff:Number = (m_maxValue - m_minValue) / (m_numTickMarks - 1);
-			var index:int = Math.floor(val / diff);
-			if (val % diff > diff / 2) index++;
-			return index * diff;
+			if (m_frameListenerActive) return;
+
+			addEventListener(Event.ENTER_FRAME, self_enterFrame);
+			m_frameListenerActive = true;
+		}
+		
+		protected function removeFrameListener():void
+		{
+			if (!m_frameListenerActive) return;
+			var animationActive:Boolean = m_thumb.left != valueToPosition(m_value, m_minValue, 
+				m_maxValue);
+			if (animationActive || m_isDragging) return;
+			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
+			m_frameListenerActive = false;
 		}
 		
 		
 		
-		/***************************************************************************
-		*									events								   *
-		***************************************************************************/
+		//*****************************************************************************************
+		//*                                         Events                                        *
+		//*****************************************************************************************
 		protected function thumb_click(e:MouseEvent):void
 		{
 			m_dragStartThumbPosition = m_thumb.left;
 			m_dragStartMousePosition = m_track.mouseX;
 			m_isDragging = true;
-			addEventListener(Event.ENTER_FRAME, self_enterFrame);
+			addFrameListener();
 		}
 		
 		protected function stage_mouseUp(e:MouseEvent):void
@@ -220,13 +266,13 @@ package reprise.controls
 			{
 				return;
 			}
-			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			m_isDragging = false;
+			removeFrameListener();
 			applyCurrentDragValue();
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 		
-		protected function self_click(e:MouseEvent):void
+		protected function track_mouseDown(e:MouseEvent):void
 		{
 			setValue(positionToValue(mouseX - m_thumb.width / 2));
 			dispatchEvent(new Event(Event.CHANGE));
@@ -234,6 +280,12 @@ package reprise.controls
 		
 		protected function self_enterFrame(e:Event):void
 		{
+			// if we're not being dragged, there's animation to be done
+			if (!m_isDragging)
+			{
+				applyValue();
+				return;
+			}
 			if (m_isContinuous)
 			{
 				dispatchEvent(new Event(Event.CHANGE));
