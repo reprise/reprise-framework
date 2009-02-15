@@ -139,8 +139,11 @@ package reprise.css
 		}
 		reprise function getStyleForEscapedSelectorPath(sp : String) : CSSDeclaration
 		{
-			return m_declarationList && m_declarationList.getStyleForSelectorsPath(sp) || 
-				new CSSDeclaration();
+			if (!m_declarationList)
+			{
+				return new CSSDeclaration();
+			}
+			return m_declarationList.getStyleForSelectorsPath(sp);
 		}
 
 		public function stylesheetURLs() : Array
