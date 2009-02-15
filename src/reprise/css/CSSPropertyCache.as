@@ -32,21 +32,31 @@ package reprise.css
 		*							public methods								   *
 		***************************************************************************/
 		reprise static function propertyForKeyValue(
-			key:String, value:String, file : String) : Object
+			key:String, value:String, file : String, weak : Boolean = false) : Object
 		{
-			var prop:Object = g_propertyCache[key+"="+value+file];
+			var prop:Object = g_propertyCache[key+"="+value+file + weak];
 			if (!prop)
 			{
 				var parser : Function = CSSDeclaration.parserForProperty(key);
 				prop = parser(value, file);
-				setPropertyForKeyValue(key, value, file, prop);
+				if (weak)
+				{
+					if (prop is CSSProperty)
+					{
+						CSSProperty(prop).setIsWeak(true);
+					}
+					else if (prop is CSSParsingResult)
+					{
+						var props : Object = prop.properties();
+						for (key in props)
+						{
+							CSSProperty(props[key]).setIsWeak(true);
+						}
+					}
+				}
+				g_propertyCache[key+"="+value+file+weak] = prop;
 			}
 			return prop;
-		}
-		reprise static function setPropertyForKeyValue(
-			key:String, value:String, file : String, property:Object) : void
-		{
-			g_propertyCache[key+"="+value+file] = property;
 		}
 		
 		/***************************************************************************

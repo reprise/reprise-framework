@@ -102,6 +102,7 @@ package reprise.ui
 		protected var m_currentStyles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
 		protected var m_instanceStyles : CSSDeclaration;
+		protected var m_weakStyles : CSSDeclaration;
 		protected var m_elementDefaultStyles : CSSDeclaration;
 		
 		protected var m_autoFlags : Object = {};
@@ -1222,8 +1223,7 @@ package reprise.ui
 		 */
 		public function setStyleAttribute(value : String) : void
 		{
-			m_instanceStyles = 
-				CSSParsingHelper.parseDeclarationString(value, applicationURL());
+			m_instanceStyles = CSSParsingHelper.parseDeclarationString(value, applicationURL());
 		}
 
 		/**
@@ -1349,6 +1349,7 @@ package reprise.ui
 			m_transitionsManager = new CSSTransitionsManager(this);
 			m_layoutManager = new CSSBoxModelLayoutManager();
 			m_currentStyles = new ComputedStyles();
+			m_weakStyles = new CSSDeclaration();
 			m_stylesInvalidated = true;
 			super.initialize();
 		}
@@ -1509,7 +1510,7 @@ package reprise.ui
 				{
 					m_contentBoxWidth = m_intrinsicWidth;
 				}
-				if (m_intrinsicHeight != -1 && m_autoFlags.height)
+				if (m_autoFlags.height && m_intrinsicHeight != -1)
 				{
 					m_contentBoxHeight = m_intrinsicHeight;
 				}
@@ -1698,22 +1699,43 @@ package reprise.ui
 		{
 			refreshSelectorPath();
 			
-			var styles : CSSDeclaration = m_elementDefaultStyles.clone();
+//			var styles : CSSDeclaration = m_elementDefaultStyles.clone();
+//			var oldStyles : CSSDeclaration = m_specifiedStyles;
+//			
+//			if (m_parentElement != this && m_parentElement is UIComponent)
+//			{
+//				styles.inheritCSSDeclaration(
+//					UIComponent(m_parentElement).m_complexStyles);
+//			}
+//			
+//			if (m_rootElement.styleSheet)
+//			{
+//				styles.mergeCSSDeclaration(m_rootElement.styleSheet.
+//					getStyleForEscapedSelectorPath(m_selectorPath));
+//			}
+//			
+//			styles.mergeCSSDeclaration(m_instanceStyles);
+//			
+//			var compareStyles : CSSDeclaration = styles;
+			
+			var styles : CSSDeclaration = new CSSDeclaration();
 			var oldStyles : CSSDeclaration = m_specifiedStyles;
 			
-			if (m_parentElement != this && m_parentElement is UIComponent)
-			{
-				styles.inheritCSSDeclaration(
-					UIComponent(m_parentElement).m_complexStyles);
-			}
-			
+			styles.mergeCSSDeclaration(m_instanceStyles);
 			if (m_rootElement.styleSheet)
 			{
 				styles.mergeCSSDeclaration(m_rootElement.styleSheet.
-					getStyleForEscapedSelectorPath(m_selectorPath));
+					getStyleForEscapedSelectorPath(m_selectorPath), false, true);
+			}
+			if (m_parentElement != this && m_parentElement is UIComponent)
+			{
+				styles.mergeCSSDeclaration(
+					UIComponent(m_parentElement).m_complexStyles, true, true);
 			}
 			
-			styles.mergeCSSDeclaration(m_instanceStyles);
+			styles.mergeCSSDeclaration(m_elementDefaultStyles, false, true);
+			
+			styles.mergeCSSDeclaration(m_weakStyles, false, true);
 			
 			m_freezeDisplay = (styles.hasStyle('freezeDisplay') && 
 				styles.getStyle('freezeDisplay').specifiedValue() == true);
@@ -2008,7 +2030,7 @@ package reprise.ui
 						m_currentStyles[propName] = Math.round(
 							cssProperty.resolveRelativeValueTo(baseValue, this));
 					}
-					m_autoFlags[propName] = cssProperty.isAuto();
+					m_autoFlags[propName] = cssProperty.isAuto() || cssProperty.isWeak();
 				}
 				else 
 				{

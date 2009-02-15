@@ -159,14 +159,14 @@ package reprise.css
 		}
 		
 		// Alias for setPropertyForKey
-		public function setStyle(key : String, value : String = null) : void
+		public function setStyle(key : String, value : String = null, weak : Boolean = false) : void
 		{
 			if (!value)
 			{
 				m_properties[key] && delete m_properties[key];
 				return;
 			}
-			setValueForKeyDefinedInFile(value, key);
+			setValueForKeyDefinedInFile(value, key, '', weak);
 		}
 		// Alias for getPropertyForKey
 		public function getStyle(key : String) : CSSProperty
@@ -195,7 +195,7 @@ package reprise.css
 	
 		// the cssdeclaration defined by argument will by default overwrite our properties
 		public function mergeCSSDeclaration(otherDeclaration: CSSDeclaration, 
-			inheritableStylesOnly:Boolean = false) : void
+			inheritableStylesOnly:Boolean = false, weakly : Boolean = false) : void
 		{
 			var props : Object = otherDeclaration.m_properties;
 			var key : String;
@@ -214,9 +214,16 @@ package reprise.css
 				}
 				
 				otherProp = props[key];
+				
+				// well, inheritable styles only is the deal
+				if (weakly && ourProp && !ourProp.isAuto() && !otherProp.important())
+				{
+					continue;
+				}
+				
 							
 				// now we have two properties. so here goes the real merging
-				if (ourProp && ourProp.important() && !otherProp.important())
+				if (ourProp && ourProp.important() && (!otherProp.important() || weakly))
 				{
 					continue;
 				}
@@ -366,7 +373,7 @@ package reprise.css
 		***************************************************************************/
 		// internal handling of getting and setting properties
 		reprise function setValueForKeyDefinedInFile(
-			val:String, key:String, file:String = '') : void
+			val:String, key:String, file:String = '', weak : Boolean = false) : void
 		{
 			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file);
 			

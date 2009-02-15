@@ -56,8 +56,9 @@ package reprise.css
 		protected var m_cssFile : String;
 	
 		protected var m_id : Number;
+		protected var m_isWeak : Boolean;
+
 		
-	
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
@@ -99,6 +100,16 @@ package reprise.css
 		public function isRelativeValue() : Boolean
 		{
 			return m_isRelativeValue;
+		}
+		
+		public function setIsWeak(isWeak : Boolean) : void
+		{
+			m_isWeak = isWeak;
+		}
+		
+		public function isWeak() : Boolean
+		{
+			return m_isWeak;
 		}
 		
 		reprise function setIsRelativeValue( bFlag : Boolean ) : void
@@ -298,5 +309,4 @@ package reprise.css
 			return m_calculation.resolve(reference, context);
 		}
 	}
-	
 }
