@@ -1444,7 +1444,8 @@ package reprise.ui
 				if (!m_isRendered)
 				{
 					visible = false;
-					if (isCurrentlyRendered && !UIComponent(m_parentElement).m_isValidating)
+					if (m_parentElement && 
+						isCurrentlyRendered && !UIComponent(m_parentElement).m_isValidating)
 					{
 						UIComponent(m_parentElement).validateAfterChildren();
 					}
