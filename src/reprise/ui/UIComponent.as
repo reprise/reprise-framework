@@ -1438,11 +1438,16 @@ package reprise.ui
 			
 			if (m_stylesInvalidated)
 			{
+				var isCurrentlyRendered : Boolean = m_isRendered;
 				calculateStyles();
 				
 				if (!m_isRendered)
 				{
 					visible = false;
+					if (isCurrentlyRendered && !UIComponent(m_parentElement).m_isValidating)
+					{
+						UIComponent(m_parentElement).validateAfterChildren();
+					}
 					return;
 				}
 				if (m_isFrozen)
@@ -1502,15 +1507,47 @@ package reprise.ui
 			
 			measure();
 			
-			if (m_autoFlags.width || m_autoFlags.height)
+			if (m_autoFlags.width && (m_currentStyles.display == 'inline' ||
+				(!m_positionInFlow && (m_autoFlags.left || m_autoFlags.right))))
 			{
-				if (m_autoFlags.width && 
-					(m_currentStyles.display == 'inline' ||
-					(!m_positionInFlow && (m_autoFlags.left || m_autoFlags.right))))
+				if (m_transitionsManager.hasTransitionForStyle('width'))
+				{
+					if (m_weakStyles.hasStyle('width') && 
+						m_weakStyles.getStyle('width').specifiedValue() == m_intrinsicWidth)
+					{
+						m_contentBoxWidth = m_currentStyles.width;
+					}
+					else
+					{
+						m_weakStyles.setStyle('width', m_intrinsicWidth + 'px', true);
+						m_invalidateStylesAfterValidation = true;
+						m_stylesInvalidated = true;
+						invalidate();
+					}
+				}
+				else
 				{
 					m_contentBoxWidth = m_intrinsicWidth;
 				}
-				if (m_autoFlags.height && m_intrinsicHeight != -1)
+			}
+			if (m_autoFlags.height && m_intrinsicHeight != -1)
+			{
+				if (m_transitionsManager.hasTransitionForStyle('height'))
+				{
+					if (m_weakStyles.hasStyle('height') && 
+						m_weakStyles.getStyle('height').specifiedValue() == m_intrinsicHeight)
+					{
+						m_contentBoxHeight = m_currentStyles.height;
+					}
+					else
+					{
+						m_weakStyles.setStyle('height', m_intrinsicHeight + 'px', true);
+						m_invalidateStylesAfterValidation = true;
+						m_stylesInvalidated = true;
+						invalidate();
+					}
+				}
+				else
 				{
 					m_contentBoxHeight = m_intrinsicHeight;
 				}
@@ -1699,25 +1736,6 @@ package reprise.ui
 		{
 			refreshSelectorPath();
 			
-//			var styles : CSSDeclaration = m_elementDefaultStyles.clone();
-//			var oldStyles : CSSDeclaration = m_specifiedStyles;
-//			
-//			if (m_parentElement != this && m_parentElement is UIComponent)
-//			{
-//				styles.inheritCSSDeclaration(
-//					UIComponent(m_parentElement).m_complexStyles);
-//			}
-//			
-//			if (m_rootElement.styleSheet)
-//			{
-//				styles.mergeCSSDeclaration(m_rootElement.styleSheet.
-//					getStyleForEscapedSelectorPath(m_selectorPath));
-//			}
-//			
-//			styles.mergeCSSDeclaration(m_instanceStyles);
-//			
-//			var compareStyles : CSSDeclaration = styles;
-			
 			var styles : CSSDeclaration = new CSSDeclaration();
 			var oldStyles : CSSDeclaration = m_specifiedStyles;
 			
@@ -1763,6 +1781,7 @@ package reprise.ui
 			{
 				return;
 			}
+			
 			
 			m_complexStyles = styles;
 			m_currentStyles = styles.toComputedStyles();
@@ -1964,6 +1983,10 @@ package reprise.ui
 						m_currentStyles.paddingLeft - m_currentStyles.paddingRight - 
 						m_currentStyles.borderLeftWidth - m_currentStyles.borderRightWidth;
 				}
+			}
+			else if (wProp.isWeak())
+			{
+				m_autoFlags.width = true;
 			}
 			else
 			{

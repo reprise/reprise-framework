@@ -375,7 +375,7 @@ package reprise.css
 		reprise function setValueForKeyDefinedInFile(
 			val:String, key:String, file:String = '', weak : Boolean = false) : void
 		{
-			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file);
+			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file, weak);
 			
 			if (result is CSSProperty)
 			{

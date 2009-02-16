@@ -35,8 +35,15 @@ package reprise.css.transitions
 		protected static const DEFAULT_EASING : Array = [Linear.easeNone];
 		protected static var g_transitionShortcuts : Object = {};
 		
+		protected var m_transitionProperties : Array;
+		protected var m_transitionDurations : Array;
+		protected var m_transitionDelays : Array;
+		protected var m_transitionEasings : Array;
+		protected var m_defaultValues : Array;
+		
 		protected var m_activeTransitions : Object;
 		protected var m_target : EventDispatcher;
+		protected var m_frameDuration : int;
 
 		
 		/***************************************************************************
@@ -50,6 +57,11 @@ package reprise.css.transitions
 		public function isActive() : Boolean
 		{
 			return m_activeTransitions != null;
+		}
+		
+		public function hasTransitionForStyle(style : String) : Boolean
+		{
+			return m_transitionProperties && m_transitionProperties.indexOf(style) != -1;
 		}
 		
 		public function hasActiveTransitionForStyle(style : String) : Boolean
@@ -66,32 +78,31 @@ package reprise.css.transitions
 			var transitionEasing : Function;
 			var transition : CSSPropertyTransition;
 			var startTime : int = getTimer();
-			var frameDuration : int;
 			
 			if (newStyles.hasStyle('transitionFrameDropping') && 
 				newStyles.getStyle('transitionFrameDropping').specifiedValue() == 'prevent')
 			{
-				frameDuration = 1000 / frameRate;
+				m_frameDuration = 1000 / frameRate;
 			}
 			else
 			{
-				frameDuration = 10000;
+				m_frameDuration = 10000;
 			}
 			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
 			{
-				var transitionProperties : Array = 
+				m_transitionProperties = 
 					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
-				var transitionDurations : Array = newStyles.hasStyle('RepriseTransitionDuration') 
+				m_transitionDurations = newStyles.hasStyle('RepriseTransitionDuration') 
 					? newStyles.getStyle('RepriseTransitionDuration').specifiedValue() 
 					: DEFAULT_DURATION;
-				var transitionDelays : Array = newStyles.hasStyle('RepriseTransitionDelay') 
+				m_transitionDelays = newStyles.hasStyle('RepriseTransitionDelay') 
 					? newStyles.getStyle('RepriseTransitionDelay').specifiedValue() 
 					: DEFAULT_DELAY;
-				var transitionEasings : Array = 
+				m_transitionEasings = 
 					newStyles.hasStyle('RepriseTransitionTimingFunction') 
 					? newStyles.getStyle('RepriseTransitionTimingFunction').specifiedValue() 
 					: DEFAULT_EASING;
-				var defaultValues : Array = newStyles.getStyle(
+				m_defaultValues = newStyles.getStyle(
 					'RepriseTransitionDefaultValue').specifiedValue();
 				
 				//remove any transitions that aren't supposed to be active anymore
@@ -99,11 +110,12 @@ package reprise.css.transitions
 				{
 					for (transitionPropName in m_activeTransitions)
 					{
-						if (transitionProperties.indexOf(transitionPropName) == -1)
+						//TODO: check if the shortcut check can also use g_transitionShortcuts here
+						if (m_transitionProperties.indexOf(transitionPropName) == -1)
 						{
 							transition = m_activeTransitions[transitionPropName];
 							var shortcut : String = transition.shortcut;
-							if (!shortcut || transitionProperties.indexOf(shortcut) == -1)
+							if (!shortcut || m_transitionProperties.indexOf(shortcut) == -1)
 							{
 								delete m_activeTransitions[transitionPropName];
 								var cancelEvent : TransitionEvent = new TransitionEvent(
@@ -125,8 +137,7 @@ package reprise.css.transitions
 				function processProperty(transitionPropName : String, 
 					shortcut : String = null, defaultValue : CSSProperty = null) : void
 				{
-					var oldValue : CSSProperty = (oldStyles && 
-						oldStyles.getStyle(transitionPropName)) as CSSProperty;
+					var oldValue : CSSProperty = (oldStyles && oldStyles.getStyle(transitionPropName)) as CSSProperty;
 					var targetValue : CSSProperty = 
 						newStyles.getStyle(transitionPropName);
 					
@@ -144,21 +155,6 @@ package reprise.css.transitions
 							targetValue = defaultValue;
 						}
 					}
-					
-					//exception for intrinsic dimensions
-//					if (!targetValue && (transitionPropName == 'intrinsicHeight' || 
-//						transitionPropName == 'intrinsicWidth'))
-//					{
-//						//TODO: cache these properties
-//						trace("exception for " + transitionPropName);
-//						if (!m_firstDraw)
-//						{
-//							oldValue = new CSSProperty();
-//							oldValue.setSpecifiedValue(0);
-//						}
-//						targetValue = new CSSProperty();
-//						targetValue.setSpecifiedValue(999);
-//					}
 					
 					//ignore properties that don't have previous values or target values
 					//TODO: check if we can implement default values for new elements
@@ -184,24 +180,24 @@ package reprise.css.transitions
 					{
 						transition.easing = transitionEasing;
 						transition.updateValues(targetValue, transitionDuration, 
-							transitionDelay, startTime, frameDuration, this);
+							transitionDelay, startTime, m_frameDuration, this);
 					}
 				}
 				
 				//add all new properties and update already active ones
-				for (var i : int = 0; i < transitionProperties.length; i++)
+				for (var i : int = 0; i < m_transitionProperties.length; i++)
 				{
-					transitionPropName = transitionProperties[i];
-					transitionDuration = transitionDurations[i] || 
+					transitionPropName = m_transitionProperties[i];
+					transitionDuration = m_transitionDurations[i] || 
 						transitionDuration || DEFAULT_DURATION[0];
-					transitionDelay = transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
-					transitionEasing = transitionEasings[i] || 
+					transitionDelay = m_transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
+					transitionEasing = m_transitionEasings[i] || 
 						transitionEasing || DEFAULT_EASING[0];
 					var defaultValue : *;
-					if (defaultValues[i] && defaultValues[i] != 'none')
+					if (m_defaultValues[i] && m_defaultValues[i] != 'none')
 					{
 						defaultValue = CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, defaultValues[i], null);
+							transitionPropName, m_defaultValues[i], null);
 					}
 					if (g_transitionShortcuts[transitionPropName])
 					{
@@ -245,7 +241,7 @@ package reprise.css.transitions
 			{
 				transition = m_activeTransitions[transitionPropName];
 				var previousRatio : Number = transition.currentRatio;
-				transition.setValueForTimeInContext(startTime, frameDuration, this);
+				transition.setValueForTimeInContext(startTime, m_frameDuration, this);
 				if (previousRatio == 0 && transition.currentRatio != 0)
 				{
 					var startEvent : TransitionEvent = 

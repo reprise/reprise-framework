@@ -202,6 +202,7 @@ package reprise.css
 			str += "\tcomputed Value : " + m_computedValue + "\n";
 			str += "\tunit : " + m_unit + "\n";
 			str += "\timportant : " + m_important + "\n";
+			str += "\tweak : " + m_isWeak + "\n";
 			return str;
 		}	
 		
@@ -233,6 +234,7 @@ package reprise.css
 		{
 			var prop : CSSProperty = new CSSProperty();
 			prop.m_important = m_important;
+			prop.m_isWeak = m_isWeak;
 			prop.m_unit = m_unit;
 			prop.m_inheritsValue = m_inheritsValue;
 			prop.m_isRelativeValue = m_isRelativeValue;

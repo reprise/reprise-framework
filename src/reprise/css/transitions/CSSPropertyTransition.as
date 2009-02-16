@@ -71,6 +71,11 @@ package reprise.css.transitions
 			m_startValue = value;
 			currentValue = CSSProperty(value.clone(true));
 			m_backupValue = CSSProperty(value.clone(true));
+			if (m_endValue)
+			{
+				currentValue.setIsWeak(m_endValue.isWeak());
+				m_backupValue.setIsWeak(m_endValue.isWeak());
+			}
 			m_propertyTransition.startValue = value.specifiedValue();
 			m_propertyTransition.currentValue = currentValue.specifiedValue();
 		}
@@ -82,6 +87,11 @@ package reprise.css.transitions
 		public function set endValue(value : CSSProperty) : void
 		{
 			m_endValue = value;
+			if (currentValue)
+			{
+				currentValue.setIsWeak(m_endValue.isWeak());
+				m_backupValue.setIsWeak(m_endValue.isWeak());
+			}
 			m_propertyTransition.endValue = value.specifiedValue();
 		}
 		public function get endValue() : CSSProperty
