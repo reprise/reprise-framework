@@ -142,7 +142,8 @@ package reprise.css.transitions
 						newStyles.getStyle(transitionPropName);
 					
 					//apply default values
-					if (defaultValue && defaultValue.specifiedValue() != 'none')
+					if (defaultValue && (defaultValue.specifiedValue() != 'none' || 
+						transitionPropName == 'display'))
 					{
 						//use default value if we have a target value but no old value
 						if (targetValue && !oldValue)
@@ -194,7 +195,8 @@ package reprise.css.transitions
 					transitionEasing = m_transitionEasings[i] || 
 						transitionEasing || DEFAULT_EASING[0];
 					var defaultValue : *;
-					if (m_defaultValues[i] && m_defaultValues[i] != 'none')
+					if (m_defaultValues[i] && (m_defaultValues[i] != 'none' || 
+						transitionPropName == 'display'))
 					{
 						defaultValue = CSSPropertyCache.propertyForKeyValue(
 							transitionPropName, m_defaultValues[i], null);
