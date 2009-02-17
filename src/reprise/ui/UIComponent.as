@@ -1501,8 +1501,8 @@ package reprise.ui
 				return;
 			}
 			
-			var oldIntrinsicHeight : int = m_intrinsicHeight;
-			var oldIntrinsicWidth : int = m_intrinsicWidth;
+			var oldContentBoxHeight : int = m_contentBoxHeight;
+			var oldContentBoxWidth : int = m_contentBoxWidth;
 			
 			applyInFlowChildPositions();
 			
@@ -1585,8 +1585,8 @@ package reprise.ui
 	//				log("f reason for parentReflow: dims of in-flow changed");
 				}
 			}
-			else if (m_intrinsicHeight != oldIntrinsicHeight || 
-				m_intrinsicWidth != oldIntrinsicWidth)
+			else if (m_intrinsicHeight != oldContentBoxHeight || 
+				m_intrinsicWidth != oldContentBoxWidth)
 			{
 				applyOverflowProperty();
 			}
