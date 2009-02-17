@@ -25,10 +25,10 @@ package reprise.ui.renderers
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var SIDE_TOP : Number = 1;
-		protected static var SIDE_RIGHT : Number = 2;
-		protected static var SIDE_BOTTOM : Number = 3;
-		protected static var SIDE_LEFT : Number = 4;
+		protected static var SIDE_TOP : int = 1;
+		protected static var SIDE_RIGHT : int = 2;
+		protected static var SIDE_BOTTOM : int = 3;
+		protected static var SIDE_LEFT : int = 4;
 	
 	
 	
@@ -72,7 +72,7 @@ package reprise.ui.renderers
 			var order : Array = ['borderTopLeftRadius', 'borderTopRightRadius', 
 				'borderBottomRightRadius', 'borderBottomLeftRadius'];
 	
-			var i : Number;
+			var i : int;
 			var radiusItem : Number;
 			for (i = 0; i < order.length; i++)
 			{
@@ -107,7 +107,7 @@ package reprise.ui.renderers
 			var topRight : Point = new Point();
 			var bottomRight : Point = new Point();
 			var bottomLeft : Point = new Point();
-			if (borderWidth.top > 0 && borderStyle.top != 'none')
+			if (borderWidth.top > 0 && borderStyle.top != 'none' && borderColor.top != 0)
 			{
 				topLeft.x = 0;
 				topLeft.y = 0;
@@ -121,7 +121,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_TOP);
 			}
 			
-			if (borderWidth.right > 0 && borderStyle.right != 'none')
+			if (borderWidth.right > 0 && borderStyle.right != 'none' && borderColor.right != 0)
 			{
 				topLeft.x = m_width;
 				topLeft.y = 0;
@@ -135,7 +135,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_RIGHT);
 			}
 	
-			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none')
+			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none' && borderColor.bottom != 0)
 			{
 				topLeft.x = 0;
 				topLeft.y = m_height;
@@ -149,7 +149,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_BOTTOM);
 			}
 			
-			if (borderWidth.left > 0 && borderStyle.left != 'none')
+			if (borderWidth.left > 0 && borderStyle.left != 'none' && borderColor.left != 0)
 			{
 				topLeft.x = 0;
 				topLeft.y = 0;
@@ -171,7 +171,7 @@ package reprise.ui.renderers
 		***************************************************************************/
 		protected function drawBorderInRect(color : AdvancedColor, style : String, 
 			width : Number, pt1 : Point, pt2 : Point, pt3 : Point, pt4 : Point, 
-			side : Number) : void
+			side : int) : void
 		{
 			var colorValue : int = 0;
 			var opacityValue : int = 1;
