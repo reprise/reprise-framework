@@ -168,7 +168,7 @@ package reprise.external {
 			m_httpStatus = m_loader.httpStatus();
 			m_bytesLoaded = m_loader.bytesLoaded();
 			m_bytesTotal = m_loader.bytesTotal();
-			m_success = e.success;
+			m_success = e.success && !m_loader.isCancelled();
 			
 			if (m_success)
 			{
@@ -179,7 +179,8 @@ package reprise.external {
 			
 			for each (var target : BitmapResource in m_targets)
 			{
-				applyDataToTarget(target);
+				// target can be null. @see removeTarget
+				if (target) applyDataToTarget(target);
 			}
 			m_targets = null;
 			
