@@ -164,7 +164,10 @@ package reprise.ui
 		{
 			m_styleSheet = stylesheet;
 			invalidateStyles();
-			startWatchingStylesheets();
+			if (m_styleSheet)
+			{
+				startWatchingStylesheets();
+			}
 		}
 		/**
 		 * returns the stylesheet for this element structure
