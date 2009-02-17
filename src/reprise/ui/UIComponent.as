@@ -1775,6 +1775,8 @@ package reprise.ui
 			
 			m_specifiedStyles = styles;
 			styles = m_transitionsManager.processTransitions(oldStyles, styles, stage.frameRate);
+			m_complexStyles = styles;
+			
 			//this element might have been removed in a transitions event handler. Return if so.
 			m_isRendered = !(styles.hasStyle('display') && 
 				styles.getStyle('display').specifiedValue() == 'none') && m_rootElement;
@@ -1783,8 +1785,6 @@ package reprise.ui
 				return;
 			}
 			
-			
-			m_complexStyles = styles;
 			m_currentStyles = styles.toComputedStyles();
 			
 			if (m_transitionsManager.isActive())
