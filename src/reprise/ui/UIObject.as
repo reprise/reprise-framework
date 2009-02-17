@@ -813,6 +813,7 @@ package reprise.ui
 			{
 				visible = false;
 				m_isValidating = false;
+				finishValidation();
 				return;
 			}
 			validateChildren();
