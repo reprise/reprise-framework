@@ -29,7 +29,6 @@ package reprise.ui
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "UIObject";
 		
 		
 		/***************************************************************************
@@ -71,7 +70,8 @@ package reprise.ui
 		protected var m_tooltipDelay : int = 0;
 		
 		protected var m_delayedMethods : Array;
-		
+		protected var m_childArrayCleanupNeeded : Boolean;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -836,10 +836,15 @@ package reprise.ui
 		}
 		protected function validateChildren() : void
 		{
-			var childCount : int = m_children.length;
-			for (var i : int = 0; i < childCount; i++)
+			for (var i : int = 0; i < m_children.length; i++)
 			{
 				validateChild(UIObject(m_children[i]));
+			}
+			if (m_childArrayCleanupNeeded)
+			{
+				m_children = m_children.filter(function(
+					item : Object, index : int, array : Array) : Boolean {return item != null;});
+				m_childArrayCleanupNeeded = false;
 			}
 		}
 		protected function validateChild(child:UIObject) : void
@@ -849,11 +854,21 @@ package reprise.ui
 		
 		protected function unregisterChildView(child:UIObject) : void
 		{
-			if (child.m_parentElement != this)
+			var index : int = m_children.indexOf(child);
+			if (index == -1)
 			{
 				return;
 			}
-			m_children.splice(m_children.indexOf(child), 1);
+			
+			if (m_isValidating)
+			{
+				m_childArrayCleanupNeeded = true;
+				m_children[index] = null;
+			}
+			else
+			{
+				m_children.splice(m_children.indexOf(child), 1);
+			}
 			child.parent.removeChild(child);
 			child.m_parentElement = null;
 			child.setRootElement(null);
