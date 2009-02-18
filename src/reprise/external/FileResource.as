@@ -10,12 +10,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.external 
-{	
+{
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	
+	import flash.net.URLRequestMethod;	
+
 	public class FileResource extends AbstractResource
 	{
 		/***************************************************************************
@@ -23,6 +24,7 @@ package reprise.external
 		***************************************************************************/
 		protected var m_loader : URLLoader;
 		protected var m_requestContentType : String;
+		protected var m_requestMethod : String;
 		protected var m_data : String;
 		
 		
@@ -78,8 +80,9 @@ package reprise.external
 			var request : URLRequest = new URLRequest(urlByAppendingTimestamp());
 			if (m_requestContentType)
 			{
-				request.contentType = 'text/xml; charset=utf-8';
+				request.contentType = m_requestContentType;
 			}
+			request.method = m_requestMethod || URLRequestMethod.GET;
 			return request;
 		}
 		

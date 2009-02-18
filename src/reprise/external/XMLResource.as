@@ -28,6 +28,7 @@ package reprise.external
 		public function XMLResource(url:String) 
 		{
 			setRequestContentType('text/xml; charset=utf-8');
+			m_requestMethod = URLRequestMethod.POST;
 			super(url);
 		}
 		
@@ -49,7 +50,6 @@ package reprise.external
 		protected override function createRequest() : URLRequest
 		{
 			var request : URLRequest = super.createRequest();
-			request.method = URLRequestMethod.POST;
 			if (m_requestXML)
 			{
 				request.data = m_requestXML.toXMLString();
