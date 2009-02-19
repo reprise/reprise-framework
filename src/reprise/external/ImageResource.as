@@ -42,7 +42,12 @@ package reprise.external
 		public override function content() : *
 		{
 			return m_resource;
-		}		
+		}
+		
+		public function loader() : Loader
+		{
+			return m_loader;
+		}
 		
 		public function bitmap(backgroundColor:Number = NaN, smoothing : Boolean = false) : BitmapData
 		{
