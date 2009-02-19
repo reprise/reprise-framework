@@ -63,7 +63,10 @@ package reprise.commands
 		//*****************************************************************************************
 		//*                                     Public Methods                                    *
 		//*****************************************************************************************
-		public function CompositeCommand() {}
+		public function CompositeCommand() 
+		{
+			reset();
+		}
 		
 		
 		/**
@@ -89,7 +92,7 @@ package reprise.commands
 		public function addCommand(cmd:ICommand):void
 		{
 			// we automatically reset everything for a new run
-			if (!m_pendingCommands || (!m_isExecuting && !m_pendingCommands.length))
+			if (!m_isExecuting && !m_pendingCommands.length)
 			{
 				reset();
 			}
@@ -232,7 +235,7 @@ package reprise.commands
 		*/
 		protected function executeNext() : void
 		{
-			if (!m_pendingCommands || m_pendingCommands.length == 0 && m_currentCommands.length == 0)
+			if (m_pendingCommands.length == 0 && m_currentCommands.length == 0)
 			{
 				m_isExecuting = false;
 				// we only dispatch a event if we're executing asynchronously
