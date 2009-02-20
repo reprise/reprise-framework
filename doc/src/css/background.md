@@ -5,8 +5,7 @@ toc-title: Background
 ## background
 
 ### Description
-A shorthand property for setting all background properties in one declaration. __Background attachment
-is not supported!__
+A shorthand property for setting all background properties in one declaration. __Background attachment is not supported!__
 
 ### Values
 * `background-color`
@@ -135,9 +134,7 @@ The background-position property sets the starting position of a background imag
 ## background-scale9-rect
 
 ### Description
-Scales a background image according to a user defined scaling rect. With Scale 9 you can resize 
-images without having distorted them. The defined rect is applied to the current background image
-and uses the size of the element in which the background image is drawn.
+Scales a background image according to a user defined scaling rect. With Scale 9 you can resize images without distorting them. The defined rect is applied to the current background image and uses the size of the element in which the background image is drawn.
 
 ![Scale9grid](images/scale9grid.gif)
 
@@ -171,10 +168,58 @@ and uses the size of the element in which the background image is drawn.
 ***
 
 ## background-image-type
+<table>
+	<tr>
+		<th>Name:</th>
+		<th>background-image-type</th>
+	</tr>
+	<tr>
+		<td>Value:</td>
+		<td><code>bitmap | animation</code></td>
+	</tr>
+	<tr>
+		<td>Initial:</td>
+		<td><code>bitmap</code></td>
+	</tr>
+	<tr>
+		<td>Applies to:</td>
+		<td>All elements</td>
+	</tr>
+	<tr>
+		<td>Inherited:</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>Percentages:</td>
+		<td>N/A</td>
+	</tr>
+</table>
+
+### Description
+The `background-image-type` property defines if the background image is treated as a static bitmap image or as an active swf movie that may contain animations or run code.
+
 
 ***
 
 ## background-image-preload
+
+Name
+: background-image-preload
+
+Value
+: preload | true | false
+
+Initial
+: false
+
+Applies to
+: N/A
+
+Inherited
+: No
+
+Percentages
+: N/A
 
 ### Description
 Specifies if the CSS implementation should preload the `background-image` specified in the same declaration as this property.
@@ -183,21 +228,40 @@ Using this property, you can force images to be preloaded as part of the CSS loa
 
 Note that this property only works in conjunction with the `background-image` property, not with background images specified in the `background` shortcut.
 
-### Values
-* `preload` | `true`
-* `false`
-
 ***
 
 ## background-image-aliasing
+<table>
+	<tr>
+		<th>Name:</th>
+		<th>background-image-aliasing</th>
+	</tr>
+	<tr>
+		<td>Value:</td>
+		<td><code>alias | anti-alias</code></td>
+	</tr>
+	<tr>
+		<td>Initial:</td>
+		<td><code>anti-alias</code></td>
+	</tr>
+	<tr>
+		<td>Applies to:</td>
+		<td>All Elements</td>
+	</tr>
+	<tr>
+		<td>Inherited:</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>Percentages:</td>
+		<td>N/A</td>
+	</tr>
+</table>
 
 ### Description
-Specifies if an image used as the background image should be aliased or not. If this property is not 
-set, the DefaultBackgroundRenderer uses `anti-alias`.
+Specifies if an image used as the background image should be aliased or not. If this property is not set, the DefaultBackgroundRenderer uses `anti-alias`.
 
-### Values
-* `alias`
-* `anti-alias`
+Only applies to background images for elements that don't have `background-image-type` set to `animation`.
 
 ### Examples
 
