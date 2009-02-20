@@ -79,7 +79,7 @@ package reprise.controls
 		
 		public override function setData(theData:*):void
 		{
-			super.setXMLData(theData);
+			super.setData(theData);
 			options = theData;
 		}
 		
