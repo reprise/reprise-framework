@@ -124,7 +124,7 @@ package reprise.controls.html
 		
 		protected override function measure() : void
 		{
-			if (!(m_imageLoader && m_imageLoader.didFinishLoading()))
+			if (!(m_imageLoader && m_imageLoader.didSucceed()))
 			{
 				m_intrinsicWidth = 0;
 				m_intrinsicHeight = 0;
