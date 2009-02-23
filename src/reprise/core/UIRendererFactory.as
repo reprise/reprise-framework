@@ -25,7 +25,7 @@ package reprise.core
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var TEXTNODE_TAGS : String = "span,br,strong,null,";
+		public static var TEXTNODE_TAGS : String = "span,br,strong,i,null,";
 		
 		
 		/***************************************************************************

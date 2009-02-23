@@ -2246,9 +2246,10 @@ package reprise.ui
 		 */
 		protected function parseXMLContent(node : XML) : void
 		{
-			for each (var childNode:XML in node.children())
+			var childNode : XML = node.children()[0];
+			while (childNode)
 			{
-				preprocessTextNode(childNode);
+				childNode = preprocessTextNode(childNode);
 				var child : UIComponent = 
 					m_rootElement.uiRendererFactory().rendererByNode(childNode);
 				if (child)
@@ -2260,37 +2261,40 @@ package reprise.ui
 				{
 					log("f No handler found for node: " + childNode.toXMLString());
 				}
+				childNode = childNode.parent().children()[childNode.childIndex() + 1];
 			}
 		}
 		
-		protected function preprocessTextNode(node : XML) : void
+		protected function preprocessTextNode(node : XML) : XML
 		{
 			var textNodeTags : String = UIRendererFactory.TEXTNODE_TAGS;
-			if (textNodeTags.indexOf(node.localName() + ",") != -1)
+			if (textNodeTags.indexOf(node.localName() + ",") == -1)
 			{
-				var nodesToCombine : XMLList = new XMLList(node);
-				var parentNode : XML = node.parent() as XML;
-				var siblings : XMLList = parentNode ? parentNode.* : null;
-				if (!siblings)
-				{
-					return;
-				}
-				//TODO: find a cleaner way to combine text nodes
-				for (var i : int = node.childIndex() + 1; 
-					i < XMLList(parentNode.*).length();)
-				{
-					var sibling : XML = XMLList(parentNode.*)[i];
-					if (textNodeTags.indexOf(sibling.localName() + ',') == -1)
-					{
-						break;
-					}
-					nodesToCombine += sibling;
-					delete parentNode.*[i];
-				}
-				var xmlParser : XML = <p/>;
-				xmlParser.setChildren(nodesToCombine);
-				siblings[node.childIndex()] = xmlParser;
+				return node;
 			}
+			var nodesToCombine : XMLList = new XMLList(node);
+			var parentNode : XML = node.parent() as XML;
+			var siblings : XMLList = parentNode ? parentNode.* : null;
+			if (!siblings)
+			{
+				return node;
+			}
+			//TODO: find a cleaner way to combine text nodes
+			for (var i : int = node.childIndex() + 1; 
+				i < XMLList(parentNode.*).length();)
+			{
+				var sibling : XML = XMLList(parentNode.*)[i];
+				if (textNodeTags.indexOf(sibling.localName() + ',') == -1)
+				{
+					break;
+				}
+				nodesToCombine += sibling;
+				delete parentNode.*[i];
+			}
+			var xmlParser : XML = <p/>;
+			xmlParser.setChildren(nodesToCombine);
+			siblings[node.childIndex()] = xmlParser;
+			return xmlParser;
 		}
 		
 		
