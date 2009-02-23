@@ -52,7 +52,7 @@ package reprise.controls.html
 		***************************************************************************/
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
-			var htmlEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK);
+			var htmlEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, true);
 			htmlEvent.href = m_href;
 			htmlEvent.linkTarget = m_target;
 			dispatchEvent(htmlEvent);
