@@ -12,7 +12,7 @@ package reprise.controls
 	import reprise.ui.DocumentView;
 	
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
+	import flash.events.EventDispatcher;	
 	
 	use namespace reprise;
 	
@@ -118,6 +118,26 @@ package reprise.controls
 		public function selectedData():*
 		{
 			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
+		}
+		
+		public function selectNextButton(currentButton : RadioButton) : void
+		{
+			var currentIndex : int = m_radioButtons.indexOf(currentButton);
+			if (currentIndex < m_radioButtons.length - 1)
+			{
+				var nextButton : RadioButton = m_radioButtons[currentIndex + 1];
+				setRadioButtonSelected(nextButton, true);
+			}
+		}
+		
+		public function selectPreviousButton(currentButton : RadioButton) : void
+		{
+			var currentIndex : int = m_radioButtons.indexOf(currentButton);
+			if (currentIndex > 0)
+			{
+				var nextButton : RadioButton = m_radioButtons[currentIndex - 1];
+				setRadioButtonSelected(nextButton, true);
+			}
 		}
 		
 		public function activateNextButton(currentButton : RadioButton) : void
