@@ -195,6 +195,22 @@ package reprise.controls
 		{
 			m_instanceStyles.setStyle('scaleScrollThumb', scaleScrollThumb.toString());
 		}
+
+		/**
+		 * getter for the m_scrollUpBtn 
+		 */		
+		public function get scrollUpBtn() : SimpleButton
+		{
+			return m_scrollUpBtn;
+		}
+		
+		/**
+		 * getter for the m_scrollDownBtn 
+		 */
+		public function get scrollDownBtn() : SimpleButton
+		{
+			return m_scrollDownBtn;
+		}
 		
 		/**
 		 * sets the area in which the scrollbar should react on mouseWheel events
