@@ -174,7 +174,7 @@ package reprise.ui.renderers
 			side : int) : void
 		{
 			var colorValue : int = 0;
-			var opacityValue : int = 1;
+			var opacityValue : Number = 1;
 			if (color)
 			{
 				colorValue = color.rgb();
