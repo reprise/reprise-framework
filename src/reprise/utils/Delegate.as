@@ -10,12 +10,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.utils
-{ 
-	import reprise.commands.ICommand;	
-	
-	import flash.events.EventDispatcher;
-	
-	public class Delegate extends EventDispatcher implements ICommand
+{
+	import reprise.commands.AbstractCommand;	 
+
+	public class Delegate extends AbstractCommand
 	{
 		/***************************************************************************
 		*							protected properties							   *
@@ -23,8 +21,6 @@ package reprise.utils
 		protected var m_scope : Object;
 		protected var m_method : Function;
 		protected var m_args : Array;
-		protected var m_priority : Number;
-		protected var m_id : Number;
 		
 		
 		/***************************************************************************
@@ -45,12 +41,13 @@ package reprise.utils
 		/**
 		 * executes the delegate
 		 */
-		public function execute(...rest) : void
+		public override function execute(...rest) : void
 		{
 			var args:Array = rest.concat(m_args).concat(this);
 			m_method.apply(m_scope, args);
+			m_didSucceed = true;
 		}
-		
+
 		public function scope() : Object
 		{
 			return m_scope;
@@ -58,31 +55,6 @@ package reprise.utils
 		public function setScope(scope : Object) : void
 		{
 			m_scope = scope;
-		}
-		
-		public function get priority():Number
-		{
-			return m_priority;
-		}
-		
-		public function set priority(value:Number):void
-		{
-			m_priority = value;
-		}
-		
-		public function get id():Number
-		{
-			return m_id;
-		}
-		
-		public function set id(value:Number):void
-		{
-			m_id = value;
-		}		
-		
-		public function didSucceed():Boolean
-		{
-			return true;
 		}
 	}
 }
