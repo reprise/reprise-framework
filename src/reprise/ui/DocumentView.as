@@ -11,16 +11,12 @@
 
 package reprise.ui
 {
-	import reprise.css.ComputedStyles;	
-	
-	import flash.geom.Rectangle;	
-	
 	import reprise.core.ApplicationContext;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
-	import reprise.data.collection.HashMap;
+	import reprise.css.ComputedStyles;
 	import reprise.events.DebugEvent;
 	import reprise.events.DisplayEvent;
 	
@@ -38,7 +34,7 @@ package reprise.ui
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
+	import flash.utils.setTimeout;		
 	
 	use namespace reprise;
 
@@ -62,8 +58,7 @@ package reprise.ui
 		protected var m_styleSheet : CSS;
 		protected var m_rendererFactory : UIRendererFactory;
 	
-		protected var m_elementsById : HashMap;
-		protected var m_elementsByTagName : HashMap;
+		protected var m_elementsById : Object;
 		
 		protected var m_appContext : ApplicationContext;
 		
@@ -89,7 +84,7 @@ package reprise.ui
 		public function DocumentView()
 		{
 			m_rendererFactory = new UIRendererFactory();
-			m_elementsById = new HashMap();
+			m_elementsById = {};
 		}
 		
 		/**
@@ -189,7 +184,7 @@ package reprise.ui
 		 */
 		public function getElementById(id:String) : UIComponent
 		{
-			return UIComponent(m_elementsById.objectForKey(id));
+			return UIComponent(m_elementsById[id]);
 		}
 		
 		/**
@@ -206,11 +201,11 @@ package reprise.ui
 		***************************************************************************/
 		reprise function registerElementID(id:String, element:UIComponent) : void
 		{
-			m_elementsById.setObjectForKey(element, id);
+			m_elementsById[id] = element;
 		}
 		reprise function removeElementID(id:String) : void
 		{
-			m_elementsById.removeObjectForKey(id);
+			m_elementsById[id] && delete m_elementsById[id];
 		}
 		
 		reprise function markChildAsInvalid(child : UIObject) : void
