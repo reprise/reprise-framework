@@ -308,7 +308,6 @@ package reprise.css
 		protected function resolveCalculation(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
-			log(m_specifiedValue, reference);
 			return m_calculation.resolve(reference, context);
 		}
 	}
