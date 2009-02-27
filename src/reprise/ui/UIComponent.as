@@ -163,6 +163,8 @@ package reprise.ui
 		private var m_oldInFlowStatus : int = -1;
 		private var m_oldOuterBoxDimension : Point;
 		protected var m_invalidateStylesAfterValidation : Boolean;
+		private var m_oldContentBoxWidth : int;
+		private var m_oldContentBoxHeight : int;
 
 		
 		/***************************************************************************
@@ -1433,8 +1435,8 @@ package reprise.ui
 				m_borderBoxHeight + m_currentStyles.marginTop + m_currentStyles.marginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
 			
-			var oldWidth : int = m_currentStyles.width;
-			var oldHeight : int = m_currentStyles.height;
+			m_oldContentBoxWidth = m_contentBoxWidth;
+			m_oldContentBoxHeight = m_contentBoxHeight;
 			
 			if (m_stylesInvalidated)
 			{
@@ -1483,8 +1485,8 @@ package reprise.ui
 						}
 					}
 					applyStyles();
-					if (m_currentStyles.width != oldWidth || 
-						m_currentStyles.height != oldHeight)
+					if (m_currentStyles.width != m_oldContentBoxWidth || 
+						m_currentStyles.height != m_oldContentBoxHeight)
 					{
 						m_specifiedDimensionsChanged = true;
 					}
@@ -1501,9 +1503,8 @@ package reprise.ui
 				return;
 			}
 			
-			var oldContentBoxHeight : int = m_contentBoxHeight;
-			var oldContentBoxWidth : int = m_contentBoxWidth;
-			
+			var oldIntrinsicWidth : int = m_intrinsicWidth;
+			var oldIntrinsicHeight : int = m_intrinsicHeight;
 			applyInFlowChildPositions();
 			
 			measure();
@@ -1520,7 +1521,11 @@ package reprise.ui
 					}
 					else
 					{
+						//TODO: deal with inline elements adapting to the intermittend sizes, 
+						//changing the intrinsic width
 						m_weakStyles.setStyle('width', m_intrinsicWidth + 'px', true);
+						m_specifiedStyles.setStyle('width', m_oldContentBoxWidth + 'px');
+						m_contentBoxWidth = m_oldContentBoxWidth;
 						m_invalidateStylesAfterValidation = true;
 						m_stylesInvalidated = true;
 						invalidate();
@@ -1543,6 +1548,8 @@ package reprise.ui
 					else
 					{
 						m_weakStyles.setStyle('height', m_intrinsicHeight + 'px', true);
+						m_specifiedStyles.setStyle('height', m_oldContentBoxHeight + 'px');
+						m_contentBoxHeight = m_oldContentBoxHeight;
 						m_invalidateStylesAfterValidation = true;
 						m_stylesInvalidated = true;
 						invalidate();
@@ -1585,8 +1592,10 @@ package reprise.ui
 	//				log("f reason for parentReflow: dims of in-flow changed");
 				}
 			}
-			else if (m_intrinsicHeight != oldContentBoxHeight || 
-				m_intrinsicWidth != oldContentBoxWidth)
+			else if (m_contentBoxHeight != m_oldContentBoxHeight || 
+				m_contentBoxWidth != m_oldContentBoxWidth || 
+				m_intrinsicHeight != oldIntrinsicHeight || 
+				m_intrinsicWidth != oldIntrinsicWidth)
 			{
 				applyOverflowProperty();
 			}
