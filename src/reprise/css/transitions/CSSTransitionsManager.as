@@ -159,7 +159,7 @@ package reprise.css.transitions
 					
 					//ignore properties that don't have previous values or target values
 					//TODO: check if we can implement default values for new elements
-					if (!oldValue || !targetValue || 
+					if (!oldValue || !targetValue || targetValue.isAuto() || 
 						oldValue.specifiedValue() == targetValue.specifiedValue())
 					{
 						return;
