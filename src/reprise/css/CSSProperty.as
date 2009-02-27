@@ -222,11 +222,11 @@ package reprise.css
 			{
 				return m_specifiedValue is Number && m_specifiedValue || 0;
 			}
-			if (m_calculationResultsCache[reference])
+			if (m_calculationResultsCache[reference+m_specifiedValue])
 			{
-				return m_calculationResultsCache[reference];
+				return m_calculationResultsCache[reference+m_specifiedValue];
 			}
-			return m_calculationResultsCache[reference] = 
+			return m_calculationResultsCache[reference+m_specifiedValue] = 
 				resolveCalculation(reference, context);
 		}
 		
@@ -308,6 +308,7 @@ package reprise.css
 		protected function resolveCalculation(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
+			log(m_specifiedValue, reference);
 			return m_calculation.resolve(reference, context);
 		}
 	}
