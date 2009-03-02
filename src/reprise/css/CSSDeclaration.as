@@ -63,10 +63,10 @@ package reprise.css
 		};
 		protected static const g_textStyleNames : Object = {};
 		
-		protected static var m_inheritableProperties : Object = {};
-		protected static var m_defaultValues : Object	= {};
-		protected static var m_propertyToParserTable : Object	= {};
-		protected static var g_defaultPropertiesRegistered : Boolean;	
+		protected static const g_inheritableProperties : Object = {};
+		protected static const g_propertyToParserTable : Object	= {};
+		protected static const g_defaultPropertiesRegistered : Boolean = 
+			registerDefaultProperties();
 		
 		protected var m_properties : Object;
 		protected var m_hasDefaultValues : Boolean;
@@ -81,12 +81,6 @@ package reprise.css
 		***************************************************************************/
 		public function CSSDeclaration()
 		{
-			if (!CSSDeclaration.g_defaultPropertiesRegistered)
-			{
-				CSSDeclaration.g_defaultPropertiesRegistered = 
-					CSSDeclaration.registerDefaultProperties();
-			}		
-			
 			m_properties = {};
 		}
 		
@@ -106,14 +100,6 @@ package reprise.css
 			var properties : Object = collection.KNOWN_PROPERTIES;
 			
 			registerPropertyCollectionObject(properties, collection);
-			
-			if (collection.defaultValues)
-			{
-				for (var key : String in collection.defaultValues)
-				{
-					m_defaultValues[key] = collection.defaultValues[key];
-				}
-			}
 		}
 		
 		private static function registerPropertyCollectionObject(
@@ -123,10 +109,10 @@ package reprise.css
 				for (var prop : String in properties)
 				{
 					var definition : Object = properties[prop];
-					m_propertyToParserTable[prop] = definition['parser'];
+					g_propertyToParserTable[prop] = definition['parser'];
 					if (definition['inheritable'])
 					{
-						m_inheritableProperties[prop] = true;
+						g_inheritableProperties[prop] = true;
 					}
 					if (definition['transition'])
 					{
@@ -144,7 +130,7 @@ package reprise.css
 		reprise static function parserForProperty(key : String) : Function
 		{
 			// get the name of the associated class
-			var parser : Function = CSSDeclaration.m_propertyToParserTable[key];
+			var parser : Function = g_propertyToParserTable[key];
 			if (parser == null)
 			{
 				parser = DefaultParser.parseAnything;
@@ -207,7 +193,7 @@ package reprise.css
 				ourProp = m_properties[key];
 				
 				// well, inheritable styles only is the deal
-				if (inheritableStylesOnly && !m_inheritableProperties[key] && 
+				if (inheritableStylesOnly && !g_inheritableProperties[key] && 
 					!(ourProp && ourProp.inheritsValue()))
 				{
 					continue;
@@ -216,7 +202,7 @@ package reprise.css
 				otherProp = props[key];
 				
 				// well, inheritable styles only is the deal
-				if (weakly && ourProp && !ourProp.isAuto() && !otherProp.important())
+				if (weakly && ourProp && !otherProp.important())
 				{
 					continue;
 				}
@@ -235,18 +221,6 @@ package reprise.css
 		public function inheritCSSDeclaration(parentDeclaration:CSSDeclaration) : void
 		{
 			mergeCSSDeclaration(parentDeclaration, true);
-		}
-		
-		public function addDefaultValues() : void
-		{
-			for (var key : String in m_defaultValues)
-			{
-				if (m_properties[key])
-				{
-					continue;
-				}
-				m_properties[key] = CSSProperty(m_defaultValues[key]);		
-			}
 		}
 		
 		public function compare(otherDeclaration:CSSDeclaration) : Boolean
@@ -406,15 +380,15 @@ package reprise.css
 		
 		protected static function registerDefaultProperties() : Boolean
 		{
-			CSSDeclaration.registerPropertyCollection(Background);
-			CSSDeclaration.registerPropertyCollection(Border);
-			CSSDeclaration.registerPropertyCollection(DisplayPosition);
-			CSSDeclaration.registerPropertyCollection(Font);
-			CSSDeclaration.registerPropertyCollection(Margin);
-			CSSDeclaration.registerPropertyCollection(Padding);
-			CSSDeclaration.registerPropertyCollection(ScrollbarProperties);
-			CSSDeclaration.registerPropertyCollection(Filters);
-			CSSDeclaration.registerPropertyCollection(Transition);
+			registerPropertyCollection(Background);
+			registerPropertyCollection(Border);
+			registerPropertyCollection(DisplayPosition);
+			registerPropertyCollection(Font);
+			registerPropertyCollection(Margin);
+			registerPropertyCollection(Padding);
+			registerPropertyCollection(ScrollbarProperties);
+			registerPropertyCollection(Filters);
+			registerPropertyCollection(Transition);
 			return true;
 		}
 	}
