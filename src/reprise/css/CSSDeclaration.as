@@ -202,7 +202,7 @@ package reprise.css
 				otherProp = props[key];
 				
 				// well, inheritable styles only is the deal
-				if (weakly && ourProp && !otherProp.important())
+				if (weakly && ourProp && !ourProp.isAuto() && !otherProp.important())
 				{
 					continue;
 				}
