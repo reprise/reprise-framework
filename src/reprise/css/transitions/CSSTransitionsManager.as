@@ -21,7 +21,7 @@ package reprise.css.transitions
 	import com.robertpenner.easing.Linear;
 	
 	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;
+	import flash.utils.getTimer;	
 	
 	use namespace reprise;
 	
@@ -70,7 +70,7 @@ package reprise.css.transitions
 		}
 
 		public function processTransitions(oldStyles : CSSDeclaration, newStyles : CSSDeclaration, 
-			frameRate : int) : CSSDeclaration
+			frameRate : int, frameTime : int) : CSSDeclaration
 		{
 			var transitionPropName : String;
 			var transitionDuration : CSSProperty;
@@ -121,7 +121,7 @@ package reprise.css.transitions
 								var cancelEvent : TransitionEvent = new TransitionEvent(
 									TransitionEvent.TRANSITION_CANCEL);
 								cancelEvent.propertyName = transitionPropName;
-								cancelEvent.elapsedTime = startTime - 
+								cancelEvent.elapsedTime = frameTime - 
 									transition.startTime - 
 									transition.delay.specifiedValue();
 								m_target.dispatchEvent(cancelEvent);
@@ -172,7 +172,7 @@ package reprise.css.transitions
 						transition.duration = transitionDuration;
 						transition.delay = transitionDelay;
 						transition.easing = transitionEasing;
-						transition.startTime = startTime;
+						transition.startTime = frameTime;
 						transition.startValue = oldValue;
 						transition.endValue = targetValue;
 						m_activeTransitions[transitionPropName] = transition;
@@ -181,7 +181,7 @@ package reprise.css.transitions
 					{
 						transition.easing = transitionEasing;
 						transition.updateValues(targetValue, transitionDuration, 
-							transitionDelay, startTime, m_frameDuration, this);
+							transitionDelay, frameTime, m_frameDuration, this);
 					}
 				}
 				
@@ -243,7 +243,7 @@ package reprise.css.transitions
 			{
 				transition = m_activeTransitions[transitionPropName];
 				var previousRatio : Number = transition.currentRatio;
-				transition.setValueForTimeInContext(startTime, m_frameDuration, this);
+				transition.setValueForTimeInContext(frameTime, m_frameDuration, this);
 				if (previousRatio == 0 && transition.currentRatio != 0)
 				{
 					var startEvent : TransitionEvent = 
@@ -258,7 +258,7 @@ package reprise.css.transitions
 					var completeEvent : TransitionEvent = 
 						new TransitionEvent(TransitionEvent.TRANSITION_COMPLETE);
 					completeEvent.propertyName = transitionPropName;
-					completeEvent.elapsedTime = startTime - 
+					completeEvent.elapsedTime = frameTime - 
 						transition.startTime - 
 						(transition.delay ? transition.delay.specifiedValue() : 0);
 					m_target.dispatchEvent(completeEvent);

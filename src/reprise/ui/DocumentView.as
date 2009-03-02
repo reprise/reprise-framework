@@ -76,6 +76,7 @@ package reprise.ui
 		protected var m_currentDebugElement : UIComponent;
 		protected var m_debugInterface : Sprite;
 		protected var m_validatedElementsCount : int;
+		protected var m_currentFrameTime : int;
 
 		
 		/***************************************************************************
@@ -110,6 +111,19 @@ package reprise.ui
 		public function applicationContext() : ApplicationContext
 		{
 			return m_appContext;
+		}
+		
+		/**
+		 * Returns the time that's used as the time for all timed actions executed in the 
+		 * current frame.
+		 * 
+		 * This time is used to synchronize all frame actions.
+		 * 
+		 * @return The time to use for all times frame actions.
+		 */
+		public function frameTime() : int
+		{
+			return m_currentFrameTime;
 		}
 		
 		/**
@@ -331,7 +345,7 @@ package reprise.ui
 		protected function validateElements() : void
 		{
 			//TODO: verify this validation scheme
-			var t1 : int = getTimer();
+			m_currentFrameTime = getTimer();
 			m_validatedElementsCount = 0;
 			if (m_invalidChildren.length == 0)
 			{
@@ -355,7 +369,7 @@ package reprise.ui
 				element.validation_execute();
 			}
 			log('d validation of ' + m_validatedElementsCount + 
-				' elements took ' + (getTimer() - t1) + 'ms');
+				' elements took ' + (getTimer() - m_currentFrameTime) + 'ms');
 			dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
 			//validate elements that have been marked as invalid during validation
 			if (m_invalidChildren.length)

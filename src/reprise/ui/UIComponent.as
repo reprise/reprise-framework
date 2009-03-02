@@ -1340,7 +1340,6 @@ package reprise.ui
 			if (!m_class.basicStyles)
 			{
 				m_class.basicStyles = new CSSDeclaration();
-				m_class.basicStyles.addDefaultValues();
 				m_elementDefaultStyles = m_class.basicStyles;
 				initDefaultStyles();
 			}
@@ -1783,7 +1782,8 @@ package reprise.ui
 			}
 			
 			m_specifiedStyles = styles;
-			styles = m_transitionsManager.processTransitions(oldStyles, styles, stage.frameRate);
+			styles = m_transitionsManager.processTransitions(
+				oldStyles, styles, stage.frameRate, m_rootElement.frameTime());
 			m_complexStyles = styles;
 			
 			//this element might have been removed in a transitions event handler. Return if so.
