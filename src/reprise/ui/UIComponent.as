@@ -148,7 +148,7 @@ package reprise.ui
 		protected var m_frozenContentDisplay : Bitmap;
 		
 		protected var m_vScrollbar : Scrollbar;
-		protected var m_hScrollbar : Scrollbar;
+		public var m_hScrollbar : Scrollbar;
 		
 		protected var m_dropShadowFilter : DropShadowFilter;
 		
@@ -1267,6 +1267,33 @@ package reprise.ui
 		public function hasActiveTransitionForStyle(style : String) : Boolean
 		{
 			return m_transitionsManager.hasActiveTransitionForStyle(style);
+		}
+		
+		
+		public function get hScroll():Number
+		{
+			if (!m_hScrollbar) return 0;
+			return -m_hScrollbar.scrollPosition;
+		}
+		
+		public function set hScroll(val:Number):void
+		{
+			if (!m_hScrollbar) return;
+			m_hScrollbar.scrollPosition = val;
+			m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
+		}
+		
+		public function get vScroll():Number
+		{
+			if (!m_vScrollbar) return 0;
+			return -m_vScrollbar.scrollPosition;
+		}
+		
+		public function set vScroll(val:Number):void
+		{
+			if (!m_vScrollbar) return;
+			m_vScrollbar.scrollPosition = val;
+			m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
 		}
 		
 		
@@ -2520,7 +2547,7 @@ package reprise.ui
 			
 			if (m_currentStyles.overflowY == 'scroll')
 			{
-				vScrollerNeeded == true;
+				vScrollerNeeded = true;
 			}
 			
 			if (m_currentStyles.overflowX == 0 && m_intrinsicWidth > m_currentStyles.width)
@@ -2543,7 +2570,7 @@ package reprise.ui
 
 			if (m_currentStyles.overflowX == 'scroll')
 			{
-				hScrollerNeeded == true;
+				hScrollerNeeded = true;
 			}
 
 			if (vScrollerNeeded)
