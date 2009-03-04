@@ -56,5 +56,15 @@ package reprise.utils
 		{
 			m_scope = scope;
 		}
+		
+		public function arguments():Array
+		{
+			return m_args;
+		}
+		
+		public function setArguments(args:Array):void
+		{
+			m_args = args;
+		}
 	}
 }
