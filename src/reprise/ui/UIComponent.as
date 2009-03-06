@@ -1273,7 +1273,7 @@ package reprise.ui
 		public function get hScroll():Number
 		{
 			if (!m_hScrollbar) return 0;
-			return -m_hScrollbar.scrollPosition;
+			return m_hScrollbar.scrollPosition;
 		}
 		
 		public function set hScroll(val:Number):void
@@ -1286,7 +1286,7 @@ package reprise.ui
 		public function get vScroll():Number
 		{
 			if (!m_vScrollbar) return 0;
-			return -m_vScrollbar.scrollPosition;
+			return m_vScrollbar.scrollPosition;
 		}
 		
 		public function set vScroll(val:Number):void
