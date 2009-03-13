@@ -129,6 +129,16 @@ package reprise.controls.html
 			m_validationDisabled = bFlag;
 		}
 		
+		public function markAsValid():void
+		{
+			for (var i:int = 0; i < m_fields.length; i++)
+			{
+				var input:IInput = m_fields[i];
+				input.markAsValid();
+			}
+			removeCSSPseudoClass('error');
+		}
+		
 		
 		
 		/***************************************************************************
@@ -137,7 +147,7 @@ package reprise.controls.html
 		protected override function initialize():void
 		{
 			super.initialize();
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
+			if (stage) stage.addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
 		}
 		
 		protected function validate():void
