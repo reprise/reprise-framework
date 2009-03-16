@@ -104,7 +104,13 @@ package reprise.controls
 		{
 			value ? activate() : deactivate();
 		}
-		
+
+		public override function remove(...args) : void
+		{
+			group().removeRadioButton(this);
+			super.remove(args);
+		}
+
 		/***************************************************************************
 		*                             protected methods                            *
 		***************************************************************************/
