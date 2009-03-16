@@ -160,9 +160,13 @@ package reprise.ui.layoutmanagers
 						child.x = childStyle.marginLeft + elementStyle.paddingLeft;
 					}
 				}
-				widestChildWidth = Math.max(child.x + 
-					child.outerWidth + childStyle.marginRight, 
-					widestChildWidth);
+				
+				if (child.positionInFlow || childStyle.float)
+				{
+					widestChildWidth = Math.max(child.x + 
+						child.outerWidth + childStyle.marginRight, 
+						widestChildWidth);
+				}
 				
 				//apply vertical position including margin collapsing
 				if (child.positionInFlow)
@@ -250,7 +254,7 @@ package reprise.ui.layoutmanagers
 			elementStyle.intrinsicWidth = 
 				Math.max(widestChildWidth - elementStyle.paddingLeft, 0);
 		}
-		
+
 		public function applyAbsolutePositions(
 			element : UIComponent, children : Array) : void
 		{
