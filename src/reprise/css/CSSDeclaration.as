@@ -332,9 +332,9 @@ package reprise.css
 			var str:String = "CSSDeclaration\n{\n";
 			for (var key:String in m_properties)
 			{
-				str += "\t" + key + " : " + 
-					CSSProperty(m_properties[key]).specifiedValue() + 
-					(CSSProperty(m_properties[key]).unit() || '') + ";\n";
+				var property : CSSProperty = CSSProperty(m_properties[key]);
+				str += "\t" + key + " : " + property.specifiedValue() + 
+					(property.unit() || '') + "; //" + (property.cssFile() || '[no file]') + "\n";
 			}
 				
 			return str + '}';
