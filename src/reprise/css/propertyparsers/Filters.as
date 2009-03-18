@@ -85,21 +85,21 @@ package reprise.css.propertyparsers
 					name + 'ShadowColor');
 				part = parts[counter++];
 			}
-			if (parts.length == 4)
-			{
-				res.addPropertyForKey(strToIntProperty(part + important, file), 
-					name + 'ShadowXOffset');
-				part = parts[counter++];				
-				res.addPropertyForKey(strToIntProperty(part + important, file), 
-						name + 'ShadowYOffset');
-			}
-			else if (parts.length < 4)
+			if (parts.length == 3)
 			{
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
 					name + 'ShadowXOffset');
 				part = parts[counter++];
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
+						name + 'ShadowYOffset');
+			}
+			else if (parts.length < 3)
+			{
+				res.addPropertyForKey(strToIntProperty(part + important, file), 
+					name + 'ShadowXOffset');
+				res.addPropertyForKey(strToIntProperty(part + important, file), 
 					name + 'ShadowYOffset');
+				return res;
 			}
 			part = parts[counter++];
 			res.addPropertyForKey(strToIntProperty(part + important, file), 
