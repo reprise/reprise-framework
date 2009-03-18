@@ -89,7 +89,7 @@ package reprise.css.propertyparsers
 			{
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
 					name + 'ShadowXOffset');
-				part = parts[counter++];					
+				part = parts[counter++];				
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
 						name + 'ShadowYOffset');
 			}
@@ -97,8 +97,9 @@ package reprise.css.propertyparsers
 			{
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
 					name + 'ShadowXOffset');
+				part = parts[counter++];
 				res.addPropertyForKey(strToIntProperty(part + important, file), 
-				name + 'ShadowYOffset');
+					name + 'ShadowYOffset');
 			}
 			part = parts[counter++];
 			res.addPropertyForKey(strToIntProperty(part + important, file), 
@@ -139,7 +140,8 @@ package reprise.css.propertyparsers
 			{
 				quality = 3;
 			}
-					
+			log('f ' + offset.angle());		
+			log('f ' + offset.angle());		
 			var filter : DropShadowFilter = new DropShadowFilter(
 				offset.getLength(), offset.angle(), color.rgb(), color.opacity(), blurX, blurY, 
 				strength, quality, inner, knockout, hideObject);				
