@@ -1600,7 +1600,7 @@ package reprise.ui
 				m_borderBoxWidth + 
 				m_currentStyles.marginLeft + m_currentStyles.marginRight, 
 				m_borderBoxHeight + 
-				m_currentStyles.marginTop + m_currentStyles.marginBottom));
+				m_currentStyles.collapseMarginTop + m_currentStyles.collapsedMarginBottom));
 			
 			var parentReflowNeeded : Boolean = false;
 			
