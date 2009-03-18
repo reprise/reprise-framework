@@ -137,9 +137,9 @@ package reprise.css.transitions
 				function processProperty(transitionPropName : String, 
 					shortcut : String = null, defaultValue : CSSProperty = null) : void
 				{
-					var oldValue : CSSProperty = (oldStyles && oldStyles.getStyle(transitionPropName)) as CSSProperty;
-					var targetValue : CSSProperty = 
-						newStyles.getStyle(transitionPropName);
+					var oldValue : CSSProperty = 
+						CSSProperty(oldStyles && oldStyles.getStyle(transitionPropName));
+					var targetValue : CSSProperty = newStyles.getStyle(transitionPropName);
 					
 					//apply default values
 					if (defaultValue && (defaultValue.specifiedValue() != 'none' || 
@@ -194,7 +194,7 @@ package reprise.css.transitions
 					transitionDelay = m_transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
 					transitionEasing = m_transitionEasings[i] || 
 						transitionEasing || DEFAULT_EASING[0];
-					var defaultValue : *;
+					var defaultValue : * = null;
 					if (m_defaultValues[i] && (m_defaultValues[i] != 'none' || 
 						transitionPropName == 'display'))
 					{
