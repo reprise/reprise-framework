@@ -140,8 +140,6 @@ package reprise.css.propertyparsers
 			{
 				quality = 3;
 			}
-			log('f ' + offset.angle());		
-			log('f ' + offset.angle());		
 			var filter : DropShadowFilter = new DropShadowFilter(
 				offset.getLength(), offset.angle(), color.rgb(), color.opacity(), blurX, blurY, 
 				strength, quality, inner, knockout, hideObject);				
