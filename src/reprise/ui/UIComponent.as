@@ -1458,7 +1458,8 @@ package reprise.ui
 			}
 			m_oldOuterBoxDimension = new Point(
 				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
-				m_borderBoxHeight + m_currentStyles.marginTop + m_currentStyles.marginBottom);
+				m_borderBoxHeight + m_currentStyles.collapsedMarginTop + 
+				m_currentStyles.collapsedMarginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
 			
 			m_oldContentBoxWidth = m_contentBoxWidth;
@@ -1597,10 +1598,9 @@ package reprise.ui
 				m_currentStyles.borderLeftWidth + m_currentStyles.borderRightWidth;
 			
 			m_dimensionsChanged = !m_oldOuterBoxDimension.equals(new Point(
-				m_borderBoxWidth + 
-				m_currentStyles.marginLeft + m_currentStyles.marginRight, 
+				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
 				m_borderBoxHeight + 
-				m_currentStyles.collapseMarginTop + m_currentStyles.collapsedMarginBottom));
+				m_currentStyles.collapsedMarginTop + m_currentStyles.collapsedMarginBottom));
 			
 			var parentReflowNeeded : Boolean = false;
 			
