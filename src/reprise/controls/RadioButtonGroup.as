@@ -120,6 +120,11 @@ package reprise.controls
 			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
 		}
 		
+		public function radioButtons() : Array
+		{
+			return m_radioButtons;
+		}
+		
 		public function name() : String
 		{
 			return m_name;
