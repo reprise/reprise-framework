@@ -158,9 +158,7 @@ package reprise.css.transitions
 					}
 					
 					//ignore properties that don't have previous values or target values
-					//TODO: check if we can implement default values for new elements
-					if (!oldValue || !targetValue || targetValue.isAuto() || 
-						oldValue.specifiedValue() == targetValue.specifiedValue())
+					if (!oldValue || !targetValue || targetValue.isAuto())
 					{
 						return;
 					}
@@ -176,6 +174,11 @@ package reprise.css.transitions
 						transition.startValue = oldValue;
 						transition.endValue = targetValue;
 						m_activeTransitions[transitionPropName] = transition;
+					}
+					else if (transition.currentValue.specifiedValue() == 
+						targetValue.specifiedValue())
+					{
+						delete m_activeTransitions[transitionPropName];
 					}
 					else if (transition.endValue != targetValue)
 					{
