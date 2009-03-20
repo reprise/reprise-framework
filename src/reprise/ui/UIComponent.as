@@ -2751,12 +2751,12 @@ package reprise.ui
 		{
 		}
 		
-		internal function valueForKey(key : String) : *
+		reprise function valueForKey(key : String) : *
 		{
 			return this[key];
 		}
 
-		internal function setValueForKey(key : String, value : *) : void
+		reprise function setValueForKey(key : String, value : *) : void
 		{
 			//try to assign to a setter method by prepending 'set'
 			try
