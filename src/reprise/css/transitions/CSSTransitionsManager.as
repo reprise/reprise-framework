@@ -42,6 +42,7 @@ package reprise.css.transitions
 		protected var m_defaultValues : Array;
 		
 		protected var m_activeTransitions : Object;
+		protected var m_adjustedStartTimes : Object;
 		protected var m_target : EventDispatcher;
 		protected var m_frameDuration : int;
 
@@ -52,6 +53,7 @@ package reprise.css.transitions
 		public function CSSTransitionsManager(target : EventDispatcher)
 		{
 			m_target = target;
+			m_adjustedStartTimes = {};
 		}
 		
 		public function isActive() : Boolean
@@ -67,6 +69,12 @@ package reprise.css.transitions
 		public function hasActiveTransitionForStyle(style : String) : Boolean
 		{
 			return m_activeTransitions && m_activeTransitions[style] != null;
+		}
+		
+		public function registerAdjustedStartTimeForProperty(
+			startTime : int, property : String) : void
+		{
+			m_adjustedStartTimes[property] = startTime;
 		}
 
 		public function processTransitions(oldStyles : CSSDeclaration, newStyles : CSSDeclaration, 
@@ -170,7 +178,8 @@ package reprise.css.transitions
 						transition.duration = transitionDuration;
 						transition.delay = transitionDelay;
 						transition.easing = transitionEasing;
-						transition.startTime = frameTime;
+						transition.startTime = 
+							m_adjustedStartTimes[transitionPropName] || frameTime;
 						transition.startValue = oldValue;
 						transition.endValue = targetValue;
 						m_activeTransitions[transitionPropName] = transition;
@@ -183,8 +192,9 @@ package reprise.css.transitions
 					else if (transition.endValue != targetValue)
 					{
 						transition.easing = transitionEasing;
-						transition.updateValues(targetValue, transitionDuration, 
-							transitionDelay, frameTime, m_frameDuration, this);
+						transition.updateValues(targetValue, transitionDuration, transitionDelay, 
+							m_adjustedStartTimes[transitionPropName] || frameTime, 
+							m_frameDuration, this);
 					}
 				}
 				
@@ -279,6 +289,8 @@ package reprise.css.transitions
 					new TransitionEvent(TransitionEvent.ALL_TRANSITIONS_COMPLETE);
 				m_target.dispatchEvent(allCompleteEvent);
 			}
+			
+			m_adjustedStartTimes = {};
 			
 			return styles;
 		}
