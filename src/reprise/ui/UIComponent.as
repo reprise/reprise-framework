@@ -1552,6 +1552,8 @@ package reprise.ui
 						//changing the intrinsic width
 						m_weakStyles.setStyle('width', m_intrinsicWidth + 'px', true);
 						m_specifiedStyles.setStyle('width', m_oldContentBoxWidth + 'px');
+						m_transitionsManager.registerAdjustedStartTimeForProperty(
+							m_rootElement.frameTime(), 'width');
 						m_contentBoxWidth = m_oldContentBoxWidth;
 						m_invalidateStylesAfterValidation = true;
 						m_stylesInvalidated = true;
@@ -1576,6 +1578,8 @@ package reprise.ui
 					{
 						m_weakStyles.setStyle('height', m_intrinsicHeight + 'px', true);
 						m_specifiedStyles.setStyle('height', m_oldContentBoxHeight + 'px');
+						m_transitionsManager.registerAdjustedStartTimeForProperty(
+							m_rootElement.frameTime(), 'height');
 						m_contentBoxHeight = m_oldContentBoxHeight;
 						m_invalidateStylesAfterValidation = true;
 						m_stylesInvalidated = true;
