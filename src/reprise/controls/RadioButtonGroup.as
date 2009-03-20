@@ -120,6 +120,11 @@ package reprise.controls
 			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
 		}
 		
+		public function name() : String
+		{
+			return m_name;
+		}
+
 		public function selectNextButton(currentButton : RadioButton) : void
 		{
 			var currentIndex : int = m_radioButtons.indexOf(currentButton);
