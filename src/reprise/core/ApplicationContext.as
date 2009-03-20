@@ -44,15 +44,20 @@ package reprise.core
 		***************************************************************************/
 		public function ApplicationContext(application:Application, loaderInfo:LoaderInfo)
 		{
-			if (!g_mainContext)
-			{
-				g_mainContext = this;
-				coreResourceLoader = new CoreResourceLoader(this);
-			}
-			else
-			{
-				coreResourceLoader = g_mainContext.coreResourceLoader;
-			}
+//			if (!g_mainContext)
+//			{
+//				g_mainContext = this;
+//				coreResourceLoader = new CoreResourceLoader(this);
+//			}
+//			else
+//			{
+//				coreResourceLoader = g_mainContext.coreResourceLoader;
+//			}
+			/*
+			 * TODO: find a way to use a global loader for all applications while correctly 
+			 * resolving relative URLs
+			 */
+			coreResourceLoader = new CoreResourceLoader(this);
 			
 			var objCopy:ByteArray = new ByteArray();
 			objCopy.writeObject(loaderInfo.parameters);
