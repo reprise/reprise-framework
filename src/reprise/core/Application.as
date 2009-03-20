@@ -133,7 +133,7 @@ package reprise.core
 		
 		protected function initialize() : void
 		{
-			m_appContext = new ApplicationContext(this, stage.loaderInfo);
+			m_appContext = new ApplicationContext(this, this.loaderInfo);
 			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -163,7 +163,7 @@ package reprise.core
 			{
 				return;
 			}
-			var cssURL:String = stage.loaderInfo.parameters.css_url || 
+			var cssURL:String = m_appContext.applicationParameters.css_url || 
 				Object(this).constructor['CSS_URL'] || CSS_URL;
 			m_css = new CSS(cssURL);
 			m_css.setBaseURL(applicationURL());
