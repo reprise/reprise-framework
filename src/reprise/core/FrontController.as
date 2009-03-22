@@ -9,22 +9,20 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.core { 
+package reprise.core 
+{
 	import reprise.commands.ICommand;
 	import reprise.events.EventBroadcaster;
 	import reprise.ui.DocumentView;
 	
-	import flash.events.Event;
-	
-	
+	import flash.events.Event; 
+
 	public class FrontController
 	{
-	
-	
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected	var m_commands : Object;
+		protected var m_commands : Object;
 		protected var m_view : DocumentView;
 		
 		
@@ -43,7 +41,7 @@ package reprise.core {
 			commandToExec.execute(event);
 		}	
 		
-		public function addGlobalCommand(name:String, command:Function) : void
+		public function addGlobalCommand(name:String, command:Class) : void
 		{
 			if (m_commands[name] != null)
 			{
@@ -64,7 +62,7 @@ package reprise.core {
 			m_commands[name] = null;
 		}
 		
-		public function addCommand(name:String, command:Function) : void
+		public function addCommand(name:String, command:Class) : void
 		{
 			if (m_commands[name] != null)
 			{
