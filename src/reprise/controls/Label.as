@@ -305,7 +305,9 @@ package reprise.controls
 				
 				var labelString : String = m_labelXML.toXMLString();
 				labelString = resolveBindings(labelString);
+				
 				var labelXML : XML;
+				XML.ignoreWhitespace = false;
 				try
 				{
 					labelXML = new XML(labelString);
@@ -314,11 +316,13 @@ package reprise.controls
 				{
 					labelXML = new XML('<p style="color: red;">malformed content</p>');
 				}
+				XML.ignoreWhitespace = true;
 				labelXML.normalize();
 				cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
-				//TODO: check if condenseWhite = true is ok to use!
 				
+				XML.prettyPrinting = false;
 				var text : String = labelXML.toXMLString();
+				XML.prettyPrinting = true;
 				if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
 				{
 					m_labelDisplay.htmlText = text.substr(0, text.length - 3);
