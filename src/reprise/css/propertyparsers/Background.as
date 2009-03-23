@@ -96,6 +96,7 @@ package reprise.css.propertyparsers
 		
 		public static const GRADIENT_TYPE_LINEAR : String	= 'linear';
 		public static const GRADIENT_TYPE_RADIAL : String = 'radial';
+		public static const GRADIENT_TYPE_NONE : String = 'none';
 		
 		public static const SCALE9_TYPE_STRETCH : String 	= 'stretch';
 		public static const SCALE9_TYPE_REPEAT : String	= 'repeat';
@@ -206,6 +207,7 @@ package reprise.css.propertyparsers
 			var gradientTypeLookup : Array = [];
 			gradientTypeLookup[GRADIENT_TYPE_LINEAR] = true;
 			gradientTypeLookup[GRADIENT_TYPE_RADIAL] = true;
+			gradientTypeLookup[GRADIENT_TYPE_NONE] = true;
 			
 			// type
 			part = parts[counter];
