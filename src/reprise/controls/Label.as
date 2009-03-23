@@ -78,16 +78,18 @@ package reprise.controls
 		 */
 		public function setLabel(label:String) : void
 		{
+			XML.ignoreWhitespace = false;
 			m_labelXML = new XML('<p>' + label + '</p>');
+			XML.ignoreWhitespace = true;
 			m_textSetExternally = true;
 			invalidate();
 		}
 		public function getLabel() : String
 		{
+			XML.prettyPrinting = false;
 			var labelStr:String = m_labelXML.toXMLString();
+			XML.prettyPrinting = true;
 			return labelStr;
-			return labelStr.substring(
-				labelStr.indexOf(">") + 1, labelStr.lastIndexOf("<"));
 		}
 	
 		public function get label() : String
@@ -303,24 +305,23 @@ package reprise.controls
 				m_textAlignment = null;
 				m_containsImages = false;
 				
+				XML.prettyPrinting = false;
 				var labelString : String = m_labelXML.toXMLString();
 				labelString = resolveBindings(labelString);
-				
 				var labelXML : XML;
 				XML.ignoreWhitespace = false;
 				try
 				{
 					labelXML = new XML(labelString);
+					labelXML.normalize();
 				}
 				catch (error : Error)
 				{
 					labelXML = new XML('<p style="color: red;">malformed content</p>');
 				}
 				XML.ignoreWhitespace = true;
-				labelXML.normalize();
 				cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
 				
-				XML.prettyPrinting = false;
 				var text : String = labelXML.toXMLString();
 				XML.prettyPrinting = true;
 				if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
