@@ -117,6 +117,10 @@ package reprise.controls
 		
 		public function selectedData():*
 		{
+			if (m_selectedIndex == -1)
+			{
+				return null;
+			}
 			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
 		}
 		
