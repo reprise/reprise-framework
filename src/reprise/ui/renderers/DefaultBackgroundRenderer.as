@@ -123,6 +123,8 @@ package reprise.ui.renderers
 					dropShadowFilterFromStyleObjectForName(m_styles, 'background');
 				m_display.filters = [dropShadow];
 			}
+			else
+				m_display.filters = [];
 			
 			// draw mask if neccessary
 			if (hasAnyContent)
