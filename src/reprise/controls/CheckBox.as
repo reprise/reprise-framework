@@ -58,7 +58,6 @@ package reprise.controls
 		protected override function createChildren() : void
 		{
 			super.createChildren();
-			m_labelDisplay.html = true;
 		}
 	}
 }
