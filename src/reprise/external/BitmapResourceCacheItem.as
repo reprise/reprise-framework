@@ -170,7 +170,7 @@ package reprise.external {
 			m_bytesTotal = m_loader.bytesTotal();
 			m_success = e.success && !m_loader.isCancelled();
 			
-			if (m_success)
+			if (m_success && m_loader.content().width && m_loader.content().height)
 			{
 				m_bitmapDataReference = new BitmapData(
 					m_loader.content().width, m_loader.content().height, true, 0);
