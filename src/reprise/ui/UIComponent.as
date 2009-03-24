@@ -1460,6 +1460,8 @@ package reprise.ui
 			
 			m_oldContentBoxWidth = m_contentBoxWidth;
 			m_oldContentBoxHeight = m_contentBoxHeight;
+			var oldSpecifiedWidth : int = m_currentStyles.width;
+			var oldSpecifiedHeight : int = m_currentStyles.height;
 			
 			if (m_stylesInvalidated)
 			{
@@ -1508,8 +1510,8 @@ package reprise.ui
 						}
 					}
 					applyStyles();
-					if (m_currentStyles.width != m_oldContentBoxWidth || 
-						m_currentStyles.height != m_oldContentBoxHeight)
+					if (m_currentStyles.width != oldSpecifiedWidth || 
+						m_currentStyles.height != oldSpecifiedHeight)
 					{
 						m_specifiedDimensionsChanged = true;
 					}
