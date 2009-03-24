@@ -11,7 +11,6 @@
 
 package reprise.controls
 {
-	import reprise.utils.StringUtil;	
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
@@ -19,6 +18,7 @@ package reprise.controls
 	import reprise.css.CSSProperty;
 	import reprise.events.LabelEvent;
 	import reprise.ui.AbstractInput;
+	import reprise.utils.StringUtil;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -30,7 +30,7 @@ package reprise.controls
 	import flash.text.AntiAliasType;
 	import flash.text.GridFitType;
 	import flash.text.TextField;
-	import flash.text.TextFormat;
+	import flash.text.TextFormat;		
 	
 	use namespace reprise;
 
@@ -55,8 +55,8 @@ package reprise.controls
 		protected var m_internalStyleIndex : Number;
 	
 		protected var m_labelXML : XML;
-	
-		protected var m_htmlMode : Boolean;
+		protected var m_usedLabelXML : XML;
+		protected var m_nodesMap : Array;
 	
 		protected var m_textAlignment : String;
 		protected var m_containsImages : Boolean;	
@@ -110,25 +110,6 @@ package reprise.controls
 		public override function setValue(value:*):void
 		{
 			label = value.toString();
-		}
-		
-		/**
-		 * sets whether the label should be displayed with html formatting or not
-		 */
-		public function set html(value:Boolean) : void
-		{
-			if (m_htmlMode != value)
-			{
-				m_htmlMode = value;
-				invalidate();
-			}
-		}
-		/**
-		 * sets whether the label should be displayed with html formatting or not
-		 */
-		public function get html() : Boolean
-		{
-			return m_htmlMode;
 		}
 		
 		public function set enabled(value:Boolean) : void
@@ -193,6 +174,7 @@ package reprise.controls
 			
 			m_labelXML = <p/>;
 			m_textLinkHrefs = [];
+			m_nodesMap = [];
 		}
 		protected override function createChildren() : void
 		{
@@ -203,8 +185,11 @@ package reprise.controls
 			m_labelDisplay.mouseEnabled = false;
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
 			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
+			m_contentDisplay.addEventListener(MouseEvent.MOUSE_MOVE, contentDisplay_mouseMove);
+			m_contentDisplay.addEventListener(MouseEvent.MOUSE_OUT, contentDisplay_mouseMove);
 			m_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
 		}
+		
 		protected override function initDefaultStyles() : void
 		{
 			m_elementDefaultStyles.setStyle('selectable', 'true');
@@ -252,6 +237,8 @@ package reprise.controls
 			}
 			m_labelDisplay.wordWrap = m_currentStyles.wordWrap == 'wrap';
 			m_labelDisplay.multiline = m_currentStyles.multiline;
+			
+			renderLabel();
 		}
 		
 		/**
@@ -288,87 +275,100 @@ package reprise.controls
 		
 		protected function renderLabel() : void
 		{
-			if (m_stylesInvalidated || m_textSetExternally)
+			if (!(m_stylesInvalidated || m_textSetExternally))
 			{
-				m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
-				m_labelDisplay.y = m_currentStyles.paddingTop - 2;
-				if (m_currentStyles.width)
+				return;
+			}
+			m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
+			m_labelDisplay.y = m_currentStyles.paddingTop - 2;
+			
+			m_internalStyleIndex = 0;
+			m_textAlignment = null;
+			m_containsImages = false;
+			
+			XML.prettyPrinting = false;
+			var labelString : String = m_labelXML.toXMLString();
+			labelString = resolveBindings(labelString);
+			var labelXML : XML;
+			XML.ignoreWhitespace = false;
+			try
+			{
+				labelXML = new XML(labelString);
+				labelXML.normalize();
+			}
+			catch (error : Error)
+			{
+				labelXML = new XML('<p style="color: red;">malformed content</p>');
+			}
+			XML.ignoreWhitespace = true;
+			m_nodesMap.length = 0;
+			cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
+			
+			m_textSetExternally = false;
+			applyLabel(labelXML);
+		}
+		
+		protected function applyLabel(labelXML : XML) : void
+		{
+			var oldWidth : int = m_labelDisplay.textWidth;
+			var oldHeight : int = m_labelDisplay.textHeight;
+			
+			if (m_currentStyles.width)
+			{
+				m_labelDisplay.width = m_currentStyles.width + 6;
+			}
+			else
+			{
+				m_labelDisplay.autoSize = 'left';
+			}
+			
+			XML.prettyPrinting = false;
+			var text : String = labelXML.toXMLString();
+			XML.prettyPrinting = true;
+			if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
+			{
+				m_labelDisplay.htmlText = text.substr(0, text.length - 3);
+				m_usedLabelXML = labelXML;
+				m_cacheInvalid = true;
+			}
+			
+			if (m_labelDisplay.wordWrap)
+			{
+				m_labelDisplay.autoSize = 'left';
+				var enforceUpdate : Number = m_labelDisplay.height;
+			}
+			else
+			{
+				m_labelDisplay.height = m_labelDisplay.textHeight + 8;
+			}
+			m_labelDisplay.autoSize = 'none';
+			
+			//shrink the TextField to the smallest width possible
+			if (m_textAlignment != 'mixed' && !m_containsImages)
+			{
+				if (m_labelDisplay.textWidth < m_labelDisplay.width - 10)
 				{
-					m_labelDisplay.width = m_currentStyles.width + 6;
-				}
-				else
-				{
-					m_labelDisplay.autoSize = 'left';
-				}
-				
-				m_internalStyleIndex = 0;
-				m_textAlignment = null;
-				m_containsImages = false;
-				
-				XML.prettyPrinting = false;
-				var labelString : String = m_labelXML.toXMLString();
-				labelString = resolveBindings(labelString);
-				var labelXML : XML;
-				XML.ignoreWhitespace = false;
-				try
-				{
-					labelXML = new XML(labelString);
-					labelXML.normalize();
-				}
-				catch (error : Error)
-				{
-					labelXML = new XML('<p style="color: red;">malformed content</p>');
-				}
-				XML.ignoreWhitespace = true;
-				cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
-				
-				var text : String = labelXML.toXMLString();
-				XML.prettyPrinting = true;
-				if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
-				{
-					m_labelDisplay.htmlText = text.substr(0, text.length - 3);
-					m_cacheInvalid = true;
-				}
-				
-				if (m_labelDisplay.wordWrap)
-				{
-					m_labelDisplay.autoSize = 'left';
-					var enforceUpdate : Number = m_labelDisplay.height;
-				}
-				else
-				{
-					m_labelDisplay.height = m_labelDisplay.textHeight + 8;
-				}
-				m_labelDisplay.autoSize = 'none';
-				
-				//shrink the TextField to the smallest width possible
-				if (m_textAlignment != 'mixed' && !m_containsImages)
-				{
-					if (m_labelDisplay.textWidth < m_labelDisplay.width - 10)
+					m_labelDisplay.width = m_labelDisplay.textWidth + 10;
+					if (m_textAlignment == 'right')
 					{
-						m_labelDisplay.width = m_labelDisplay.textWidth + 10;
-						if (m_textAlignment == 'right')
-						{
-							m_labelDisplay.x = m_currentStyles.paddingLeft + 
-								m_currentStyles.width - m_labelDisplay.width + 2;
-						}
-						else if (m_textAlignment == 'center')
-						{
-							m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
-								m_currentStyles.width / 2 - 
-								m_labelDisplay.width / 2);
-						}
+						m_labelDisplay.x = m_currentStyles.paddingLeft + 
+							m_currentStyles.width - m_labelDisplay.width + 2;
+					}
+					else if (m_textAlignment == 'center')
+					{
+						m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
+							m_currentStyles.width / 2 - 
+							m_labelDisplay.width / 2);
 					}
 				}
-				
-				m_textSetExternally = false;
-				m_overflowIsInvalid = true;
 			}
+			
+			m_overflowIsInvalid = 
+				m_labelDisplay.textWidth != oldWidth || m_labelDisplay.textHeight != oldHeight;
 		}
 		
 		protected override function applyInFlowChildPositions() : void
 		{
-			renderLabel();
 		}
 		
 		/**
@@ -382,8 +382,9 @@ package reprise.controls
 		 * cleanes the given node to prepare it for display in a TextField
 		 */
 		protected function cleanNode(node:XML, selectorPath:String, 
-			stylesheet:CSS, transform:String = null) : void
+			stylesheet:CSS, index : int = 0, transform:String = null) : int
 		{
+			var startIndex : int = index;
 			if (node.nodeKind() == 'text')
 			{
 				if (transform)
@@ -391,13 +392,14 @@ package reprise.controls
 					node.parent().children()[node.childIndex()] = 
 						transformText(node.toString(), transform);
 				}
+				index += node.toString().length;
 				//nothing else to clean in text nodes
-				return;
+				return index;
 			}
 			if (node.localName() == 'br' || node.hasOwnProperty('ignore'))
 			{
 				//nothing to clean in <br>-nodes
-				return;
+				return index;
 			}
 			
 			//bring all style definitions into a form the player can understand
@@ -434,66 +436,35 @@ package reprise.controls
 				delete node.@style;
 			}
 			
-			if (nodeStyle)
+			var styleName : String = nodeStyle.textStyleName(m_internalStyleIndex++ == 0);
+			node.@['class'] = styleName;
+			
+			// check if the label has mixed textAlign properties.
+			// If it does its TextField can't be shrinked horizontally
+			if (m_textAlignment != 'mixed')
 			{
-				var styleName : String = 
-					nodeStyle.textStyleName(m_internalStyleIndex++ == 0);
-				node.@['class'] = styleName;
-				
-				// check if the label has mixed textAlign properties.
-				// If it does its TextField can't be shrinked horizontally
-				if (m_textAlignment != 'mixed')
+				var textAlignProperty : CSSProperty = nodeStyle.getStyle('textAlign');
+				var textAlign : String;
+				if (textAlignProperty)
 				{
-					var textAlignProperty : CSSProperty = nodeStyle.getStyle('textAlign');
-					var textAlign : String;
-					if (textAlignProperty)
-					{
-						textAlign = textAlignProperty.valueOf() as String;
-					}
-					else
-					{
-						textAlign = 'left';
-					}
-					if (!m_textAlignment)
-					{
-						m_textAlignment = textAlign;
-					}
-					else if (m_textAlignment != textAlign)
-					{
-						m_textAlignment = 'mixed';
-					}
+					textAlign = textAlignProperty.valueOf() as String;
+				}
+				else
+				{
+					textAlign = 'left';
+				}
+				if (!m_textAlignment)
+				{
+					m_textAlignment = textAlign;
+				}
+				else if (m_textAlignment != textAlign)
+				{
+					m_textAlignment = 'mixed';
 				}
 			}
 			
 			switch (node.localName())
 			{
-				//TODO: Check if we need the whitespace cleanup stuff. We most certainly 
-				//don't, because we call XML::normalize on the root node. (Ok, turns out 
-				//we don't do that, but use TextField::condenseWhite, so that should be 
-				//fine.)
-//				case "br":
-//				{
-//					//remove all redundant whitespace around "<br />"-tags
-//					var parent : XML = node.parent();
-//					var siblings : XMLList = parent ? parent.children() : null;
-//					if (!siblings)
-//					{
-//						//we are the root node, get outta here
-//						//TODO: check if that's even possible
-//						 break;
-//					}
-//					var sibling : XML = siblings[node.childIndex() - 1];
-//					if (sibling && sibling.nodeKind() == 'text')
-//					{
-//						sibling.setChildren(StringUtil.rTrim(sibling.toString()));
-//					}
-//					sibling = siblings[node.childIndex() + 1];
-//					if (sibling && sibling.nodeKind() == 'text')
-//					{
-//						sibling.setChildren(StringUtil.lTrim(sibling.toString()));
-//					}
-//					break;
-//				}
 				case "a":
 				{
 					//extract all links and redirect them to an ActionScript method
@@ -518,8 +489,7 @@ package reprise.controls
 						break;
 					}
 					/*
-					 * TODO: Find a way to simulate correct margins instead of just 
-					 * adding a line break.
+					 * TODO: Find a way to support marginTop
 					 */ 
 					if (nodeStyle.hasStyle('marginBottom'))
 					{
@@ -539,7 +509,7 @@ package reprise.controls
 				case "ul":
 				case "li":
 				{
-					//do nothing these tags are fine
+					//do nothing, these tags are fine
 					break;
 				}
 				case "img":
@@ -562,8 +532,11 @@ package reprise.controls
 			
 			for each (var child : XML in node.children())
 			{
-				cleanNode(child, selectorPath, stylesheet, transform);
+				index = cleanNode(child, selectorPath, stylesheet, index, transform);
 			}
+			m_nodesMap.push({start : startIndex, end : index, path : selectorPath, 
+				styleName : styleName, node : node});
+			return index;
 		}
 		/**
 		 * event handler, invoked on click of one of 
@@ -607,6 +580,45 @@ package reprise.controls
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			e.stopPropagation();			
+		}
+		
+		protected function contentDisplay_mouseMove(event : MouseEvent) : void
+		{
+			var labelChanged : Boolean;
+			var index : int = m_labelDisplay.getCharIndexAtPoint(event.localX, event.localY);
+			
+			for (var i : int = m_nodesMap.length; i--;)
+			{
+				var def : Object = m_nodesMap[i];
+				var node : XML = def.node;
+				if (int(m_nodesMap[i].start) <= index && int(m_nodesMap[i].end) > index)
+				{
+					if (!def.hover)
+					{
+						def.hover = true;
+						def.defaultClass = node.@['class'].toString();
+						var hoverStyle : CSSDeclaration = m_rootElement.styleSheet.
+							getStyleForEscapedSelectorPath(def.path + '@:hover@');
+						node.@['class'] = hoverStyle.textStyleName(node.parent() == null);
+						labelChanged = true;
+					}
+				}
+				else if (def.hover)
+				{
+					def.hover = false;
+					node.@['class'] = def.defaultClass;
+					labelChanged = true;
+				}
+			}
+			
+			if (labelChanged)
+			{
+				applyLabel(m_usedLabelXML);
+				if (m_overflowIsInvalid)
+				{
+					invalidate();
+				}
+			}
 		}
 		
 		protected function transformText(text:String, transform:String) : String
