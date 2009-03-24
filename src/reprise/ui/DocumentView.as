@@ -77,6 +77,7 @@ package reprise.ui
 		protected var m_debugInterface : Sprite;
 		protected var m_validatedElementsCount : int;
 		protected var m_currentFrameTime : int;
+		protected var m_documentIsValidating : Boolean;
 
 		
 		/***************************************************************************
@@ -126,6 +127,19 @@ package reprise.ui
 			return m_currentFrameTime;
 		}
 		
+		/**
+		 * Returns the documents validation state
+		 * 
+		 * A return value of <code>true</code> indicates that the document is currently validating, 
+		 * <code>false</code> indicates that it is not.
+		 * 
+		 * @return The documents validation state
+		 */
+		public function documentIsValidating() : Boolean
+		{
+			return m_documentIsValidating;
+		}
+
 		/**
 		 * TODO: remove this override or turn it into a no-op. This should really be handled in a 
 		 * cleaner way.
@@ -346,12 +360,13 @@ package reprise.ui
 		protected function validateElements() : void
 		{
 			//TODO: verify this validation scheme
-			m_currentFrameTime = getTimer();
-			m_validatedElementsCount = 0;
 			if (m_invalidChildren.length == 0)
 			{
 				return;
 			}
+			m_documentIsValidating = true;
+			m_currentFrameTime = getTimer();
+			m_validatedElementsCount = 0;
 			var lastValidatedPath : String;
 			var sortedElements : Array = m_invalidChildren.sortOn(
 				'path', Array.DESCENDING);
@@ -377,7 +392,9 @@ package reprise.ui
 			{
 				m_stageInvalidationTimeout = setTimeout(invalidateStage, 5);
 			}
+			m_documentIsValidating = false;
 		}
+
 		protected function invalidateStage() : void
 		{
 			clearTimeout(m_stageInvalidationTimeout);
