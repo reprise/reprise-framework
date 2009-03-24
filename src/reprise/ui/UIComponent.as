@@ -1456,10 +1456,6 @@ package reprise.ui
 			{
 				m_scrollbarsDisplay.transform.matrix = m_contentDisplay.transform.matrix;
 			}
-			m_oldOuterBoxDimension = new Point(
-				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
-				m_borderBoxHeight + m_currentStyles.collapsedMarginTop + 
-				m_currentStyles.collapsedMarginBottom);
 			m_oldInFlowStatus = m_positionInFlow;
 			
 			m_oldContentBoxWidth = m_contentBoxWidth;
@@ -1601,10 +1597,13 @@ package reprise.ui
 			m_borderBoxWidth = m_paddingBoxWidth + 
 				m_currentStyles.borderLeftWidth + m_currentStyles.borderRightWidth;
 			
-			m_dimensionsChanged = !m_oldOuterBoxDimension.equals(new Point(
+			var outerBoxDimensions : Point = new Point(
 				m_borderBoxWidth + m_currentStyles.marginLeft + m_currentStyles.marginRight, 
 				m_borderBoxHeight + 
-				m_currentStyles.collapsedMarginTop + m_currentStyles.collapsedMarginBottom));
+				m_currentStyles.collapsedMarginTop + m_currentStyles.collapsedMarginBottom);
+			m_dimensionsChanged = 
+				!(m_oldOuterBoxDimension  && m_oldOuterBoxDimension.equals(outerBoxDimensions));
+			m_oldOuterBoxDimension = outerBoxDimensions;
 			
 			var parentReflowNeeded : Boolean = false;
 			
