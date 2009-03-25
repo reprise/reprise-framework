@@ -39,7 +39,6 @@ package reprise.controls
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var className : String = "Label";
 		
 		
 		/***************************************************************************
@@ -50,20 +49,20 @@ package reprise.controls
 		protected var m_labelDisplay : TextField;
 		protected var m_textSetExternally : Boolean;
 		
-		protected var m_textLinkHrefs : Array;
-		
 		protected var m_internalStyleIndex : Number;
 	
 		protected var m_labelXML : XML;
 		protected var m_usedLabelXML : XML;
 		protected var m_nodesMap : Array;
+		protected var m_textLinkHrefs : Array;
 	
 		protected var m_textAlignment : String;
 		protected var m_containsImages : Boolean;	
 		protected var m_overflowIsInvalid : Boolean;
 		
 		protected var m_bitmapCache : Bitmap;
-		private var m_cacheInvalid : Boolean;
+		protected var m_cacheInvalid : Boolean;
+		protected var m_lastHoverIndex : int;
 
 		
 		/***************************************************************************
@@ -186,7 +185,7 @@ package reprise.controls
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
 			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
 			m_contentDisplay.addEventListener(MouseEvent.MOUSE_MOVE, contentDisplay_mouseMove);
-			m_contentDisplay.addEventListener(MouseEvent.MOUSE_OUT, contentDisplay_mouseMove);
+			m_contentDisplay.addEventListener(MouseEvent.MOUSE_OUT, contentDisplay_mouseOut);
 			m_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
 		}
 		
@@ -584,8 +583,26 @@ package reprise.controls
 		
 		protected function contentDisplay_mouseMove(event : MouseEvent) : void
 		{
+			updateHover();
+		}
+		protected function contentDisplay_mouseOut(event : MouseEvent) : void
+		{
+			updateHover(true);
+		}
+
+		protected function updateHover(mouseOut : Boolean = false) : void
+		{
 			var labelChanged : Boolean;
-			var index : int = m_labelDisplay.getCharIndexAtPoint(event.localX, event.localY);
+			var index : int = -1;
+			if (!mouseOut)
+			{
+				index = m_labelDisplay.getCharIndexAtPoint(
+					m_labelDisplay.mouseX, m_labelDisplay.mouseY);
+			}
+			if (index == m_lastHoverIndex)
+			{
+				return;
+			}
 			
 			for (var i : int = m_nodesMap.length; i--;)
 			{
@@ -619,6 +636,7 @@ package reprise.controls
 					invalidate();
 				}
 			}
+			m_lastHoverIndex = index;
 		}
 		
 		protected function transformText(text:String, transform:String) : String
