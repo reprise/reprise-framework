@@ -236,10 +236,13 @@ package reprise.controls
 			}
 			m_labelDisplay.wordWrap = m_currentStyles.wordWrap == 'wrap';
 			m_labelDisplay.multiline = m_currentStyles.multiline;
-			
+		}
+
+		override protected function validateChildren() : void
+		{
 			renderLabel();
 		}
-		
+
 		/**
 		 * Don't do anything here: Labels don't have child elements
 		 */
