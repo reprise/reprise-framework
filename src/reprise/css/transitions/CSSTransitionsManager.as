@@ -165,8 +165,10 @@ package reprise.css.transitions
 						}
 					}
 					
-					//ignore properties that don't have previous values or target values
-					if (!oldValue || !targetValue || targetValue.isAuto())
+					//ignore properties that don't have previous values or target values or where 
+					//the values are identical
+					if (!oldValue || !targetValue || targetValue.isAuto() || 
+						oldValue == targetValue)
 					{
 						return;
 					}
