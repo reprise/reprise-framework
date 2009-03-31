@@ -73,7 +73,7 @@ package reprise.core
 		 */
 		public function applicationURL() : String
 		{
-			return loaderInfo.url;
+			return loaderInfo.url.split('\\').join('/');
 		}
 		
 		/**
