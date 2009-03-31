@@ -85,7 +85,6 @@ package reprise.css.transitions
 			var transitionDelay : CSSProperty;
 			var transitionEasing : Function;
 			var transition : CSSPropertyTransition;
-			var startTime : int = getTimer();
 			
 			if (newStyles.hasStyle('transitionFrameDropping') && 
 				newStyles.getStyle('transitionFrameDropping').specifiedValue() == 'prevent')
@@ -96,7 +95,7 @@ package reprise.css.transitions
 			{
 				m_frameDuration = 10000;
 			}
-			if (newStyles && newStyles.getStyle('RepriseTransitionProperty'))
+			if (newStyles && newStyles.hasStyle('RepriseTransitionProperty'))
 			{
 				m_transitionProperties = 
 					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
@@ -110,8 +109,10 @@ package reprise.css.transitions
 					newStyles.hasStyle('RepriseTransitionTimingFunction') 
 					? newStyles.getStyle('RepriseTransitionTimingFunction').specifiedValue() 
 					: DEFAULT_EASING;
-				m_defaultValues = newStyles.getStyle(
-					'RepriseTransitionDefaultValue').specifiedValue();
+				m_defaultValues = newStyles.hasStyle('RepriseTransitionDefaultValue') && 
+					newStyles.hasStyle('RepriseTransitionDefaultValue') 
+					? newStyles.getStyle('RepriseTransitionDefaultValue').specifiedValue() 
+					: [];
 				
 				//remove any transitions that aren't supposed to be active anymore
 				if (m_activeTransitions)
