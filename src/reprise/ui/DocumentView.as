@@ -238,9 +238,12 @@ package reprise.ui
 		
 		reprise function markChildAsInvalid(child : UIObject) : void
 		{
+			if (m_invalidChildren.length == 0)
+			{
+				addEventListener(Event.ENTER_FRAME, self_enterFrame);
+			}
 			//TODO: check if child.toString() is ok to use
 			m_invalidChildren.push({element : child, path : child.toString()});
-			stage.invalidate();
 		}
 		
 		reprise function markChildAsValid(child : UIObject) : void
@@ -298,7 +301,6 @@ package reprise.ui
 			stage.addEventListener(Event.RESIZE, stage_resize);
 			super.initialize();
 			stage.stageFocusRect = false;
-			stage.addEventListener(Event.RENDER, stage_render);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, key_down);
 			stage.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, stage_keyFocusChange);
 			stage.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, stage_mouseFocusChange);
@@ -390,7 +392,7 @@ package reprise.ui
 			//validate elements that have been marked as invalid during validation
 			if (m_invalidChildren.length)
 			{
-				m_stageInvalidationTimeout = setTimeout(invalidateStage, 5);
+				addEventListener(Event.ENTER_FRAME, self_enterFrame);
 			}
 			m_documentIsValidating = false;
 		}
@@ -497,8 +499,9 @@ package reprise.ui
 			}
 		}
 		
-		protected function stage_render(event : Event) : void
+		protected function self_enterFrame(event : Event) : void
 		{
+			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			validateElements();
 		}
 		
