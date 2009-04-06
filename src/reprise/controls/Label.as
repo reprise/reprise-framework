@@ -631,7 +631,11 @@ package reprise.controls
 			
 			if (labelChanged)
 			{
+				var oldWidth : Number = m_labelDisplay.width;
+				var oldHeight : Number = m_labelDisplay.height;
 				applyLabel(m_usedLabelXML);
+				m_labelDisplay.width = oldWidth;
+				m_labelDisplay.height = oldHeight;
 				if (m_overflowIsInvalid)
 				{
 					invalidate();
