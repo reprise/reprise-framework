@@ -312,8 +312,14 @@ package reprise.controls
 		
 		protected function applyLabel(labelXML : XML) : void
 		{
-			var oldWidth : int = m_labelDisplay.textWidth;
-			var oldHeight : int = m_labelDisplay.textHeight;
+			XML.prettyPrinting = false;
+			var text : String = labelXML.toXMLString();
+			text = text.substr(0, text.length - 3);
+			XML.prettyPrinting = true;
+			if (text == m_labelDisplay.htmlText)
+			{
+				return;
+			}
 			
 			if (m_currentStyles.width)
 			{
@@ -323,16 +329,9 @@ package reprise.controls
 			{
 				m_labelDisplay.autoSize = 'left';
 			}
-			
-			XML.prettyPrinting = false;
-			var text : String = labelXML.toXMLString();
-			XML.prettyPrinting = true;
-			if (text.substr(0, text.length - 3) != m_labelDisplay.htmlText)
-			{
-				m_labelDisplay.htmlText = text.substr(0, text.length - 3);
-				m_usedLabelXML = labelXML;
-				m_cacheInvalid = true;
-			}
+			m_labelDisplay.htmlText = text;
+			m_usedLabelXML = labelXML;
+			m_cacheInvalid = true;
 			
 			if (m_labelDisplay.wordWrap)
 			{
@@ -365,8 +364,7 @@ package reprise.controls
 				}
 			}
 			
-			m_overflowIsInvalid = 
-				m_labelDisplay.textWidth != oldWidth || m_labelDisplay.textHeight != oldHeight;
+			m_overflowIsInvalid = true;
 		}
 		
 		protected override function applyInFlowChildPositions() : void
@@ -664,7 +662,13 @@ package reprise.controls
 			}
 			return text;
 		}
-		
+
+		override protected function validateAfterChildren() : void
+		{
+			m_stylesInvalidated ||= m_overflowIsInvalid;
+			super.validateAfterChildren();
+		}
+
 		protected override function applyOverflowProperty() : void
 		{
 			if (!m_overflowIsInvalid)
@@ -805,7 +809,7 @@ package reprise.controls
 			scrollbar.addEventListener(Event.CHANGE, scrollbar_change);
 			return scrollbar;
 		}
-	
+		
 		protected override function draw() : void
 		{
 			if (!m_cacheInvalid && !m_dimensionsChanged)
