@@ -270,7 +270,7 @@ package reprise.ui
 				m_focus.setFocus(false, method);
 			}
 			m_focus = element;
-			if (element)
+			if (element && element.document == this)
 			{
 				stage.focus = element;
 				element.setFocus(true, method);
