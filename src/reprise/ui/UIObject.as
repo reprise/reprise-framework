@@ -108,6 +108,11 @@ package reprise.ui
 			return loaderInfo.url;
 		}
 		
+		public function elementType():String
+		{
+			return m_elementType;
+		}
+		
 		/**
 		 * Sets the parent <code>UIObject</code> for the object.
 		 * 
