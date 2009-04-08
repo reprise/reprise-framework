@@ -150,6 +150,13 @@ package reprise.controls
 		//*****************************************************************************************
 		//*                                   Protected Methods                                   *
 		//*****************************************************************************************
+		override protected function initialize():void
+		{
+			super.initialize();
+			addEventListener(Event.ADDED_TO_STAGE, self_addedToStage);
+			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage);
+		}
+		
 		override protected function createChildren():void
 		{
 			createTrack();
@@ -183,7 +190,6 @@ package reprise.controls
 		{
 			m_thumb.addEventListener(MouseEvent.MOUSE_DOWN, thumb_click);
 			m_track.addEventListener(MouseEvent.MOUSE_DOWN, track_mouseDown);
-			stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUp);
 		}
 		
 		protected function applyValue():void
@@ -252,6 +258,16 @@ package reprise.controls
 		//*****************************************************************************************
 		//*                                         Events                                        *
 		//*****************************************************************************************
+		protected function self_addedToStage(e:Event):void
+		{
+			stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUp);
+		}
+		
+		protected function self_removedFromStage(e:Event):void
+		{
+			stage.removeEventListener(MouseEvent.MOUSE_UP, stage_mouseUp);
+		}
+		
 		protected function thumb_click(e:MouseEvent):void
 		{
 			m_dragStartThumbPosition = m_thumb.left;
