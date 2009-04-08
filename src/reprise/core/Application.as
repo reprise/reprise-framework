@@ -37,8 +37,7 @@ package reprise.core
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static const CSS_URL : String = 'style/slider.css';
-		
+		protected static const CSS_URL : String = 'flash.css';		
 		protected var m_rootElement : DocumentView;
 		protected var m_currentView : UIObject;
 		protected var m_lastView : UIObject;
