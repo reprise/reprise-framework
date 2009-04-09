@@ -11,14 +11,17 @@
 
 package reprise.controls.html
 {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.events.Event;
-	
+	import reprise.core.reprise;
 	import reprise.events.DisplayEvent;
 	import reprise.events.ResourceEvent;
 	import reprise.external.BitmapResource;
-	import reprise.ui.UIComponent; 
+	import reprise.ui.UIComponent;
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.events.Event;		
+	
+	use namespace reprise;
 
 	public class Image extends UIComponent
 	{
@@ -83,13 +86,22 @@ package reprise.controls.html
 				m_imageLoader.priority = value;
 			}
 		}
-	
+		
 		public function setSmoothing(enabled : Boolean) : void
 		{
 			//TODO: found out how to enable smoothing
 			m_smoothing = enabled;
 		}
 		
+		public function bitmapData() : BitmapData
+		{
+			if (!m_image)
+			{
+				return null;
+			}
+			return m_image.bitmapData;
+		}
+
 		
 		/***************************************************************************
 		*							protected methods							   *
@@ -116,12 +128,54 @@ package reprise.controls.html
 			{
 				m_lowerContentDisplay.removeChild(m_image);
 			}
-			m_image = new Bitmap(BitmapData(m_imageLoader.content()));
+			m_image = new Bitmap(BitmapData(m_imageLoader.content()), 'auto', m_smoothing);
 			m_lowerContentDisplay.addChild(m_image);
 			invalidate();
 			dispatchEvent(new DisplayEvent(DisplayEvent.LOAD_COMPLETE));
 		}
+
+		override protected function applyInFlowChildPositions() : void
+		{
+			if (m_loaded)
+			{
+				if (!m_imageDisplayed)
+				{
+					m_imageDisplayed = true;
+					m_lowerContentDisplay.visible = true;
+				}
+				m_image.x = m_currentStyles.paddingLeft;
+				m_image.y = m_currentStyles.paddingTop;
+				if (m_autoFlags.height)
+				{
+					m_image.height = BitmapData(m_imageLoader.content()).height;
+				}
+				else
+				{
+					m_image.height = m_currentStyles.height;
+				}
+				if (m_autoFlags.width)
+				{
+					m_image.width = BitmapData(m_imageLoader.content()).width;
+				}
+				else
+				{
+					m_image.width = m_currentStyles.width;
+				}
+			}
+		}
+		override protected function applyOutOfFlowChildPositions() : void
+		{
+		}
 		
+		override reprise function innerWidth() : int
+		{
+			return m_contentBoxWidth;
+		}
+		override reprise function innerHeight() : int
+		{
+			return m_contentBoxHeight;
+		}
+
 		protected override function measure() : void
 		{
 			if (!(m_imageLoader && m_imageLoader.didSucceed()))
@@ -130,19 +184,8 @@ package reprise.controls.html
 				m_intrinsicHeight = 0;
 				return;
 			}
-			m_intrinsicWidth = m_image.width;
-			m_intrinsicHeight = m_image.height;
-		}
-
-		protected override function draw() : void
-		{
-			if (m_loaded && !m_imageDisplayed)
-			{
-				m_image.x = m_currentStyles.paddingLeft || 0;
-				m_image.y = m_currentStyles.paddingTop || 0;
-				m_imageDisplayed = true;
-				m_lowerContentDisplay.visible = true;
-			}
+			m_intrinsicWidth = BitmapData(m_imageLoader.content()).width;
+			m_intrinsicHeight = BitmapData(m_imageLoader.content()).height;
 		}
 	}
 }
