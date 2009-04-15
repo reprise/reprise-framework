@@ -203,40 +203,45 @@ package reprise.data
 				urlString = urlString.substr(schemeEndIndex + 3);
 			}
 			
+			var networkLocation:String = '';
 			var networkLocationEndIndex : Number = urlString.indexOf('/');
 			if (networkLocationEndIndex > 0)
 			{
-				var networkLocation : String = 
-					urlString.substring(0, networkLocationEndIndex);
+				networkLocation.substring(0, networkLocationEndIndex);
 				urlString = urlString.substr(networkLocationEndIndex);
-				var hostParts : Array;
+			}
+			else
+			{
+				networkLocation = urlString;
+				urlString = '';
+			}
 			
-				var networkLocationParts : Array = m_host.split('@');
-				if (networkLocationParts.length == 2)
+			var hostParts : Array;
+			var networkLocationParts : Array = m_host.split('@');
+			if (networkLocationParts.length == 2)
+			{
+				var credentialParts : Array = networkLocationParts[0].split(':');
+
+				m_user = credentialParts[0];			
+				if (credentialParts.length == 2)
 				{
-					var credentialParts : Array = networkLocationParts[0].split(':');
-	
-					m_user = credentialParts[0];			
-					if (credentialParts.length == 2)
-					{
-						m_password = credentialParts[1];
-					}
-				
-					hostParts = networkLocationParts[1].split(':');
-					m_host = hostParts[0];		
-					if (hostParts.length == 2)
-					{
-						m_port = parseInt(hostParts[1]);
-					}
+					m_password = credentialParts[1];
 				}
-				else
+			
+				hostParts = networkLocationParts[1].split(':');
+				m_host = hostParts[0];		
+				if (hostParts.length == 2)
 				{
-					hostParts = networkLocation.split(':');
-					m_host = hostParts[0];
-					if (hostParts.length == 2)
-					{
-						m_port = parseInt(hostParts[1]);
-					}
+					m_port = parseInt(hostParts[1]);
+				}
+			}
+			else
+			{
+				hostParts = networkLocation.split(':');
+				m_host = hostParts[0];
+				if (hostParts.length == 2)
+				{
+					m_port = parseInt(hostParts[1]);
 				}
 			}
 			
