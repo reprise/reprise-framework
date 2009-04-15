@@ -59,11 +59,20 @@ package reprise.core
 			 */
 			coreResourceLoader = new CoreResourceLoader(this);
 			
+			//copy parameters of stage loader
 			var objCopy:ByteArray = new ByteArray();
-			objCopy.writeObject(loaderInfo.parameters);
+			objCopy.writeObject(application.stage.loaderInfo.parameters);
 			objCopy.position = 0;
 			applicationURL = application.applicationURL();
 			applicationParameters = objCopy.readObject();
+			//merge parameters of application loader if it's not the same as the stage loader
+			if (loaderInfo.url != application.stage.loaderInfo.url)
+			{
+				for (var i : String in loaderInfo.parameters)
+				{
+					applicationParameters[i] = loaderInfo.parameters[i];
+				}
+			}
 		}
 		
 		public function setI18NService(i18nService : II18NService) : void
