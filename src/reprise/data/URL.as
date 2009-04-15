@@ -16,6 +16,19 @@ package reprise.data
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
+		protected static const URL_PARSER : RegExp = new RegExp(
+			'(?:' +										//match absolute path parts only if a 
+														//protocol is given
+				'(?P<protocol>[a-z]*(?=[:]//))' +		//match protocol
+				'[:]//(?P<credentials>[^@]*(?=@))?@?' + //match user credentials
+				'(?P<host>[^/:]*(?=[:/]))?' + 			//match host
+				'[:]?(?P<port>(?<=[:])[0-9]*)?' + 		//match port
+			'|)' + 										//end absolute path stuff
+			'(?P<path>[^?]+)?' +						//match relative path on server
+			'(?:[?](?P<query>[^#]+))?' +				//match query part
+			'(?:[#](?P<anchor>.*))?'					//match anchor part
+			, '');
+		
 		protected var m_scheme : String;
 		protected var m_host : String = '';
 		protected var m_user : String;
@@ -41,11 +54,15 @@ package reprise.data
 		
 		public function scheme() : String
 		{
-			return m_scheme;
+			return m_scheme ? m_scheme + '://' : null;
 		}
 	
 		public function setScheme(val:String) : void
 		{
+			if (val.indexOf('://') != -1)
+			{
+				val = val.substr(0, val.indexOf('://'));
+			}
 			m_scheme = val;
 		}
 		
@@ -137,7 +154,7 @@ package reprise.data
 		
 		public function isFileURL() : Boolean
 		{
-			return m_scheme == 'file://';
+			return m_scheme == 'file';
 		}
 		
 		public function isAbsoluteURL() : Boolean
@@ -149,15 +166,20 @@ package reprise.data
 		public function valueOf() : String
 		{
 			var str : String = '';
-			if (m_scheme != null )
+			if (m_scheme)
 			{
-				str += m_scheme;
+				str += m_scheme + '://';
 			}
-			if (m_user != null && m_password != null)
+			if (m_user)
 			{
-				str += m_user + ':' + m_password + '@';
+				str += m_user;
+				if (m_password)
+				{
+					str += ':' + m_password;
+				}
+				str += '@';
 			}
-			if (m_host != null)
+			if (m_host)
 			{
 				str += m_host;
 				if (!isNaN(m_port))
@@ -169,15 +191,15 @@ package reprise.data
 					str += '/';
 				}
 			}
-			if (m_path != null)
+			if (m_path)
 			{
 				str += m_path;
 			}
-			if (m_query != null)
+			if (m_query)
 			{
 				str += '?' + m_query;
 			}
-			if (m_fragment != null)
+			if (m_fragment)
 			{
 				str += '#' + m_fragment;
 			}
@@ -196,73 +218,16 @@ package reprise.data
 		***************************************************************************/
 		protected function parseURL(urlString : String) : void
 		{
-			var schemeEndIndex : Number = urlString.indexOf('://');
-			if (schemeEndIndex != -1)
-			{
-				m_scheme = urlString.substring(0, schemeEndIndex + 3);
-				urlString = urlString.substr(schemeEndIndex + 3);
-			}
-			
-			var networkLocation:String = '';
-			var networkLocationEndIndex : Number = urlString.indexOf('/');
-			if (networkLocationEndIndex > 0)
-			{
-				networkLocation.substring(0, networkLocationEndIndex);
-				urlString = urlString.substr(networkLocationEndIndex);
-			}
-			else
-			{
-				networkLocation = urlString;
-				urlString = '';
-			}
-			
-			var hostParts : Array;
-			var networkLocationParts : Array = m_host.split('@');
-			if (networkLocationParts.length == 2)
-			{
-				var credentialParts : Array = networkLocationParts[0].split(':');
-
-				m_user = credentialParts[0];			
-				if (credentialParts.length == 2)
-				{
-					m_password = credentialParts[1];
-				}
-			
-				hostParts = networkLocationParts[1].split(':');
-				m_host = hostParts[0];		
-				if (hostParts.length == 2)
-				{
-					m_port = parseInt(hostParts[1]);
-				}
-			}
-			else
-			{
-				hostParts = networkLocation.split(':');
-				m_host = hostParts[0];
-				if (hostParts.length == 2)
-				{
-					m_port = parseInt(hostParts[1]);
-				}
-			}
-			
-			var queryStartIndex : Number = urlString.indexOf('?');		
-			if (queryStartIndex != -1)
-			{
-				var query : String = urlString.substring(queryStartIndex + 1);
-				var queryParts : Array = query.split('#');
-				setQuery(queryParts[0]);
-				m_fragment = queryParts[1];
-				m_path = urlString.substring(0, queryStartIndex);
-			}
-			else
-			{
-				var pathParts : Array = urlString.split('#');
-				m_path = pathParts[0];
-				if (pathParts.length == 2)
-				{
-					m_fragment = pathParts[1];
-				}
-			}
+			var match : Array = URL_PARSER.exec(urlString);
+			m_scheme = match['protocol'];
+			var credentials : Array = match['credentials'].split(':');
+			m_user = credentials[0];
+			m_password = credentials[1] || '';
+			m_host = match['host'];
+			m_port = parseInt(match['port']);
+			m_path = match['path'];
+			setQuery(match['query']);
+			m_fragment = match['anchor'];
 		}	
 	}
 }
