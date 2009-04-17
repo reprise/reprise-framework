@@ -87,7 +87,6 @@ package reprise.controls
 		{
 			XML.prettyPrinting = false;
 			var labelStr:String = m_labelXML.toXMLString();
-			XML.prettyPrinting = true;
 			return labelStr;
 		}
 	
@@ -180,7 +179,6 @@ package reprise.controls
 			m_labelDisplay = new TextField();
 			m_labelDisplay = TextField(m_contentDisplay.addChild(m_labelDisplay));
 			m_labelDisplay.name = 'labelDisplay';
-			m_labelDisplay.condenseWhite = true;
 			m_labelDisplay.mouseEnabled = false;
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
 			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
@@ -242,7 +240,7 @@ package reprise.controls
 		{
 			renderLabel();
 		}
-
+		
 		/**
 		 * Don't do anything here: Labels don't have child elements
 		 */
@@ -251,6 +249,8 @@ package reprise.controls
 			m_xmlDefinition = node;
 			if (node.localName() != 'p')
 			{
+				XML.prettyPrinting = false;
+				XML.ignoreWhitespace = false;
 				m_labelXML = <p/>;
 				m_labelXML.setChildren(node);
 			}
@@ -289,22 +289,20 @@ package reprise.controls
 			m_containsImages = false;
 			
 			XML.prettyPrinting = false;
+			XML.ignoreWhitespace = false;
 			var labelString : String = m_labelXML.toXMLString();
 			labelString = resolveBindings(labelString);
 			var labelXML : XML;
-			XML.ignoreWhitespace = false;
 			try
 			{
 				labelXML = new XML(labelString);
-				labelXML.normalize();
 			}
 			catch (error : Error)
 			{
 				labelXML = new XML('<p style="color: red;">malformed content</p>');
 			}
-			XML.ignoreWhitespace = true;
 			m_nodesMap.length = 0;
-			cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet);
+			cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet, new NodeCleanupConfig());
 			
 			m_textSetExternally = false;
 			applyLabel(labelXML);
@@ -313,9 +311,9 @@ package reprise.controls
 		protected function applyLabel(labelXML : XML) : void
 		{
 			XML.prettyPrinting = false;
+			XML.ignoreWhitespace = false;
 			var text : String = labelXML.toXMLString();
 			text = text.substr(0, text.length - 3);
-			XML.prettyPrinting = true;
 			if (text == m_labelDisplay.htmlText)
 			{
 				return;
@@ -381,25 +379,57 @@ package reprise.controls
 		/**
 		 * cleanes the given node to prepare it for display in a TextField
 		 */
-		protected function cleanNode(node:XML, selectorPath:String, 
-			stylesheet:CSS, index : int = 0, transform:String = null) : int
+		protected function cleanNode(
+			node:XML, selectorPath:String, stylesheet:CSS, config : NodeCleanupConfig) : void
 		{
-			var startIndex : int = index;
+			var startIndex : int = config.index;
 			if (node.nodeKind() == 'text')
 			{
-				if (transform)
+				var textChanged : Boolean = false;
+				var text : String = node.toString();
+				if (config.transform)
 				{
-					node.parent().children()[node.childIndex()] = 
-						transformText(node.toString(), transform);
+					text = transformText(text, config.transform);
+					textChanged = true;
 				}
-				index += node.toString().length;
+				for (var i : int = 0; i < text.length - 1; i++)
+				{
+					if (' \n\r\t'.indexOf(text.charAt(i)) != -1 && 
+						' \n\r\t'.indexOf(text.charAt(i + 1)) != -1)
+					{
+						textChanged = true;
+						text = text.substr(0, i + 1) + text.substr(i + 2);
+						i--;
+					}
+				}
+				if (config.removeFirstWhitespace && ' \n\r\t'.indexOf(text.charAt(0)) != -1)
+				{
+					text = text.substr(1);
+				}
+				if (text.length)
+				{
+					config.removeFirstWhitespace = 
+						' \n\r\t'.indexOf(text.charAt(text.length - 1)) != -1;
+				}
+				config.index += text.length;
+				
+				if (textChanged)
+				{
+					node.parent().children()[node.childIndex()] = text;
+				}
 				//nothing else to clean in text nodes
-				return index;
+				return;
 			}
-			if (node.localName() == 'br' || node.hasOwnProperty('ignore'))
+			if (node.localName() == 'br')
 			{
-				//nothing to clean in <br>-nodes
-				return index;
+				//nothing to clean in <br>-nodes, but we need to remove the next whitespace
+				config.removeFirstWhitespace = true;
+				config.index++;
+				return;
+			}
+			if (node.hasOwnProperty('ignore'))
+			{
+				return;
 			}
 			
 			//bring all style definitions into a form the player can understand
@@ -408,7 +438,7 @@ package reprise.controls
 			{
 				nodeStyle = m_complexStyles.clone();
 				var transformStyle : CSSProperty = nodeStyle.getStyle('textTransform');
-				transformStyle && (transform = String(transformStyle.valueOf()));
+				transformStyle && (config.transform = String(transformStyle.valueOf()));
 			}
 			else
 			{
@@ -463,6 +493,7 @@ package reprise.controls
 				}
 			}
 			
+			var isBlockNode : Boolean = false;
 			switch (node.localName())
 			{
 				case "a":
@@ -488,6 +519,7 @@ package reprise.controls
 					{
 						break;
 					}
+					isBlockNode = true;
 					/*
 					 * TODO: Find a way to support marginTop
 					 */ 
@@ -519,6 +551,13 @@ package reprise.controls
 					//textHeight. Therefore, we flag that now and don't try to 
 					//reduce the size
 					m_containsImages = true;
+					var nodeDisplayType : String = nodeStyle.getStyle('display')
+						? nodeStyle.getStyle('display').specifiedValue() 
+						: 'block';
+					if (nodeDisplayType == 'block')
+					{
+						isBlockNode = true;
+					}
 					break;
 				}
 				default:
@@ -532,11 +571,15 @@ package reprise.controls
 			
 			for each (var child : XML in node.children())
 			{
-				index = cleanNode(child, selectorPath, stylesheet, index, transform);
+				cleanNode(child, selectorPath, stylesheet, config);
 			}
-			m_nodesMap.push({start : startIndex, end : index, path : selectorPath, 
+			if (isBlockNode)
+			{
+				config.removeFirstWhitespace = true;
+				config.index++;
+			}
+			m_nodesMap.push({start : startIndex, end : config.index, path : selectorPath, 
 				styleName : styleName, node : node});
-			return index;
 		}
 		/**
 		 * event handler, invoked on click of one of 
@@ -863,5 +906,16 @@ package reprise.controls
 		{
 			draw();
 		}
+	}
+}
+
+final class NodeCleanupConfig
+{
+	public var index : int = 0;
+	public var removeFirstWhitespace : Boolean = true;
+	public var transform : String;
+	public function NodeCleanupConfig()
+	{
+		
 	}
 }
