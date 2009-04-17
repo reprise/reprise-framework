@@ -11,6 +11,7 @@
 
 package reprise.controls
 {
+	import reprise.css.ComputedStyles;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
@@ -63,6 +64,7 @@ package reprise.controls
 		protected var m_bitmapCache : Bitmap;
 		protected var m_cacheInvalid : Boolean;
 		protected var m_lastHoverIndex : int;
+		protected var m_usePointer : Boolean;
 
 		
 		/***************************************************************************
@@ -197,7 +199,17 @@ package reprise.controls
 		
 		protected override function applyStyles() : void
 		{
-			super.applyStyles();
+			if (m_usePointer && m_currentStyles.cursor != 'pointer')
+			{
+				var oldCursor : String = m_currentStyles.cursor;
+				m_currentStyles.cursor = 'pointer';
+				super.applyStyles();
+				m_currentStyles.cursor = oldCursor;
+			}
+			else
+			{
+				super.applyStyles();
+			}
 			
 			//TODO: find a way to re-enable tab stops
 //			var fmt : TextFormat = new TextFormat();
@@ -648,11 +660,14 @@ package reprise.controls
 				return;
 			}
 			
+			var usePointer : Boolean = false;
+			var innerStart : int = 0;
+			var innerEnd : int = m_labelDisplay.length;
 			for (var i : int = m_nodesMap.length; i--;)
 			{
 				var def : Object = m_nodesMap[i];
 				var node : XML = def.node;
-				if (int(m_nodesMap[i].start) <= index && int(m_nodesMap[i].end) > index)
+				if (int(def.start) <= index && int(def.end) > index)
 				{
 					if (!def.hover)
 					{
@@ -662,6 +677,15 @@ package reprise.controls
 							getStyleForEscapedSelectorPath(def.path + '@:hover@');
 						node.@['class'] = hoverStyle.textStyleName(node.parent() == null);
 						labelChanged = true;
+						def.pointer ||= (hoverStyle.hasStyle('cursor') 
+							? hoverStyle.getStyle('cursor').specifiedValue()
+							: null) == 'pointer';
+					}
+					if (def.start > innerStart || def.end < innerEnd)
+					{
+						innerStart = def.start;
+						innerEnd = def.end;
+						usePointer = def.pointer;
 					}
 				}
 				else if (def.hover)
@@ -683,6 +707,20 @@ package reprise.controls
 				{
 					invalidate();
 				}
+			}
+			if (usePointer)
+			{
+				m_usePointer = true;
+				if (!buttonMode)
+				{
+					buttonMode = true;
+					useHandCursor = true;
+				}
+			}
+			else if (buttonMode && m_currentStyles.cursor != 'pointer')
+			{
+				buttonMode = false;
+				useHandCursor = false;
 			}
 			m_lastHoverIndex = index;
 		}
