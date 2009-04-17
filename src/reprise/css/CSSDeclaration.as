@@ -24,7 +24,8 @@ package reprise.css
 	import reprise.css.propertyparsers.Transition;
 	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.css.transitions.TransitionVOFactory;
-	
+	import reprise.data.AdvancedColor;
+
 	import flash.text.StyleSheet;
 	
 	use namespace reprise;
@@ -284,15 +285,7 @@ package reprise.css
 					tfObject[key] = CSSProperty(m_properties[key]).valueOf();
 				}
 			}
-			if (tfObject.color != null)
-			{
-				var colorStr:String = tfObject.color.rgb().toString(16);
-				while(colorStr.length < 6)
-				{
-					colorStr = '0' + colorStr;
-				}
-				tfObject.color = '#' + colorStr;
-			}
+			tfObject.color &&= AdvancedColor(tfObject.color).toString().substr(0, 7);
 			return tfObject;
 		}
 		
