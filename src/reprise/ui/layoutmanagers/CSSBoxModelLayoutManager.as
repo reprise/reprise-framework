@@ -361,7 +361,7 @@ package reprise.ui.layoutmanagers
 				{
 					upperContainer.addChildAt(element, currentDepth);
 				}
-				else
+				else if (element.parent.getChildIndex(element) != currentDepth)
 				{
 					element.parent.setChildIndex(element, currentDepth);
 				}
