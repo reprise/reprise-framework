@@ -32,7 +32,7 @@ package reprise.external
 		protected var m_retryTimes : int = 3;
 		protected var m_failedTimes : int;
 		protected var m_forceReload : Boolean;
-		protected var m_content : String;
+		protected var m_content : Object;
 		protected var m_controlDelegate : Delegate;
 		protected var m_lastBytesLoaded : int;
 		protected var m_lastCheckTime : int;
