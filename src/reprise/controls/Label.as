@@ -259,7 +259,7 @@ package reprise.controls
 		protected override function parseXMLContent(node : XML) : void
 		{
 			m_xmlDefinition = node;
-			if (node.localName() != 'p')
+			if (node.localName().toLowerCase() != 'p')
 			{
 				XML.prettyPrinting = false;
 				XML.ignoreWhitespace = false;
@@ -432,7 +432,7 @@ package reprise.controls
 				//nothing else to clean in text nodes
 				return;
 			}
-			if (node.localName() == 'br')
+			if (node.localName().toLowerCase() == 'br')
 			{
 				//nothing to clean in <br>-nodes, but we need to remove the next whitespace
 				config.removeFirstWhitespace = true;
@@ -465,7 +465,7 @@ package reprise.controls
 					id = "@#" + id + "@";
 					delete node.@id;
 				}
-				selectorPath += " @" + node.localName() + "@" + classesStr + id;
+				selectorPath += " @" + node.localName().toLowerCase() + "@" + classesStr + id;
 				nodeStyle = stylesheet.getStyleForEscapedSelectorPath(selectorPath);
 			}
 			//the player doesn't understand the "style" attribute, so we need to
@@ -506,7 +506,7 @@ package reprise.controls
 			}
 			
 			var isBlockNode : Boolean = false;
-			switch (node.localName())
+			switch (node.localName().toLowerCase())
 			{
 				case "a":
 				{

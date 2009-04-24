@@ -2214,7 +2214,7 @@ package reprise.ui
 					}
 				}
 				m_nodeAttributes = attributes;
-				m_elementType = node.localName();
+				m_elementType = node.localName().toLowerCase();
 			}
 		}
 		
