@@ -97,17 +97,6 @@ package reprise.controls
 			m_lastStyles = m_currentStyles;
 		}
 		
-		/**
-		 * Just pass the content on to the labelDisplay
-		 */
-		protected override function parseXMLContent(node : XML) : void
-		{
-			if (node.children().length())
-			{
-				m_labelDisplay.setLabel(node.children().toXMLString());
-			}
-		}
-		
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
 			if (event.target != this)
