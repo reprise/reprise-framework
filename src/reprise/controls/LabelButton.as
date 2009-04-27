@@ -68,10 +68,6 @@ package reprise.controls
 		{
 			m_labelDisplay = Label(addComponent('label', null, Label));
 			m_labelDisplay.label = m_label;
-			if (m_label)
-			{
-				setLabel(m_label);
-			}
 		}
 		
 		/**
