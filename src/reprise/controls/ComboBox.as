@@ -121,8 +121,6 @@ package reprise.controls
 			for each (var childNode:XML in node.children())
 			{
 				preprocessTextNode(childNode);
-				var child:UIComponent = 
-					m_rootElement.uiRendererFactory().rendererByNode(childNode);
 				if (childNode.localName() != 'option')
 				{
 					log('Illegal node ' + childNode.localName() + ' below ComboBox');
