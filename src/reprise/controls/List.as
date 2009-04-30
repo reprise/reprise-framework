@@ -54,7 +54,7 @@ package reprise.controls
 			{
 				addItemWithTitleAndValue(item.label, item.value);
 			}
-			setSelectedIndex(0);
+			setSelectedIndex(-1);
 		}
 		
 		public function removeAllItems() : void
