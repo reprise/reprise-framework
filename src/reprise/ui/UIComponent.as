@@ -1737,7 +1737,7 @@ package reprise.ui
 			{
 				path = "";
 			}
-			path += "@" + m_elementType + "@";
+			path += "@" + m_elementType.toLowerCase() + "@";
 			if (m_cssId)
 			{
 				path += "@#" + m_cssId + "@";
@@ -2214,7 +2214,7 @@ package reprise.ui
 					}
 				}
 				m_nodeAttributes = attributes;
-				m_elementType = node.localName().toLowerCase();
+				m_elementType = node.localName();
 			}
 		}
 		
