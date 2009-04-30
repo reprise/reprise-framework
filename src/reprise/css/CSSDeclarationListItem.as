@@ -53,6 +53,11 @@ package reprise.css
 			while (i--)
 			{
 				m_selectorPattern[i] = m_selectorPattern[i].split('|');
+				//match element names case-insensitive
+				if ('.:#'.indexOf(m_selectorPattern[i][0].charAt(1)) == -1)
+				{
+					m_selectorPattern[i][0] = m_selectorPattern[i][0].toLowerCase();
+				}
 			}
 			
 			declarationSpecificity = specificityForSelector(selector);

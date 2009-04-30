@@ -81,12 +81,12 @@ package reprise.ui
 			m_class = Class(Object(this).constructor);
 			if (m_class['className'])
 			{
-				m_elementType = m_class['className'];
+				m_elementType = m_class['className'].toLowerCase();
 			}
 			else
 			{
 				var className : String = getQualifiedClassName(this);
-				m_elementType =  className.substr(className.indexOf('::') + 2);
+				m_elementType =  className.substr(className.indexOf('::') + 2).toLowerCase();
 			}
 			preinitialize();
 		}
