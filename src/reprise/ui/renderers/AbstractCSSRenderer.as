@@ -9,10 +9,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.ui.renderers { 
+package reprise.ui.renderers 
+{	
 	import reprise.css.CSSDeclaration;
-	
+	import reprise.css.ComputedStyles;
+
 	import flash.display.Sprite;
+
 	public class AbstractCSSRenderer
 		implements ICSSRenderer
 	{
@@ -21,7 +24,7 @@ package reprise.ui.renderers {
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_styles : Object;
+		protected var m_styles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
 		protected var m_width : Number;
 		protected var m_height : Number;
@@ -44,12 +47,12 @@ package reprise.ui.renderers {
 			return m_id;
 		}
 		
-		public function styles() : Object
+		public function styles() : ComputedStyles
 		{
 			return m_styles;
 		}
 	
-		public function setStyles(val : Object) : void
+		public function setStyles(val : ComputedStyles) : void
 		{
 			m_styles = val;
 		}

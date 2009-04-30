@@ -10,11 +10,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 package reprise.ui.renderers
-{ 
+{	
 	import reprise.css.CSSDeclaration;
-	
+	import reprise.css.ComputedStyles;
+
 	import flash.display.Sprite;
-	
+
 	public interface ICSSRenderer
 	{
 		function setId(id:String) : void;
@@ -26,8 +27,8 @@ package reprise.ui.renderers
 		function height() : Number;
 		function setSize(width : Number, height : Number) : void;
 		
-		function setStyles(styles : Object) : void;
-		function styles() : Object;
+		function setStyles(styles : ComputedStyles) : void;
+		function styles() : ComputedStyles;
 		function setComplexStyles(styles : CSSDeclaration) : void;
 		function complexStyles() : CSSDeclaration;
 		function setDisplay(display : Sprite) : void;
