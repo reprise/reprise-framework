@@ -57,6 +57,10 @@ package reprise.css
 					m_starSelectors.push(item);
 					continue;
 				}
+				if ('.:#'.indexOf(part.charAt(0)) == -1)
+				{
+					part = part.toLowerCase();
+				}
 				if (!m_selectorHeadParts[part])
 				{
 					m_selectorHeadParts[part] = [];
