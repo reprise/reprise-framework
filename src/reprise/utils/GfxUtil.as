@@ -17,6 +17,9 @@ package reprise.utils
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import reprise.utils.GeomUtil;
+	
 	public class GfxUtil 
 	{
 		/***************************************************************************
@@ -421,7 +424,19 @@ package reprise.utils
 				scale9Rect.width, scale9Rect.height);
 					
 			return rects;
-		}	
+		}
+		
+		public static function bitmapDataScaledToRect(bmp:BitmapData, rect:Rectangle, 
+			keepRatio:Boolean = true, allowUpScale:Boolean = false):BitmapData
+		{
+			var sourceRect:Rectangle = new Rectangle(0, 0, bmp.width, bmp.height);
+			GeomUtil.scaleRectToRect(sourceRect, rect, keepRatio, allowUpScale);
+			var mat:Matrix = new Matrix();
+			mat.scale(sourceRect.width / bmp.width, sourceRect.height / bmp.height);
+			var scaledBmp:BitmapData = new BitmapData(sourceRect.width, sourceRect.height, true, 0x0);
+			scaledBmp.draw(bmp, mat, null, null, null, true);
+			return scaledBmp;
+		}
 		
 			
 		/***************************************************************************
