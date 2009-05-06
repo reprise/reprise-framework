@@ -15,12 +15,11 @@ package reprise.controls
 	import reprise.events.MouseEventConstants;
 	import reprise.ui.AbstractInput;
 	import reprise.ui.DocumentView;
-	import reprise.ui.UIComponent;
-	
+
 	import flash.display.DisplayObject;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import flash.ui.Keyboard;		
+	import flash.ui.Keyboard;
 	
 	use namespace reprise;
 
@@ -35,7 +34,6 @@ package reprise.controls
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_isToggleButton : Boolean = false;
-		protected var m_currentState : String;
 	
 		protected var m_selected : Boolean = false;
 		protected var m_enabled : Boolean = true;
@@ -112,7 +110,6 @@ package reprise.controls
 			{
 				removeCSSPseudoClass("disabled");
 			}
-//			m_buttonDisplay.enabled = value;
 			invalidate();
 		}
 		
@@ -212,6 +209,11 @@ package reprise.controls
 		}
 		protected function buttonDisplay_click(event : MouseEvent) : void
 		{
+			if (!m_enabled)
+			{
+				event.stopImmediatePropagation();
+				return;
+			}
 			if (m_canBecomeKeyView)
 			{
 				m_rootElement.setFocusedElement(this, DocumentView.FOCUS_METHOD_MOUSE);
