@@ -2288,7 +2288,6 @@ package reprise.ui
 		protected function parseXMLContent(node : XML) : void
 		{
 			XML.prettyPrinting = false;
-			XML.ignoreWhitespace = false;
 			var childNode : XML = node.children()[0];
 			while (childNode)
 			{
@@ -2338,6 +2337,7 @@ package reprise.ui
 			var xmlParser : XML = <p/>;
 			xmlParser.setChildren(nodesToCombine);
 			siblings[node.childIndex()] = xmlParser;
+			XML.ignoreWhitespace = true;
 			return xmlParser;
 		}
 		
