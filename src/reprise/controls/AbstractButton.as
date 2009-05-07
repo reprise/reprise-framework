@@ -131,7 +131,10 @@ package reprise.controls
 		public override function setFocus(value : Boolean, method : String) : void
 		{
 			super.setFocus(value, method);
-			stage.focus = this;
+			if (value && stage)
+			{
+				stage.focus = this;
+			}
 		}
 		
 		
