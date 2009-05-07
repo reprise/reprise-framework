@@ -11,21 +11,19 @@
 
 package reprise.core
 {
+	import reprise.core.ApplicationContext;
+	import reprise.css.CSS;
+	import reprise.events.DisplayEvent;
+	import reprise.external.IResource;
+	import reprise.ui.DocumentView;
+	import reprise.ui.UIObject;
+	import reprise.utils.PathUtil;
+
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
-	import flash.utils.Timer;
-	
-	import reprise.core.ApplicationContext;
-	import reprise.css.CSS;
-	import reprise.events.DisplayEvent;
-	import reprise.external.IResource;
-	import reprise.external.ResourceLoader;
-	import reprise.ui.DocumentView;
-	import reprise.ui.UIObject;
-	import reprise.utils.PathUtil;
 
 	public class Application extends Sprite
 	{

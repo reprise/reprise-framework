@@ -11,6 +11,7 @@
 
 package reprise.ui
 {
+	import reprise.core.FocusManager;
 	import reprise.core.ApplicationContext;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
@@ -19,10 +20,10 @@ package reprise.ui
 	import reprise.css.ComputedStyles;
 	import reprise.events.DebugEvent;
 	import reprise.events.DisplayEvent;
-	
+
 	import com.nesium.events.FileMonitorEvent;
 	import com.nesium.logging.FileMonitor;
-	
+
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
@@ -34,7 +35,6 @@ package reprise.ui
 	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
-	import flash.utils.setTimeout;		
 	
 	use namespace reprise;
 
@@ -43,9 +43,6 @@ package reprise.ui
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static const FOCUS_METHOD_KEYBOARD : String = 'keyboard';
-		public static const FOCUS_METHOD_MOUSE : String = 'mouse';
-		
 		public static var className : String = "body";
 		
 		public var stageDimensionsChanged : Boolean;
@@ -61,23 +58,21 @@ package reprise.ui
 		protected var m_elementsById : Object;
 		
 		protected var m_appContext : ApplicationContext;
+		protected var m_focusManager : FocusManager;
 		
 		protected var m_invalidChildren : Array;
+		protected var m_validatedElementsCount : int;
+		protected var m_currentFrameTime : int;
+		protected var m_documentIsValidating : Boolean;
 		
 		protected var m_widthIsRelative : Boolean;
 		protected var m_heightIsRelative : Boolean;
 		
 		protected var m_stageInvalidationTimeout : int;
 		
-		protected var m_focus:UIObject;
-		protected var m_lastTabPress : int;
-		
 		protected var m_debuggingMode : Boolean;
 		protected var m_currentDebugElement : UIComponent;
 		protected var m_debugInterface : Sprite;
-		protected var m_validatedElementsCount : int;
-		protected var m_currentFrameTime : int;
-		protected var m_documentIsValidating : Boolean;
 
 		
 		/***************************************************************************
@@ -261,22 +256,7 @@ package reprise.ui
 		
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
-			if (m_focus && m_focus == element)
-			{
-				return false;
-			}
-			if (m_focus)
-			{
-				m_focus.setFocus(false, method);
-			}
-			m_focus = element;
-			if (element && element.document == this)
-			{
-				stage.focus = element;
-				element.setFocus(true, method);
-				return true;
-			}
-			return false;
+			return m_focusManager.setFocusedElement(element, method);
 		}
 		
 		
@@ -301,10 +281,8 @@ package reprise.ui
 			stage.addEventListener(Event.RESIZE, stage_resize);
 			super.initialize();
 			stage.stageFocusRect = false;
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, key_down);
-			stage.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, stage_keyFocusChange);
-			stage.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, stage_mouseFocusChange);
-			stage.focus = this;
+			m_focusManager = new FocusManager(this);
+			addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
 		}
 		
 		protected override function initDefaultStyles() : void
@@ -504,50 +482,8 @@ package reprise.ui
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			validateElements();
 		}
-		
-		protected function stage_keyFocusChange(e:FocusEvent):void
-		{
-			if (e.keyCode == Keyboard.TAB && !e.isDefaultPrevented())
-			{
-				if (getTimer() - m_lastTabPress < 15)
-				{
-					e.preventDefault();
-					return;
-				}
-				m_lastTabPress = getTimer();
-				var focusView:UIObject;
-				if (e.shiftKey)
-				{
-					focusView = m_focus != null 
-						? m_focus.previousValidKeyView() 
-						: previousValidKeyView();
-				}
-				else
-				{
-					focusView = m_focus != null 
-						? m_focus.nextValidKeyView() 
-						: nextValidKeyView();
-				}
-				if (setFocusedElement(focusView, FOCUS_METHOD_KEYBOARD))
-				{
-		            e.preventDefault();
-				}
-	        }
-		}
-		protected function stage_mouseFocusChange(event : FocusEvent) : void
-		{
-			var element : DisplayObject = DisplayObject(event.relatedObject);
-			while (element && !(element is UIObject))
-			{
-				element = element.parent;
-			}
-			if (setFocusedElement(element as UIObject, FOCUS_METHOD_MOUSE))
-			{
-				event.preventDefault();
-			}
-		}
-		
-		protected function key_down(event : KeyboardEvent) : void
+
+		protected function self_keyDown(event : KeyboardEvent) : void
 		{
 			if (event.shiftKey && event.ctrlKey)
 			{

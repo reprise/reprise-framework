@@ -11,10 +11,10 @@
 
 package reprise.controls
 {
+	import reprise.core.FocusManager;
 	import reprise.core.reprise;
 	import reprise.events.MouseEventConstants;
 	import reprise.ui.AbstractInput;
-	import reprise.ui.DocumentView;
 
 	import flash.display.DisplayObject;
 	import flash.events.KeyboardEvent;
@@ -216,7 +216,7 @@ package reprise.controls
 			}
 			if (m_canBecomeKeyView)
 			{
-				m_rootElement.setFocusedElement(this, DocumentView.FOCUS_METHOD_MOUSE);
+				m_rootElement.setFocusedElement(this, FocusManager.FOCUS_METHOD_MOUSE);
 			}
 			
 			if(isToggleButton)

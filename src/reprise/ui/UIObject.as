@@ -137,6 +137,14 @@ package reprise.ui
 			return this;
 		}
 		
+		/**
+		 * Returns the parent UIObject, no matter what their actual relation in the displayList is
+		 */
+		public function parentElement() : UIObject
+		{
+			return m_parentElement == this ? null : m_parentElement;
+		}
+
 		protected function setRootElement(rootElement : DocumentView) : void
 		{
 			m_rootElement = rootElement;
