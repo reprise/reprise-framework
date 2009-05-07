@@ -11,6 +11,8 @@
 
 package reprise.controls
 {
+	import flash.text.TextField;
+
 	import reprise.core.FocusManager;
 	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
@@ -300,6 +302,15 @@ package reprise.controls
 				m_verticalScrollingOn = m_labelDisplay.maxScrollV > 1;
 				m_horizontalScrollingOn = m_labelDisplay.maxScrollH > 0;
 			}
+		}
+
+		override protected function updateHover(mouseOut : Boolean = false) : void
+		{
+			if (stage.focus == m_labelDisplay)
+			{
+				return;
+			}
+			super.updateHover(mouseOut);
 		}
 	}
 }

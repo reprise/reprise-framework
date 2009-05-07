@@ -62,16 +62,13 @@ package reprise.core
 		 */
 		protected function document_mouseDown(event : MouseEvent) : void
 		{
-			if (m_focus)
+			var element : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
+				DisplayObject(event.target), true);
+			if (element == m_focus)
 			{
 				return;
 			}
-			var element : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
-				DisplayObject(event.target), true);
-			if (element)
-			{
-				setFocusedElement(element, FOCUS_METHOD_MOUSE);
-			}
+			setFocusedElement(element, FOCUS_METHOD_MOUSE);
 		}
 
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
@@ -84,20 +81,15 @@ package reprise.core
 			{
 				m_focus.setFocus(false, method);
 			}
-			else
-			{
-				m_document.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
-			}
 			m_focus = element;
 			if (element && element.document == m_document)
 			{
-				m_document.stage.focus = element;
 				element.setFocus(true, method);
 				return true;
 			}
 			//else
+			m_document.stage.focus = null;
 			m_focus = null;
-			m_document.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			return false;
 		}
 		
@@ -148,11 +140,9 @@ package reprise.core
 			}
 			m_inFocusHandling = true;
 			var element : DisplayObject = DisplayObject(event.relatedObject);
-			while (element && !(element is UIObject))
-			{
-				element = element.parent;
-			}
-			if (setFocusedElement(element as UIObject, FOCUS_METHOD_MOUSE))
+			var focusedElement : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
+				element, true);
+			if (setFocusedElement(focusedElement, FOCUS_METHOD_MOUSE))
 			{
 				event.preventDefault();
 			}

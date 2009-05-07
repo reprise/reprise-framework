@@ -128,6 +128,12 @@ package reprise.controls
 			selected = Boolean(value);
 		}
 		
+		public override function setFocus(value : Boolean, method : String) : void
+		{
+			super.setFocus(value, method);
+			stage.focus = this;
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
