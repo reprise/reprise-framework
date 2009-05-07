@@ -92,6 +92,7 @@ package reprise.ui
 		
 		//attribute properties
 		protected var m_xmlDefinition : XML;
+		protected var m_xmlURL : String = '';
 		protected var m_nodeAttributes : Object;
 		protected var m_cssClasses : String = "";
 		protected var m_cssPseudoClasses : String = "";
@@ -2167,9 +2168,10 @@ package reprise.ui
 		/**
 		 * parses the elements' xmlDefinition as set through innerHTML
 		 */
-		protected function parseXMLDefinition(xmlDefinition : XML) : void
+		protected function parseXMLDefinition(xmlDefinition : XML, url : String) : void
 		{
 			m_xmlDefinition = xmlDefinition;
+			m_xmlURL = url;
 			parseXMLAttributes(xmlDefinition);
 			parseXMLContent(xmlDefinition);
 			
@@ -2297,7 +2299,7 @@ package reprise.ui
 				if (child)
 				{
 					addChild(child);
-					child.parseXMLDefinition(childNode);
+					child.parseXMLDefinition(childNode, m_xmlURL);
 				}
 				else
 				{

@@ -169,9 +169,9 @@ package reprise.ui
 		 * initializes the UIComponent structure from the given xml structure, 
 		 * creating child views as needed
 		 */
-		public function initFromXML(xml : XML) : DocumentView
+		public function initFromXML(xml : XML, url : String = '') : DocumentView
 		{
-			parseXMLDefinition(xml);
+			parseXMLDefinition(xml, url);
 			return this;
 		}
 		

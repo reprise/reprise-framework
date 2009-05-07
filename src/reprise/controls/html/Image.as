@@ -12,14 +12,15 @@
 package reprise.controls.html
 {
 	import reprise.core.reprise;
+	import reprise.css.CSSParsingHelper;
 	import reprise.events.DisplayEvent;
 	import reprise.events.ResourceEvent;
 	import reprise.external.BitmapResource;
 	import reprise.ui.UIComponent;
-	
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.events.Event;		
+	import flash.events.Event;
 	
 	use namespace reprise;
 
@@ -60,6 +61,7 @@ package reprise.controls.html
 			{
 				return;
 			}
+			src = CSSParsingHelper.resolvePathAgainstPath(src, m_xmlURL);
 			m_loaded = false;
 			m_imageLoader = new BitmapResource();
 			m_imageLoader.setCheckPolicyFile(m_checkPolicyFile);
