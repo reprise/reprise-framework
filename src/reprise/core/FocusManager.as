@@ -11,12 +11,13 @@
 
 package reprise.core
 {
-	import reprise.utils.DisplayListUtil;
 	import reprise.ui.DocumentView;
 	import reprise.ui.UIObject;
+	import reprise.utils.DisplayListUtil;
 
 	import flash.display.DisplayObject;
 	import flash.events.FocusEvent;
+	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
 	import flash.utils.getTimer;
 	
@@ -46,11 +47,33 @@ package reprise.core
 		public function FocusManager(document : DocumentView)
 		{
 			m_document = document;
-			document.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, self_keyFocusChange);
-			document.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, self_mouseFocusChange);
-			document.addEventListener(FocusEvent.FOCUS_IN, self_focusIn);
+			document.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, document_keyFocusChange);
+			document.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, document_mouseFocusChange);
+			document.addEventListener(FocusEvent.FOCUS_IN, document_focusIn);
+			document.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 		}
 		
+		/**
+		 * Because of the entirely borked focus management of the Flash Player, we need to make 
+		 * sure that we really, really get the focus under all conditions. As it turns out, in 
+		 * certain cases, the player doesn't even dispatch a FOCUS_IN event for TextFields when 
+		 * they are clicked.
+		 * This method catches these cases.
+		 */
+		protected function document_mouseDown(event : MouseEvent) : void
+		{
+			if (m_focus)
+			{
+				return;
+			}
+			var element : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
+				DisplayObject(event.target), true);
+			if (element)
+			{
+				setFocusedElement(element, FOCUS_METHOD_MOUSE);
+			}
+		}
+
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
 			if (m_focus && m_focus == element)
@@ -61,6 +84,10 @@ package reprise.core
 			{
 				m_focus.setFocus(false, method);
 			}
+			else
+			{
+				m_document.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
+			}
 			m_focus = element;
 			if (element && element.document == m_document)
 			{
@@ -68,13 +95,16 @@ package reprise.core
 				element.setFocus(true, method);
 				return true;
 			}
+			//else
+			m_focus = null;
+			m_document.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			return false;
 		}
 		
 		/***************************************************************************
 		*							protected methods							   *
 		***************************************************************************/
-		protected function self_keyFocusChange(e:FocusEvent):void
+		protected function document_keyFocusChange(e:FocusEvent):void
 		{
 			if (m_inFocusHandling)
 			{
@@ -110,7 +140,7 @@ package reprise.core
 	        }
 			m_inFocusHandling = false;
 		}
-		protected function self_mouseFocusChange(event : FocusEvent) : void
+		protected function document_mouseFocusChange(event : FocusEvent) : void
 		{
 			if (m_inFocusHandling)
 			{
@@ -129,8 +159,9 @@ package reprise.core
 			m_inFocusHandling = false;
 		}
 		
-		protected function self_focusIn(event : FocusEvent) : void
+		protected function document_focusIn(event : FocusEvent) : void
 		{
+			log("event: " + (event.target));
 			if (m_inFocusHandling)
 			{
 				return;
