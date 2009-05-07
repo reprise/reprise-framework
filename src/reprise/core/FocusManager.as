@@ -161,7 +161,6 @@ package reprise.core
 		
 		protected function document_focusIn(event : FocusEvent) : void
 		{
-			log("event: " + (event.target));
 			if (m_inFocusHandling)
 			{
 				return;
