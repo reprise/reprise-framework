@@ -7,6 +7,7 @@
 
 package reprise.controls
 {
+	import reprise.ui.DocumentView;
 	import reprise.ui.AbstractInput;
 	import reprise.ui.UIComponent;
 	
@@ -151,13 +152,13 @@ package reprise.controls
 		protected function showList():void
 		{			
 			removeEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
-			stage.addEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDown);
+			m_rootElement.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			m_list.removeCSSClass('hidden');
 		}
 		
 		protected function hideList():void
 		{
-			stage.removeEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDown);
+			m_rootElement.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 			m_list.addCSSClass('hidden');
 		}
@@ -167,7 +168,7 @@ package reprise.controls
 			showList();
 		}
 		
-		protected function stage_mouseDown(e:MouseEvent):void
+		protected function document_mouseDown(e:MouseEvent):void
 		{
 			if (contains(DisplayObject(e.target)))
 			{
