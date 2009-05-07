@@ -8,11 +8,11 @@
 package reprise.controls
 {
 	import reprise.controls.RadioButton;
+	import reprise.core.FocusManager;
 	import reprise.core.reprise;
-	import reprise.ui.DocumentView;
-	
+
 	import flash.events.Event;
-	import flash.events.EventDispatcher;	
+	import flash.events.EventDispatcher;
 	
 	use namespace reprise;
 	
@@ -161,7 +161,7 @@ package reprise.controls
 			{
 				currentButton.document.setFocusedElement(
 					RadioButton(m_radioButtons[currentIndex + 1]), 
-					DocumentView.FOCUS_METHOD_KEYBOARD);
+					FocusManager.FOCUS_METHOD_KEYBOARD);
 			}
 		}
 		public function activatePreviousButton(currentButton : RadioButton) : void
@@ -170,7 +170,7 @@ package reprise.controls
 			if (currentIndex > 0)
 			{
 				currentButton.document.setFocusedElement(RadioButton(m_radioButtons[0]), 
-					DocumentView.FOCUS_METHOD_KEYBOARD);
+					FocusManager.FOCUS_METHOD_KEYBOARD);
 			}
 		}
 	}

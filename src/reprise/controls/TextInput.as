@@ -11,14 +11,14 @@
 
 package reprise.controls
 {
+	import reprise.core.FocusManager;
 	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
-	import reprise.ui.DocumentView;
 	import reprise.utils.StringUtil;
-	
+
 	import flash.events.Event;
 	import flash.events.TextEvent;
-	import flash.text.TextFormat;		
+	import flash.text.TextFormat;
 	
 	use namespace reprise;
 	
@@ -89,7 +89,7 @@ package reprise.controls
 					removeCSSClass('placeholder');
 					setLabel('');
 				}
-				if (method == DocumentView.FOCUS_METHOD_KEYBOARD)
+				if (method == FocusManager.FOCUS_METHOD_KEYBOARD)
 				{
 					m_labelDisplay.setSelection(0, m_labelDisplay.length);
 				}
