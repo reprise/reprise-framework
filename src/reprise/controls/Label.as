@@ -313,10 +313,15 @@ package reprise.controls
 			XML.prettyPrinting = false;
 			var text : String = labelXML.toXMLString();
 			text = text.substr(0, text.length - 3);
-			if (text == m_labelDisplay.htmlText)
+			var textChanged : Boolean = text != m_labelDisplay.htmlText;
+			
+			if (!textChanged && m_oldContentBoxWidth == m_contentBoxWidth && 
+				m_oldContentBoxHeight == m_contentBoxHeight)
 			{
 				return;
 			}
+			
+			m_cacheInvalid = true;
 			
 			if (m_currentStyles.width)
 			{
@@ -326,10 +331,11 @@ package reprise.controls
 			{
 				m_labelDisplay.autoSize = 'left';
 			}
-			m_labelDisplay.htmlText = text;
-			m_usedLabelXML = labelXML;
-			m_cacheInvalid = true;
-			
+			if (textChanged)
+			{
+				m_labelDisplay.htmlText = text;
+				m_usedLabelXML = labelXML;
+			}
 			if (m_labelDisplay.wordWrap)
 			{
 				m_labelDisplay.autoSize = 'left';
