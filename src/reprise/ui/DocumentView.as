@@ -282,7 +282,7 @@ package reprise.ui
 			super.initialize();
 			stage.stageFocusRect = false;
 			m_focusManager = new FocusManager(this);
-			addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, stage_keyDown);
 		}
 		
 		protected override function initDefaultStyles() : void
@@ -483,7 +483,7 @@ package reprise.ui
 			validateElements();
 		}
 
-		protected function self_keyDown(event : KeyboardEvent) : void
+		protected function stage_keyDown(event : KeyboardEvent) : void
 		{
 			if (event.shiftKey && event.ctrlKey)
 			{
