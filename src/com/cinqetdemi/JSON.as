@@ -301,7 +301,6 @@ package com.cinqetdemi
 			{
 				s = str();
 				white();
-				trace(ch);
 				if(ch == ':')
 				{
 					return s;
