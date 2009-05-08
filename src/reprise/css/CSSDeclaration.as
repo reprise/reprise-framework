@@ -323,13 +323,15 @@ package reprise.css
 		public function toString() : String
 		{
 			var str:String = "CSSDeclaration\n{\n";
+			var props : Array = [];
 			for (var key:String in m_properties)
 			{
 				var property : CSSProperty = CSSProperty(m_properties[key]);
-				str += "\t" + key + " : " + property.specifiedValue() + 
-					(property.unit() || '') + "; //" + (property.cssFile() || '[no file]') + "\n";
+				props.push("\t" + key + " : " + property.specifiedValue() + 
+					(property.unit() || '') + "; //" + (property.cssFile() || '[no file]'));
 			}
-				
+			props = props.sort();
+			return str + props.join('\n') + '\n}';	
 			return str + '}';
 		}
 		
