@@ -117,6 +117,8 @@ package reprise.ui
 		protected var m_dimensionsChanged : Boolean;
 		protected var m_specifiedDimensionsChanged : Boolean;
 		protected var m_selectorPathChanged : Boolean;
+		protected var m_oldContentBoxWidth : int;
+		protected var m_oldContentBoxHeight : int;
 		
 		//dimensions and position
 		protected var m_contentBoxWidth : int = 0;
@@ -163,9 +165,7 @@ package reprise.ui
 		private var m_scrollbarsDisplay : Sprite;
 		private var m_oldInFlowStatus : int = -1;
 		private var m_oldOuterBoxDimension : Point;
-		protected var m_invalidateStylesAfterValidation : Boolean;
-		private var m_oldContentBoxWidth : int;
-		private var m_oldContentBoxHeight : int;
+		private var m_invalidateStylesAfterValidation : Boolean;
 
 		
 		/***************************************************************************
