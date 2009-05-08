@@ -692,6 +692,10 @@ package reprise.controls
 			{
 				case 'uppercase':
 				{
+					if (text.indexOf('ß') != -1)
+					{
+						text = text.split('ß').join('SS');
+					}
 					text = text.toUpperCase();
 					break;
 				}
