@@ -701,7 +701,7 @@ package reprise.ui
 			{
 				m_rootElement.removeElementID(m_cssId);
 			}
-			m_rootElement.registerElementID(id, this);
+			m_rootElement && m_rootElement.registerElementID(id, this);
 			m_cssId = id;
 			invalidateStyles();
 		}
@@ -1380,6 +1380,10 @@ package reprise.ui
 			m_currentStyles = new ComputedStyles();
 			m_weakStyles = new CSSDeclaration();
 			m_stylesInvalidated = true;
+			if (m_cssId)
+			{
+				m_rootElement.registerElementID(m_cssId, this);
+			}
 			super.initialize();
 		}
 		
