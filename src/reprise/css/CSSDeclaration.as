@@ -36,6 +36,7 @@ package reprise.css
 		*							public properties							   *
 		***************************************************************************/
 		reprise static const TEXT_STYLESHEET : StyleSheet = new StyleSheet();
+		public static const INHERITABLE_PROPERTIES : Object = {};
 		
 		
 		/***************************************************************************
@@ -64,7 +65,6 @@ package reprise.css
 		};
 		protected static const g_textStyleNames : Object = {};
 		
-		protected static const g_inheritableProperties : Object = {};
 		protected static const g_propertyToParserTable : Object	= {};
 		protected static const g_defaultPropertiesRegistered : Boolean = 
 			registerDefaultProperties();
@@ -106,26 +106,26 @@ package reprise.css
 		private static function registerPropertyCollectionObject(
 			properties : Object, collection : Object) : void
 		{
-				var shortcuts : Object = collection.TRANSITION_SHORTCUTS || {};
-				for (var prop : String in properties)
+			var shortcuts : Object = collection.TRANSITION_SHORTCUTS || {};
+			for (var prop : String in properties)
+			{
+				var definition : Object = properties[prop];
+				g_propertyToParserTable[prop] = definition['parser'];
+				if (definition['inheritable'])
 				{
-					var definition : Object = properties[prop];
-					g_propertyToParserTable[prop] = definition['parser'];
-					if (definition['inheritable'])
-					{
-						g_inheritableProperties[prop] = true;
-					}
-					if (definition['transition'])
-					{
-						TransitionVOFactory.registerProperty(
-							prop, definition['transition']);
-					}
-					if (shortcuts[prop])
-					{
-						CSSTransitionsManager.registerTransitionShortcut(
-							prop, shortcuts[prop]);
-					}
+					INHERITABLE_PROPERTIES[prop] = true;
 				}
+				if (definition['transition'])
+				{
+					TransitionVOFactory.registerProperty(
+						prop, definition['transition']);
+				}
+				if (shortcuts[prop])
+				{
+					CSSTransitionsManager.registerTransitionShortcut(
+						prop, shortcuts[prop]);
+				}
+			}
 		}
 
 		reprise static function parserForProperty(key : String) : Function
@@ -194,7 +194,7 @@ package reprise.css
 				ourProp = m_properties[key];
 				
 				// well, inheritable styles only is the deal
-				if (inheritableStylesOnly && !g_inheritableProperties[key] && 
+				if (inheritableStylesOnly && !INHERITABLE_PROPERTIES[key] && 
 					!(ourProp && ourProp.inheritsValue()))
 				{
 					continue;
@@ -224,32 +224,46 @@ package reprise.css
 			mergeCSSDeclaration(parentDeclaration, true);
 		}
 		
-		public function compare(otherDeclaration:CSSDeclaration) : Boolean
+		public function compare(otherDeclaration:CSSDeclaration) : Object
 		{
+			var ownProperties:Object = m_properties;
+			var changes : Object = {length : 0};
+			var key : String;
 			if (!otherDeclaration)
 			{
-				return false;
+				for (key in ownProperties)
+				{
+					changes[key] = ownProperties[key];
+					changes.length++;
+				}
+				return changes;
 			}
-			var ownProperties:Object = m_properties;
 			var otherProperties:Object = otherDeclaration.m_properties;
-			var key : String;
+			var comparedProperties : Object = {};
 			for (key in ownProperties)
 			{
 				if (ownProperties[key] != otherProperties[key])
 				{
-					return false;
+					changes[key] = ownProperties[key];
+					changes.length++;
 				}
+				comparedProperties[key] = true;
 			}
 			//we have to compare in both direction as for .. in doesn't allow us 
 			//to know if the other object has more properties
 			for (key in otherProperties)
 			{
+				if (comparedProperties[key])
+				{
+					continue;
+				}
 				if (ownProperties[key] != otherProperties[key])
 				{
-					return false;
+					changes[key] = otherProperties[key];
+					changes.length++;
 				}
 			}
-			return true;
+			return changes;
 		}
 		
 		public function clone() : CSSDeclaration

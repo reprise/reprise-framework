@@ -102,9 +102,11 @@ package reprise.ui
 		//style properties
 		protected var m_currentStyles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
+		protected var m_specifiedStyles : CSSDeclaration;
 		protected var m_instanceStyles : CSSDeclaration;
 		protected var m_weakStyles : CSSDeclaration;
 		protected var m_elementDefaultStyles : CSSDeclaration;
+		protected var m_changedStyleProperties : Object;
 		
 		protected var m_autoFlags : Object = {};
 		protected var m_positionInFlow : int = 1;
@@ -160,12 +162,12 @@ package reprise.ui
 		*							private properties							   *
 		***************************************************************************/
 		private var m_explicitContainingBlock : UIComponent;
-		private var m_specifiedStyles : CSSDeclaration;
 		private var m_transitionsManager : CSSTransitionsManager;
 		private var m_scrollbarsDisplay : Sprite;
 		private var m_oldInFlowStatus : int = -1;
 		private var m_oldOuterBoxDimension : Point;
 		private var m_invalidateStylesAfterValidation : Boolean;
+		private var m_forceChildValidation : Boolean;
 
 		
 		/***************************************************************************
@@ -1810,8 +1812,9 @@ package reprise.ui
 			
 			//check if styles or other relevant factors have changed and stop validation 
 			//if not.
+			m_changedStyleProperties = styles.compare(oldStyles);
 			if (!(m_containingBlock && m_containingBlock.m_specifiedDimensionsChanged) && 
-				styles.compare(oldStyles) && !m_transitionsManager.isActive() && 
+				!m_changedStyleProperties.length && !m_transitionsManager.isActive() && 
 				!(this == m_rootElement && DocumentView(this).stageDimensionsChanged))
 			{
 				m_stylesInvalidated = false;
