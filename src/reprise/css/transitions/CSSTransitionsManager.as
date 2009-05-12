@@ -14,14 +14,14 @@ package reprise.css.transitions
 	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingResult;
+	import reprise.css.CSSPropertiesChangeList;
 	import reprise.css.CSSProperty;
 	import reprise.css.CSSPropertyCache;
 	import reprise.events.TransitionEvent;
-	
+
 	import com.robertpenner.easing.Linear;
-	
+
 	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;	
 	
 	use namespace reprise;
 	
@@ -78,7 +78,7 @@ package reprise.css.transitions
 		}
 
 		public function processTransitions(oldStyles : CSSDeclaration, newStyles : CSSDeclaration, 
-			frameRate : int, frameTime : int) : CSSDeclaration
+			changeList : CSSPropertiesChangeList, frameRate : int, frameTime : int) : CSSDeclaration
 		{
 			var transitionPropName : String;
 			var transitionDuration : CSSProperty;
@@ -257,6 +257,7 @@ package reprise.css.transitions
 			var activeTransitionsCount : int = 0;
 			for (transitionPropName in m_activeTransitions)
 			{
+				changeList.addChange(transitionPropName);
 				transition = m_activeTransitions[transitionPropName];
 				var previousRatio : Number = transition.currentRatio;
 				transition.setValueForTimeInContext(frameTime, m_frameDuration, this);

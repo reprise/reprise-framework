@@ -17,6 +17,7 @@ package reprise.ui
 	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;
 	import reprise.css.CSSParsingHelper;
+	import reprise.css.CSSPropertiesChangeList;
 	import reprise.css.CSSProperty;
 	import reprise.css.ComputedStyles;
 	import reprise.css.math.ICSSCalculationContext;
@@ -26,7 +27,7 @@ package reprise.ui
 	import reprise.ui.renderers.ICSSRenderer;
 	import reprise.utils.GfxUtil;
 	import reprise.utils.StringUtil;
-	
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -36,7 +37,7 @@ package reprise.ui
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;		
+	import flash.geom.Rectangle;
 	
 	use namespace reprise;
 
@@ -83,6 +84,11 @@ package reprise.ui
 			['borderBottomLeftRadius', false],
 			['borderBottomRightRadius', false]
 		];
+		protected static const CHILDREN_INVALIDATING_PROPERTIES : Object = 
+		{
+			width : true,
+			height : true
+		};
 		
 		protected static const DEFAULT_SCROLLBAR_WIDTH : int = 16;
 		
@@ -106,7 +112,7 @@ package reprise.ui
 		protected var m_instanceStyles : CSSDeclaration;
 		protected var m_weakStyles : CSSDeclaration;
 		protected var m_elementDefaultStyles : CSSDeclaration;
-		protected var m_changedStyleProperties : Object;
+		protected var m_changedStyleProperties : CSSPropertiesChangeList;
 		
 		protected var m_autoFlags : Object = {};
 		protected var m_positionInFlow : int = 1;
@@ -992,11 +998,7 @@ package reprise.ui
 		 */
 		public function get opacity() : Number
 		{
-			if (m_currentStyles.opacity != null)
-			{
-				return m_currentStyles.opacity;
-			}
-			return 1;
+			return m_currentStyles.opacity;
 		}
 		
 		/**
@@ -1018,7 +1020,7 @@ package reprise.ui
 		 */
 		public override function get rotation() : Number
 		{
-			return m_currentStyles.rotation || 0;
+			return m_currentStyles.rotation;
 		}
 		
 		/**
@@ -1442,6 +1444,13 @@ package reprise.ui
 				//as invalid to allow for immediate validation after un-freezing.
 				return;
 			}
+			if (!m_isInvalidated && !forceValidation)
+			{
+				m_changedStyleProperties = new CSSPropertiesChangeList();
+				m_selectorPathChanged = false;
+				validateChildren();
+				return;
+			}
 			m_rootElement.increaseValidatedElementsCount();
 			if (validateStyles)
 			{
@@ -1710,14 +1719,31 @@ package reprise.ui
 			{
 				return;
 			}
+			
+			m_forceChildValidation = m_selectorPathChanged;
+			if (!m_forceChildValidation)
+			{
+				for (var key : String in m_changedStyleProperties)
+				{
+					if (CHILDREN_INVALIDATING_PROPERTIES[key])
+					{
+						m_forceChildValidation = true;
+						break;
+					}
+					if (CSSDeclaration.INHERITABLE_PROPERTIES[key])
+					{
+						m_forceChildValidation = true;
+						break;
+					}
+				}
+			}
 			super.validateChildren();
 		}
 		protected override function validateChild(child:UIObject) : void
 		{
 			if (child is UIComponent)
 			{
-				UIComponent(child).validateElement(
-					true, m_stylesInvalidated || m_selectorPathChanged);
+				UIComponent(child).validateElement(m_forceChildValidation, m_forceChildValidation);
 			}
 			else
 			{
@@ -1822,9 +1848,10 @@ package reprise.ui
 			}
 			
 			m_specifiedStyles = styles;
-			styles = m_transitionsManager.processTransitions(
-				oldStyles, styles, stage.frameRate, m_rootElement.frameTime());
+			styles = m_transitionsManager.processTransitions(oldStyles, styles, 
+				m_changedStyleProperties, stage.frameRate, m_rootElement.frameTime());
 			m_complexStyles = styles;
+			m_currentStyles.updateValues(styles, m_changedStyleProperties);
 			
 			//this element might have been removed in a transitions event handler. Return if so.
 			m_isRendered = !(styles.hasStyle('display') && 
@@ -1833,8 +1860,6 @@ package reprise.ui
 			{
 				return;
 			}
-			
-			m_currentStyles = styles.toComputedStyles();
 			
 			if (m_transitionsManager.isActive())
 			{
@@ -1861,15 +1886,12 @@ package reprise.ui
 			}
 			
 			
-			if (m_currentStyles.tabIndex != null)
-			{
-				m_tabIndex = m_currentStyles.tabIndex;
-			}
+			m_tabIndex = m_currentStyles.tabIndex;
 			
 			m_tooltipRenderer = m_currentStyles.tooltipRenderer;
 			m_tooltipDelay = m_currentStyles.tooltipDelay;
 			
-			m_contentDisplay.blendMode = m_currentStyles.blendMode || 'normal';
+			m_contentDisplay.blendMode = m_currentStyles.blendMode;
 			
 			if (m_dropShadowFilter != null)
 			{
@@ -1905,26 +1927,18 @@ package reprise.ui
 				useHandCursor = false;
 			}
 			
-			super.rotation = m_currentStyles.rotation || 0;
-			if (m_currentStyles.opacity == null)
-			{
-				super.alpha = 1;
-			}
-			else
-			{
-				super.alpha = m_currentStyles.opacity;
-			}
+			super.rotation = m_currentStyles.rotation;
+			super.alpha = m_currentStyles.opacity;
 		}
 		
 		protected function resolvePositioningProperties() : void
 		{
-			if (!m_currentStyles.float || m_currentStyles.float == 'none')
+			if (m_currentStyles.float == 'none')
 			{
 				m_currentStyles.float = null;
 			}
 			
-			var positioning : String = m_positioningType = 
-				m_currentStyles.position ||  'static';
+			var positioning : String = m_positioningType = m_currentStyles.position;
 			
 			if (!m_currentStyles.float && 
 				(positioning == 'static' || positioning == 'relative'))
@@ -1983,8 +1997,7 @@ package reprise.ui
 		protected function resolveRelativeStyles(styles : CSSDeclaration, 
 			parentW : int = -1, parentH : int = -1) : void
 		{
-			var borderBoxSizing : Boolean = 
-				m_currentStyles.boxSizing && m_currentStyles.boxSizing == 'border-box';
+			var borderBoxSizing : Boolean = m_currentStyles.boxSizing == 'border-box';
 			
 			if (parentW == -1)
 			{
@@ -2001,20 +2014,16 @@ package reprise.ui
 			//so we have to do this here.
 			for each (var borderName : String in EDGE_NAMES)
 			{
-				var style : String = 
-					m_currentStyles['border' + borderName + 'Style'] ||  'none';
+				var style : String = m_currentStyles['border' + borderName + 'Style'];
 				if (style == 'none')
 				{
 					m_currentStyles['border' + borderName + 'Width'] = 0;
-				}
-				else
-				{
-					m_currentStyles['border' + borderName + 'Width'] ||=  0;
 				}
 			}
 			
 			
 			var wProp : CSSProperty = styles.getStyle('width');
+			var baseWidth : int = m_currentStyles.width;
 			if (!wProp || wProp.specifiedValue() == 'auto')
 			{
 				m_autoFlags.width = true;
@@ -2065,12 +2074,17 @@ package reprise.ui
 				}
 				m_contentBoxWidth = m_currentStyles.width || 0;
 			}
+			if (!m_changedStyleProperties.width && m_currentStyles.width != baseWidth)
+			{
+				m_changedStyleProperties.addChange('width');
+			}
 			
 			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
 			m_contentBoxHeight = m_currentStyles.height;
 			
 			if (borderBoxSizing && !m_autoFlags.height)
 			{
+				var baseHeight : int = m_currentStyles.height;
 				m_contentBoxHeight -= 
 					m_currentStyles.borderTopWidth + m_currentStyles.paddingTop + 
 					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom;
@@ -2079,6 +2093,10 @@ package reprise.ui
 					m_contentBoxHeight = 0;
 				}
 				m_currentStyles.height = m_contentBoxHeight;
+				if (!m_changedStyleProperties.height && m_currentStyles.height != baseHeight)
+				{
+				m_changedStyleProperties.addChange('height');
+				}
 			}
 			//TODO: verify that we should really resolve the border-radii this way
 			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
@@ -2100,8 +2118,14 @@ package reprise.ui
 				{
 					if (cssProperty.isRelativeValue())
 					{
+						var oldValue : int = m_currentStyles[propName];
 						m_currentStyles[propName] = Math.round(
 							cssProperty.resolveRelativeValueTo(baseValue, this));
+						if (!m_changedStyleProperties[propName] && 
+							m_currentStyles[propName] != oldValue)
+						{
+							m_changedStyleProperties.addChange('propName');
+						}
 					}
 					m_autoFlags[propName] = cssProperty.isAuto() || cssProperty.isWeak();
 				}

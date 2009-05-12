@@ -87,7 +87,7 @@ package reprise.ui.renderers
 				{
 					grad.setRatios(m_styles.backgroundGradientRatios);
 				}
-				if (m_styles.backgroundGradientRotation != null)
+				if (m_styles.backgroundGradientRotation != 0)
 				{
 					grad.setRotation(m_styles.backgroundGradientRotation);
 				}
@@ -98,8 +98,7 @@ package reprise.ui.renderers
 			}
 			
 			// load a background image
-			if (m_styles.backgroundImage != null && 
-				m_styles.backgroundImage != Background.IMAGE_NONE)
+			if (m_styles.backgroundImage != Background.IMAGE_NONE)
 			{
 				hasAnyContent = true;
 				loadBackgroundImage();

@@ -224,17 +224,16 @@ package reprise.css
 			mergeCSSDeclaration(parentDeclaration, true);
 		}
 		
-		public function compare(otherDeclaration:CSSDeclaration) : Object
+		public function compare(otherDeclaration:CSSDeclaration) : CSSPropertiesChangeList
 		{
 			var ownProperties:Object = m_properties;
-			var changes : Object = {length : 0};
+			var changes : CSSPropertiesChangeList = new CSSPropertiesChangeList();
 			var key : String;
 			if (!otherDeclaration)
 			{
 				for (key in ownProperties)
 				{
-					changes[key] = ownProperties[key];
-					changes.length++;
+					changes.addChange(key);
 				}
 				return changes;
 			}
@@ -244,8 +243,7 @@ package reprise.css
 			{
 				if (ownProperties[key] != otherProperties[key])
 				{
-					changes[key] = ownProperties[key];
-					changes.length++;
+					changes.addChange(key);
 				}
 				comparedProperties[key] = true;
 			}
@@ -259,8 +257,7 @@ package reprise.css
 				}
 				if (ownProperties[key] != otherProperties[key])
 				{
-					changes[key] = otherProperties[key];
-					changes.length++;
+					changes.addChange(key);
 				}
 			}
 			return changes;
