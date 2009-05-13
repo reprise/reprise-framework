@@ -139,18 +139,7 @@ package reprise.controls.html
 			removeCSSPseudoClass('error');
 		}
 		
-		
-		
-		/***************************************************************************
-		*                             protected methods                            *
-		***************************************************************************/
-		protected override function initialize():void
-		{
-			super.initialize();
-			if (stage) stage.addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
-		}
-		
-		protected function validate():void
+		public function validate():void
 		{
 			if (m_validationDisabled)
 			{
@@ -192,6 +181,17 @@ package reprise.controls.html
 				validation_complete(
 					new CommandEvent(Event.COMPLETE, m_validationCommand.didSucceed()));
 			}
+		}
+		
+		
+		
+		/***************************************************************************
+		*                             protected methods                            *
+		***************************************************************************/
+		protected override function initialize():void
+		{
+			super.initialize();
+			if (stage) stage.addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
 		}
 		
 		protected function validation_complete(e:CommandEvent):void
