@@ -24,6 +24,7 @@ package reprise.utils
 		protected var m_executionDelegate : Delegate;
 		protected var m_waitsForEvent : Boolean = false;
 		protected var m_commandCompleteEventName : String;
+		protected var m_successEvaluationFunction : Function;
 	
 	
 		/***************************************************************************
@@ -38,6 +39,7 @@ package reprise.utils
 				m_waitsForEvent = true;
 				m_commandCompleteEventName = commandCompleteEventName;
 			}
+			m_successEvaluationFunction = function(e:Event):Boolean{return true};
 		}
 		
 		public static function create(
@@ -78,6 +80,15 @@ package reprise.utils
 			m_commandCompleteEventName = val;
 		}
 		
+		public function successEvaluationFunction():Function
+		{
+			return m_successEvaluationFunction;
+		}
+		public function setSuccessEvaluationFunction(f:Function):void
+		{
+			m_successEvaluationFunction = f;
+		}
+		
 		
 		/***************************************************************************
 		*							protected methods								   *
@@ -86,7 +97,7 @@ package reprise.utils
 		{
 			EventDispatcher(m_executionDelegate.scope()).removeEventListener(
 				m_commandCompleteEventName, execution_complete);
-			notifyComplete(true);
+			notifyComplete(m_successEvaluationFunction(event));
 		}
 	}
 }
