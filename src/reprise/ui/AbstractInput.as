@@ -116,6 +116,11 @@ package reprise.ui
 					setValidator(new EmailValidator());
 					break;
 				}
+				case 'decimal':
+				{
+					setValidator(new RegExpValidator('/[0-9]+'));
+					break;
+				}
 				default:
 				{
 					throw new Error('Input format not supported: ' + format);
