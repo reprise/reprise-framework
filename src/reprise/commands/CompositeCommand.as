@@ -381,7 +381,7 @@ package reprise.commands
 			unregisterListenersForAsynchronousCommand(completedCommand);
 			m_currentCommands.remove(e.target);
 			m_numCommandsExecuted++;
-			if (!e.success)
+			if (!completedCommand.didSucceed())
 			{
 				m_didSucceed = false;
 				m_numCommandsFailed++;
