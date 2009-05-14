@@ -81,6 +81,10 @@ package reprise.controls
 
 		override protected function applyInFlowChildPositions() : void
 		{
+			if (!m_image)
+			{
+				return;
+			}
 			if (!m_imageDisplayed)
 			{
 				m_imageDisplayed = true;
