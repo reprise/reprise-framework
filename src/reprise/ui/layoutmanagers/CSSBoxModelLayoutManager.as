@@ -144,14 +144,14 @@ package reprise.ui.layoutmanagers
 						if (child.autoFlags.marginRight)
 						{
 							//center horizontally
-							child.x = Math.round(totalAvailableWidth / 2 - 
-								child.outerWidth / 2);
+							child.x = elementStyle.paddingLeft + 
+								Math.round(totalAvailableWidth / 2 - child.outerWidth / 2);
 						}
 						else
 						{
 							//align right
-							child.x = totalAvailableWidth - child.outerWidth - 
-								childStyle.marginRight - elementStyle.paddingRight;
+							child.x = elementStyle.paddingLeft + totalAvailableWidth - 
+								child.outerWidth - childStyle.marginRight;
 						}
 					}
 					else
