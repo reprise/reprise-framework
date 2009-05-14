@@ -206,5 +206,11 @@ package reprise.ui.renderers
 			}
 			return element.localToGlobal(p);
 		}
+		
+		protected override function validateAfterChildren() : void
+		{
+			super.validateAfterChildren();
+			applyOutOfFlowChildPositions();
+		}
 	}
 }
