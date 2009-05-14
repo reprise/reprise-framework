@@ -11,8 +11,8 @@
 
 package reprise.ui.layoutmanagers 
 {
-	import reprise.css.ComputedStyles;	
 	import reprise.core.reprise;
+	import reprise.css.ComputedStyles;
 	import reprise.ui.UIComponent;
 	
 	import flash.display.DisplayObject;
@@ -137,15 +137,25 @@ package reprise.ui.layoutmanagers
 					}
 				}
 				else if (child.positionInFlow || 
-					(child.autoFlags.left && child.autoFlags.right))
+					child.autoFlags.marginLeft && child.autoFlags.marginRight && 
+					!child.autoFlags.left && !child.autoFlags.right)
 				{
 					if (child.autoFlags.marginLeft)
 					{
 						if (child.autoFlags.marginRight)
 						{
 							//center horizontally
-							child.x = elementStyle.paddingLeft + 
-								Math.round(totalAvailableWidth / 2 - child.outerWidth / 2);
+							var offset : int = elementStyle.paddingLeft;
+							var availableWidth : int = totalAvailableWidth;
+							//for absolutely positioned elements, add 'left' and 'right' to the 
+							//calculation
+							if (!child.positionInFlow)
+							{
+								offset += childStyle.left;
+								availableWidth -= childStyle.left + childStyle.right;
+							}
+							child.x = offset + 
+								Math.round(availableWidth / 2 - child.outerWidth / 2);
 						}
 						else
 						{
