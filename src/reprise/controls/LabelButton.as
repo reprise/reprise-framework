@@ -11,6 +11,8 @@
 
 package reprise.controls
 {
+	import reprise.css.CSSPropertiesChangeList;
+
 	import flash.events.MouseEvent;	
 
 	/**
@@ -29,8 +31,6 @@ package reprise.controls
 		protected var m_labelDisplay : Label;
 		protected var m_label : String = '';
 		
-		protected var m_lastStyles : Object;
-	
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -85,16 +85,19 @@ package reprise.controls
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
-			var oldStyles : Object = m_lastStyles || {};
-			if (m_currentStyles.selectable != oldStyles.selectable)
+			
+			if (m_changedStyleProperties['selectable'])
 			{
 				m_labelDisplay.setStyle('selectable', String(m_currentStyles.selectable));
 			}
-			if (m_currentStyles.cursor != oldStyles.cursor)
+			if (m_changedStyleProperties['cursor'])
 			{
 				m_labelDisplay.setStyle('cursor', m_currentStyles.cursor);
 			}
-			m_lastStyles = m_currentStyles;
+			if (m_changedStyleProperties['textDecoration'])
+			{
+				m_labelDisplay.setStyle('textDecoration', m_currentStyles.textDecoration);
+			}
 		}
 		
 		protected override function buttonDisplay_click(event : MouseEvent) : void
