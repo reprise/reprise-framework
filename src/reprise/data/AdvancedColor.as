@@ -52,9 +52,10 @@ package reprise.data
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function AdvancedColor(rgb : int = 0)
+		public function AdvancedColor(rgb : int = 0, opacity : Number = 1)
 		{
 			setRGB(rgb);
+			m_opacity = opacity;
 		}
 		
 		
@@ -82,13 +83,13 @@ package reprise.data
 		
 		public function setARGB(argb : uint) : void
 		{
-			m_opacity = (argb >> 32 & 0xFF) / 0xFF;
-			m_value = argb & ~(0xFF << 32);
+			m_opacity = (argb >> 24 & 0xFF) / 0xFF;
+			m_value = argb & 0xFFFFFF;
 		}
 		
 		public function argb() : uint
 		{
-			return m_value | ((m_opacity * 0xFF) << 32);
+			return uint(m_opacity * 0xFF << 24 | m_value);
 		}
 		
 		public function setRGBComponents(r : int, g : int, b : int) : void
