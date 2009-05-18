@@ -21,6 +21,13 @@ package reprise.controls
 	{
 		
 		//*****************************************************************************************
+		//*                                  public Properties                                 *
+		//*****************************************************************************************
+		public static const DIRECTION_VERTICAL : String = 'vertical';
+		public static const DIRECTION_HORIZONTAL : String = 'horizontal';
+		
+
+		//*****************************************************************************************
 		//*                                  Protected Properties                                 *
 		//*****************************************************************************************
 		protected var m_thumb:UIComponent;
@@ -42,6 +49,7 @@ package reprise.controls
 		protected var m_animatesChange:Boolean = false;
 		protected var m_animationFriction:Number = .35;
 		
+		protected var m_direction : String;
 		
 		
 		//*****************************************************************************************
@@ -140,11 +148,10 @@ package reprise.controls
 			m_animatesChange = bFlag;
 		}
 		
-		protected function animatesChange():Boolean
+		public function setDirection(direction : String) : void
 		{
-			return m_animatesChange;
+			m_direction = direction;
 		}
-		
 		
 		
 		//*****************************************************************************************
@@ -155,8 +162,9 @@ package reprise.controls
 			super.initialize();
 			addEventListener(Event.ADDED_TO_STAGE, self_addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage);
+			m_direction = DIRECTION_HORIZONTAL;
 		}
-		
+
 		override protected function createChildren():void
 		{
 			createTrack();
@@ -194,13 +202,22 @@ package reprise.controls
 		
 		protected function applyValue():void
 		{
+			var thumbPosition : int;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				thumbPosition = m_thumb.left;
+			}
+			else
+			{
+				thumbPosition = m_thumb.top;
+			}
 			var pos:Number = valueToPosition(m_value, m_minValue, m_maxValue);
 			if (m_animatesChange && (!m_isDragging || m_allowsTickMarkValuesOnly))
 			{
-				var diff:Number = (pos - m_thumb.left) * m_animationFriction;
+				var diff:Number = (pos - thumbPosition) * m_animationFriction;
 				if (Math.abs(diff) > 0.05)
 				{
-					pos = m_thumb.left + diff;
+					pos = thumbPosition + diff;
 					addFrameListener();
 				}
 				else 
@@ -208,30 +225,67 @@ package reprise.controls
 					removeFrameListener();
 				}
 			}
-			m_thumb.left = m_statusBar.width = pos;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				m_thumb.left = m_statusBar.width = pos;
+			}
+			else
+			{
+				m_thumb.top = m_statusBar.height = pos;
+			}
 		}
 		
 		protected function valueToPosition(value:Number, dataMin:Number, dataMax:Number):Number
 		{
-			var pos:Number = (width - m_thumb.width) / 100 * ((value - dataMin) / 
-				((dataMax - dataMin) / 100));
-			pos = Math.max(0, pos);
-			pos = Math.min(width - m_thumb.width, pos);
+			var pos:Number;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				pos = (width - m_thumb.width) / 100 * ((value - dataMin) / 
+					((dataMax - dataMin) / 100));
+				pos = Math.max(0, pos);
+				pos = Math.min(width - m_thumb.width, pos);
+			}
+			else
+			{
+				pos = (height - m_thumb.height) / 100 * ((value - dataMin) / 
+					((dataMax - dataMin) / 100));
+				pos = Math.max(0, pos);
+				pos = Math.min(height - m_thumb.height, pos);
+				
+			}
 			return Math.round(pos);
 		}
 		
 		protected function positionToValue(pos:Number):Number
 		{
-			pos = Math.max(0, pos);
-			pos = Math.min(width - m_thumb.width, pos);
-			return pos / ((width - m_thumb.width) / 100) * 
-				((m_maxValue - m_minValue) / 100) + m_minValue;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				pos = Math.max(0, pos);
+				pos = Math.min(width - m_thumb.width, pos);
+				return pos / ((width - m_thumb.width) / 100) * 
+					((m_maxValue - m_minValue) / 100) + m_minValue;
+			}
+			else
+			{
+				pos = Math.max(0, pos);
+				pos = Math.min(height - m_thumb.height, pos);
+				return pos / ((height - m_thumb.height) / 100) * 
+					((m_maxValue - m_minValue) / 100) + m_minValue;
+			}
 		}
 		
 		protected function applyCurrentDragValue():void
 		{
-			setValue(positionToValue(m_dragStartThumbPosition + 
-				(m_track.mouseX - m_dragStartMousePosition)));
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				setValue(positionToValue(m_dragStartThumbPosition + 
+					(m_track.mouseX - m_dragStartMousePosition)));
+			}
+			else
+			{
+				setValue(positionToValue(m_dragStartThumbPosition + 
+					(m_track.mouseY - m_dragStartMousePosition)));
+			}
 			applyValue();
 		}
 		
@@ -246,8 +300,17 @@ package reprise.controls
 		protected function removeFrameListener():void
 		{
 			if (!m_frameListenerActive) return;
-			var animationActive:Boolean = m_thumb.left != valueToPosition(m_value, m_minValue, 
+			var animationActive:Boolean;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				animationActive = m_thumb.left != valueToPosition(m_value, m_minValue, 
 				m_maxValue);
+			}
+			else
+			{
+				animationActive = m_thumb.top != valueToPosition(m_value, m_minValue, 
+				m_maxValue);
+			}
 			if (animationActive || m_isDragging) return;
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			m_frameListenerActive = false;
@@ -270,8 +333,16 @@ package reprise.controls
 		
 		protected function thumb_click(e:MouseEvent):void
 		{
-			m_dragStartThumbPosition = m_thumb.left;
-			m_dragStartMousePosition = m_track.mouseX;
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				m_dragStartThumbPosition = m_thumb.left;
+				m_dragStartMousePosition = m_track.mouseX;
+			}
+			else
+			{
+				m_dragStartThumbPosition = m_thumb.top;
+				m_dragStartMousePosition = m_track.mouseY;
+			}
 			m_isDragging = true;
 			addFrameListener();
 		}
@@ -290,7 +361,14 @@ package reprise.controls
 		
 		protected function track_mouseDown(e:MouseEvent):void
 		{
-			setValue(positionToValue(mouseX - m_thumb.width / 2));
+			if(m_direction == DIRECTION_HORIZONTAL)
+			{
+				setValue(positionToValue(mouseX - m_thumb.width / 2));
+			}
+			else
+			{
+				setValue(positionToValue(mouseY - m_thumb.height / 2));
+			}
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 		
@@ -307,6 +385,11 @@ package reprise.controls
 				dispatchEvent(new Event(Event.CHANGE));
 			}
 			applyCurrentDragValue();
+		}
+		
+		protected function animatesChange():Boolean
+		{
+			return m_animatesChange;
 		}
 	}
 }
