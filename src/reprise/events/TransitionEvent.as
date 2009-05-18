@@ -66,9 +66,9 @@ package reprise.events
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function TransitionEvent(type : String)
+		public function TransitionEvent(type : String, bubbles : Boolean = false)
 		{
-			super(type, true, false);
+			super(type, bubbles);
 		}
 		
 		public override function toString() : String
