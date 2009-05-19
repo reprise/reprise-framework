@@ -60,6 +60,12 @@ package reprise.css.propertyparsers
 		
 		public static var TRANSITION_SHORTCUTS : Object	=
 		{
+			background :
+			[
+				'backgroundColor',
+				'backgroundPositionX',
+				'backgroundPositionY'
+			],
 			backgroundPosition :
 			[
 				'backgroundPositionX',
