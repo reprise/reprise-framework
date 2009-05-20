@@ -215,7 +215,8 @@ package reprise.controls
 			if (m_animatesChange && (!m_isDragging || m_allowsTickMarkValuesOnly))
 			{
 				var diff:Number = (pos - thumbPosition) * m_animationFriction;
-				if (Math.abs(diff) > 0.05)
+					
+				if (Math.abs(diff) > 0.7)
 				{
 					pos = thumbPosition + diff;
 					addFrameListener();
