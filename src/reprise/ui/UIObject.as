@@ -153,6 +153,37 @@ package reprise.ui
 				child.setRootElement(rootElement);
 			}
 		}
+		
+		/**
+		 * Returns a live list of the element's children
+		 * 
+		 * @returns A live list of the element's children
+		 */
+		public function children() : Array
+		{
+			return m_children;
+		}
+		
+		/**
+		 * Returns the child element uniquely identified by the given name
+		 * 
+		 * Note that this name is really only useful internally, as it's naming schema is not 
+		 * guaranteed. One external use for the name is to locate an object based on it's path, 
+		 * which can be got by calling element#toString.
+		 * 
+		 * @return The child element identified by the given or null if none such element exists
+		 */
+		public function elementForName(name : String) : UIObject
+		{
+			for each (var child : UIObject in m_children)
+			{
+				if (child.name == name)
+				{
+					return child;
+				}
+			}
+			return null;
+		}
 
 		public override function addChild(child : DisplayObject) : DisplayObject
 		{
