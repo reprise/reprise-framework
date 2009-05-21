@@ -49,7 +49,7 @@ package reprise.ui
 		protected var m_initialized : Boolean;
 		protected var m_firstDraw : Boolean;
 		protected var m_visible : Boolean = true;
-		protected var m_isRendered : Boolean;
+		protected var m_isRendered : Boolean = true;
 		protected var m_isInvalidated : Boolean;
 		protected var m_isValidating : Boolean;
 	
