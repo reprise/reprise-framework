@@ -62,7 +62,7 @@ package reprise.utils
 			{
 				return false;
 			}
-			var i : Number = array1.length;
+			var i : int = array1.length;
 			if (exactComparison)
 			{
 				while(i--)

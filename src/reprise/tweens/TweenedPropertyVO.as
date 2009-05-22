@@ -78,7 +78,7 @@ package reprise.tweens {
 			default tweenFunction without any easing, can be replaced by any function with the same signature
 		*/
 		public function tweenFunction(
-			time:Number, start:Number, change:Number, duration:Number, ...rest) : Number
+			time:int, start:Number, change:Number, duration:int, ...rest) : Number
 		{
 			if (m_easingFunction != null)
 			{
@@ -92,7 +92,7 @@ package reprise.tweens {
 			Method: tweenProperty
 			tweens the property
 		*/
-		public function tweenProperty(duration:Number, time:Number) : void
+		public function tweenProperty(duration:int, time:int) : void
 		{
 			if (propertyIsMethod)
 			{
@@ -102,13 +102,13 @@ package reprise.tweens {
 			tweenPropertyAsProperty(duration, time);
 		}
 		
-		protected function tweenPropertyAsProperty(duration:Number, time:Number):void 
+		protected function tweenPropertyAsProperty(duration:int, time:int):void 
 		{
 			var args : Array = [time, startValue, valueChange, duration].concat(extraParams);
 			var result : Number = tweenFunction.apply(null, args);
 			scope[property] = roundResults ? Math.round(result) : result;
 		}
-		protected function tweenPropertyAsMethod (duration:Number, time:Number):void {
+		protected function tweenPropertyAsMethod (duration:int, time:int):void {
 			var args : Array = [time, startValue, valueChange, duration].concat(extraParams);
 			var result : Number = tweenFunction.apply(null, args);
 			var methodArgs : Array = 

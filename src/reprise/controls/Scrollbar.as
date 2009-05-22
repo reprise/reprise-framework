@@ -40,8 +40,8 @@ package reprise.controls
 		***************************************************************************/
 		protected static var g_linkageID : String = "Scrollbar";
 		
-		protected static var SCROLL_DIR_UP : Number = -1;
-		protected static var SCROLL_DIR_DOWN : Number = 1;
+		protected static var SCROLL_DIR_UP : int = -1;
+		protected static var SCROLL_DIR_DOWN : int = 1;
 		
 		
 		protected var m_scrollUpBtn : SimpleButton;
@@ -49,8 +49,8 @@ package reprise.controls
 		protected var m_scrollThumb : SimpleButton;
 		protected var m_scrollTrack : SimpleButton;
 		
-		protected var m_scrollDirection : Number;
-		protected var m_scrollIntervalID : Number;
+		protected var m_scrollDirection : int;
+		protected var m_scrollIntervalID : int;
 		
 		protected var m_target : TextField;
 		protected var m_textScrollOrientation : String;
@@ -424,7 +424,7 @@ package reprise.controls
 			startScroll(scrollSize, SCROLL_DIR_DOWN);
 		}
 		
-		protected function startScroll(scrollSize:Number, direction:Number) : void
+		protected function startScroll(scrollSize:Number, direction:int) : void
 		{
 			m_scrollDirection = direction;
 			scrollV(scrollSize);

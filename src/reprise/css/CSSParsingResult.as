@@ -57,14 +57,11 @@ package reprise.css
 		reprise static function ResultWithPropertiesAndKeys(... args) : CSSParsingResult
 		{
 			var res : CSSParsingResult = new CSSParsingResult();
-			var prop : CSSProperty;
-			var key : String;
-			var i : Number;
 			
-			for ( i = 0; i < args.length; i += 2 )
+			for (var i : int = 0; i < args.length; i += 2)
 			{
-				prop = args[ i ];
-				key = args[ i + 1 ];
+				var prop : CSSProperty = args[ i ];
+				var key : String = args[ i + 1 ];
 				
 				if ( !( prop is CSSProperty ) || 
 						typeof( key ) != 'string' )

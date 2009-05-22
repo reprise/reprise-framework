@@ -76,7 +76,7 @@ package reprise.css.propertyparsers
 			var res : CSSParsingResult = new CSSParsingResult();
 			
 			var parts : Array = val.split(' ');
-			var counter : Number = 0;
+			var counter : int = 0;
 			var part : String = parts[counter++];
 			if (CSSParsingHelper.valueIsColor(part))
 			{

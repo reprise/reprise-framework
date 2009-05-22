@@ -11,9 +11,8 @@
 
 package reprise.css.transitions
 {
-	import reprise.data.AdvancedColor;
 	import reprise.utils.ColorUtil;
-	
+
 	public class ColorTransitionVO extends PropertyTransitionVO
 	{
 		/***************************************************************************
@@ -27,7 +26,6 @@ package reprise.css.transitions
 		{
 			var startColorRGB : Object = ColorUtil.number2rgbObject(startValue);
 			var endColorRGB : Object = ColorUtil.number2rgbObject(endValue);
-			var currentColorRGB : Object = {};
 			
 			var r : Number = startColorRGB.r + (endColorRGB.r - startColorRGB.r) * ratio;
 			var g : Number = startColorRGB.g + (endColorRGB.g - startColorRGB.g) * ratio;

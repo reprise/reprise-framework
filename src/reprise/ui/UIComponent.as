@@ -1414,7 +1414,7 @@ package reprise.ui
 		 * 
 		 * Mostly used in debugging to enable style reloading.
 		 */
-		protected function resetStyles() : void
+		reprise function resetStyles() : void
 		{
 			m_complexStyles = null;
 			m_specifiedStyles = null;

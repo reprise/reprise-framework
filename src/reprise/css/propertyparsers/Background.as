@@ -205,7 +205,7 @@ package reprise.css.propertyparsers
 			val = sliceResult.result;
 			var colorsPart : String = sliceResult.slice;
 			
-			var counter : Number = 0;
+			var counter : int = 0;
 			var parts : Array = val.split(' ');
 			var part : String;
 			var lcPart : String;
@@ -293,13 +293,11 @@ package reprise.css.propertyparsers
 				return prop;
 			}		
 			
-			var parts : Array = val.split(' ');
-			var colors : Array = [];
-			var i : Number;
+			var colors : Array = val.split(' ');
 			
-			for (i = 0; i < parts.length; i++)
+			for (var i : int = 0; i < colors.length; i++)
 			{
-				colors.push(CSSParsingHelper.parseColor(parts[i]));
+				colors[i] = CSSParsingHelper.parseColor(colors[i]);
 			}
 			
 			prop.setSpecifiedValue(colors);
@@ -321,13 +319,11 @@ package reprise.css.propertyparsers
 				return prop;
 			}		
 			
-			var parts : Array = val.split(' ');
-			var ratios : Array = [];
-			var i : Number;
+			var ratios : Array = val.split(' ');
 			
-			for (i = 0; i < parts.length; i++)
+			for (var i : int = 0; i < ratios.length; i++)
 			{
-				ratios.push(parseInt(parts[i]));
+				ratios[i] = parseInt(ratios[i]);
 			}
 			
 			prop.setSpecifiedValue(ratios);

@@ -269,9 +269,8 @@ package reprise.ui.renderers
 				'borderBottomRightRadius', 'borderBottomLeftRadius'];
 			
 			var borderTopWidthHalf : Number = (m_styles['borderTopWidth'] || 0) / 2;
-			var i : Number;
 			var radiusItem : Number;
-			for (i = 0; i < order.length; i++)
+			for (var i : int = 0; i < order.length; i++)
 			{
 				if (!(m_styles[order[i]] is Number))
 				{
@@ -434,9 +433,6 @@ package reprise.ui.renderers
 		protected function drawScale9RepeatedBackground(sourceImage : BitmapData, 
 			scale9Rect : Rectangle, repeat : Boolean = false) : void
 		{
-			var imgWidth : Number = sourceImage.width;
-			var imgHeight : Number = sourceImage.height;
-			
 			var bitmaps : Object = GfxUtil.segmentedBitmapsOfScale9RectInRectWithSize(
 				sourceImage, scale9Rect);
 			var offset : Matrix = new Matrix();

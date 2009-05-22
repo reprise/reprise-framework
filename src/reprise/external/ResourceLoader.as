@@ -15,7 +15,6 @@ package reprise.external
 	import reprise.commands.IAsynchronousCommand;
 	import reprise.commands.ICommand;
 	import reprise.commands.IProgressCommand;
-	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
 	import reprise.events.ResourceEvent;
 
@@ -29,7 +28,7 @@ package reprise.external
 		/**
 		* The default number of how many resources are loaded concurrently
 		*/
-		public static var DEFAULT_MAX_PARALLEL_EXECUTION_COUNT : Number = 3;
+		public static var DEFAULT_MAX_PARALLEL_EXECUTION_COUNT : int = 3;
 		
 		/**
 		* The number of contained resources to load
@@ -111,7 +110,7 @@ package reprise.external
 			{
 				return;
 			}
-			var i : Number = m_pendingCommands.length;
+			var i : int = m_pendingCommands.length;
 			while (i--)
 			{
 				var cmd : ICommand = ICommand(m_pendingCommands[i]);
@@ -151,7 +150,7 @@ package reprise.external
 		* 
 		* @return The number of bytes loaded
 		*/
-		public function bytesLoaded() : Number
+		public function bytesLoaded() : int
 		{
 			var bytesLoaded : int = 0;
 			var i : int = m_currentCommands.length;
@@ -188,7 +187,7 @@ package reprise.external
 		protected function progressOfCurrentResources() : Number
 		{
 			var progress : Number = 0;
-			var i : Number = m_currentCommands.length;
+			var i : int = m_currentCommands.length;
 			while(i--)
 			{
 				var cmd:ICommand = m_currentCommands[i];

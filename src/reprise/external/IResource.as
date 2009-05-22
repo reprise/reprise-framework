@@ -21,13 +21,13 @@ package reprise.external
 		function setURL( src : String ) : void;
 		function url() : String;
 		function content() : *;
-		function setTimeout( timeout : Number ) : void;
-		function timeout() : Number;
+		function setTimeout( timeout : int ) : void;
+		function timeout() : int;
 		function setForceReload( bFlag : Boolean ) : void;
 		function forceReload() : Boolean;
-		function setRetryTimes( times : Number ) : void;
-		function retryTimes() : Number;
-		function bytesLoaded() : Number;
-		function bytesTotal() : Number;
+		function setRetryTimes( times : int ) : void;
+		function retryTimes() : int;
+		function bytesLoaded() : int;
+		function bytesTotal() : int;
 	}
 }

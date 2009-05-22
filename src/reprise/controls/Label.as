@@ -49,7 +49,7 @@ package reprise.controls
 		protected var m_labelDisplay : TextField;
 		protected var m_textSetExternally : Boolean;
 		
-		protected var m_internalStyleIndex : Number;
+		protected var m_internalStyleIndex : int;
 	
 		protected var m_labelXML : XML;
 		protected var m_usedLabelXML : XML;

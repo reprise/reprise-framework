@@ -38,7 +38,7 @@ package reprise.css
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var g_id : Number = 0;
+		protected static var g_id : int = 0;
 		
 		protected var m_important : Boolean = false;
 		protected var m_isRelativeValue : Boolean = false;
@@ -55,7 +55,7 @@ package reprise.css
 		
 		protected var m_cssFile : String;
 	
-		protected var m_id : Number;
+		protected var m_id : int;
 		protected var m_isWeak : Boolean;
 
 		

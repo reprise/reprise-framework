@@ -22,8 +22,8 @@ package reprise.commands
 		*                           Protected properties                           *
 		***************************************************************************/
 		protected var m_didSucceed : Boolean;
-		protected var m_id:Number = 0;
-		protected var m_priority:Number = 0;
+		protected var m_id:int = 0;
+		protected var m_priority:int = 0;
 		
 		
 		/***************************************************************************
@@ -37,22 +37,22 @@ package reprise.commands
 			
 		}
 		
-		public function get priority():Number
+		public function get priority():int
 		{
 			return m_priority;
 		}
 		
-		public function set priority(value:Number):void
+		public function set priority(value:int):void
 		{
 			m_priority = value;
 		}
 		
-		public function get id():Number
+		public function get id():int
 		{
 			return m_id;
 		}
 		
-		public function set id(value:Number):void
+		public function set id(value:int):void
 		{
 			m_id = value;
 		}

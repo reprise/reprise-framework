@@ -23,17 +23,17 @@ package reprise.commands
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static const DIRECTION_FORWARDS : Number = 1;
-		public static const DIRECTION_BACKWARDS : Number = 2;
+		public static const DIRECTION_FORWARDS : int = 1;
+		public static const DIRECTION_BACKWARDS : int = 2;
 		
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_target : MovieClip;
-		protected var m_direction : Number = 1;
-		protected var m_frameDelay : Number = 1;
-		protected var m_frameDelayCount : Number = 0;
+		protected var m_direction : int = 1;
+		protected var m_frameDelay : int = 1;
+		protected var m_frameDelayCount : int = 0;
 		protected var m_frameRange : Range;
 		protected var m_resetOnExecute : Boolean = false;
 		
@@ -77,28 +77,28 @@ package reprise.commands
 			}
 		}
 		
-		public function setDirection(dir:Number) : void
+		public function setDirection(dir:int) : void
 		{
 			m_direction = dir;
 		}
 	
-		public function currentFrame() : Number
+		public function currentFrame() : int
 		{
 			return m_target.currentFrame;
 		}
 		
-		public function totalFrames() : Number
+		public function totalFrames() : int
 		{
 			return m_target.totalFrames;
 		}
 		
-		public function gotoAndStop(frame:Number) : void
+		public function gotoAndStop(frame:int) : void
 		{
 			frame = normalizedFrame(frame);
 			m_target.gotoAndStop(frame);
 		}
 		
-		public function gotoAndPlay(frame:Number) : void
+		public function gotoAndPlay(frame:int) : void
 		{
 			frame = normalizedFrame(frame);
 			m_target.gotoAndStop(frame);
@@ -111,7 +111,7 @@ package reprise.commands
 			super.cancel();
 		}
 		
-		public function setFrameDelay(delay:Number) : void
+		public function setFrameDelay(delay:int) : void
 		{
 			m_frameDelay = Math.max(0, delay);
 		}
@@ -153,7 +153,7 @@ package reprise.commands
 			super.notifyComplete(success);
 		}
 		
-		protected function normalizedFrame(frame:Number) : Number
+		protected function normalizedFrame(frame:int) : int
 		{
 			frame = Math.max(frame, m_frameRange.location);
 			frame = Math.min(frame, m_frameRange.location + m_frameRange.length - 1);

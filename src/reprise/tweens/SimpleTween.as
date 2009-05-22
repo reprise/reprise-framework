@@ -51,7 +51,7 @@ package reprise.tweens
 		*							public methods								   *
 		***************************************************************************/
 		public function SimpleTween(
-			duration:Number = 1, delay : uint = 0, normalizeToFrameRate : uint = 0)
+			duration:int = 1, delay : uint = 0, normalizeToFrameRate : uint = 0)
 		{
 			m_duration = duration;
 			if (m_duration <= 0 || isNaN(m_duration))
@@ -99,7 +99,7 @@ package reprise.tweens
 			tweenFunction:Function = null, roundResults:Boolean = false, 
 			extraParams:Array = null) : void
 		{
-			for (var i : Number = 0; i < properties.length; i++)
+			for (var i : int = 0; i < properties.length; i++)
 			{
 				var property:String = properties[i];
 				var startValue:Number = startValues[i];
@@ -124,7 +124,7 @@ package reprise.tweens
 		public function removeTweenProperty (
 			tweenPropertyVO:TweenedPropertyVO) : void
 		{
-			for (var i : Number = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < m_tweenedProperties.length; i++)
 			{
 				if (TweenedPropertyVO (m_tweenedProperties[i]) == tweenPropertyVO)
 				{
@@ -139,7 +139,7 @@ package reprise.tweens
 		 * note that the time is rescaled accordingly, 
 		 * so as not to interrupt smooth movements
 		 */
-		public function setDuration (duration:Number) : void
+		public function setDuration (duration:int) : void
 		{
 			m_currentTime = m_currentTime / m_duration * duration;
 			m_duration = duration;
@@ -148,7 +148,7 @@ package reprise.tweens
 		/**
 		 * returns the tween's duration
 		 */
-		public function getDuration () : Number
+		public function getDuration () : int
 		{
 			return m_duration;
 		}
@@ -156,7 +156,7 @@ package reprise.tweens
 		/**
 		 * sets the tween's current time
 		 */
-		public function setTime (newTime:Number) : void
+		public function setTime (newTime:int) : void
 		{
 			m_currentTime = newTime;
 		}
@@ -164,7 +164,7 @@ package reprise.tweens
 		/**
 		 * returns the tween's current time
 		 */
-		public function getTime() : Number
+		public function getTime() : int
 		{
 			return m_currentTime;
 		}
@@ -181,7 +181,7 @@ package reprise.tweens
 			m_direction = (m_direction == DIRECTION_FORWARD ? 
 				DIRECTION_BACKWARD : DIRECTION_FORWARD);
 			
-			for (var i : Number = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < m_tweenedProperties.length; i++)
 			{
 				TweenedPropertyVO(m_tweenedProperties[i]).reverse();
 			}
@@ -366,7 +366,7 @@ package reprise.tweens
 		protected function tweenProperties () : void
 		{
 			var propertyVO:TweenedPropertyVO;
-			for (var i : Number = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < m_tweenedProperties.length; i++)
 			{
 				propertyVO = TweenedPropertyVO(m_tweenedProperties[i]);
 				propertyVO.tweenProperty(m_duration, m_currentTime);

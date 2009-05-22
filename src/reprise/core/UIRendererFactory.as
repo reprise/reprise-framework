@@ -171,7 +171,7 @@ package reprise.core
 				if (classesString)
 				{
 					var classes:Array = classesString.split(' ');
-					for (var i : Number = classes.length; i--;)
+					for (var i : int = classes.length; i--;)
 					{
 						var className:String = String(classes[i]);
 						renderer = rendererByClass(className);

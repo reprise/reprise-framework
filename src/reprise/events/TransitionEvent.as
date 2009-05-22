@@ -42,7 +42,7 @@ package reprise.events
 		 * Note that this property is not defined for events of type 
 		 * ALL_TRANSITIONS_COMPLETE
 		 */
-		public function get elapsedTime() : Number
+		public function get elapsedTime() : int
 		{
 			return m_elapsedTime;
 		}
@@ -50,7 +50,7 @@ package reprise.events
 		{
 			m_propertyName = name;
 		}
-		public function set elapsedTime(time : Number) : void
+		public function set elapsedTime(time : int) : void
 		{
 			m_elapsedTime = time;
 		}
@@ -60,7 +60,7 @@ package reprise.events
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_propertyName : String;
-		protected var m_elapsedTime : Number;
+		protected var m_elapsedTime : int;
 
 		
 		/***************************************************************************

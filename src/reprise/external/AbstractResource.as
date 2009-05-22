@@ -83,22 +83,22 @@ package reprise.external
 			return m_url;
 		}
 		
-		public function timeout() : Number
+		public function timeout() : int
 		{
 			return m_timeout;
 		}
 	
-		public function setTimeout(timeout : Number) : void
+		public function setTimeout(timeout : int) : void
 		{
 			m_timeout = timeout;
 		}
 		
-		public function retryTimes() : Number
+		public function retryTimes() : int
 		{
 			return m_retryTimes;
 		}
 	
-		public function setRetryTimes(times : Number) : void
+		public function setRetryTimes(times : int) : void
 		{
 			m_retryTimes = times;
 		}
@@ -127,14 +127,14 @@ package reprise.external
 			return m_content;
 		}
 		
-		public function bytesLoaded() : Number
+		public function bytesLoaded() : int
 		{
 			throw new Error(
 				'Cannot call bytesLoaded of AbstractResource directly!');
 			return null;
 		}
 		
-		public function bytesTotal() : Number
+		public function bytesTotal() : int
 		{
 			throw new Error(
 				'Cannot call bytesTotal of AbstractResource directly!');
@@ -268,7 +268,7 @@ package reprise.external
 		{
 			m_httpStatus = httpStatus;
 		}
-		protected function setFailureReason(failureReason:Number) : void
+		protected function setFailureReason(failureReason:int) : void
 		{
 			m_failureReason = failureReason;
 		}
@@ -317,7 +317,7 @@ package reprise.external
 				success, m_failureReason, m_httpStatus));
 		}
 		
-		protected function loader_httpStatus(statusCode : Number) : void
+		protected function loader_httpStatus(statusCode : int) : void
 		{
 			m_httpStatus = new HTTPStatus(statusCode, m_url);
 		}

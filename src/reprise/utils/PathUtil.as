@@ -33,7 +33,7 @@ package reprise.utils
 				components[0] = '/';
 			}
 			
-			var i : Number = components.length;
+			var i : int = components.length;
 			while (i-- > 1)
 			{
 				if (components[i].length == 0)
@@ -51,7 +51,7 @@ package reprise.utils
 			path = path.split('//').join('/').split('//').join('/').split('/./').join('/');
 			
 			var searchRange : Range = new Range(0, path.length);
-			var foundIndex : Number = StringUtil.indexOfStringInRange(path, '../', searchRange);
+			var foundIndex : int = StringUtil.indexOfStringInRange(path, '../', searchRange);
 	
 			while (foundIndex - searchRange.location == 0)
 			{
@@ -63,7 +63,7 @@ package reprise.utils
 			foundIndex = StringUtil.indexOfStringInRange(path, '/../', searchRange);		
 			while (foundIndex != -1)
 			{
-				var lastSlashIndex : Number = StringUtil.indexOfStringInRange(
+				var lastSlashIndex : int = StringUtil.indexOfStringInRange(
 					path, '/', new Range(0, foundIndex), StringUtil.BACKWARDS_SEARCH);			
 				if (lastSlashIndex == -1)
 				{
@@ -96,8 +96,7 @@ package reprise.utils
 		public static function pathWithComponents(components:Array) : String
 		{
 			var path:String = components[0];
-			var i : Number;
-			for (i = 1; i < components.length; i++)
+			for (var i : int = 1; i < components.length; i++)
 			{
 				path = stringByAppendingPathComponent(path, components[i]);
 			}
@@ -115,14 +114,14 @@ package reprise.utils
 			{
 				return '';
 			}
-			var dotIndex:Number = path.lastIndexOf('.');
+			var dotIndex:int = path.lastIndexOf('.');
 	
 			if (dotIndex == -1)
 			{
 				return '';
 			}
 			
-			var sepIndex:Number = path.lastIndexOf('/');
+			var sepIndex:int = path.lastIndexOf('/');
 			if (sepIndex != -1 && dotIndex < sepIndex)
 			{
 				return '';
@@ -133,7 +132,7 @@ package reprise.utils
 		
 		public static function lastPathComponent(path:String) : String
 		{
-			var sepIndex:Number = path.lastIndexOf('/');
+			var sepIndex:int = path.lastIndexOf('/');
 			var component : String;
 			
 			if (sepIndex == -1)
@@ -163,7 +162,7 @@ package reprise.utils
 		
 		public static function stringByDeletingLastPathComponent(path:String) : String
 		{		
-			var index:Number = path.lastIndexOf(lastPathComponent(path));
+			var index:int = path.lastIndexOf(lastPathComponent(path));
 			if (index == -1)
 			{
 				return path;
@@ -219,8 +218,7 @@ package reprise.utils
 				lastComponent = String(resolveeComponents.pop());
 			}
 	
-			var i : Number;
-			for (i = 0; i < resolveeComponents.length; i++)
+			for (var i : int = 0; i < resolveeComponents.length; i++)
 			{
 				var currentDirPart:String = resolveeComponents[i];
 				if (currentDirPart == '..')
@@ -263,7 +261,7 @@ package reprise.utils
 			var uniquePart2 : Array = 
 				pathComponents(filename).slice(commonRoot.length - 1);
 			
-			var numberOfStepsUp : Number = uniquePart1.length;
+			var numberOfStepsUp : int = uniquePart1.length;
 			if (uniquePart1[uniquePart1.length - 1] == '')
 			{
 				numberOfStepsUp--;
@@ -273,9 +271,8 @@ package reprise.utils
 				return uniquePart2.join('/');
 			}
 			
-			var i : Number;
 			var stepsUpArray : Array = uniquePart2.concat();
-			for (i = 0; i < numberOfStepsUp; i++)
+			for (var i : int = 0; i < numberOfStepsUp; i++)
 			{
 				var steppingUpPast : String = uniquePart1[i];
 				if (steppingUpPast == '..')
@@ -302,11 +299,10 @@ package reprise.utils
 		{
 			var filename1Array : Array = pathComponents(file1);
 			var filename2Array : Array = pathComponents(file2);
-			var minLength : Number = Math.min(filename1Array.length, filename2Array.length);
+			var minLength : int = int(Math.min(filename1Array.length, filename2Array.length));
 			var resultArray : Array = [];
 			
-			var i : Number;
-			for (i = 0; i < minLength; i++)
+			for (var i : int = 0; i < minLength; i++)
 			{
 				if (filename1Array[i] == filename2Array[i])
 				{

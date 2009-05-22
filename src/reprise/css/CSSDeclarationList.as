@@ -23,7 +23,7 @@ package reprise.css
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_items : Array;
-		protected var m_declarationIndex : Number = 0;
+		protected var m_declarationIndex : int = 0;
 		protected var m_declarationCache : Array;
 		protected var m_selectorHeadParts : Object = {};
 		protected var m_starSelectors : Array = [];
@@ -162,7 +162,7 @@ package reprise.css
 //			var declaration : CSSDeclaration = new CSSDeclaration();
 //			
 //			var path : String = element.selectorPath;
-//			var i : Number = m_items.length;
+//			var i : int = m_items.length;
 //			var item : CSSDeclarationListItem;
 //			var matches : Array = [];
 //			

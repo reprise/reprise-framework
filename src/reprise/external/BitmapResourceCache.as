@@ -26,7 +26,7 @@ package reprise.external
 		protected var m_cacheList : IndexedArray;
 		protected var m_temporaryList : IndexedArray;
 		protected var m_resourceLoader : ResourceLoader;
-		protected var m_maxParallelExecutionCount : Number = 3;
+		protected var m_maxParallelExecutionCount : int = 3;
 	
 	
 		/***************************************************************************
@@ -102,7 +102,7 @@ package reprise.external
 			m_cacheList.remove(cacheItem);
 		}
 		
-		public function setMaxParallelExecutionCount(count : Number) : void
+		public function setMaxParallelExecutionCount(count : int) : void
 		{
 			m_maxParallelExecutionCount = isNaN(count) ? 3 : count;
 			if (m_resourceLoader)
@@ -142,7 +142,7 @@ package reprise.external
 		
 		protected function cacheItemWithURL(url:String) : BitmapResourceCacheItem
 		{
-			var i : Number = m_cacheList.length;
+			var i : int = m_cacheList.length;
 			var item : BitmapResourceCacheItem;
 			while (i--)
 			{	
@@ -158,7 +158,7 @@ package reprise.external
 		protected function temporaryCacheItemWithURL(
 			url:String) : BitmapResourceCacheItem
 		{
-			var i : Number = m_temporaryList.length;
+			var i : int = m_temporaryList.length;
 			var item : BitmapResourceCacheItem;
 			while (i--)
 			{	

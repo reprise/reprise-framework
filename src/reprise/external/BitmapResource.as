@@ -22,8 +22,8 @@ package reprise.external {
 		***************************************************************************/
 		protected var m_cacheBitmap : Boolean;
 		protected var m_cloneBitmap : Boolean;
-		protected var m_bytesLoaded : Number;
-		protected var m_bytesTotal : Number;
+		protected var m_bytesLoaded : int;
+		protected var m_bytesTotal : int;
 		protected var m_applicationURL : String;
 		protected var m_data : BitmapData;
 		
@@ -46,12 +46,12 @@ package reprise.external {
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
 		}
 		
-		public override function bytesLoaded() : Number
+		public override function bytesLoaded() : int
 		{
 			return m_bytesLoaded;
 		}
 		
-		public override function bytesTotal() : Number
+		public override function bytesTotal() : int
 		{
 			return m_bytesTotal;
 		}	
@@ -121,7 +121,7 @@ package reprise.external {
 			m_containingImageResource = imageResource;
 		}
 		
-		public override function set priority(value : Number) : void
+		public override function set priority(value : int) : void
 		{
 			super.priority = value;
 			// @FIXME

@@ -11,6 +11,7 @@
 
 package reprise.external 
 {
+	import org.libspark.utils.ForcibleLoader;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
@@ -29,6 +30,7 @@ package reprise.external
 		protected var m_loader : Loader;
 		protected var m_resource : DisplayObject;
 		protected var m_attachMode : Boolean;
+		private var m_forcible : ForcibleLoader;
 
 		
 		/***************************************************************************
@@ -63,7 +65,7 @@ package reprise.external
 			return bmp;
 		}
 		
-		public override function bytesLoaded() : Number
+		public override function bytesLoaded() : int
 		{
 			if (m_attachMode)
 			{
@@ -76,7 +78,7 @@ package reprise.external
 			return m_loader.contentLoaderInfo.bytesLoaded;
 		}
 		
-		public override function bytesTotal() : Number
+		public override function bytesTotal() : int
 		{
 			if (m_attachMode)
 			{
@@ -129,10 +131,12 @@ package reprise.external
 			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
 			var context : LoaderContext = new LoaderContext(m_checkPolicyFile, ApplicationDomain.currentDomain);
-			m_loader.load(m_request, context);
-
+//			m_loader.load(m_request, context);
+//			m_loader.close();
+			m_forcible = new ForcibleLoader(m_loader);
+			m_forcible.load(m_request);
 		}
-		
+
 		protected override function doCancel() : void
 		{
 			if (m_loader)

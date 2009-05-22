@@ -33,7 +33,7 @@ package reprise.tweens
 		*							private methods								   *
 		***************************************************************************/
 		public override function tweenFunction(
-			time:Number, start:Number, change:Number, duration:Number, ...rest) : Number
+			time:int, start:Number, change:Number, duration:int, ...rest) : Number
 		{
 			var args : Array = [time, 0, 1, duration].concat(extraParams);
 			var percent : Number = super.tweenFunction.apply(null, args);

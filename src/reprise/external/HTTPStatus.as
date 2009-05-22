@@ -16,7 +16,7 @@ package reprise.external
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var m_statusCode : Number;
+		protected var m_statusCode : int;
 		protected var m_description : String;
 		protected	var m_url : String;
 		protected var m_isError : Boolean;
@@ -26,55 +26,55 @@ package reprise.external
 		*							public properties							   *
 		***************************************************************************/
 		// for future versions of HTTP
-		public static var HTTP_STATUS_CONTINUE					: Number		= 100;
-		public static var HTTP_STATUS_SWITCHING_PROTOCOLS		: Number		= 101;
+		public static const HTTP_STATUS_CONTINUE					: int		= 100;
+		public static const HTTP_STATUS_SWITCHING_PROTOCOLS			: int		= 101;
 		                                                    
 		// informational states                             
-		public static var HTTP_STATUS_OK						: Number		= 200;
-		public static var HTTP_STATUS_CREATED					: Number		= 201;
-		public static var HTTP_STATUS_ACCEPTED					: Number		= 202;
-		public static var HTTP_STATUS_NON_AUTH_INFORMATION		: Number		= 203;
-		public static var HTTP_STATUS_NO_CONTENT				: Number		= 204;
-		public static var HTTP_STATUS_RESET_CONTENT				: Number		= 205;
-		public static var HTTP_STATUS_PARTIAL_CONTENT			: Number		= 206;
+		public static const HTTP_STATUS_OK							: int		= 200;
+		public static const HTTP_STATUS_CREATED						: int		= 201;
+		public static const HTTP_STATUS_ACCEPTED					: int		= 202;
+		public static const HTTP_STATUS_NON_AUTH_INFORMATION		: int		= 203;
+		public static const HTTP_STATUS_NO_CONTENT					: int		= 204;
+		public static const HTTP_STATUS_RESET_CONTENT				: int		= 205;
+		public static const HTTP_STATUS_PARTIAL_CONTENT				: int		= 206;
 				                                            
 		// redirection                                      
-		public static var HTTP_STATUS_MULTIPLE_CHOICES			: Number		= 300;
-		public static var HTTP_STATUS_MOVED_PERMANENTLY			: Number		= 301;
-		public static var HTTP_STATUS_MOVED_TEMPORARILY			: Number		= 302;
-		public static var HTTP_STATUS_SEE_OTHER					: Number		= 303;
-		public static var HTTP_STATUS_NOT_MODIFIED				: Number		= 304;
-		public static var HTTP_STATUS_USE_PROXY					: Number		= 305;
+		public static const HTTP_STATUS_MULTIPLE_CHOICES			: int		= 300;
+		public static const HTTP_STATUS_MOVED_PERMANENTLY			: int		= 301;
+		public static const HTTP_STATUS_MOVED_TEMPORARILY			: int		= 302;
+		public static const HTTP_STATUS_SEE_OTHER					: int		= 303;
+		public static const HTTP_STATUS_NOT_MODIFIED				: int		= 304;
+		public static const HTTP_STATUS_USE_PROXY					: int		= 305;
 		// 306 is reserved but currently not used           
-		public static var HTTP_STATUS_TEMPORARY_REDIRECT		: Number		= 307;			
+		public static const HTTP_STATUS_TEMPORARY_REDIRECT			: int		= 307;			
 		                                                    
 		// client error                                     
-		public static var HTTP_STATUS_BAD_REQUEST				: Number		= 400;
-		public static var HTTP_STATUS_UNAUTHORIZED				: Number		= 401;
-		public static var HTTP_STATUS_PAYMENT_REQUIRED			: Number		= 402;
-		public static var HTTP_STATUS_FORBIDDEN					: Number		= 403;
-		public static var HTTP_STATUS_NOT_FOUND					: Number		= 404;
-		public static var HTTP_STATUS_METHOD_NOT_ALLOWED		: Number		= 405;
-		public static var HTTP_STATUS_NOT_ACCEPTABLE			: Number		= 406;
-		public static var HTTP_STATUS_PROXY_AUTH_REQUIRED		: Number		= 407;
-		public static var HTTP_STATUS_REQUEST_TIMEOUT			: Number		= 408;
-		public static var HTTP_STATUS_CONFLICT					: Number		= 409;
-		public static var HTTP_STATUS_GONE						: Number		= 410;
-		public static var HTTP_STATUS_LENGTH_REQUIRED			: Number		= 411;
-		public static var HTTP_STATUS_PRECONDITION_FAILED		: Number		= 412;
-		public static var HTTP_STATUS_REQUEST_ENTITY_TOO_LARGE	: Number		= 413;
-		public static var HTTP_STATUS_REQUEST_URL_TOO_LONG		: Number		= 414;
-		public static var HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE	: Number		= 415;
-		public static var HTTP_STATUS_REQ_RANGE_NOT_SATISFIABLE	: Number		= 416;
-		public static var HTTP_STATUS_EXPECTATION_FAILED		: Number		= 417;
+		public static const HTTP_STATUS_BAD_REQUEST					: int		= 400;
+		public static const HTTP_STATUS_UNAUTHORIZED				: int		= 401;
+		public static const HTTP_STATUS_PAYMENT_REQUIRED			: int		= 402;
+		public static const HTTP_STATUS_FORBIDDEN					: int		= 403;
+		public static const HTTP_STATUS_NOT_FOUND					: int		= 404;
+		public static const HTTP_STATUS_METHOD_NOT_ALLOWED			: int		= 405;
+		public static const HTTP_STATUS_NOT_ACCEPTABLE				: int		= 406;
+		public static const HTTP_STATUS_PROXY_AUTH_REQUIRED			: int		= 407;
+		public static const HTTP_STATUS_REQUEST_TIMEOUT				: int		= 408;
+		public static const HTTP_STATUS_CONFLICT					: int		= 409;
+		public static const HTTP_STATUS_GONE						: int		= 410;
+		public static const HTTP_STATUS_LENGTH_REQUIRED				: int		= 411;
+		public static const HTTP_STATUS_PRECONDITION_FAILED			: int		= 412;
+		public static const HTTP_STATUS_REQUEST_ENTITY_TOO_LARGE	: int		= 413;
+		public static const HTTP_STATUS_REQUEST_URL_TOO_LONG		: int		= 414;
+		public static const HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE		: int		= 415;
+		public static const HTTP_STATUS_REQ_RANGE_NOT_SATISFIABLE	: int		= 416;
+		public static const HTTP_STATUS_EXPECTATION_FAILED			: int		= 417;
 		
 		// server errors
-		public static var HTTP_STATUS_INTERNAL_SERVER_ERROR		: Number		= 500;
-		public static var HTTP_STATUS_NOT_IMPLEMENTED			: Number		= 501;
-		public static var HTTP_STATUS_BAD_GATEWAY				: Number		= 502;
-		public static var HTTP_STATUS_SERVICE_UNAVAILABLE		: Number		= 503;
-		public static var HTTP_STATUS_GATEWAY_TIMEOUT			: Number		= 504;
-		public static var HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED: Number		= 505;
+		public static const HTTP_STATUS_INTERNAL_SERVER_ERROR		: int		= 500;
+		public static const HTTP_STATUS_NOT_IMPLEMENTED				: int		= 501;
+		public static const HTTP_STATUS_BAD_GATEWAY					: int		= 502;
+		public static const HTTP_STATUS_SERVICE_UNAVAILABLE			: int		= 503;
+		public static const HTTP_STATUS_GATEWAY_TIMEOUT				: int		= 504;
+		public static const HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED	: int		= 505;
 		
 		public static var g_cancelRetryStates : Array;
 		
@@ -83,7 +83,7 @@ package reprise.external
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		public function HTTPStatus( code : Number, url : String )
+		public function HTTPStatus( code : int, url : String )
 		{
 			m_url = url;
 			setStatusCode( code );
@@ -97,7 +97,7 @@ package reprise.external
 			}
 		}	
 		
-		public function setStatusCode( code : Number ) : void
+		public function setStatusCode( code : int ) : void
 		{
 			m_statusCode = code;
 			generateMessage();

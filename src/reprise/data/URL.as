@@ -34,7 +34,7 @@ package reprise.data
 		protected var m_user : String;
 		protected var m_password : String;
 		protected var m_path : String;
-		protected var m_port : Number;
+		protected var m_port : int;
 		protected var m_query : String;
 		protected var m_queryObject : Object;
 		protected var m_fragment : String;
@@ -106,12 +106,12 @@ package reprise.data
 			m_path = val;
 		}
 		
-		public function port() : Number
+		public function port() : int
 		{
 			return m_port;
 		}
 	
-		public function setPort(val:Number) : void
+		public function setPort(val:int) : void
 		{
 			m_port = val;
 		}

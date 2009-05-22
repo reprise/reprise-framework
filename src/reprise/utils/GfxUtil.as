@@ -114,13 +114,12 @@ package reprise.utils
 		
 		
 		public static function drawStar(mc : Sprite, x : Number, y : Number, 
-			numSides : Number, innerRadius : Number, outerRadius : Number, 
+			numSides : int, innerRadius : Number, outerRadius : Number, 
 			startAngle : Number = NaN) : void
 		{
 			var step : Number = (2 * Math.PI) / numSides;
 			var angle : Number;
-			var i : Number;
-			var count : Number = 0;
+			var count : int = 0;
 		
 			if (isNaN(startAngle))
 			{
@@ -134,7 +133,7 @@ package reprise.utils
 			x += outerRadius;
 			y += outerRadius;
 		
-			for (i = 0; i < numSides; i++)
+			for (var i : int = 0; i < numSides; i++)
 			{
 				angle = (step * count++) + startAngle;
 				if (i == 0)

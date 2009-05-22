@@ -69,7 +69,7 @@ package reprise.css
 		public static function removeImportantFlagFromString(str:String) : Object
 		{
 			var important : Boolean = false;
-			var index : Number = str.indexOf( CSSProperty.IMPORTANT_FLAG );
+			var index : int = str.indexOf( CSSProperty.IMPORTANT_FLAG );
 			
 			if ( index > -1 && index == str.length - CSSProperty.IMPORTANT_FLAG.length )
 			{

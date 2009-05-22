@@ -43,7 +43,7 @@ package reprise.css
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected var g_idSource : Number;
+		protected var g_idSource : int;
 		
 		
 		protected var m_cssFile : CSSImport;
@@ -57,10 +57,10 @@ package reprise.css
 		protected var m_baseURL : String;
 		protected var m_runtimeParserRegistered : Boolean;
 		
-		protected var m_cleanupTime : Number;
-		protected var m_parseTime : Number;
-		protected var m_importsLoaded : Number;
-		protected var m_importsTotal : Number;
+		protected var m_cleanupTime : int;
+		protected var m_parseTime : int;
+		protected var m_importsLoaded : int;
+		protected var m_importsTotal : int;
 		private var m_stylesheetURLs : Array;
 
 		
@@ -221,12 +221,12 @@ package reprise.css
 		{
 			return m_declarationList;
 		}
-		public override function bytesLoaded() : Number
+		public override function bytesLoaded() : int
 		{
 			//TODO: Check if we shouldn't return a better status here
 			return m_importsLoaded;
 		}
-		public override function bytesTotal() : Number
+		public override function bytesTotal() : int
 		{
 			//TODO: Check if we shouldn't return a better status here
 			return m_importsTotal;
@@ -234,7 +234,7 @@ package reprise.css
 		
 		public function resolveImport(cssImport:CSSImport) : void
 		{
-			var index:Number = m_cssSegments.getIndex(cssImport);
+			var index:int = m_cssSegments.getIndex(cssImport);
 			m_cssSegments[index] = cssImport.data();
 			parseImportsInCSSSegmentWithIndex(index, cssImport.url());
 			m_importsLoaded++;
@@ -300,23 +300,21 @@ package reprise.css
 		***************************************************************************/
 		protected function parseCSSVariables() : void
 		{
-			var i : Number;
-			for (i = 0; i < m_cssSegments.length; i++)
+			for (var i : int = 0; i < m_cssSegments.length; i++)
 			{	
 				var seg : CSSSegment = CSSSegment(m_cssSegments[i]);
 				var parts : Array = seg.content().split('@define ');
 		
-				var j : Number;
-				for (j = 1; j < parts.length; j++)
+				for (var j : int = 1; j < parts.length; j++)
 				{
 					var part : String = parts[j];
-					var lbPos : Number = part.indexOf(';\n');
-					var scPos : Number = part.indexOf(';');
-					var cutPos : Number = scPos == lbPos ? scPos + 1 : scPos;
+					var lbPos : int = part.indexOf(';\n');
+					var scPos : int = part.indexOf(';');
+					var cutPos : int = scPos == lbPos ? scPos + 1 : scPos;
 					
 					var varStr : String = part.substring(0, scPos);
 					
-					var wsPos : Number = part.indexOf(' ');
+					var wsPos : int = part.indexOf(' ');
 					var varName : String = varStr.substring(0, wsPos);
 					var varCnt : String = varStr.substring(wsPos + 1, scPos);
 					
@@ -329,13 +327,12 @@ package reprise.css
 		
 		protected function replaceCSSVariables() : void
 		{
-			var i : Number = m_cssSegments.length;
+			var i : int = m_cssSegments.length;
 			while (i--)
 			{
 				var seg : CSSSegment = CSSSegment(m_cssSegments[i]);
 				var cnt : String = seg.content();
-				var varName : String;
-				for (varName in m_cssVariables)
+				for (var varName : String in m_cssVariables)
 				{
 					var varCnt : String = m_cssVariables[varName];
 					cnt = cnt.split('${' + varName + '}').join(varCnt);
@@ -344,13 +341,11 @@ package reprise.css
 			}
 		}
 		
-		protected function parseImportsInCSSSegmentWithIndex(
-			index:Number, baseURL:String) : void
+		protected function parseImportsInCSSSegmentWithIndex(index:int, baseURL:String) : void
 		{
 			var cssString : String = cleanupCSS(m_cssSegments[index]);
 			var segments : Array = cssString.split('@import');
 			var parsedSegment : CSSSegment;		
-			var i : Number;
 			var additionalSegments : Array = [];
 	
 			parsedSegment = new CSSSegment();
@@ -358,10 +353,10 @@ package reprise.css
 			parsedSegment.setURL(baseURL);
 			m_cssSegments[index] = parsedSegment;
 			
-			for (i = 1; i < segments.length; i++)
+			for (var i : int = 1; i < segments.length; i++)
 			{
 				var url : String;
-				var pos : Number;
+				var pos : int;
 				var cssImport : CSSImport;
 				var segment : String;
 				var segmentContent : String;
@@ -388,15 +383,14 @@ package reprise.css
 			
 			if (additionalSegments.length)
 			{
-				m_cssSegments.splice.apply(m_cssSegments, ([index + 1, 0]).concat(additionalSegments));
+				m_cssSegments.splice.apply(
+					m_cssSegments, ([index + 1, 0]).concat(additionalSegments));
 			}
 		}
 	
 		protected function dequeueImports() : void
 		{
-			var i:Number;
-			//m_loader.clear();
-			for (i = 0; i < m_importQueue.length; i++)
+			for (var i : int = 0; i < m_importQueue.length; i++)
 			{
 				m_loader.addResource(m_importQueue[i]);
 			}
@@ -439,16 +433,14 @@ package reprise.css
 	
 		protected function parseCSS() : void
 		{
-			var i : Number;
-			var segment : CSSSegment;
 			var success : Boolean;
 	
 			parseCSSVariables();
 			replaceCSSVariables();
 			
-			for (i = 0; i < m_cssSegments.length; i++)
+			for (var i : int = 0; i < m_cssSegments.length; i++)
 			{
-				segment = m_cssSegments[i];
+				var segment : CSSSegment = m_cssSegments[i];
 				success = parseCSSSegment(segment);
 				if (!success)
 				{			
@@ -485,7 +477,7 @@ package reprise.css
 		
 		protected function parseCSSSegment(segment : CSSSegment) : Boolean
 		{
-			var timestamp : Number = getTimer();
+			var timestamp : int = getTimer();
 			var url : String = segment.url();		
 			//split string into class definitions
 			var classesArr:Array = segment.content().split("}");
@@ -513,7 +505,7 @@ package reprise.css
 					var classNames:Array = cssClassDefArr[0].split("\n").join(" ").
 						split("  ").join(" ").split(", ").join(",").split(",");			
 					
-					var classNamesLen:Number = classNames.length;
+					var classNamesLen:int = classNames.length;
 					for (var j : int = 0; j < classNamesLen; j++)
 					{
 						var className:String = classNames[j];
@@ -544,13 +536,13 @@ package reprise.css
 		**/
 		protected function cleanupCSS(cssStr:String) : String
 		{
-			var timestamp : Number = getTimer();		
+			var timestamp : int = getTimer();		
 			// remove all comments to ease parsing
 			var arr : Array = cssStr.split( "/*" );
 			for ( var i : uint = arr.length; i-- > 1; )
 			{
 				var block:String = arr[i];
-				var commentClosePosition:Number = block.indexOf("*/");
+				var commentClosePosition:int = block.indexOf("*/");
 				if (commentClosePosition == -1)
 				{
 					arr[i] = "";

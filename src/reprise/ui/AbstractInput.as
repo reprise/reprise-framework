@@ -29,8 +29,8 @@ package reprise.ui
 		*                             Public properties                            *
 		***************************************************************************/
 		/* @TODO: properties probably should be namespaced */
-		public var m_priority : Number = 0;
-		public var m_id : Number;
+		public var m_priority : int = 0;
+		public var m_id : int;
 		
 		
 		/***************************************************************************
@@ -201,22 +201,22 @@ package reprise.ui
 			setFieldName(aName);
 		}
 		
-		public function get priority():Number
+		public function get priority():int
 		{
 			return m_priority;
 		}
 		
-		public function set priority(value:Number):void
+		public function set priority(value:int):void
 		{
 			m_priority = value;
 		}
 		
-		public function get id():Number
+		public function get id():int
 		{
 			return m_id;
 		}
 		
-		public function set id(value:Number):void
+		public function set id(value:int):void
 		{
 			m_id = value;
 		}

@@ -22,13 +22,13 @@ package reprise.tweens {
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var EVENT_START : String = "start";
-		public static var EVENT_TICK : String = "tick";
-		public static var EVENT_FINISH_TWEEN : String = "finishTween";
-	public static var EVENT_FINISH_CHAIN : String = "finishChain";
+		public static const EVENT_START : String = "start";
+		public static const EVENT_TICK : String = "tick";
+		public static const EVENT_FINISH_TWEEN : String = "finishTween";
+		public static const EVENT_FINISH_CHAIN : String = "finishChain";
 		
-		public static var DIRECTION_FORWARD:Number = 1;
-		public static var DIRECTION_BACKWARD:Number = -1;
+		public static const DIRECTION_FORWARD:int = 1;
+		public static const DIRECTION_BACKWARD:int = -1;
 		
 		
 		/***************************************************************************
@@ -36,7 +36,7 @@ package reprise.tweens {
 		***************************************************************************/
 		protected var m_tweens : Array;
 		protected var m_currentTween : SimpleTween;
-		protected var m_currentTweenIndex : Number;
+		protected var m_currentTweenIndex : int;
 		protected var m_isRunning : Boolean;
 		protected var m_direction:Number;
 		

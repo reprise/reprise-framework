@@ -20,8 +20,8 @@ package reprise.css
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public var declarationSpecificity : Number;
-		public var declarationIndex : Number;
+		public var declarationSpecificity : int;
+		public var declarationIndex : int;
 		
 		
 		/***************************************************************************
@@ -36,7 +36,7 @@ package reprise.css
 		*							public methods								   *
 		***************************************************************************/
 		public function CSSDeclarationListItem(selector : String, 
-			declaration : CSSDeclaration, index : Number, file : String = null) 
+			declaration : CSSDeclaration, index : int, file : String = null) 
 		{
 			m_selector = selector;
 			var selectorStr : String = (("@" + selector.split(" ").join("@ @").
@@ -77,8 +77,8 @@ package reprise.css
 		
 		reprise function matchesSubjectPath(subjectPath:String) : Boolean
 		{
-			var subjectIndex : Number = subjectPath.length;
-			var minSubjectIndex : Number = subjectPath.lastIndexOf(" ") + 1;
+			var subjectIndex : int = subjectPath.length;
+			var minSubjectIndex : int = subjectPath.lastIndexOf(" ") + 1;
 			var patternOffset : int = 1;
 			subjectPath += " ";
 			
@@ -87,7 +87,7 @@ package reprise.css
 			{
 				//get pattern for the current element from the itemPath
 				var currentPattern : Array = m_selectorPattern[i];
-				var subjectPartBegin : Number;
+				var subjectPartBegin : int;
 				var patternPart : String = 
 					currentPattern[currentPattern.length - patternOffset];
 				patternOffset = 1;
@@ -103,7 +103,7 @@ package reprise.css
 				{
 					//check if the first element of the patternPart is in the 
 					//subjectpath at a valid position.
-					var patternInSubjectIndex : Number = 
+					var patternInSubjectIndex : int = 
 						subjectPath.lastIndexOf(patternPart, subjectIndex);
 					if (patternInSubjectIndex < minSubjectIndex)
 					{
@@ -111,7 +111,7 @@ package reprise.css
 					}
 					subjectPartBegin = 
 						subjectPath.lastIndexOf(" ", patternInSubjectIndex);
-					var subjectPartEnd : Number = 
+					var subjectPartEnd : int = 
 						subjectPath.indexOf(" ", patternInSubjectIndex);
 					var currentSubjectPart : String = 
 						subjectPath.substring(subjectPartBegin + 1, subjectPartEnd);
@@ -164,11 +164,11 @@ package reprise.css
 		/***************************************************************************
 		*							protected methods								   *
 		***************************************************************************/
-		protected function specificityForSelector(selector:String) : Number
+		protected function specificityForSelector(selector:String) : int
 		{
 			var patterns : Array = selector.split(' ');
-			var spec : Number = 0;
-			var i : Number = patterns.length;
+			var spec : int = 0;
+			var i : int = patterns.length;
 			
 			while (i--)
 			{
@@ -178,13 +178,13 @@ package reprise.css
 			return spec;
 		}
 		
-		protected function specificityForPattern(pattern:String) : Number
+		protected function specificityForPattern(pattern:String) : int
 		{
-			var specificityFactorElement : Number = 1;
-			var specificityFactorClass : Number = 10;
-			var specificityFactorId : Number = 100;
+			var specificityFactorElement : int = 1;
+			var specificityFactorClass : int = 10;
+			var specificityFactorId : int = 100;
 	
-			var spec : Number = 0;
+			var spec : int = 0;
 			var patternParts : Array = pattern.split(':').join('.:').split('.');
 			
 			//add specificity of classes multiplied by class count

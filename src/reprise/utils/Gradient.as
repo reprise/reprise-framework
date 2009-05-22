@@ -132,12 +132,11 @@ package reprise.utils {
 		}
 		public function setColors(val:Array) : void
 		{
-			var i : Number;
 			var color : Object;
 			m_colors = [];
 			m_alphas = [];
 			
-			for (i = 0; i < val.length; i++)
+			for (var i : int = 0; i < val.length; i++)
 			{
 				color = val[i];
 				if (color is AdvancedColor)
@@ -283,7 +282,7 @@ package reprise.utils {
 		protected function initDefaultAlphas() : void
 		{
 			m_alphas = [];
-			var len:Number = m_colors.length;
+			var len:int = m_colors.length;
 			while (len--)
 			{
 				m_alphas.push(1);
@@ -293,7 +292,7 @@ package reprise.utils {
 		protected function initDefaultRatios() : void
 		{
 			m_ratios = [];
-			var len:Number = m_colors.length;
+			var len:int = m_colors.length;
 			var step:Number = 0xff / (len - 1);
 			var ratio : Number = 0;
 			while (len--)

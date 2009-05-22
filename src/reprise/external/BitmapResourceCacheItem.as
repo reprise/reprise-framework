@@ -30,8 +30,8 @@ package reprise.external {
 		protected var m_isTemporary : Boolean = false;
 		protected var m_bitmapDataReference : BitmapData;
 		protected var m_httpStatus : HTTPStatus;
-		protected var m_bytesLoaded : Number;
-		protected var m_bytesTotal : Number;
+		protected var m_bytesLoaded : int;
+		protected var m_bytesTotal : int;
 		protected var m_success : Boolean;
 		protected var m_targets : Array;
 		protected var m_loadFinished : Boolean = false;
@@ -116,8 +116,8 @@ package reprise.external {
 		***************************************************************************/
 		protected function removeTarget(target:BitmapResource) : void
 		{
-			var i : uint = m_targets.length;
-			var numTargets : Number = 0;
+			var i : int = m_targets.length;
+			var numTargets : int = 0;
 			var foundTarget : BitmapResource;
 			
 			while (i--)

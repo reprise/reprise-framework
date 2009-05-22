@@ -93,12 +93,12 @@ package reprise.external
 			return m_objectEncoding;
 		}
 		
-		public override function bytesLoaded() : Number
+		public override function bytesLoaded() : int
 		{
 			return 0;
 		}
 		
-		public override function bytesTotal() : Number
+		public override function bytesTotal() : int
 		{
 			return 0;
 		}

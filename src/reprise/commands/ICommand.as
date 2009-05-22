@@ -16,10 +16,10 @@ package reprise.commands
 	public interface ICommand extends IEventDispatcher
 	{
 		function execute(...rest) : void;
-		function get priority():Number;
-		function set priority(value:Number):void;
-		function get id():Number;
-		function set id(value:Number):void;
+		function get priority():int;
+		function set priority(value:int):void;
+		function get id():int;
+		function set id(value:int):void;
 		function didSucceed():Boolean;
 	}
 }

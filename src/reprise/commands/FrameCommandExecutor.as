@@ -23,7 +23,7 @@ package reprise.commands
 		***************************************************************************/
 		protected static var g_instance : FrameCommandExecutor;
 		private	var m_commands : HashMap;
-		protected var m_nextKeyIndex : Number;
+		protected var m_nextKeyIndex : int;
 		
 	
 	

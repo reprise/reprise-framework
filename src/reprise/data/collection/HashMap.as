@@ -19,7 +19,7 @@ package reprise.data.collection
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_map : Array;
-		protected var m_size : Number;
+		protected var m_size : int;
 		
 		
 			
@@ -44,8 +44,7 @@ package reprise.data.collection
 		
 		public function containsObject(value : Object) : Boolean
 		{
-			var key : String;
-			for (key in m_map)
+			for (var key : String in m_map)
 			{
 				if (m_map[key] == value)
 				{
@@ -73,15 +72,16 @@ package reprise.data.collection
 		public function removeObjectForKey(key : String) : void
 		{
 			if (!containsKey(key))
+			{
 				return;
+			}
 			delete m_map[key];
 			m_size--;
 		}
 		
 		public function removeObject(value : Object) : void
 		{
-			var key : String;
-			for (key in m_map)
+			for (var key : String in m_map)
 			{
 				if (m_map[key] == value)
 				{
@@ -91,7 +91,7 @@ package reprise.data.collection
 			}
 		}
 		
-		public function size() : Number
+		public function size() : int
 		{
 			return m_size;
 		}
@@ -99,8 +99,7 @@ package reprise.data.collection
 		public function keys() : Array
 		{
 			var keysArray : Array = [];
-			var key : String;
-			for (key in m_map)
+			for (var key : String in m_map)
 			{
 				keysArray.push(key);
 			}
@@ -110,8 +109,7 @@ package reprise.data.collection
 		public function values() : Array
 		{
 			var valuesArray : Array = [];
-			var key : String;
-			for (key in m_map)
+			for (var key : String in m_map)
 			{
 				valuesArray.push(m_map[key]);
 			}

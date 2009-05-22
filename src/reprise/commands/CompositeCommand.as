@@ -150,7 +150,7 @@ package reprise.commands
 		* @param value The number of commands to be run concurrently. Set to <code>0</code> if you
 		* want all commands to be executed in one run.
 		*/
-		public function setMaxParallelExecutionCount(value : Number) : void
+		public function setMaxParallelExecutionCount(value : int) : void
 		{
 			m_maxParallelExecutionCount = value;
 			if (m_isExecuting)
@@ -326,7 +326,7 @@ package reprise.commands
 		*/
 		protected function failGracefully(userInterrupt:Boolean):void
 		{
-			var i : Number = m_currentCommands.length;
+			var i : int = m_currentCommands.length;
 			while (i--)
 			{
 				var cmd:ICommand = ICommand(m_currentCommands[i]);

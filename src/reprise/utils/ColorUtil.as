@@ -32,9 +32,9 @@ package reprise.utils
 		 *
 		 * @param	hex		color as hexadecimal string
 		 *
-		 * @return	Number	rgb color value
+		 * @return	uint	rgb color value
 		 */	
-		public static function hex2rgb(hex : String) : Number
+		public static function hex2rgb(hex : String) : uint
 		{
 			if (hex.charAt(0) == "#")
 			{
@@ -49,10 +49,10 @@ package reprise.utils
 		/**
 		 * Converts an rgb color number to an rgb Array
 		 * 
-		 * @param	rgbInt	Number	The rgm color number to convert.
+		 * @param	rgbInt	Number	The rgb color number to convert.
 		 * @usage	number2rgbArray(0xFFFFFF); //returns [255,255,255]
 		 */
-		public static function number2rgbArray(rgbInt : Number) : Array
+		public static function number2rgbArray(rgbInt : int) : Array
 		{
 			var r:Number = rgbInt >> 16;
 			var g:Number = (rgbInt ^ (r << 16)) >> 8;
@@ -61,7 +61,7 @@ package reprise.utils
 			return new Array(r, g, b);
 		}
 		
-		public static function number2rgbObject(rgbInt : Number) : Object
+		public static function number2rgbObject(rgbInt : int) : Object
 		{
 			var obj : Object = {};
 			obj.r = rgbInt >> 16;
@@ -71,13 +71,13 @@ package reprise.utils
 			return obj;
 		}
 		
-		public static function rgbObject2Number(rgb:Object) : Number
+		public static function rgbObject2Number(rgb:Object) : int
 		{
 			return (rgb.r << 16) | (rgb.g << 8) | rgb.b;
 		}
 		
 		
-		public static function randomColor() : Number
+		public static function randomColor() : int
 		{
 			return (Math.random() * 255) << 16 | (Math.random() * 255) << 8 | (Math.random() * 255);
 		}
@@ -100,7 +100,7 @@ package reprise.utils
 		/**
 		* returns either black or white depending on which contrast is greater to a given color
 		**/
-		public static function contrastColorAgainstColor(hexColor : Number) : Number
+		public static function contrastColorAgainstColor(hexColor : int) : int
 		{
 			var hsb : Object = hexToHsb(hexColor);
 			if (hsb.b <= 50)
@@ -111,12 +111,12 @@ package reprise.utils
 		
 		
 		public static function hsbToHex(
-			h : Number = 0, s : Number = 0, br : Number = 0) : Number
+			h : int = 0, s : int = 0, br : int = 0) : int
 		{
-			var r : Number;
-			var g : Number;
-			var b : Number;
-			var rgb : Number;
+			var r : int;
+			var g : int;
+			var b : int;
+			var rgb : int;
 		
 			s = (100 - s) / 100;
 			br = (100 - br) / 100;
@@ -159,16 +159,16 @@ package reprise.utils
 		}
 			
 		
-		public static function hexToHsb(hex : Number) : Object 
+		public static function hexToHsb(hex : int) : Object 
 		{
 			var rgb : Object = number2rgbObject(hex);
-			var r : Number = rgb.r;
-			var g : Number = rgb.g;
-			var b : Number = rgb.b;
+			var r : int = rgb.r;
+			var g : int = rgb.g;
+			var b : int = rgb.b;
 			
 			var hsb : Object = {};
 			hsb.b = Math.max(Math.max(r, g), b);
-			var min:Number = Math.min(r, Math.min(g, b));
+			var min:int = Math.min(r, Math.min(g, b));
 			hsb.s = (hsb.b <= 0) ? 0 : Math.round(100 * (hsb.b - min) / hsb.b);
 			hsb.b = Math.round((hsb.b / 255) * 100);
 			hsb.h = 0;

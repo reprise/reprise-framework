@@ -51,12 +51,12 @@ package reprise.external
 			return m_loader.data;
 		}
 		
-		public override function bytesLoaded() : Number
+		public override function bytesLoaded() : int
 		{
 			return m_loader.bytesLoaded;
 		}
 		
-		public override function bytesTotal() : Number
+		public override function bytesTotal() : int
 		{
 			return m_loader.bytesTotal;
 		}
