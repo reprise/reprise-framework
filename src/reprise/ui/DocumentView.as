@@ -11,8 +11,9 @@
 
 package reprise.ui
 {
-	import reprise.core.FocusManager;
+	import flash.utils.describeType;
 	import reprise.core.ApplicationContext;
+	import reprise.core.FocusManager;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
@@ -28,11 +29,12 @@ package reprise.ui
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.events.StatusEvent;
 	import flash.geom.Point;
-	import flash.ui.Keyboard;
+	import flash.net.LocalConnection;
+	import flash.utils.ByteArray;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	
@@ -73,6 +75,8 @@ package reprise.ui
 		protected var m_debuggingMode : Boolean;
 		protected var m_currentDebugElement : UIComponent;
 		protected var m_debugInterface : Sprite;
+		private var m_debugConnection : LocalConnection;
+		private var m_debugReceiveConnection : LocalConnection;
 
 		
 		/***************************************************************************
@@ -283,8 +287,16 @@ package reprise.ui
 			stage.stageFocusRect = false;
 			m_focusManager = new FocusManager(this);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, stage_keyDown);
+			m_debugConnection = new LocalConnection();
+			m_debugConnection.client = this;
+			
+            m_debugConnection.addEventListener(StatusEvent.STATUS, onStatus);
 		}
 		
+		private function onStatus(event : StatusEvent) : void
+		{
+		}
+
 		protected override function initDefaultStyles() : void
 		{
 			m_elementDefaultStyles.setStyle('width', '100%');
@@ -404,7 +416,82 @@ package reprise.ui
 			addChild(m_debugInterface);
 			
 			stage.addEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true, 100);
+			
+			
+			var test : Array = [{name:'document', elements:childTree(this)}];
+			var bytes : ByteArray = new ByteArray();
+			bytes.writeObject(test);
+			bytes.position = 0;
+			try
+			{
+				m_debugConnection.send('_repriseDebugger', 'setRepriseDisplayList', bytes);
+				m_debugReceiveConnection = new LocalConnection();
+				m_debugReceiveConnection.allowDomain('*');
+				m_debugReceiveConnection.connect('_repriseReceive');
+				m_debugReceiveConnection.client = this;
+			}
+			catch(error : Error)
+			{
+				log(error);
+			}
 		}
+		
+		public function elementDebug(path : String) : void
+		{
+			var element : UIObject = elementForPath(path);
+			var msg : String;
+			if (!element)
+			{
+				msg = 'not found';
+			}
+			else if (element is UIComponent)
+			{
+				msg = debugMarkElement(UIComponent(element));
+				msg += '\n\nComplex styles:\n' + 
+					UIComponent(element).valueForKey('m_complexStyles');
+			}
+			else
+			{
+				msg = 'UIObject\n';
+				msg += 'rect:\t\t' + element.getBounds(element.parentElement()).toString() + '\n';
+				msg += 'stage rect:\t' + element.getBounds(stage).toString() + '\n';
+				msg += 'opacity:\t\t' + element.alpha + '\n';
+				msg += 'visible:\t\t' + element.visible + '\n';
+				msg += 'hidden anc:\t' + element.hasHiddenAncestors() + '\n';
+			}
+			m_debugConnection.send('_repriseDebugger', 'showDetailsForElement', path, msg);
+		}
+		
+		protected function childTree(root : UIObject) : Array
+		{
+			var tree : Array = [];
+			var elements : Array = root.children();
+			for (var i : int = 0; i < elements.length; i++)
+			{
+				var child : UIObject = elements[i];
+				if (!child)
+				{
+					continue;
+				}
+				tree.push({name : child.name, path : child.toString(), elements : childTree(child)});
+			}
+			return tree;
+		}
+
+		protected function elementForPath(path : String) : UIObject
+		{
+			var parts : Array = path.split('.');
+			parts.shift();
+			var element : UIObject = this;
+			while (parts.length && element)
+			{
+				var name : String = parts.shift();
+				element = element.elementForName(name);
+			}
+			return element;
+		}
+
+		
 		protected function deactivateDebuggingMode() : void
 		{
 			if (!m_debuggingMode)
@@ -419,7 +506,7 @@ package reprise.ui
 			
 			stage.removeEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true);
 		}
-		protected function debugMarkElement(element : UIComponent) : void
+		protected function debugMarkElement(element : UIComponent) : String
 		{
 			m_currentDebugElement = element;
 			var style : ComputedStyles = element.style;
@@ -464,7 +551,7 @@ package reprise.ui
 			m_debugInterface.graphics.drawRect(style.paddingLeft, 
 				style.paddingTop, boxWidth, boxHeight);
 			
-			log(output);
+			return output;
 		}
 		
 		protected function stage_resize(event : Event) : void
@@ -573,7 +660,11 @@ package reprise.ui
 				m_currentDebugElement = null;
 				return;
 			}
-			debugMarkElement(element);
+			var debugStr : String = debugMarkElement(element);
+			m_debugConnection.send('_repriseDebugger', 'showDetailsForElement', 
+				element.toString(), debugStr + '\n\nComplex styles:\n' + 
+					UIComponent(element).valueForKey('m_complexStyles'));
+			log(debugStr);
 		}
 	}
 }
