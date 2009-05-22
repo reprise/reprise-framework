@@ -17,7 +17,7 @@ package reprise.utils
 	 * @author	Florian Finke
 	 * @version	$Revision$ | $Id$
 	 */
-	public class ArrayUtil
+	public final class ArrayUtil
 	{
 	
 		/**
@@ -36,31 +36,7 @@ package reprise.utils
 		 */
 		public static function inArray( arr : Array, obj : Object ) : Boolean
 		{
-			return arrayIndex(arr, obj) > -1;
-		}
-	
-	
-	
-		/**
-		 * @param	arr	The Array to search in.
-		 * @param	obj	The object to search for.
-		 *
-		 * @return	Number	The array index of the object 
-		 * 			or -1 if the obj doesn't exist in the array.
-		 */
-		public static function arrayIndex( arr : Array, obj : Object ) : int
-		{
-			if (arr.length)
-			{
-				for (var i:Number = arr.length; i--;)
-				{
-					if (arr[i] == obj)
-					{
-						return i;
-					}
-				}
-			}
-			return -1;
+			return arr.indexOf(obj) > -1;
 		}
 		
 		
