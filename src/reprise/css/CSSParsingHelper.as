@@ -24,7 +24,7 @@ package reprise.css
 		public static const percentageExpression : RegExp = /\d+%/;
 		public static const lengthExpression : RegExp = /\d+px|0/;
 		public static const URIExpression : RegExp = 
-			/(?:url\([ ]*(['"]).*\1[ ]*\)|url\([ ]*[^'"][^)]*\))/;
+			/(?:url\([ ]*(['"]).*\1[ ]*\)|url\([ ]*[^'"][^)]*\))/; //'"
 		public static const repeatExpression : RegExp = 
 			/repeat[-]x|repeat[-]y|no[-]repeat|repeat/;
 		
