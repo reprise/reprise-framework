@@ -11,28 +11,17 @@
 
 package reprise.ui
 {
-	import reprise.core.FocusManager;
+	import reprise.debug.DebugInterface;
 	import reprise.core.ApplicationContext;
+	import reprise.core.FocusManager;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
-	import reprise.css.ComputedStyles;
-	import reprise.events.DebugEvent;
 	import reprise.events.DisplayEvent;
 
-	import com.nesium.events.FileMonitorEvent;
-	import com.nesium.logging.FileMonitor;
-
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	import flash.events.FocusEvent;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	import flash.ui.Keyboard;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	
@@ -70,9 +59,7 @@ package reprise.ui
 		
 		protected var m_stageInvalidationTimeout : int;
 		
-		protected var m_debuggingMode : Boolean;
-		protected var m_currentDebugElement : UIComponent;
-		protected var m_debugInterface : Sprite;
+		protected var m_debugInterface : DebugInterface;
 
 		
 		/***************************************************************************
@@ -184,7 +171,7 @@ package reprise.ui
 			invalidateStyles();
 			if (m_styleSheet)
 			{
-				startWatchingStylesheets();
+				m_debugInterface.startWatchingStylesheets();
 			}
 		}
 		/**
@@ -282,7 +269,8 @@ package reprise.ui
 			super.initialize();
 			stage.stageFocusRect = false;
 			m_focusManager = new FocusManager(this);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, stage_keyDown);
+			
+			m_debugInterface = new DebugInterface(this);
 		}
 		
 		protected override function initDefaultStyles() : void
@@ -348,10 +336,9 @@ package reprise.ui
 			m_currentFrameTime = getTimer();
 			m_validatedElementsCount = 0;
 			var lastValidatedPath : String;
-			var sortedElements : Array = m_invalidChildren.sortOn(
-				'path', Array.DESCENDING);
+			var sortedElements : Array = m_invalidChildren.sortOn('path', Array.DESCENDING);
 			m_invalidChildren = [];
-			for(var i : Number = sortedElements.length; i--;)
+			for(var i : int = sortedElements.length; i--;)
 			{
 				var path : String = sortedElements[i].path;
 				if (path.indexOf(lastValidatedPath) == 0)
@@ -380,92 +367,6 @@ package reprise.ui
 			clearTimeout(m_stageInvalidationTimeout);
 			stage.invalidate();
 		}
-		protected function toggleDebuggingMode() : void
-		{
-			if (m_debuggingMode)
-			{
-				deactivateDebuggingMode();
-			}
-			else
-			{
-				activateDebuggingMode();
-			}
-		}
-		protected function activateDebuggingMode() : void
-		{
-			if (m_debuggingMode)
-			{
-				return;
-			}
-			m_debuggingMode = true;
-			
-			m_debugInterface = new Sprite();
-			m_debugInterface.mouseEnabled = false;
-			addChild(m_debugInterface);
-			
-			stage.addEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true, 100);
-		}
-		protected function deactivateDebuggingMode() : void
-		{
-			if (!m_debuggingMode)
-			{
-				return;
-			}
-			m_debuggingMode = false;
-			
-			removeChild(m_debugInterface);
-			m_debugInterface = null;
-			m_currentDebugElement = null;
-			
-			stage.removeEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true);
-		}
-		protected function debugMarkElement(element : UIComponent) : void
-		{
-			m_currentDebugElement = element;
-			var style : ComputedStyles = element.style;
-			var autoFlags : Object = element.autoFlags;
-			var output : String = '\nElement: ' + element + 
-				'\nSelectorpath: ' + element.selectorPath.split('@').join('') + '\n' + 
-				'position: ' + (style.position || 'static') + ', ';
-			output += 'top: ' + (autoFlags.top ? 'auto' : style.top + 'px') + 
-				', right: ' + (autoFlags.right ? 'auto' : style.right + 'px') + 
-				', bottom: ' + (autoFlags.bottom ? 'auto' : style.bottom + 'px') + 
-				', left: ' + (autoFlags.left ? 'auto' : style.left + 'px') + '\n';
-			output += 'margin: ' + style.marginTop + 'px ' + style.marginRight + 'px ' + 
-				style.marginBottom + 'px ' + style.marginLeft + 'px\n';
-			
-			var position : Point = element.getPositionRelativeToDisplayObject(this);
-			m_debugInterface.x = position.x;
-			m_debugInterface.y = position.y;
-			
-			m_debugInterface.graphics.clear();
-			m_debugInterface.graphics.lineStyle(1, 0xffff);
-			
-			var boxWidth : Number = element.borderBoxWidth;
-			var boxHeight : Number = element.borderBoxHeight;
-			output += 'Border Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.drawRect(-style.borderLeftWidth, 
-				-style.borderTopWidth, boxWidth, boxHeight);
-			
-			boxWidth -= style.borderLeftWidth;
-			boxWidth -= style.borderRightWidth;
-			boxHeight -= style.borderTopWidth;
-			boxHeight -= style.borderBottomWidth;
-			output += 'Padding Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
-			
-			boxWidth -= style.paddingLeft;
-			boxWidth -= style.paddingRight;
-			boxHeight -= style.paddingTop;
-			boxHeight -= style.paddingBottom;
-			output += 'Content Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(style.paddingLeft, 
-				style.paddingTop, boxWidth, boxHeight);
-			
-			log(output);
-		}
 		
 		protected function stage_resize(event : Event) : void
 		{
@@ -481,99 +382,6 @@ package reprise.ui
 		{
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			validateElements();
-		}
-
-		protected function stage_keyDown(event : KeyboardEvent) : void
-		{
-			if (event.shiftKey && event.ctrlKey)
-			{
-				if (event.keyCode == 4) //'d'
-				{
-					toggleDebuggingMode();
-					return;
-				}
-				if (event.keyCode == 19 && m_currentDebugElement) //'s'
-				{
-					log('Complex styles:\n' + m_currentDebugElement.valueForKey('m_complexStyles'));
-					return;
-				}
-				if (event.keyCode == 18) //'r'
-				{
-					reloadStyles();
-					return;
-				}
-				if (event.keyCode == 23) //'w'
-				{
-					startWatchingStylesheets();
-					return;
-				}
-			}
-		}
-
-		protected function startWatchingStylesheets() : void
-		{
-			FileMonitor.instance().removeEventListener(
-				FileMonitorEvent.FILE_CHANGED, file_changed);
-			var stylesheets : Array = m_styleSheet.stylesheetURLs();
-			var containsLocalFiles : Boolean;
-			for each (var url : String in stylesheets)
-			{
-				if (url.indexOf('file://') == 0)
-				{
-					FileMonitor.instance().startMonitoringFile(url.substr(7));
-					containsLocalFiles = true;
-				}
-			}
-			if (containsLocalFiles)
-			{
-				log('d start watching stylesheets');
-				FileMonitor.instance().addEventListener(
-					FileMonitorEvent.FILE_CHANGED, file_changed);
-			}
-		}
-
-		protected function file_changed(event : FileMonitorEvent):void
-		{
-			reloadStyles();
-		}
-		
-		protected function reloadStyles() : void
-		{
-			//TODO: make sure that CSS variables are treated correctly when reloading
-			m_styleSheet.addEventListener(Event.COMPLETE, styleSheet_complete);
-			m_styleSheet.reset();
-			m_styleSheet.execute();
-		}
-		
-		protected function styleSheet_complete(event : Event) : void
-		{
-			m_styleSheet.removeEventListener(Event.COMPLETE, styleSheet_complete);
-			dispatchEvent(new DebugEvent(DebugEvent.WILL_RESET_STYLES));
-			resetStyles();
-			dispatchEvent(new DebugEvent(DebugEvent.DID_RESET_STYLES));
-		}
-
-		protected function debugging_mouseOver(event : MouseEvent) : void
-		{
-			var parent : DisplayObject = DisplayObject(event.target);
-			var element : UIComponent;
-			while (parent)
-			{
-				if (parent is UIComponent)
-				{
-					element = UIComponent(parent);
-					break;
-				}
-				parent = parent.parent;
-			}
-			if (!element)
-			{
-				removeChild(m_debugInterface);
-				m_debugInterface = null;
-				m_currentDebugElement = null;
-				return;
-			}
-			debugMarkElement(element);
 		}
 	}
 }
