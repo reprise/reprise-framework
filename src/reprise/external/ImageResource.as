@@ -11,7 +11,6 @@
 
 package reprise.external 
 {
-	import org.libspark.utils.ForcibleLoader;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
@@ -19,7 +18,7 @@ package reprise.external
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.system.ApplicationDomain;
-	import flash.system.LoaderContext;	
+	import flash.system.LoaderContext;
 	import flash.utils.getDefinitionByName;
 
 	public class ImageResource extends AbstractResource
@@ -30,7 +29,6 @@ package reprise.external
 		protected var m_loader : Loader;
 		protected var m_resource : DisplayObject;
 		protected var m_attachMode : Boolean;
-		private var m_forcible : ForcibleLoader;
 
 		
 		/***************************************************************************
@@ -131,10 +129,7 @@ package reprise.external
 			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
 			var context : LoaderContext = new LoaderContext(m_checkPolicyFile, ApplicationDomain.currentDomain);
-//			m_loader.load(m_request, context);
-//			m_loader.close();
-			m_forcible = new ForcibleLoader(m_loader);
-			m_forcible.load(m_request);
+			m_loader.load(m_request, context);
 		}
 
 		protected override function doCancel() : void
