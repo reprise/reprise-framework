@@ -39,16 +39,21 @@ package reprise.utils
 			return arr.indexOf(obj) > -1;
 		}
 		
-		
-		public static function shuffle(arr:Array) : Array
+		/**
+		 * Shuffles the array in place
+		 * 
+		 * @see http://en.wikipedia.org/wiki/Fisher-Yates_shuffle
+		 */
+		public static function shuffle(arr:Array) : void
 		{
-			// aye, uglyness!
-			return arr.sort(
-				function(a:Object, b:Object) : int
-				{
-					return (Math.random() < .5) ? -1 : 1;
-				}, 
-				Array.NUMERIC);
+			var i : int = arr.length;
+			while (i > 1)
+	        {
+	        	var swapIndex : int = Math.random() * i--;
+	            var temp : Object = arr[i];
+	            arr[i] = arr[swapIndex];
+	            arr[swapIndex] = temp;
+	        }
 		}
 		
 		public static function compareArrays(
