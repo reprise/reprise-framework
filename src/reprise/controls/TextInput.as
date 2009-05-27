@@ -306,7 +306,7 @@ package reprise.controls
 
 		override protected function updateHover(mouseOut : Boolean = false) : void
 		{
-			if (stage.focus == m_labelDisplay)
+			if (!stage || stage.focus == m_labelDisplay)
 			{
 				return;
 			}
