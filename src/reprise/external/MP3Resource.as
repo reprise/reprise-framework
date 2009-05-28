@@ -21,12 +21,12 @@ package reprise.external
 			m_sound.addEventListener(Event.COMPLETE, sound_complete);
 		}
 		
-		public override function bytesTotal():Number
+		public override function bytesTotal():int
 		{
 			return m_sound.bytesLoaded;
 		}
 		
-		public override function bytesLoaded():Number
+		public override function bytesLoaded():int
 		{
 			return m_sound.bytesTotal;
 		}
@@ -35,8 +35,6 @@ package reprise.external
 		{
 			return m_sound;
 		}
-		
-		
 		
 		protected override function doLoad():void
 		{
