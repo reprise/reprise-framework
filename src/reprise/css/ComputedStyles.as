@@ -108,7 +108,7 @@ package reprise.css
 		public var backgroundGradientType : String;
 		public var backgroundGradientColors : Array;
 		public var backgroundGradientRatios : Array;
-		public var backgroundGradientRotation : Number;
+		public var backgroundGradientRotation : Number = 0;
 		public var backgroundImage : String = 'none';
 		public var backgroundShadowColor : AdvancedColor;
 		public var backgroundImageType : String;
