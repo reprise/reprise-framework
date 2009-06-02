@@ -2062,6 +2062,10 @@ package reprise.ui
 					m_currentStyles.width = 
 						wProp.resolveRelativeValueTo(relevantWidth, this);
 				}
+				else if (borderBoxSizing)
+				{
+					m_currentStyles.width = wProp.specifiedValue();
+				}
 				if (borderBoxSizing)
 				{
 					m_currentStyles.width -= 
@@ -2084,18 +2088,18 @@ package reprise.ui
 			
 			if (borderBoxSizing && !m_autoFlags.height)
 			{
-				var baseHeight : int = m_currentStyles.height;
-				m_contentBoxHeight -= 
-					m_currentStyles.borderTopWidth + m_currentStyles.paddingTop + 
-					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom;
+				var baseHeight : int = styles.getStyle('height').resolveRelativeValueTo(parentH);
+				m_contentBoxHeight = baseHeight - 
+					(m_currentStyles.borderTopWidth + m_currentStyles.paddingTop + 
+					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom);
 				if (m_contentBoxHeight < 0)
 				{
 					m_contentBoxHeight = 0;
 				}
 				m_currentStyles.height = m_contentBoxHeight;
-				if (!m_changedStyleProperties.height && m_currentStyles.height != baseHeight)
+				if (!m_changedStyleProperties.height && m_contentBoxHeight != baseHeight)
 				{
-				m_changedStyleProperties.addChange('height');
+					m_changedStyleProperties.addChange('height');
 				}
 			}
 			//TODO: verify that we should really resolve the border-radii this way
