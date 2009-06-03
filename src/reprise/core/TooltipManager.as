@@ -214,6 +214,7 @@ package reprise.core
 
 		protected function updateTooltipPosition():void
 		{
+			if (!m_tooltip) return;
 			m_tooltip.updatePosition();
 		}
 		
