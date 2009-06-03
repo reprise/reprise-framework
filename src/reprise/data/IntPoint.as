@@ -11,29 +11,31 @@
 
 package reprise.data
 {
-	public class Size
+	
+	public class IntPoint
 	{
+
 		//*****************************************************************************************
 		//*                                   Public Properties                                   *
 		//*****************************************************************************************
-		public var width:Number;
-		public var height:Number;
+		public var x : int;
+		public var y : int;
 		
 		
 		
 		//*****************************************************************************************
 		//*                                     Public Methods                                    *
 		//*****************************************************************************************
-		public function Size(w:Number, h:Number) 
+		public function IntPoint(x : int = 0, y : int = 0) 
 		{
-			width = w;
-			height = h;
+			this.x = x;
+			this.y = y;
 		}
 		
 		
 		public function toString() : String
 		{
-			return '[Size] width: ' + width + ', height: ' + height;
+			return '[IntPoint] x: ' + x + ', y: ' + y;
 		}
 	}
 }
