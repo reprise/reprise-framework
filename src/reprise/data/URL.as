@@ -21,7 +21,7 @@ package reprise.data
 														//protocol is given
 				'(?P<protocol>[a-z]*(?=[:]//))' +		//match protocol
 				'[:]//(?P<credentials>[^@]*(?=@))?@?' + //match user credentials
-				'(?P<host>[^/:]*(?=[:/]))?' + 			//match host
+				'(?P<host>[^/:]*(?=[:/]|$))?' + 			//match host
 				'[:]?(?P<port>(?<=[:])[0-9]*)?' + 		//match port
 			'|)' + 										//end absolute path stuff
 			'(?P<path>[^?]+)?' +						//match relative path on server
