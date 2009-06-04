@@ -551,7 +551,7 @@ package reprise.ui
 		 */
 		public function remove(...args) : void
 		{
-			m_parentElement.unregisterChildView(this);
+			m_parentElement && m_parentElement.unregisterChildView(this);
 		}
 		
 		/**
