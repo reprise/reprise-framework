@@ -132,7 +132,7 @@ package reprise.ui
 			}
 			invalidate();
 			
-			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
+			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT));
 			
 			return this;
 		}
