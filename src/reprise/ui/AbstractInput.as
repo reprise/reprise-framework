@@ -11,17 +11,17 @@
 
 package reprise.ui
 {
-	import flash.events.Event;
-	import flash.events.KeyboardEvent;
-	
+	import reprise.commands.CompositeCommand;
 	import reprise.commands.IAsynchronousCommand;
 	import reprise.controls.html.IInput;
 	import reprise.data.IValidator;
 	import reprise.data.validators.EmailValidator;
 	import reprise.data.validators.RegExpValidator;
 	import reprise.events.CommandEvent;
-	
-	
+
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+
 	public class AbstractInput extends UIComponent 
 		implements IInput
 	{
@@ -40,8 +40,9 @@ package reprise.ui
 		protected var m_validator : IValidator;
 		protected var m_required : Boolean;
 		protected var m_fieldname : String;
-		protected var m_data:*;
-		
+		protected var m_data : *;
+		protected var m_queueParent : CompositeCommand;
+
 		
 		/***************************************************************************
 		*                              Public methods                              *
@@ -219,6 +220,11 @@ package reprise.ui
 		public function set id(value:int):void
 		{
 			m_id = value;
+		}
+		
+		public function setQueueParent(queue : CompositeCommand) : void
+		{
+			m_queueParent = queue;
 		}
 		
 		public function cancel() : void

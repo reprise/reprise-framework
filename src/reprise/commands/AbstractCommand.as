@@ -24,6 +24,7 @@ package reprise.commands
 		protected var m_didSucceed : Boolean;
 		protected var m_id:int = 0;
 		protected var m_priority:int = 0;
+		protected var m_queueParent : CompositeCommand;
 		
 		
 		/***************************************************************************
@@ -44,7 +45,14 @@ package reprise.commands
 		
 		public function set priority(value:int):void
 		{
-			m_priority = value;
+			if (value != m_priority)
+			{
+				m_priority = value;
+				if (m_queueParent)
+				{
+					m_queueParent.invalidatePriorities();
+				}
+			}
 		}
 		
 		public function get id():int
@@ -60,6 +68,11 @@ package reprise.commands
 		public function didSucceed() : Boolean
 		{
 			return m_didSucceed;
+		}
+		
+		public function setQueueParent(queue : CompositeCommand) : void
+		{
+			m_queueParent = queue;
 		}
 	}
 }

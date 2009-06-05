@@ -21,5 +21,6 @@ package reprise.commands
 		function get id():int;
 		function set id(value:int):void;
 		function didSucceed():Boolean;
+		function setQueueParent(queue : CompositeCommand) : void;
 	}
 }

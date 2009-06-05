@@ -28,6 +28,11 @@ package reprise.commands
 		*/
 		protected var m_maxParallelExecutionCount : int = 1;
 		/**
+		* flag that signifies a change in command priorities. If set, the queue has to be re-sorted 
+		* before the next command is executed.
+		*/
+		protected var m_prioritiesInvalid : Boolean;
+		/**
 		* Holds the commands in the queue.
 		*/
 		protected var m_pendingCommands : IndexedArray;
@@ -68,6 +73,11 @@ package reprise.commands
 			reset();
 		}
 		
+		public function invalidatePriorities() : void
+		{
+			m_prioritiesInvalid = true;
+		}
+
 		
 		/**
 		* Executes the command, which in return runs all queued commands it contains.
@@ -254,8 +264,12 @@ package reprise.commands
 			{
 				return;
 			}
-			m_pendingCommands.sortOn(['priority', 'id'], 
-				[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
+			if (m_prioritiesInvalid)
+			{
+				m_pendingCommands.sortOn(['priority', 'id'], 
+					[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
+				m_prioritiesInvalid = false;
+			}
 			var currentCommand : ICommand = ICommand(m_pendingCommands.shift());
 			
 			if (currentCommand is IAsynchronousCommand && 
