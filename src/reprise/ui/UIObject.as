@@ -132,7 +132,13 @@ package reprise.ui
 			}
 			invalidate();
 			
-			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT));
+			/**
+			 * TODO: ADDED_TO_DOCUMENT should only really be dispatched after the element has 
+			 * really been added to the document, i.e. in setRootElement. Unfortunately, this is 
+			 * sort of a risky change: It meddles with the initialization order of elements.
+			 * Most likely functionality to be broken: Forms and their handling of FormInputs.
+			 */ 
+			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
 			
 			return this;
 		}
@@ -147,6 +153,10 @@ package reprise.ui
 
 		protected function setRootElement(rootElement : DocumentView) : void
 		{
+			if (rootElement == m_rootElement)
+			{
+				return;
+			}
 			m_rootElement = rootElement;
 			for each (var child : UIObject in m_children)
 			{
