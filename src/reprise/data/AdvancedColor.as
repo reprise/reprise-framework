@@ -11,6 +11,8 @@
 
 package reprise.data
 {
+	import flash.filters.ColorMatrixFilter;
+	
 	import reprise.core.Cloneable;
 	 
 	public class AdvancedColor implements Cloneable
@@ -308,6 +310,17 @@ package reprise.data
 		public function opacity() : Number
 		{
 			return m_opacity;
+		}
+		
+		public function tintFilter():ColorMatrixFilter
+		{
+			var rgb:Object = rgbComponents();
+			var matrix:Array = [];
+			matrix = matrix.concat([1, 0, 0, 0, rgb.r * m_opacity]);
+			matrix = matrix.concat([0, 1, 0, 0, rgb.g * m_opacity]);
+			matrix = matrix.concat([0, 0, 1, 0, rgb.b * m_opacity]);
+			matrix = matrix.concat([0, 0, 0, 1, 0]);
+			return new ColorMatrixFilter(matrix);
 		}
 		
 	
