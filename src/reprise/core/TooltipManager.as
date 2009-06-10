@@ -111,7 +111,7 @@ package reprise.core
 			m_lastMousedElement = mousedElement;
 			m_lastTooltipDataProvider = element;
 
-			if (element == null)
+			if (element == null && m_tooltip)
 			{
 				m_tooltip.setMousedComponent(null);
 				m_tooltip.setMousedElement(null);
