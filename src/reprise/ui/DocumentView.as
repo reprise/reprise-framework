@@ -11,18 +11,17 @@
 
 package reprise.ui
 {
-	import reprise.debug.DebugInterface;
 	import reprise.core.ApplicationContext;
 	import reprise.core.FocusManager;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
+	import reprise.debug.DebugInterface;
 	import reprise.events.DisplayEvent;
 
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	
 	use namespace reprise;
@@ -220,7 +219,7 @@ package reprise.ui
 		{
 			if (m_invalidChildren.length == 0)
 			{
-				addEventListener(Event.ENTER_FRAME, self_enterFrame);
+				addEventListener(Event.ENTER_FRAME, self_enterFrame, false, 0, true);
 			}
 			//TODO: check if child.toString() is ok to use
 			m_invalidChildren.push({element : child, path : child.toString()});
@@ -263,14 +262,15 @@ package reprise.ui
 			m_rootElement = this;
 			m_containingBlock = this;
 			m_invalidChildren = [];
-			stage.addEventListener(Event.RESIZE, stage_resize);
+			stage.addEventListener(Event.RESIZE, stage_resize, false, 0, true);
+			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage, false, 0, true);
 			super.initialize();
 			stage.stageFocusRect = false;
 			m_focusManager = new FocusManager(this);
 			
 			m_debugInterface = new DebugInterface(this);
 		}
-		
+
 		protected override function initDefaultStyles() : void
 		{
 			m_elementDefaultStyles.setStyle('width', '100%');
@@ -362,8 +362,8 @@ package reprise.ui
 		
 		protected function stage_resize(event : Event) : void
 		{
-			if ((m_widthIsRelative && m_contentBoxWidth != stage.stageWidth) || 
-				(m_heightIsRelative && m_contentBoxHeight != stage.stageHeight))
+			if (stage && ((m_widthIsRelative && m_contentBoxWidth != stage.stageWidth) || 
+				(m_heightIsRelative && m_contentBoxHeight != stage.stageHeight)))
 			{
 				stageDimensionsChanged = true;
 				invalidateStyles();
@@ -374,6 +374,12 @@ package reprise.ui
 		{
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			validateElements();
+		}
+		
+		protected function self_removedFromStage(event : Event) : void
+		{
+			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
+			stage.removeEventListener(Event.RESIZE, stage_resize);
 		}
 	}
 }
