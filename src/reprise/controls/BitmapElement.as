@@ -81,7 +81,7 @@ package reprise.controls
 
 		override protected function applyInFlowChildPositions() : void
 		{
-			if (!m_image)
+			if (!(m_image && m_image.bitmapData))
 			{
 				return;
 			}
