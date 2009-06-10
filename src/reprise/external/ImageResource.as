@@ -136,6 +136,17 @@ package reprise.external
 		{
 			if (m_loader)
 			{
+				if (!m_didFinishLoading)
+				{
+					try
+					{
+						m_loader.close();
+					}
+					catch (error : Error)
+					{
+						//no need to handle this error, just throw it away
+					}
+				}
 				m_loader.unload();
 			}
 		}
