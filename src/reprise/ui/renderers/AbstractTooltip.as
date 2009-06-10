@@ -61,11 +61,15 @@ package reprise.ui.renderers
 		
 		public function updatePosition() : void
 		{
-			var pos:Point = new Point();
+			var pos : Point;
 			switch (style.position)
 			{
 				case DisplayPosition.POSITION_ABSOLUTE:
 				{
+					if (!m_mousedComponent)
+					{
+						return;
+					}
 					pos = positionRelativeToElement(m_mousedComponent);
 					break;
 				}
@@ -80,18 +84,17 @@ package reprise.ui.renderers
 					// view hierarchy. most probably it takes a sec before their stage attribute is 
 					// set, so we take care of this here. one frame later everything will be fine 
 					// again.
-					if (!m_mousedElement.stage)
+					if (!(m_mousedElement && m_mousedElement.stage))
 					{
 						return;
 					}
-					pos.x = m_mousedElement.stage.mouseX + style.left;
-					pos.y = m_mousedElement.stage.mouseY + style.top;
+					pos = positionRelativeToMouse();
 					break;
 				}
 			}
 			setPosition(pos.x, pos.y);
 		}
-		
+
 		public function setPosition(xValue:Number, yValue:Number) : void
 		{
 			var newPos : Point = new Point(xValue, yValue);
@@ -159,7 +162,7 @@ package reprise.ui.renderers
 		{
 			var oldPath:String = m_selectorPath;
 			super.refreshSelectorPath();
-			if (!m_mousedElement is UIComponent)
+			if (!(m_mousedComponent is UIComponent))
 			{
 				return;
 			}
@@ -183,28 +186,35 @@ package reprise.ui.renderers
 			m_positionInFlow = 0;
 		}
 		
-		protected function positionRelativeToElement(element:DisplayObject):Point
+		protected function positionRelativeToElement(element:DisplayObject) : Point
 		{
-			var p:Point = new Point();
-			
+			var pos : Point = new Point();
 			if (style.right && !style.left)
 			{
-				p.x = element.width - style.right - width;
+				pos.x = element.width - style.right - width;
 			}
 			else
 			{
-				p.x = style.left;
+				pos.x = style.left;
 			}
 			
 			if (style.bottom && !style.top)
 			{
-				p.y = element.height - style.bottom - height;
+				pos.y = element.height - style.bottom - height;
 			}
 			else
 			{
-				p.y = style.top;
+				pos.y = style.top;
 			}
-			return element.localToGlobal(p);
+			return element.localToGlobal(pos);
+		}
+		
+		protected function positionRelativeToMouse() : Point
+		{
+			var pos : Point = new Point();
+			pos.x = m_mousedElement.stage.mouseX + style.left;
+			pos.y = m_mousedElement.stage.mouseY + style.top;
+			return pos;
 		}
 		
 		protected override function validateAfterChildren() : void
