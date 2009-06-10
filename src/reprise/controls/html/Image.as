@@ -36,6 +36,7 @@ package reprise.controls.html
 		
 		protected var m_priority : int = 0;
 		protected var m_checkPolicyFile : Boolean;
+		private var m_cacheBitmap : Boolean = true;
 
 		
 		/***************************************************************************
@@ -53,9 +54,14 @@ package reprise.controls.html
 			}
 			src = CSSParsingHelper.resolvePathAgainstPath(src, m_xmlURL);
 			m_loaded = false;
+			if (m_imageLoader)
+			{
+				m_imageLoader.cancel();
+			}
 			m_imageLoader = new BitmapResource();
 			m_imageLoader.setCheckPolicyFile(m_checkPolicyFile);
 			m_imageLoader.priority = m_priority;
+			m_imageLoader.setCacheBitmap(m_cacheBitmap);
 			m_imageLoader.setURL(src);
 			m_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);
 			m_imageLoader.execute();
@@ -70,6 +76,15 @@ package reprise.controls.html
 			return m_checkPolicyFile;
 		}
 		
+		public function setCacheBitmap(cacheBitmap : Boolean) : void
+		{
+			m_cacheBitmap = cacheBitmap;
+		}
+		public function cacheBitmap() : Boolean
+		{
+			return m_cacheBitmap;
+		}
+		
 		public function setPriority(value : int) : void
 		{
 			m_priority = value;
@@ -77,6 +92,17 @@ package reprise.controls.html
 			{
 				m_imageLoader.priority = value;
 			}
+		}
+
+		override public function remove(...args : *) : void
+		{
+			if (m_imageLoader)
+			{
+				m_imageLoader.cancel();
+				m_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
+				m_imageLoader = null;
+			}
+			super.remove(args);
 		}
 		
 		
@@ -92,6 +118,8 @@ package reprise.controls.html
 			}
 			m_loaded = true;
 			setBitmapData(BitmapData(m_imageLoader.content()));
+			m_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
+			m_imageLoader = null;
 			dispatchEvent(new DisplayEvent(DisplayEvent.LOAD_COMPLETE));
 		}
 
