@@ -57,8 +57,6 @@ package reprise.ui
 		protected var m_widthIsRelative : Boolean;
 		protected var m_heightIsRelative : Boolean;
 		
-		protected var m_stageInvalidationTimeout : int;
-		
 		protected var m_debugInterface : DebugInterface;
 
 		
@@ -360,12 +358,6 @@ package reprise.ui
 				addEventListener(Event.ENTER_FRAME, self_enterFrame);
 			}
 			m_documentIsValidating = false;
-		}
-
-		protected function invalidateStage() : void
-		{
-			clearTimeout(m_stageInvalidationTimeout);
-			stage.invalidate();
 		}
 		
 		protected function stage_resize(event : Event) : void
