@@ -77,8 +77,12 @@ package reprise.core
 		
 		protected function updateTooltipForElement(mousedElement:DisplayObject):void
 		{
-			var element:UIObject = 
-				findTooltipDataProviderForElement(mousedElement);
+			var element:UIObject = findTooltipDataProviderForElement(mousedElement);
+			//ignore children of nested documents
+			if (element.document != m_rootView)
+			{
+				return;
+			}
 			
 			var currentTooltipData:Object = m_tooltip ? m_tooltip.data() : null;
 			var newTooltipData:Object = element ? element.tooltipData() : null;
