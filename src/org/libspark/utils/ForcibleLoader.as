@@ -32,6 +32,7 @@ package org.libspark.utils
 	import flash.net.URLStream;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.events.ProgressEvent;
 	import flash.events.Event;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
@@ -54,16 +55,21 @@ package org.libspark.utils
 	public class ForcibleLoader
 	{
 		private var m_request : URLRequest;
+		private var m_data : ByteArray;
+		private var m_totalSize : int = -1;
 		
 		
 		public function ForcibleLoader(loader:Loader)
 		{
 			this.loader = loader;
+			m_data = new ByteArray();
+			m_data.endian = Endian.LITTLE_ENDIAN;
 			
 			_stream = new URLStream();
 			_stream.addEventListener(Event.COMPLETE, completeHandler);
 			_stream.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			_stream.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+			_stream.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 		}
 		
 		private var _loader:Loader;
@@ -85,30 +91,43 @@ package org.libspark.utils
 			m_request = request;
 		}
 		
+		public function bytesLoaded() : int
+		{
+			return m_data.length;
+		}
+		
+		public function bytesTotal() : int
+		{
+			if (m_totalSize == -1 && m_data.length >= 8)
+			{
+				m_data.position = 4;
+				m_totalSize = m_data.readInt();
+			}
+			return m_totalSize || 0;
+		}
+		
 		private function completeHandler(event:Event):void
 		{
-			var inputBytes:ByteArray = new ByteArray();
-			_stream.readBytes(inputBytes);
+			m_data.position = 0;
 			_stream.close();
-			inputBytes.endian = Endian.LITTLE_ENDIAN;
 			
-			if (isCompressed(inputBytes)) {
-				uncompress(inputBytes);
+			if (isCompressed(m_data)) {
+				uncompress(m_data);
 			}
 			
-			var version:uint = uint(inputBytes[3]);
+			var version:uint = uint(m_data[3]);
 			
 			if (version < 9) {
-				updateVersion(inputBytes, 9);
+				updateVersion(m_data, 9);
 			}
 			if (version > 7) {
-				flagSWF9Bit(inputBytes);
+				flagSWF9Bit(m_data);
 			}
 			else {
-				insertFileAttributesTag(inputBytes);
+				insertFileAttributesTag(m_data);
 			}
 			
-			loader.loadBytes(inputBytes);
+			loader.loadBytes(m_data);
 		}
 		
 		private function isCompressed(bytes:ByteArray):Boolean
@@ -209,6 +228,11 @@ package org.libspark.utils
 		private function securityErrorHandler(event:SecurityErrorEvent):void
 		{
 			loader.dispatchEvent(event.clone());
+		}
+		
+		private function progressHandler(event:ProgressEvent):void
+		{
+			_stream.readBytes(m_data, m_data.length, _stream.bytesAvailable);
 		}
 	}
 }
