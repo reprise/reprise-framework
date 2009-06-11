@@ -79,9 +79,9 @@ package reprise.core
 		{
 			var element:UIObject = findTooltipDataProviderForElement(mousedElement);
 			//ignore children of nested documents
-			if (element.document != m_rootView)
+			if (element && element.document != m_rootView)
 			{
-				return;
+				element = null;
 			}
 			
 			var currentTooltipData:Object = m_tooltip ? m_tooltip.data() : null;
