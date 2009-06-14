@@ -9,6 +9,7 @@ package reprise.external
 {
 
 	import flash.events.IOErrorEvent;
+	import flash.events.NetStatusEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.NetConnection;
 	import flash.net.Responder;
@@ -125,6 +126,8 @@ package reprise.external
 				netConnection_securityError);
 			m_netConnection.addEventListener(IOErrorEvent.IO_ERROR, 
 				netConnection_ioError);
+			m_netConnection.addEventListener(NetStatusEvent.NET_STATUS, 
+				netConnection_netStatus);
 			m_netConnection.call.apply(m_netConnection, params);
 		}
 		
@@ -135,6 +138,8 @@ package reprise.external
 				netConnection_securityError);
 			m_netConnection.removeEventListener(IOErrorEvent.IO_ERROR, 
 				netConnection_ioError);
+			m_netConnection.removeEventListener(NetStatusEvent.NET_STATUS, 
+				netConnection_netStatus);
 			m_netConnection = null;
 		}
 		
@@ -167,6 +172,18 @@ package reprise.external
 		{
 			trace(e);
 			onData(false);
+		}
+		
+		protected function netConnection_netStatus(e:NetStatusEvent):void
+		{
+			if (e.info.hasOwnProperty('level') && e.info.level == 'error')
+			{
+				if (e.info.hasOwnProperty('code') && e.info.hasOwnProperty('details'))
+				{
+					trace(e.info.code + ' (' + e.info.details + ')');
+				}
+				onData(false);
+			}
 		}
 	}
 }
