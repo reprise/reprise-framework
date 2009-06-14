@@ -200,10 +200,7 @@ package reprise.tweens
 		 */
 		public function setDirection(direction : int) : void
 		{
-			if (direction != m_direction)
-			{
-				reverse();
-			}
+			m_direction = direction;
 		}
 		
 		/**
