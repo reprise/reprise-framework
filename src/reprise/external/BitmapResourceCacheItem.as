@@ -116,24 +116,13 @@ package reprise.external {
 		***************************************************************************/
 		protected function removeTarget(target:BitmapResource) : void
 		{
-			var i : int = m_targets.length;
-			var numTargets : int = 0;
-			var foundTarget : BitmapResource;
-			
-			while (i--)
+			var index : int = m_targets.indexOf(target);
+			if (index != -1)
 			{
-				foundTarget = m_targets[i];
-				if (foundTarget == target)
-				{
-					m_targets[i] = null;
-				}
-				else if (foundTarget != null)
-				{
-					numTargets++;
-				}
+				m_targets.splice(index, 1);
 			}
 	
-			if (numTargets == 0)
+			if (m_targets.length == 0)
 			{
 				m_loader.cancel();
 			}
@@ -179,8 +168,7 @@ package reprise.external {
 			
 			for each (var target : BitmapResource in m_targets)
 			{
-				// target can be null. @see removeTarget
-				if (target) applyDataToTarget(target);
+				applyDataToTarget(target);
 			}
 			m_targets = null;
 			
@@ -193,10 +181,8 @@ package reprise.external {
 			{
 				return;
 			}
-			var i : int = m_targets.length;
-			while (i--)
+			for each (var target : BitmapResource in m_targets)
 			{
-				var target : BitmapResource = BitmapResource(m_targets[i]);
 				target.setBytesLoaded(m_loader.bytesLoaded());
 				target.setBytesTotal(m_loader.bytesTotal());
 				target.updateProgress();
