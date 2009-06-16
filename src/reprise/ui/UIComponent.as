@@ -1028,7 +1028,7 @@ package reprise.ui
 		 */
 		public override function remove(...args) : void
 		{
-			if (m_cssId)
+			if (m_cssId && m_rootElement)
 			{
 				m_rootElement.removeElementID(m_cssId);
 			}
