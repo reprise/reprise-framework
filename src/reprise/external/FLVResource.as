@@ -23,12 +23,12 @@ package reprise.external
 			initStream();
 		}
 		
-		public override function bytesTotal():Number
+		public override function bytesTotal() : int
 		{
 			return m_stream.bytesTotal;
 		}
 		
-		public override function bytesLoaded():Number
+		public override function bytesLoaded() : int
 		{
 			return m_stream.bytesLoaded;
 		}
