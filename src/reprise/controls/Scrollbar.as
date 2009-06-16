@@ -11,6 +11,7 @@
 
 package reprise.controls 
 {
+	import reprise.css.ComputedStyles;
 	import reprise.events.DisplayEvent;
 	import reprise.events.MouseEventConstants;
 	import reprise.ui.UIComponent;
@@ -305,7 +306,8 @@ package reprise.controls
 				return;
 			}
 			
-			var specHeight:Number = m_currentStyles.height;
+			var specHeight:Number = 
+				m_currentStyles.height - m_currentStyles.marginTop - m_currentStyles.marginBottom;
 			var trackHeight:Number = 
 				specHeight - m_scrollUpBtn.outerHeight - m_scrollDownBtn.outerHeight;
 			m_scrollTrack.setStyle('height', trackHeight + 'px');
