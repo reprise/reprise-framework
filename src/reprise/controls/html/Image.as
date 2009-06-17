@@ -16,6 +16,7 @@ package reprise.controls.html
 	import reprise.events.DisplayEvent;
 	import reprise.events.ResourceEvent;
 	import reprise.external.BitmapResource;
+	import reprise.external.IResource;
 
 	import flash.display.BitmapData;
 	import flash.events.Event;
@@ -92,6 +93,11 @@ package reprise.controls.html
 			{
 				m_imageLoader.priority = value;
 			}
+		}
+		
+		public function loader() : IResource
+		{
+			return m_imageLoader;
 		}
 
 		override public function remove(...args : *) : void
