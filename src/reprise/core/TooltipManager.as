@@ -266,6 +266,7 @@ package reprise.core
 		
 		protected function mousedElement_tooltipDataChanged(e:DisplayEvent):void
 		{
+			log("e: " + (e));
 			updateTooltipForElement(m_lastMousedElement);
 		}
 	}
