@@ -54,7 +54,7 @@ package reprise.data
 		
 		public function scheme() : String
 		{
-			return m_scheme ? m_scheme + '://' : '';
+			return m_scheme ? m_scheme + '://' : null;
 		}
 	
 		public function setScheme(val:String) : void
