@@ -88,6 +88,11 @@ package reprise.controls
 			updateLabel();
 		}
 		
+		public function placeHolder() : String
+		{
+			return m_placeholder;
+		}
+
 		
 		
 		/***************************************************************************
