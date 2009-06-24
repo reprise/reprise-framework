@@ -241,15 +241,13 @@ package reprise.controls
 			var pos:Number;
 			if(m_direction == DIRECTION_HORIZONTAL)
 			{
-				pos = (width - m_thumb.width) / 100 * ((value - dataMin) / 
-					((dataMax - dataMin) / 100));
+				pos = (width - m_thumb.width) * ((value - dataMin) / (dataMax - dataMin));
 				pos = Math.max(0, pos);
 				pos = Math.min(width - m_thumb.width, pos);
 			}
 			else
 			{
-				pos = (height - m_thumb.height) / 100 * ((value - dataMin) / 
-					((dataMax - dataMin) / 100));
+				pos = (height - m_thumb.height) * ((value - dataMin) / (dataMax - dataMin));
 				pos = Math.max(0, pos);
 				pos = Math.min(height - m_thumb.height, pos);
 				
@@ -263,15 +261,13 @@ package reprise.controls
 			{
 				pos = Math.max(0, pos);
 				pos = Math.min(width - m_thumb.width, pos);
-				return pos / ((width - m_thumb.width) / 100) * 
-					((m_maxValue - m_minValue) / 100) + m_minValue;
+				return pos / (width - m_thumb.width) * (m_maxValue - m_minValue) + m_minValue;
 			}
 			else
 			{
 				pos = Math.max(0, pos);
 				pos = Math.min(height - m_thumb.height, pos);
-				return pos / ((height - m_thumb.height) / 100) * 
-					((m_maxValue - m_minValue) / 100) + m_minValue;
+				return pos / (height - m_thumb.height) * (m_maxValue - m_minValue) + m_minValue;
 			}
 		}
 		
