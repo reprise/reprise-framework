@@ -77,6 +77,15 @@ package reprise.controls
 			return m_enabled;
 		}
 		
+		public function setDisplaysAsPassword(bFlag:Boolean):void
+		{
+			m_labelDisplay.displayAsPassword = bFlag;
+		}
+		public function displaysAsPassword():Boolean
+		{
+			return m_labelDisplay.displayAsPassword;
+		}
+		
 		/**
 		 * sets the input focus to this TextInputs' Label field
 		 */
