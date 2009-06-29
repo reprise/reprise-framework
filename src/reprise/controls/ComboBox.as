@@ -171,11 +171,12 @@ package reprise.controls
 		protected function self_mouseDown(e:MouseEvent):void
 		{
 			showList();
+			e.stopPropagation();
 		}
 		
 		protected function document_mouseDown(e:MouseEvent):void
 		{
-			if (contains(DisplayObject(e.target)))
+			if (m_list.contains(DisplayObject(e.target)))
 			{
 				return;
 			}
