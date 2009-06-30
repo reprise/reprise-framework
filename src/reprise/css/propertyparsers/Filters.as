@@ -76,6 +76,17 @@ package reprise.css.propertyparsers
 			var res : CSSParsingResult = new CSSParsingResult();
 			
 			var parts : Array = val.split(' ');
+			
+			if (parts.length == 1 && parts[0] == 'none')
+			{
+				var prop : CSSProperty = new CSSProperty();
+				prop.setSpecifiedValue(null);
+				prop.setImportant(obj.important);
+				prop.setCSSFile(file);
+				res.addPropertyForKey(prop, name + 'ShadowColor');
+				return res;
+			}
+			
 			var counter : int = 0;
 			var part : String = parts[counter++];
 			if (CSSParsingHelper.valueIsColor(part))
