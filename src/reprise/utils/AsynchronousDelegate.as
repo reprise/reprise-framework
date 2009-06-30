@@ -50,6 +50,7 @@ package reprise.utils
 		
 		override public function execute(...args) : void
 		{
+			super.execute();
 			if (m_waitsForEvent)
 			{
 				EventDispatcher(m_executionDelegate.scope()).addEventListener(
