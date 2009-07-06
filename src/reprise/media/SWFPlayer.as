@@ -11,19 +11,18 @@
 
 package reprise.media
 {
-	
-	import reprise.external.IResource;
-	import reprise.media.AbstractPlayer;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Loader;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
-	import flash.display.MovieClip;
 	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
-	import flash.display.DisplayObjectContainer;
 	
-	
+	import reprise.external.IResource;
+	import reprise.media.AbstractPlayer;	
+
 	public class SWFPlayer extends AbstractPlayer
 	{
 		
