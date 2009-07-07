@@ -37,8 +37,9 @@ package reprise.external {
 			cacheBitmap:Boolean = true, cloneBitmap:Boolean = true)
 		{
 			m_url = url;
+			m_checkPolicyFile = true;
 		}
-		
+
 		public override function execute(...rest) : void
 		{
 			super.execute();

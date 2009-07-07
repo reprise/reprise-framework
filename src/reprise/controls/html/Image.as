@@ -36,7 +36,6 @@ package reprise.controls.html
 		protected var m_loaded : Boolean;
 		
 		protected var m_priority : int = 0;
-		protected var m_checkPolicyFile : Boolean;
 		private var m_cacheBitmap : Boolean = true;
 
 		
@@ -60,7 +59,6 @@ package reprise.controls.html
 				m_imageLoader.cancel();
 			}
 			m_imageLoader = new BitmapResource();
-			m_imageLoader.setCheckPolicyFile(m_checkPolicyFile);
 			m_imageLoader.priority = m_priority;
 			m_imageLoader.setCacheBitmap(m_cacheBitmap);
 			m_imageLoader.setURL(src);
@@ -68,13 +66,18 @@ package reprise.controls.html
 			m_imageLoader.execute();
 		}
 		
+		/**
+		 * Obsolete as BitmapResource now checks for a policy file by default
+		 */
 		public function setCheckPolicyFile(checkPolicyFile : Boolean) : void
 		{
-			m_checkPolicyFile = checkPolicyFile;
 		}
+		/**
+		 * Obsolete as BitmapResource now checks for a policy file by default. Always returns true.
+		 */
 		public function checkPolicyFile() : Boolean
 		{
-			return m_checkPolicyFile;
+			return true;
 		}
 		
 		public function setCacheBitmap(cacheBitmap : Boolean) : void
