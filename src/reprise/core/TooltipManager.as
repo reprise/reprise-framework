@@ -179,7 +179,7 @@ package reprise.core
 		{
 			var cssClassName:String = renderer == null ? 'default' : renderer;
 			
-			if (m_tooltip == null || cssClassName != m_tooltip.cssClasses)
+			if (m_tooltip == null || !m_tooltip.hasCSSClass(cssClassName))
 			{
 				removeTooltip();
 				m_tooltip = m_rootView.uiRendererFactory().tooltipRendererById(renderer);
@@ -194,7 +194,7 @@ package reprise.core
 			m_tooltip.setTooltipDataProvider(tooltipDataProvider);
 			m_tooltip.setMousedElement(mousedElement);
 			m_tooltip.setMousedComponent(findComponentForMousedElement(mousedElement));
-			m_tooltip.cssClasses = cssClassName;
+			m_tooltip.addCSSClass(cssClassName);
 			m_tooltip.setData(data);
 			m_tooltip.forceRedraw();
 			updateTooltipPosition();
@@ -266,7 +266,6 @@ package reprise.core
 		
 		protected function mousedElement_tooltipDataChanged(e:DisplayEvent):void
 		{
-			log("e: " + (e));
 			updateTooltipForElement(m_lastMousedElement);
 		}
 	}
