@@ -53,7 +53,16 @@ package reprise.controls
 		{
 			return m_list.options;
 		}
-		
+
+		override public function reset() : void
+		{
+			super.reset();
+			m_placeholder = '';
+			m_list.removeAllItems();
+			m_list.setSelectedIndex(-1);
+			updateLabel();
+		}
+
 		public function setSelectedIndex(index : int) : void
 		{
 			m_list.setSelectedIndex(index);
