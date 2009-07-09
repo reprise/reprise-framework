@@ -69,6 +69,12 @@ package reprise.controls
 			updateLabel();
 		}
 
+		public function selectItemWithValue(value : *) : void
+		{
+			m_list.selectItemWithValue(value);
+			updateLabel();
+		}
+
 		public override function value():*
 		{
 			return m_list.value();
