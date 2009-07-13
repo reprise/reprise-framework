@@ -88,7 +88,7 @@ package reprise.core
 				return true;
 			}
 			//else
-			m_document.stage.focus = null;
+//			m_document.stage.focus = null;
 			m_focus = null;
 			return false;
 		}
