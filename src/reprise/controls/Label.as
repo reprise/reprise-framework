@@ -892,7 +892,7 @@ package reprise.controls
 				(m_currentStyles.opacity < 1 || m_currentStyles.rasterizeDeviceFonts))
 			{
 				m_labelDisplay.visible = false;
-				if (m_currentStyles.opacity == 0)
+				if (m_currentStyles.opacity == 0 || !m_labelDisplay.width || !m_labelDisplay.height)
 				{
 					m_cacheInvalid = true;
 					return;
