@@ -11,19 +11,18 @@
 
 package reprise.controls 
 {
-	import reprise.css.ComputedStyles;
 	import reprise.events.DisplayEvent;
 	import reprise.events.MouseEventConstants;
 	import reprise.ui.UIComponent;
 	import reprise.utils.ProxyFunction;
-	
+
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
-	import flash.utils.setTimeout;	
+	import flash.utils.setTimeout;
 
 	public class Scrollbar extends UIComponent
 	{
@@ -146,6 +145,15 @@ package reprise.controls
 			return m_scrollPosition;
 		}
 		
+		public function get minScrollPosition() : Number
+		{
+			return m_minPos;
+		}
+		public function get maxScrollPosition() : Number
+		{
+			return m_maxPos;
+		}
+
 		/**
 		 * sets whether the scrollBar should automatically 
 		 * hide itself if there's no need to scrollV
