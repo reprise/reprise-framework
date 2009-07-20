@@ -29,19 +29,15 @@ package reprise.controls
 		/***************************************************************************
 		*							public properties							   *
 		***************************************************************************/
-		public static var ORIENTATION_VERTICAL : String = 'vertical';
-		public static var ORIENTATION_HORIZONTAL : String = 'horizontal';
-		
-		public static var className : String = "Scrollbar";
+		public static const ORIENTATION_VERTICAL : String = 'vertical';
+		public static const ORIENTATION_HORIZONTAL : String = 'horizontal';
 		
 		
 		/***************************************************************************
 		*							protected properties							   *
 		***************************************************************************/
-		protected static var g_linkageID : String = "Scrollbar";
-		
-		protected static var SCROLL_DIR_UP : int = -1;
-		protected static var SCROLL_DIR_DOWN : int = 1;
+		protected static const SCROLL_DIR_UP : int = -1;
+		protected static const SCROLL_DIR_DOWN : int = 1;
 		
 		
 		protected var m_scrollUpBtn : SimpleButton;
