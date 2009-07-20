@@ -11,6 +11,7 @@
 
 package reprise.ui
 {
+	import reprise.utils.DisplayListUtil;
 	import reprise.core.ApplicationContext;
 	import reprise.core.FocusManager;
 	import reprise.core.UIRendererFactory;
@@ -47,6 +48,7 @@ package reprise.ui
 		
 		protected var m_appContext : ApplicationContext;
 		protected var m_focusManager : FocusManager;
+		protected var m_parentDocument : DocumentView;
 		
 		protected var m_invalidChildren : Array;
 		protected var m_validatedElementsCount : int;
@@ -93,6 +95,11 @@ package reprise.ui
 			return m_appContext;
 		}
 		
+		public function get parentDocument() : DocumentView
+		{
+			return m_parentDocument;
+		}
+
 		/**
 		 * Returns the time that's used as the time for all timed actions executed in the 
 		 * current frame.
@@ -126,6 +133,20 @@ package reprise.ui
 		public override function setParent(parent:UIObject) : UIObject
 		{
 			super.setParent(parent);
+			
+			if (!parent)
+			{
+				m_parentDocument = null;
+			}
+			else
+			{
+				var container : UIObject = 
+					DisplayListUtil.locateElementContainingDisplayObject(parent);
+				if (container)
+				{
+					m_parentDocument = container.document;
+				}
+			}
 			//TODO: remove these after making sure that that's ok (it really should be)
 			m_rootElement = this;
 			m_containingBlock = this;
