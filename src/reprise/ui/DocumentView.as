@@ -134,14 +134,14 @@ package reprise.ui
 		{
 			super.setParent(parent);
 			
-			if (!parent)
+			if (!this.parent)
 			{
 				m_parentDocument = null;
 			}
 			else
 			{
 				var container : UIObject = 
-					DisplayListUtil.locateElementContainingDisplayObject(parent);
+					DisplayListUtil.locateElementContainingDisplayObject(this.parent);
 				if (container)
 				{
 					m_parentDocument = container.document;
@@ -399,6 +399,7 @@ package reprise.ui
 		
 		protected function self_removedFromStage(event : Event) : void
 		{
+			m_parentDocument = null;
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			stage.removeEventListener(Event.RESIZE, stage_resize);
 		}
