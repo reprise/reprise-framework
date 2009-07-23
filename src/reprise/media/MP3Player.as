@@ -40,33 +40,29 @@ package reprise.media
 		{
 			super();
 			setResource(resource);
-		}
-		
-		public override function setResource(resource:IResource):void
-		{
-			super.setResource(resource);
-			m_sound = Sound(MP3Resource(resource).content());
-			m_sound.addEventListener(Event.ID3, sound_id3);
 			m_soundTransform = new SoundTransform(1.0, 0.0);
 		}
 
 		public override function bytesLoaded():Number
 		{
-			return m_sound.bytesLoaded;
+			return m_sound ? m_sound.bytesLoaded : 0;
 		}
 
 		public override function bytesTotal():Number
 		{
-			return m_sound.bytesTotal;
+			return m_sound ? m_sound.bytesTotal : 0;
 		}
 		
 		public override function isBuffered():Boolean
 		{
-			return !m_sound.isBuffering && super.isBuffered();
+			return m_sound 
+				? !m_sound.isBuffering && super.isBuffered() 
+				: false;
 		}
 		
 		public override function position():Number
 		{
+			if (!m_sound) return 0;
 			if (m_soundChannel)
 			{
 				return m_soundChannel.position / 1000;
@@ -76,6 +72,7 @@ package reprise.media
 		
 		public override function duration():Number
 		{
+			if (!m_sound) return 0;
 			return m_sound.length / (m_sound.bytesLoaded / m_sound.bytesTotal) / 1000;
 		}
 		
@@ -86,7 +83,9 @@ package reprise.media
 		***************************************************************************/
 		protected override function doLoad():void
 		{
-			m_sound.load(new URLRequest(m_source.url()));
+			m_source.execute();
+			m_sound = Sound(MP3Resource(m_source).content());
+			m_sound.addEventListener(Event.ID3, sound_id3);
 		}
 
 		protected override function doUnload():void
