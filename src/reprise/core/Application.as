@@ -43,9 +43,6 @@ package reprise.core
 		protected var m_appContext:ApplicationContext;
 		
 		protected var m_css : CSS;
-		
-		protected var m_tooltipManager : TooltipManager;
-		protected var m_tooltipContainer : Sprite;
 
 		
 		/***************************************************************************
@@ -194,9 +191,6 @@ package reprise.core
 			m_rootElement.setApplicationContext(m_appContext);
 			addChild(m_rootElement);
 			m_rootElement.setParent(m_rootElement);
-			m_tooltipContainer = new Sprite();
-			addChild(m_tooltipContainer);
-			m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
 		}
 
 		protected function startApplication() : void

@@ -11,16 +11,18 @@
 
 package reprise.ui
 {
-	import reprise.utils.DisplayListUtil;
 	import reprise.core.ApplicationContext;
 	import reprise.core.FocusManager;
+	import reprise.core.TooltipManager;
 	import reprise.core.UIRendererFactory;
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
 	import reprise.debug.DebugInterface;
 	import reprise.events.DisplayEvent;
+	import reprise.utils.DisplayListUtil;
 
+	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.utils.getTimer;
@@ -48,6 +50,9 @@ package reprise.ui
 		
 		protected var m_appContext : ApplicationContext;
 		protected var m_focusManager : FocusManager;
+		protected var m_tooltipContainer : Sprite;
+		protected var m_tooltipManager : TooltipManager;
+		
 		protected var m_parentDocument : DocumentView;
 		
 		protected var m_invalidChildren : Array;
@@ -288,8 +293,23 @@ package reprise.ui
 			super.initialize();
 			stage.stageFocusRect = false;
 			m_focusManager = new FocusManager(this);
+			if (!parentDocument)
+			{
+				m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
+			}
 			
 			m_debugInterface = new DebugInterface(this);
+		}
+
+		override protected function createDisplayClips() : void
+		{
+			super.createDisplayClips();
+			if (parentDocument)
+			{
+				return;
+			}
+			m_tooltipContainer = new Sprite();
+			addChild(m_tooltipContainer);
 		}
 
 		protected override function initDefaultStyles() : void

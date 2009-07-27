@@ -18,14 +18,13 @@ package reprise.core
 	import reprise.ui.UIObject;
 	import reprise.ui.renderers.AbstractTooltip;
 	import reprise.utils.Delegate;
-	
+
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;	
+	import flash.events.MouseEvent;
 
-	internal class TooltipManager
+	public class TooltipManager
 	{
 		
 		/***************************************************************************
@@ -78,11 +77,6 @@ package reprise.core
 		protected function updateTooltipForElement(mousedElement:DisplayObject):void
 		{
 			var element:UIObject = findTooltipDataProviderForElement(mousedElement);
-			//ignore children of nested documents
-			if (element && element.document != m_rootView)
-			{
-				element = null;
-			}
 			
 			var currentTooltipData:Object = m_tooltip ? m_tooltip.data() : null;
 			var newTooltipData:Object = element ? element.tooltipData() : null;
@@ -182,9 +176,10 @@ package reprise.core
 			if (m_tooltip == null || !m_tooltip.hasCSSClass(cssClassName))
 			{
 				removeTooltip();
-				m_tooltip = m_rootView.uiRendererFactory().tooltipRendererById(renderer);
+				m_tooltip = tooltipDataProvider.document.uiRendererFactory().
+					tooltipRendererById(renderer);
 				m_tooltipContainer.addChild(m_tooltip);
-				m_tooltip.setParent(m_rootView);
+				m_tooltip.setParent(tooltipDataProvider.document);
 				m_tooltip.cssID = 'Tooltip';
 				m_tooltip.mouseEnabled = m_tooltip.mouseChildren = false;
 				m_tooltip.addEventListener(DisplayEvent.SHOW_COMPLETE, tooltip_showComplete);
