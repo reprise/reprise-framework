@@ -227,7 +227,23 @@ package reprise.ui
 		{
 			return false;
 		}
-		
+
+		override public function remove(...args : *) : void
+		{
+			if (parentDocument)
+			{
+				parentDocument.removeChild(this);
+			}
+			else if (m_parentElement && m_parentElement != this)
+			{
+				m_parentElement.removeChild(this);
+			}
+			if (parent)
+			{
+				parent.removeChild(this);
+			}
+		}
+
 		
 		/***************************************************************************
 		*							reprise methods								   *
