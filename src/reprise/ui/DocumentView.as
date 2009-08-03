@@ -244,6 +244,11 @@ package reprise.ui
 			}
 		}
 
+		override public function toString() : String
+		{
+			return name;
+		}
+
 		
 		/***************************************************************************
 		*							reprise methods								   *

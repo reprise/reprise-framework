@@ -809,10 +809,6 @@ package reprise.ui
 		 */
 		public override function toString() : String
 		{
-			if (!root || this == m_rootElement)
-			{
-				return name;
-			}
 			return (m_parentElement && (m_parentElement.toString() + '.') || '') + name;
 		}
 		
