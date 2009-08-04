@@ -113,6 +113,7 @@ package reprise.core
 			{
 				m_tooltip.setMousedComponent(null);
 				m_tooltip.setMousedElement(null);
+				m_tooltip.setTooltipDataProvider(null);
 			}
 			if (element == null || element.tooltipData() == null)
 			{

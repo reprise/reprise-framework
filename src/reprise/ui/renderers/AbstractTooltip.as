@@ -160,14 +160,20 @@ package reprise.ui.renderers
 		
 		protected override function refreshSelectorPath() : void
 		{
-			var oldPath:String = m_selectorPath;
+			var oldPath:String = m_selectorPath || '';
 			super.refreshSelectorPath();
-			if (!(m_mousedComponent is UIComponent))
+			if (m_mousedComponent is UIComponent)
 			{
-				return;
+				m_selectorPath = UIComponent(m_mousedComponent).selectorPath + 
+					' ' + m_selectorPath.split(' ').pop();
 			}
-			m_selectorPath = UIComponent(m_mousedComponent).selectorPath + 
-				' ' + m_selectorPath.split(' ').pop();
+			else
+			{
+				var basePathParts : Array = oldPath.split(' ');
+				basePathParts.pop();
+				basePathParts.push(m_selectorPath.split(' ').pop());
+				m_selectorPath = basePathParts.join(' ');
+			}
 			if (m_selectorPath != oldPath)
 			{
 				m_selectorPathChanged = true;
