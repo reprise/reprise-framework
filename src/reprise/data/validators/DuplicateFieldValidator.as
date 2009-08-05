@@ -35,7 +35,7 @@ package reprise.data.validators
 		
 		public override function execute(...args) : void
 		{
-			m_didSucceed = m_field.value() == m_value;
+			m_didSucceed = m_field.didSucceed() && m_field.value() == m_value;
 			if (!m_didSucceed)
 			{
 				m_field.markAsInvalid();
