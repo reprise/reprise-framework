@@ -7,13 +7,12 @@
 
 package reprise.controls
 {
-
+	import reprise.controls.ListItem;
 	import reprise.ui.AbstractInput;
+
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import reprise.controls.ListItem;
-	
-	
+
 	public class List extends AbstractInput
 	{
 		
@@ -64,6 +63,7 @@ package reprise.controls
 			{
 				removeItem(item);
 			}
+			m_data = [];
 		}
 		
 		public function removeItem(item : ListItem) : void
