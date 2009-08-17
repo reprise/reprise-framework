@@ -42,7 +42,7 @@ package reprise.css.propertyparsers
 			textTransform : {parser : strToStringProperty, inheritable : true},
 			letterSpacing : {parser : strToFloatProperty, inheritable : true},
 			leading : {parser : strToIntProperty, inheritable : true},
-			multiline : {parser : parseMultiline, transition : BooleanTransitionVO},
+			multiline : {parser : strToBoolProperty, transition : BooleanTransitionVO},
 			wordWrap : {parser : strToStringProperty},
 			selectable : {parser : strToBoolProperty, transition : BooleanTransitionVO}, 
 			fontVariant : {parser : strToStringProperty},
@@ -68,11 +68,6 @@ package reprise.css.propertyparsers
 		private static function parseFixLineEndings(val:String, file:String) : CSSProperty
 		{
 			return strToBoolProperty(val, file, ['fix']);
-		}
-		
-		private static function parseMultiline(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, file, ['multiline']);
 		}
 		
 		private static function parseRasterizeDeviceFonts(
