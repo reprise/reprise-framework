@@ -360,11 +360,11 @@ package reprise.controls
 		{
 			if(m_direction == DIRECTION_HORIZONTAL)
 			{
-				setValue(positionToValue(mouseX - m_thumb.width / 2));
+				setValue(positionToValue(m_track.mouseX - m_thumb.width / 2));
 			}
 			else
 			{
-				setValue(positionToValue(mouseY - m_thumb.height / 2));
+				setValue(positionToValue(m_track.mouseY - m_thumb.height / 2));
 			}
 			dispatchEvent(new Event(Event.CHANGE));
 		}
