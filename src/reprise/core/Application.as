@@ -24,6 +24,7 @@ package reprise.core
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
+	import flash.utils.getQualifiedClassName;
 
 	public class Application extends Sprite
 	{
@@ -127,6 +128,11 @@ package reprise.core
 		
 		protected function initialize() : void
 		{
+			CONFIG::debug
+			{
+				var className : String = getQualifiedClassName(this).split('::').pop();
+				zz_init(stage, className);
+			}
 			m_appContext = new ApplicationContext(this, this.loaderInfo);
 			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
