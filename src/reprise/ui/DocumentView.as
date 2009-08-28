@@ -43,6 +43,8 @@ package reprise.ui
 		*							protected properties							   *
 		***************************************************************************/
 		protected static var g_defaultStyleSheet : CSS = new CSS();
+		protected static var g_totalValidationTime : int = 0;
+		
 		protected var m_styleSheet : CSS;
 		protected var m_rendererFactory : UIRendererFactory;
 	
@@ -411,8 +413,10 @@ package reprise.ui
 				var element : UIObject = UIObject(sortedElements[i].element);
 				element.validation_execute();
 			}
-			log('d validation of ' + m_validatedElementsCount + 
-				' elements took ' + (getTimer() - m_currentFrameTime) + 'ms');
+			g_totalValidationTime += getTimer() - m_currentFrameTime;
+			log('d validated ' + m_validatedElementsCount + 
+				' elements in ' + (getTimer() - m_currentFrameTime) + 'ms. ' + 
+				'Total validation time: ' + g_totalValidationTime);
 			dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
 			//validate elements that have been marked as invalid during validation
 			if (m_invalidChildren.length)
