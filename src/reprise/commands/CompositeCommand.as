@@ -109,6 +109,7 @@ package reprise.commands
 
 			m_isExecutingAsynchronously ||= commandExecutesAsynchronously(cmd);
 			cmd.id = m_nextResourceId++;
+			cmd.setQueueParent(this);
 			m_pendingCommands.push(cmd);
 			
 			if (m_isExecuting)
@@ -417,7 +418,7 @@ package reprise.commands
 		protected function command_cancel(event : CommandEvent) : void
 		{
 			// cancel makes no difference to us to a unsuccessful command
-			var completeEvent:Event = new (event as Object).constructor(Event.COMPLETE, true);
+			var completeEvent:Event = new ((event as Object).constructor)(Event.COMPLETE, true);
 			IAsynchronousCommand(event.target).dispatchEvent(completeEvent);
 			// since execution is counted after a command completed its execution, cancelled
 			// commands don't fall into this category
