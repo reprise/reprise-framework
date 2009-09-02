@@ -214,22 +214,19 @@ package reprise.css.propertyparsers
 		
 		public static function parseBorderStyle(val:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(
-				val, file, 'border', 'Style', strToStringProperty);
+			return strToRectParsingResult(val, file, 'border', 'Style', strToStringProperty);
 		}
 		
 		
 		public static function parseBorderColor(val:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(
-				val, file, 'border', 'Color', strToColorProperty);
+			return strToRectParsingResult(val, file, 'border', 'Color', strToColorProperty);
 		}
 		
 		
 		public static function parseBorderWidth(val:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(
-				val, file, 'border', 'Color', strToIntProperty);
+			return strToRectParsingResult(val, file, 'border', 'Width', strToIntProperty);
 		}	
 		
 		
