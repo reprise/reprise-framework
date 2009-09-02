@@ -118,7 +118,7 @@ package reprise.css
 				prop.setSpecifiedValue(val);
 				return prop;
 			}
-			prop.setSpecifiedValue(parseInt(val));
+			prop.setSpecifiedValue(int(parseInt(val)));
 			return prop;		
 		}
 		
