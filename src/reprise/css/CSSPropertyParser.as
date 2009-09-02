@@ -315,7 +315,7 @@ package reprise.css
 			}
 			else
 			{
-				result.borderStyle = 'none';
+				result.borderStyle = strToStringProperty('none', file);
 				result.filteredString = input;
 			}
 			return result;
