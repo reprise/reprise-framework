@@ -85,11 +85,11 @@ package reprise.css
 		
 		reprise function setUnit(unitStr:String) : void
 		{
-			if (unitStr == UNIT_PIXEL)
+			if (unitStr == 'px' || unitStr == 'em')
 			{
 				m_isRelativeValue = false;
 			}
-			else if (unitStr == UNIT_EM || unitStr == UNIT_PERCENT)
+			else if (unitStr == '%')
 			{
 				setIsRelativeValue(true);
 			}
@@ -178,6 +178,10 @@ package reprise.css
 				{
 					m_calculation = new CSSCalculationPercentage(value.toString());
 				}
+			}
+			else if (m_unit == 'em')
+			{
+				m_computedValue = value * 16; //TODO: this has to be changed to make em's relative
 			}
 			else
 			{
