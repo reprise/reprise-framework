@@ -190,42 +190,67 @@ package reprise.ui
 		 * provided. This instance is immediately attached to the elements display list and 
 		 * initialized with the given CSS classes and ID.
 		 * 
-		 * @param classes The css classes the component should have.
-		 * @param id The css id the component should have.
+		 * @param cssClasses The css classes the component should have.
+		 * @param cssID The css id the component should have.
 		 * @param componentClass The ActionScript class to instantiate. If this is 
 		 * omitted, an instance of UIComponent will be created.
 		 * @param index The index at which the element should be added. If this is 
-		 * omitted, the element will be created at the next available index.
+		 * omitted, the element will be added at the next available index.
 		 * 
 		 * @return The newly created element
 		 */
-		public function addComponent(classes : String = null, id : String = null, 
+		public function addComponent(cssClasses : String = null, cssID : String = null, 
 			componentClass : Class = null, index : int = -1) : UIComponent
 		{
 			if (!componentClass)
 			{
 				componentClass = UIComponent;
 			}
-			var component : UIComponent;
+			var component : UIComponent = new componentClass();
+			return addElement(cssClasses, component, cssID, index);
+		}
+		
+		/**
+		 * Convenience method that eases the process to add a child element.
+		 * 
+		 * Attaches the given element to the display list or creates a new UIComponent if no 
+		 * element is provided. This element is then initialized with the given CSS classes and ID.
+		 * 
+		 * @param cssClasses The css classes the component should have.
+		 * @param cssID The css id the component should have.
+		 * @param element The Element to add. If this is omitted, an instance of UIComponent will 
+		 * be created.
+		 * @param index The index at which the element should be added. If this is 
+		 * omitted, the element will be added at the next available index.
+		 * 
+		 * @return The newly added element
+		 */
+		public function addElement(cssClasses : String = null, element : UIComponent = null, 
+			cssID : String = null, index : int = -1) : UIComponent
+		{
+			if (!element)
+			{
+				element = new UIComponent();
+			}
 			if (index == -1)
 			{
-				component = UIComponent(addChild(new componentClass()));
+				addChild(element);
 			}
 			else
 			{
-				component = UIComponent(addChildAt(new componentClass(), index));
+				addChildAt(element, index);
 			}
-			if (id)
+			if (cssID)
 			{
-				component.cssID = id;
+				element.cssID = cssID;
 			}
-			if (classes)
+			if (cssClasses)
 			{
-				component.cssClasses = classes;
+				element.cssClasses = cssClasses;
 			}
-			return component;
+			return element;
 		}
-		
+
 		/**
 		 * initializes the UIComponent structure from the given xml structure, 
 		 * creating child views as needed.
