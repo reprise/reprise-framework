@@ -700,7 +700,7 @@ package reprise.ui
 				return;
 			}
 			if ((!m_parentElement || !m_parentElement.m_isInvalidated) && 
-				!m_isInvalidated)
+				!m_isInvalidated && m_rootElement)
 			{
 				m_rootElement.markChildAsInvalid(this);
 			}
