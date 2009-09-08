@@ -19,7 +19,7 @@ package reprise.css.propertyparsers
 	import reprise.css.CSSPropertyParser;
 	import reprise.css.transitions.ColorTransitionVO;
 	import reprise.data.AdvancedColor;
-	import reprise.geom.Vector;
+	import reprise.geom.Vector2D;
 	
 	import flash.filters.DropShadowFilter;	
 	
@@ -134,7 +134,7 @@ package reprise.css.propertyparsers
 			styleObj:Object, name:String) : DropShadowFilter
 		{
 			var color : AdvancedColor = styleObj[name + 'ShadowColor'];
-			var offset : Vector = new Vector(styleObj[name + 'ShadowXOffset'], 
+			var offset : Vector2D = new Vector2D(styleObj[name + 'ShadowXOffset'], 
 				styleObj[name + 'ShadowYOffset']);
 			var blurX : Number = styleObj[name + 'ShadowXBlur'];
 			var blurY : Number = styleObj[name + 'ShadowYBlur'];
