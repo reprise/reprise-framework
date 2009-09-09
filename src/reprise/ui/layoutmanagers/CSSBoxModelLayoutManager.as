@@ -63,7 +63,7 @@ package reprise.ui.layoutmanagers
 			var currentLineBoxHeight:int = 0;
 			var initialLineBoxLeftBoundary : int = elementStyle.paddingLeft;
 			var currentLineBoxLeftBoundary:int = initialLineBoxLeftBoundary;
-			var currentLineBoxRightBoundary:int = totalAvailableWidth;
+			var currentLineBoxRightBoundary:int = totalAvailableWidth + initialLineBoxLeftBoundary;
 			var currentLineBoxChildren : Array = [];
 			
 			function closeLineBox() : void
@@ -74,7 +74,7 @@ package reprise.ui.layoutmanagers
 					collapsibleMargin = 0;
 					currentLineBoxHeight = 0;
 					currentLineBoxLeftBoundary = initialLineBoxLeftBoundary;
-					currentLineBoxRightBoundary = totalAvailableWidth;
+					currentLineBoxRightBoundary = totalAvailableWidth + initialLineBoxLeftBoundary;
 					currentLineBoxChildren = [];
 				}
 			}
