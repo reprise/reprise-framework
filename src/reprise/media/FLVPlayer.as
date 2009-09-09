@@ -11,19 +11,16 @@
 
 package reprise.media
 {
-	
-	import flash.events.TimerEvent;
+	import reprise.events.MediaEvent;
+	import reprise.external.FLVResource;
+	import reprise.external.IResource;
+	import reprise.media.AbstractPlayer;
+
+	import flash.events.NetStatusEvent;
+	import flash.media.SoundTransform;
 	import flash.media.Video;
 	import flash.net.NetStream;
-	import flash.media.SoundTransform;
-	import flash.events.NetStatusEvent;
-	import flash.utils.Timer;
-	import reprise.events.MediaEvent;
-	import reprise.external.IResource;
-	import reprise.external.FLVResource;
-	import reprise.media.AbstractPlayer;
-	
-	
+
 	public class FLVPlayer extends AbstractPlayer
 	{
 

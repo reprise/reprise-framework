@@ -22,13 +22,10 @@ package reprise.css.transitions
 		
 		public override function setCurrentValueToRatio(ratio : Number) : *
 		{
-			var startValues : Array = startValue as Array;
-			var endValues : Array = endValue as Array;
-			var currentValues : Array = currentValue as Array;
-			var i : int = startValues.length;
+			var i : int = (startValue as Array).length;
 			while (i--)
 			{
-				currentValues[i] = startValue[i] + (endValue[i] - startValue[i]) * ratio;
+				currentValue[i] = startValue[i] + (endValue[i] - startValue[i]) * ratio;
 			}
 			
 			return currentValue;

@@ -11,12 +11,10 @@
 
 package reprise.commands 
 {
-	
 	import reprise.events.CommandEvent;
-	
+
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	
+
 	public class AbstractAsynchronousCommand extends AbstractCommand
 		implements IAsynchronousCommand
 	{

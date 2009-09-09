@@ -140,9 +140,8 @@ package reprise.commands {
 		protected function wrapperForCommand(cmd : ICommand) : Object
 		{
 			var commands : Object = m_commands.toObject();
-			var key : String;
 			var wrapper : Object;
-			for (key in commands)
+			for (var key : String in commands)
 			{
 				wrapper = commands[key];
 				if (wrapper.command == cmd)

@@ -7,13 +7,12 @@
 
 package reprise.controls
 {
-	import reprise.ui.DocumentView;
 	import reprise.ui.AbstractInput;
 	import reprise.ui.UIComponent;
-	
+
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-	import flash.events.MouseEvent;	
+	import flash.events.MouseEvent;
 
 	public class ComboBox extends AbstractInput
 	{

@@ -583,7 +583,7 @@ package reprise.media
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				return;
 			}
-			m_status |= STATUS_PAUSED_AT_END
+			m_status |= STATUS_PAUSED_AT_END;
 			pause();
 			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 		}
@@ -667,7 +667,6 @@ package reprise.media
 		// our concrete subclasses
 		protected function checkPlayProgress():void
 		{
-			var percent:Number = position() / (duration() / 100);
 			dispatchEvent(new MediaEvent(MediaEvent.PLAY_PROGRESS));
 		}
 	
@@ -679,7 +678,6 @@ package reprise.media
 				return;
 			}
 			m_status |= STATUS_FILESIZE_KNOWN;
-			var percent:Number = bytesLoaded() / (ttl / 100);
 			dispatchEvent(new MediaEvent(MediaEvent.LOAD_PROGRESS));
 			measureSpeed();
 			

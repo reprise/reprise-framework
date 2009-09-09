@@ -11,7 +11,6 @@
 
 package reprise.media
 {
-	import flash.utils.getTimer;
 	import reprise.media.AbstractPlayer;
 
 	public class AbstractBuffer

@@ -14,8 +14,7 @@
  */
 package reprise.css.math
 {
-	import reprise.css.CSS;
-	
+
 	public class CSSCalculationGroup extends AbstractCSSCalculation
 	{
 		/***************************************************************************

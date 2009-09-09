@@ -70,9 +70,7 @@ package reprise.utils
 		public static function drawRoundRect(mc:Sprite, 
 			x:Number, y:Number, w:Number, h:Number, radius:Array) : void
 		{
-			var rbr : Number, rbl : Number, rtl : Number, rtr : Number, r : Number;
-			var a : Number;
-			var s : Number;
+			var rbr : Number, rbl : Number, rtl : Number, rtr : Number;
 					
 			// mimic css behaviour here
 			switch (radius.length)
@@ -235,10 +233,6 @@ package reprise.utils
 				(target.width - rect.x - bordersBR.x) / rect.width,
 				(target.height - rect.y - bordersBR.y) / rect.height);
 			
-			var tmp:BitmapData;
-			var tmp2:BitmapData;
-			var mat:Matrix;
-			
 			//corners
 			target.copyPixels(source, 
 				new Rectangle(0, 0, rect.x, rect.y), new Point(0, 0), 
@@ -391,9 +385,8 @@ package reprise.utils
 			var rects : Object = segmentedRectsOfScale9RectInRectWithSize(
 				scale9Rect, source.width, source.height);
 			var bitmaps : Object = {};
-			var key : String;
 			var rect : Rectangle;
-			for (key in rects)
+			for (var key : String in rects)
 			{
 				rect = Rectangle(rects[key]);
 				var bitmap : BitmapData = new BitmapData(rect.width, rect.height, true, 0);

@@ -102,7 +102,7 @@ package reprise.utils
 			stack.last = function() : Object
 			{
 				return this[ this.length - 1 ];
-			}
+			};
 	
 			while (html)
 			{

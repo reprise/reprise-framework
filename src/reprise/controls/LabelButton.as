@@ -11,9 +11,7 @@
 
 package reprise.controls
 {
-	import reprise.css.CSSPropertiesChangeList;
-
-	import flash.events.MouseEvent;	
+	import flash.events.MouseEvent;
 
 	/**
 	 * @author Marco

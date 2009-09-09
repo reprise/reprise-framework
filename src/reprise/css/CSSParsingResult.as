@@ -44,9 +44,10 @@ package reprise.css
 		reprise function addEntriesFromResult( res : CSSParsingResult ) : void
 		{
 			var props : Object = res.properties();
-			var key : String;
-			for ( key in props )
-				addPropertyForKey( props[ key ], key );
+			for (var key : String in props)
+			{
+				addPropertyForKey(props[key], key);
+			}
 		}
 		
 		

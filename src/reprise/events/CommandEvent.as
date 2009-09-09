@@ -9,11 +9,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package reprise.events { 
-	import reprise.commands.ICommand;	
-	
+package reprise.events 
+{	
 	import flash.events.Event;
-	
+
 	public class CommandEvent extends Event
 	{
 		public static const COMPLETE : String = 'completeCommandEvent';

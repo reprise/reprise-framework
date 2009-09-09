@@ -2220,14 +2220,14 @@ package reprise.ui
 				{
 					if (attribute.nodeKind() != 'text')
 					{
-						var attributeName : String = attribute.localName();
+						var attributeName : String = attribute.localName().toString();
 						var attributeValue : String = attribute.toString();
 						attributes[attributeName] = attributeValue;
 						assignValueFromAttribute(attributeName, attributeValue);
 					}
 				}
 				m_nodeAttributes = attributes;
-				m_elementType = node.localName();
+				m_elementType = node.localName().toString();
 			}
 		}
 		
@@ -2603,7 +2603,7 @@ package reprise.ui
 					innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
 				m_vScrollbar.left = m_currentStyles.width - m_vScrollbar.outerWidth + 
 					m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
-				m_vScrollbar.validateElement(true, true);
+				(m_vScrollbar as UIComponent).validateElement(true, true);
 				verticalScrollbar_change();
 			}
 			else
@@ -2622,7 +2622,7 @@ package reprise.ui
 					m_currentStyles.paddingTop + m_currentStyles.paddingRight;
 				m_hScrollbar.height = 
 					innerWidth() + m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
-				m_hScrollbar.validateElement(true, true);
+				(m_hScrollbar as UIComponent).validateElement(true, true);
 				horizontalScrollbar_change();
 			}
 			else
@@ -2663,7 +2663,7 @@ package reprise.ui
 					Event.CHANGE, this[orientation + 'Scrollbar_change']);
 			}
 			scrollbar.addEventListener(MouseEvent.CLICK, scrollbar_click);
-			scrollbar.validateElement(true, true);
+			(scrollbar as UIComponent).validateElement(true, true);
 			return scrollbar;
 		}
 		

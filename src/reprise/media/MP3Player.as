@@ -11,19 +11,15 @@
 
 package reprise.media
 {
-	
-	import flash.events.Event;
-	import flash.events.ProgressEvent;
-	import flash.media.Sound;
-	import flash.media.SoundTransform;
-	import flash.media.SoundChannel;
-	import flash.net.URLRequest;
-	import reprise.events.MediaEvent;
 	import reprise.external.IResource;
 	import reprise.external.MP3Resource;
 	import reprise.media.AbstractPlayer;
-	
-	
+
+	import flash.events.Event;
+	import flash.media.Sound;
+	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
+
 	public class MP3Player extends AbstractPlayer
 	{
 		

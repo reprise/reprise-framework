@@ -106,7 +106,6 @@ package reprise.css.transitions
 			var oldStart : CSSProperty = this.startValue;
 			var oldEnd : CSSProperty = this.endValue;
 			var oldCurrent : CSSProperty = this.currentValue;
-			var oldDelay : CSSProperty = this.delay;
 			var oldStartTime : int = m_startTime;
 			if (startTime - m_lastUpdateTime > frameDuration)
 			{
@@ -131,7 +130,7 @@ package reprise.css.transitions
 					timeOffset += 5;
 					ratio = easing(timeOffset, 0, 1, durationValue);
 				}
-				this.m_startTime -= timeOffset + (delay && delay.specifiedValue()) || 0;
+				this.m_startTime -= timeOffset + (delay ? delay.specifiedValue() : 0);
 			}
 			else
 			{
@@ -141,7 +140,7 @@ package reprise.css.transitions
 				{
 					//add new delay minus the delay already spent
 					var spentDelay : int = getTimer() - oldStartTime;
-					var delayValue : int = (delay && delay.specifiedValue()) || 0;
+					var delayValue : int = delay ? delay.specifiedValue() : 0;
 					if (delayValue > spentDelay)
 					{
 						this.m_startTime -= spentDelay;
@@ -155,7 +154,7 @@ package reprise.css.transitions
 				else
 				{
 					//already moving, don't delay any further
-					this.m_startTime -= (delay && delay.specifiedValue()) || 0;
+					this.m_startTime -= delay ? delay.specifiedValue() : 0;
 				}
 			}
 		}
@@ -164,7 +163,7 @@ package reprise.css.transitions
 			time : int, frameDuration : int, context : Object) : void
 		{
 			var durationValue : int = duration.valueOf() as int;
-			var delayValue : int = (delay && delay.specifiedValue()) || 0;
+			var delayValue : int = delay ? delay.specifiedValue() : 0;
 			if (time - m_lastUpdateTime > frameDuration)
 			{
 				m_startTime += time - m_lastUpdateTime - frameDuration;

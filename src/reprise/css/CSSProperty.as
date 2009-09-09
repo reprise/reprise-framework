@@ -226,11 +226,11 @@ package reprise.css
 			{
 				return m_specifiedValue is Number && m_specifiedValue || 0;
 			}
-			if (m_calculationResultsCache[reference+m_specifiedValue])
+			if (m_calculationResultsCache[reference+m_specifiedValue.toString()])
 			{
-				return m_calculationResultsCache[reference+m_specifiedValue];
+				return m_calculationResultsCache[reference+m_specifiedValue.toString()];
 			}
-			return m_calculationResultsCache[reference+m_specifiedValue] = 
+			return m_calculationResultsCache[reference+m_specifiedValue.toString()] = 
 				resolveCalculation(reference, context);
 		}
 		

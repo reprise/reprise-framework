@@ -39,7 +39,7 @@ package reprise.utils
 				m_waitsForEvent = true;
 				m_commandCompleteEventName = commandCompleteEventName;
 			}
-			m_successEvaluationFunction = function(e:Event):Boolean{return true};
+			m_successEvaluationFunction = function(e:Event):Boolean{return true;};
 		}
 		
 		public static function create(

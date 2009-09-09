@@ -185,11 +185,10 @@ package reprise.css
 			inheritableStylesOnly:Boolean = false, weakly : Boolean = false) : void
 		{
 			var props : Object = otherDeclaration.m_properties;
-			var key : String;
 			var otherProp : CSSProperty;
 			var ourProp : CSSProperty;
 			
-			for (key in props)
+			for (var key : String in props)
 			{
 				ourProp = m_properties[key];
 				

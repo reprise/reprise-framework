@@ -20,9 +20,8 @@ package reprise.css
 	import reprise.external.BitmapResource;
 	import reprise.external.ResourceLoader;
 	import reprise.utils.StringUtil;
-	
+
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	import flash.utils.getTimer;
 	
 	use namespace reprise;
@@ -280,8 +279,7 @@ package reprise.css
 		
 		public function addCSSVariablesFromObject(obj:Object) : void
 		{
-			var key : String;
-			for (key in obj)
+			for (var key : String in obj)
 			{
 				addCSSVariableWithNameAndValue(key, obj[key]);
 			}

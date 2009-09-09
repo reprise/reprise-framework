@@ -11,8 +11,6 @@
 
 package reprise.controls
 {
-	import flash.text.TextField;
-
 	import reprise.core.FocusManager;
 	import reprise.core.reprise;
 	import reprise.css.CSSDeclaration;

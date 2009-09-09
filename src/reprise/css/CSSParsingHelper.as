@@ -140,8 +140,6 @@ package reprise.css
 		
 		public static function extractUnitFromString(str:String) : String
 		{
-			var unit : String;
-			
 			if ( str.indexOf( CSSProperty.UNIT_PIXEL ) != -1 )
 				return CSSProperty.UNIT_PIXEL;
 			if ( str.indexOf( CSSProperty.UNIT_PERCENT ) != -1 )

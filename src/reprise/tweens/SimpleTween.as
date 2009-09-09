@@ -13,11 +13,10 @@ package reprise.tweens
 {
 	import reprise.commands.AbstractAsynchronousCommand;
 	import reprise.events.TweenEvent;
-	
+
 	import flash.display.Shape;
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;	
+	import flash.utils.getTimer;
 
 	public class SimpleTween extends AbstractAsynchronousCommand
 	{
