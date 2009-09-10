@@ -164,6 +164,10 @@ package reprise.css
 		reprise function setSpecifiedValue(value : *) : void
 		{
 			m_specifiedValue = value;
+			if (m_specifiedValue == 150)
+			{
+				m_specifiedValue;
+			}
 			if (value == 'auto')
 			{
 				m_computedValue = 0;
@@ -244,7 +248,8 @@ package reprise.css
 			prop.m_isRelativeValue = m_isRelativeValue;
 			if (m_isRelativeValue)
 			{
-				prop.m_calculationResultsCache = {};
+				prop.m_calculationResultsCache = m_calculationResultsCache;
+				prop.m_calculation = m_calculation;
 			}
 			prop.m_cssFile = m_cssFile;
 			
