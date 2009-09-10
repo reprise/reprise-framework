@@ -1834,17 +1834,17 @@ package reprise.ui
 			m_complexStyles = styles;
 			m_currentStyles.updateValues(styles, m_changedStyleProperties);
 			
+			if (m_transitionsManager.isActive())
+			{
+				invalidateStyles();
+			}
+			
 			//this element might have been removed in a transitions event handler. Return if so.
 			m_isRendered = !(styles.hasStyle('display') && 
 				styles.getStyle('display').specifiedValue() == 'none') && m_rootElement;
 			if (!m_isRendered)
 			{
 				return;
-			}
-			
-			if (m_transitionsManager.isActive())
-			{
-				invalidateStyles();
 			}
 			
 			resolvePositioningProperties();
