@@ -147,18 +147,13 @@ package reprise.core
 			}
 			//check if the node has an id and there's a renderer registered for
 			//this id. If so, create an instance of the renderer and return it.
-			var nodeId:String;
-			var idProps : XMLList = node.@id;
-			if (idProps.length())
+			var nodeId:String = node.@id.toString();
+			if (nodeId)
 			{
-				nodeId = XML(idProps[0]).toString();
-				if (nodeId)
+				renderer = rendererById(nodeId);
+				if (renderer)
 				{
-					renderer = rendererById(nodeId);
-					if (renderer)
-					{
-						return renderer;
-					}
+					return renderer;
 				}
 			}
 			
