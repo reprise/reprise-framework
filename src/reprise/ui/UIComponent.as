@@ -1400,7 +1400,15 @@ package reprise.ui
 			m_contentDisplay.addChild(m_upperContentDisplay);
 			m_upperContentDisplay.name = 'upper_content_display';
 		}
-		
+
+		override protected function addChildToContentDisplay(child : UIObject, index : int) : void
+		{
+			if (!(child is UIComponent))
+			{
+				super.addChildToContentDisplay(child, index);
+			}
+		}
+
 		/**
 		 * Resets the elements styles.
 		 * 
@@ -1475,6 +1483,13 @@ package reprise.ui
 			{
 				var isCurrentlyRendered : Boolean = m_isRendered;
 				calculateStyles();
+				
+				if (m_parentElement is UIComponent)
+				{
+					(m_parentElement as UIComponent).addComponentToDisplayList(this, 
+						m_positionInFlow == 1 && m_currentStyles.zIndex < 1 || 
+						m_currentStyles.zIndex < 0); 
+				}
 				
 				if (!m_isRendered)
 				{
@@ -1932,6 +1947,20 @@ package reprise.ui
 			}
 		}
 		
+		protected function addComponentToDisplayList(component : UIComponent, lower : Boolean) : void
+		{
+			if (lower)
+			{
+				component.parent != m_lowerContentDisplay && 
+					m_lowerContentDisplay.addChild(component);
+			}
+			else
+			{
+				component.parent != m_upperContentDisplay && 
+					m_upperContentDisplay.addChild(component);
+			}
+		}
+
 		/**
 		 * resolves the element that acts as the containing block for this element.
 		 * 

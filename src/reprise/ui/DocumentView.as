@@ -23,6 +23,7 @@ package reprise.ui
 	import reprise.utils.DisplayListUtil;
 
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.utils.getTimer;
@@ -119,7 +120,16 @@ package reprise.ui
 		{
 			return m_currentFrameTime;
 		}
-		
+
+		override public function get stage() : Stage
+		{
+			if (realStage())
+			{
+				return realStage();
+			}
+			return m_parentDocument ? m_parentDocument.stage : null;
+		}
+
 		/**
 		 * Returns the documents validation state
 		 * 
@@ -139,23 +149,23 @@ package reprise.ui
 		 */
 		public override function setParent(parent:UIObject) : UIObject
 		{
-			super.setParent(parent);
+			m_rootElement = this;
 			
-			if (!this.parent)
+			if (parent == this)
 			{
 				m_parentDocument = null;
 			}
 			else
 			{
 				var container : UIObject = 
-					DisplayListUtil.locateElementContainingDisplayObject(this.parent);
+					DisplayListUtil.locateElementContainingDisplayObject(parent);
 				if (container)
 				{
 					m_parentDocument = container.document;
 				}
 			}
-			//TODO: remove these after making sure that that's ok (it really should be)
-			m_rootElement = this;
+			super.setParent(parent);
+			//TODO: remove this after making sure that that's ok (it really should be)
 			m_containingBlock = this;
 			return this;
 		}
@@ -333,6 +343,16 @@ package reprise.ui
 			}
 			m_tooltipContainer = new Sprite();
 			addChild(m_tooltipContainer);
+		}
+
+		override protected function addComponentToDisplayList(
+			component : UIComponent, lower : Boolean) : void
+		{
+			if (component == this)
+			{
+				return;
+			}
+			super.addComponentToDisplayList(component, lower);
 		}
 
 		protected override function initDefaultStyles() : void

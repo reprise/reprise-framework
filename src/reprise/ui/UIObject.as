@@ -13,14 +13,15 @@ package reprise.ui
 {
 	import reprise.core.reprise;
 	import reprise.events.DisplayEvent;
-	
+
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.getQualifiedClassName;	
+	import flash.utils.getQualifiedClassName;
 	
 	use namespace reprise;
 	
@@ -99,7 +100,21 @@ package reprise.ui
 		{
 			return m_rootElement;
 		}
+
+		override public function get stage() : Stage
+		{
+			if (super.stage)
+			{
+				return super.stage;
+			}
+			return m_parentElement && m_rootElement ? UIObject(m_rootElement).realStage() : null;
+		}
 		
+		protected function realStage() : Stage
+		{
+			return super.stage;
+		}
+
 		/**
 		 * Returns the url of the swf in whose display list this element is in.
 		 */
@@ -242,8 +257,7 @@ package reprise.ui
 				{
 					element.m_parentElement.unregisterChildView(element);
 				}
-				m_contentDisplay.addChildAt(
-					child, Math.min(m_contentDisplay.numChildren, index));
+				addChildToContentDisplay(element, index);
 				element.setParent(this);
 				
 				
@@ -284,6 +298,12 @@ package reprise.ui
 			return child;
 		}
 		
+		protected function addChildToContentDisplay(child : UIObject, index : int) : void
+		{
+			m_contentDisplay.addChildAt(
+				child, Math.min(m_contentDisplay.numChildren, index));
+		}
+
 		/**
 		 * TODO: write a description of this method
 		 */
@@ -587,8 +607,8 @@ package reprise.ui
 		public function getPositionRelativeToDisplayObject(
 			displayObject : DisplayObject) : Point
 		{
-			var pos:Point = new Point(x, y);
-			pos = parent.localToGlobal(pos);
+			var pos:Point = new Point(0, 0);
+			pos = localToGlobal(pos);
 			pos = displayObject.globalToLocal(pos);
 			return pos;
 		}
@@ -693,7 +713,7 @@ package reprise.ui
 		public function invalidate() : void
 		{
 			//TODO: check if we need this:
-			if (!stage)
+			if (!m_rootElement)
 			{
 				//we don't validate without a display
 				m_isInvalidated = true;
@@ -881,7 +901,6 @@ package reprise.ui
 			draw();
 			
 			finishValidation();
-			
 			dispatchEvent(new DisplayEvent(DisplayEvent.VALIDATION_COMPLETE));
 		}
 		protected function validateChildren() : void
@@ -919,7 +938,7 @@ package reprise.ui
 			{
 				m_children.splice(m_children.indexOf(child), 1);
 			}
-			child.parent.removeChild(child);
+			child.parent && child.parent.removeChild(child);
 			child.m_parentElement = null;
 			child.setRootElement(null);
 			child.dispatchEvent(new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));

@@ -23,7 +23,7 @@ package reprise.utils
 		public static function locateElementContainingDisplayObject(
 			displayObject : DisplayObject, keyViewsOnly : Boolean = false) : UIObject
 		{
-			var element : DisplayObject = DisplayObject(displayObject);
+			var element : DisplayObject = displayObject;
 			while (element && !(element is UIObject))
 			{
 				element = element.parent;

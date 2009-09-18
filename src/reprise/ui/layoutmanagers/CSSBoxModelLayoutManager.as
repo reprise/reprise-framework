@@ -336,36 +336,16 @@ package reprise.ui.layoutmanagers
 			{
 				return;
 			}
-			var inPositiveRange:Boolean = false;
-			var currentDepth:int = 0;
 			
 			//sort children by zIndex and declaration index
 			m_displayStack.sortOn(['zIndex', 'index'], Array.NUMERIC);
+			var lowerIndex : int = 0;
+			var upperIndex : int = 0;
 			for (var i : int = 0; i < m_displayStack.length; i++)
 			{
 				var element : DisplayObject = m_displayStack[i].element;
-				var zIndex : int = m_displayStack[i].zIndex;
-				
-				if (!inPositiveRange && zIndex >= 0)
-				{
-					inPositiveRange = true;
-					currentDepth = 0;
-				}
-				
-				// reparent elements depending on their z-index
-				if (!inPositiveRange && element.parent != lowerContainer)
-				{
-					lowerContainer.addChildAt(element, currentDepth);
-				}
-				else if (inPositiveRange && element.parent != upperContainer)
-				{
-					upperContainer.addChildAt(element, currentDepth);
-				}
-				else if (element.parent.getChildIndex(element) != currentDepth)
-				{
-					element.parent.setChildIndex(element, currentDepth);
-				}
-				currentDepth++;
+				element.parent.setChildIndex(element, 
+					element.parent == lowerContainer ? lowerIndex++ : upperIndex++);
 			}
 			m_displayStack = null;
 		}
