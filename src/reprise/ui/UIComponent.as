@@ -1394,11 +1394,13 @@ package reprise.ui
 			m_lowerContentDisplay = new Sprite();
 			m_contentDisplay.addChild(m_lowerContentDisplay);
 			m_lowerContentDisplay.name = 'lower_content_display';
+			m_lowerContentDisplay.mouseEnabled = false;
 			
 			// create container for elements with z-index >= 0
 			m_upperContentDisplay = new Sprite();
 			m_contentDisplay.addChild(m_upperContentDisplay);
 			m_upperContentDisplay.name = 'upper_content_display';
+			m_upperContentDisplay.mouseEnabled = false;
 		}
 
 		override protected function addChildToContentDisplay(child : UIObject, index : int) : void
