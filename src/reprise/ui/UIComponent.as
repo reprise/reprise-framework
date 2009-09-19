@@ -147,8 +147,8 @@ package reprise.ui
 		//displays
 		protected var m_containingBlock : UIComponent;
 		
-		protected var m_upperContentDisplay : Sprite;
 		protected var m_lowerContentDisplay : Sprite;
+		protected var m_upperContentDisplay : Sprite;
 		protected var m_backgroundDisplay : Sprite;
 		protected var m_bordersDisplay : Sprite;
 		protected var m_upperContentMask : Sprite;
@@ -1277,7 +1277,8 @@ package reprise.ui
 		{
 			if (!m_hScrollbar) return;
 			m_hScrollbar.scrollPosition = val;
-			m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
+			m_lowerContentDisplay && (m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition);
+			m_upperContentDisplay && (m_upperContentDisplay.x = -m_hScrollbar.scrollPosition);
 		}
 		
 		public function get vScroll():Number
@@ -1290,7 +1291,8 @@ package reprise.ui
 		{
 			if (!m_vScrollbar) return;
 			m_vScrollbar.scrollPosition = val;
-			m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
+			m_lowerContentDisplay && (m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition);
+			m_upperContentDisplay && (m_upperContentDisplay.y = -m_vScrollbar.scrollPosition);
 		}
 		
 		
@@ -1383,19 +1385,16 @@ package reprise.ui
 			super.initialize();
 		}
 		
-		/**
-		 * creates all clips needed to display the UIObjects' content
-		 */
-		protected override function createDisplayClips() : void
+		protected function createLowerContentDisplay() : void
 		{
-			super.createDisplayClips();
-			
 			// create container for elements with z-index < 0
 			m_lowerContentDisplay = new Sprite();
 			m_contentDisplay.addChild(m_lowerContentDisplay);
 			m_lowerContentDisplay.name = 'lower_content_display';
 			m_lowerContentDisplay.mouseEnabled = false;
-			
+		}
+		protected function createUpperContentDisplay() : void
+		{
 			// create container for elements with z-index >= 0
 			m_upperContentDisplay = new Sprite();
 			m_contentDisplay.addChild(m_upperContentDisplay);
@@ -1695,8 +1694,7 @@ package reprise.ui
 					applyOutOfFlowChildPositions();
 				}
 			}
-			m_layoutManager.applyDepthSorting(
-				m_lowerContentDisplay, m_upperContentDisplay);
+			m_layoutManager.applyDepthSorting(m_lowerContentDisplay, m_upperContentDisplay);
 			
 			applyTransform();
 		}
@@ -1953,11 +1951,13 @@ package reprise.ui
 		{
 			if (lower)
 			{
+				!m_lowerContentDisplay && createLowerContentDisplay();
 				component.parent != m_lowerContentDisplay && 
 					m_lowerContentDisplay.addChild(component);
 			}
 			else
 			{
+				!m_upperContentDisplay && createUpperContentDisplay();
 				component.parent != m_upperContentDisplay && 
 					m_upperContentDisplay.addChild(component);
 			}
@@ -2446,8 +2446,9 @@ package reprise.ui
 					}
 					m_bordersDisplay = new Sprite();
 					m_bordersDisplay.name = "border_" + borderRendererId;
-					m_contentDisplay.addChildAt(m_bordersDisplay, 
-						m_contentDisplay.getChildIndex(m_upperContentDisplay));
+					m_contentDisplay.addChildAt(m_bordersDisplay, m_upperContentDisplay 
+						? m_contentDisplay.getChildIndex(m_upperContentDisplay)
+						: m_contentDisplay.numChildren);
 					m_borderRenderer = m_rootElement.uiRendererFactory().
 						borderRendererById(borderRendererId);
 					m_borderRenderer.setDisplay(m_bordersDisplay);
@@ -2509,8 +2510,8 @@ package reprise.ui
 			}
 			else
 			{
-				m_upperContentDisplay.mask = null;
-				m_lowerContentDisplay.mask = null;
+				m_lowerContentDisplay && (m_lowerContentDisplay.mask = null);
+				m_upperContentDisplay && (m_upperContentDisplay.mask = null);
 			}
 		}
 
@@ -2525,38 +2526,50 @@ package reprise.ui
 					? m_borderBoxHeight 
 					: innerHeight() + m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
 			
-			if (!m_lowerContentMask)
-			{
-				m_upperContentMask = new Sprite();
-				m_lowerContentMask = new Sprite();
-				m_upperContentMask.name = 'upperMask';
-				m_lowerContentMask.name = 'lowerMask';
-				addChild(m_upperContentMask);
-				addChild(m_lowerContentMask);
-				m_upperContentMask.visible = false;
-				m_lowerContentMask.visible = false;
-			}
+			var radii : Array = 
+			[
+				m_currentStyles['borderTopLeftRadius'] || 0,
+				m_currentStyles['borderTopRightRadius'] || 0,
+				m_currentStyles['borderBottomRightRadius'] || 0,
+				m_currentStyles['borderBottomLeftRadius'] || 0
+			];
 			
-			m_upperContentMask.x = m_lowerContentMask.x = m_currentStyles.borderLeftWidth;
-			m_upperContentMask.y = m_lowerContentMask.y = m_currentStyles.borderTopWidth;
-			var radii : Array = [];
-			var order : Array = 
-				['borderTopLeftRadius', 'borderTopRightRadius', 
-				'borderBottomRightRadius', 'borderBottomLeftRadius'];
-			
-			var i : int;
-			for (i = 0;i < order.length; i++)
+			if (m_lowerContentDisplay)
 			{
-				radii.push(m_currentStyles[order[i]] || 0);
+				if (!m_lowerContentMask)
+				{
+					m_lowerContentMask = new Sprite();
+					addChild(m_lowerContentMask);
+					m_lowerContentMask.visible = false;
+				}
+				
+				m_lowerContentMask.x = m_currentStyles.borderLeftWidth;
+				m_lowerContentMask.y = m_currentStyles.borderTopWidth;
+				
+				m_lowerContentMask.graphics.clear();
+				m_lowerContentMask.graphics.beginFill(0x00ff00, 50);
+				GfxUtil.drawRoundRect(m_lowerContentMask, 0, 0, maskW, maskH, radii);
+				
+				m_lowerContentDisplay.mask = m_lowerContentMask;
 			}
-			m_upperContentMask.graphics.clear();
-			m_lowerContentMask.graphics.clear();
-			m_upperContentMask.graphics.beginFill(0x00ff00, 50);
-			m_lowerContentMask.graphics.beginFill(0x00ff00, 50);
-			GfxUtil.drawRoundRect(m_upperContentMask, 0, 0, maskW, maskH, radii);
-			GfxUtil.drawRoundRect(m_lowerContentMask, 0, 0, maskW, maskH, radii);
-			m_upperContentDisplay.mask = m_upperContentMask;
-			m_lowerContentDisplay.mask = m_lowerContentMask;
+			if (m_upperContentDisplay)
+			{
+				if (!m_upperContentMask)
+				{
+					m_upperContentMask = new Sprite();
+					addChild(m_upperContentMask);
+					m_upperContentMask.visible = false;
+				}
+				
+				m_upperContentMask.x = m_currentStyles.borderLeftWidth;
+				m_upperContentMask.y = m_currentStyles.borderTopWidth;
+				
+				m_upperContentMask.graphics.clear();
+				m_upperContentMask.graphics.beginFill(0x00ff00, 50);
+				GfxUtil.drawRoundRect(m_upperContentMask, 0, 0, maskW, maskH, radii);
+				
+				m_upperContentDisplay.mask = m_upperContentMask;
+			}
 		}
 		
 		protected function applyScrollbars() : void
@@ -2706,12 +2719,14 @@ package reprise.ui
 		
 		protected function verticalScrollbar_change(event : Event = null) : void
 		{
-			m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
+			m_lowerContentDisplay && (m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition);
+			m_upperContentDisplay && (m_upperContentDisplay.y = -m_vScrollbar.scrollPosition);
 		}
 		
 		protected function horizontalScrollbar_change(event : Event = null) : void
 		{
-			m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
+			m_lowerContentDisplay && (m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition);
+			m_upperContentDisplay && (m_upperContentDisplay.x = -m_hScrollbar.scrollPosition);
 		}
 		
 		protected function mouseWheel_turn(event : MouseEvent) : void
@@ -2719,13 +2734,15 @@ package reprise.ui
 			if (event.shiftKey && m_hScrollbar)
 			{
 				m_hScrollbar.scrollPosition -= m_hScrollbar.lineScrollSize * event.delta;
-				m_upperContentDisplay.x = m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition;
+				m_lowerContentDisplay && (m_lowerContentDisplay.x = -m_hScrollbar.scrollPosition);
+				m_upperContentDisplay && (m_upperContentDisplay.x = -m_hScrollbar.scrollPosition);
 			}
 			else if ((!event.shiftKey && m_vScrollbar) || 
 				(event.shiftKey && (!m_hScrollbar || !m_hScrollbar.visibility())))
 			{
 				m_vScrollbar.scrollPosition -= m_vScrollbar.lineScrollSize * event.delta;
-				m_upperContentDisplay.y = m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition;
+				m_lowerContentDisplay && (m_lowerContentDisplay.y = -m_vScrollbar.scrollPosition);
+				m_upperContentDisplay && (m_upperContentDisplay.y = -m_vScrollbar.scrollPosition);
 			}
 		}
 		

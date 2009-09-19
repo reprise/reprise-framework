@@ -65,6 +65,7 @@ package reprise.controls
 		
 		protected function createBitmapDisplay(bmpData : BitmapData) : void
 		{
+			!m_lowerContentDisplay && createLowerContentDisplay();
 			if (!m_firstDraw)
 			{
 				m_imageDisplayed = false;
