@@ -23,6 +23,7 @@ package reprise.ui
 	import reprise.css.math.ICSSCalculationContext;
 	import reprise.css.propertyparsers.Filters;
 	import reprise.css.transitions.CSSTransitionsManager;
+	import reprise.events.DisplayEvent;
 	import reprise.ui.layoutmanagers.CSSBoxModelLayoutManager;
 	import reprise.ui.renderers.ICSSRenderer;
 	import reprise.utils.GfxUtil;
@@ -1490,6 +1491,10 @@ package reprise.ui
 					(m_parentElement as UIComponent).addComponentToDisplayList(this, 
 						m_positionInFlow == 1 && m_currentStyles.zIndex < 1 || 
 						m_currentStyles.zIndex < 0); 
+				}
+				if (m_firstDraw)
+				{
+					dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
 				}
 				
 				if (!m_isRendered)

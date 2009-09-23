@@ -147,14 +147,6 @@ package reprise.ui
 			}
 			invalidate();
 			
-			/**
-			 * TODO: ADDED_TO_DOCUMENT should only really be dispatched after the element has 
-			 * really been added to the document, i.e. in setRootElement. Unfortunately, this is 
-			 * sort of a risky change: It meddles with the initialization order of elements.
-			 * Most likely functionality to be broken: Forms and their handling of FormInputs.
-			 */ 
-			dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
-			
 			return this;
 		}
 		
