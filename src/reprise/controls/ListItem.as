@@ -11,12 +11,17 @@ package reprise.controls
 	import reprise.controls.LabelButton;
 
 	
-	public class ListItem extends LabelButton
+	public class ListItem extends LabelButton implements IListItem
 	{
 		
 		/***************************************************************************
 		*                              Public methods                              *
 		***************************************************************************/
-		public function ListItem() {}
+		override public function setData(data : *) : void
+		{
+			super.setData(data);
+			setLabel(data.label);
+			setValue(data.value);
+		}
 	}
 }

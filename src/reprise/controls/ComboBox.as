@@ -19,30 +19,53 @@ package reprise.controls
 		/***************************************************************************
 		*                           Protected properties                           *
 		***************************************************************************/
-		protected var m_label:Label;
-		protected var m_toggleBtn:SimpleButton;
-		protected var m_backgroundCell:UIComponent;
-		protected var m_placeholder:String = null;
-		protected var m_list : List;		
-		
+		protected var m_currentItemDisplay : IListItem;
+		protected var m_toggleBtn : SimpleButton;
+		protected var m_backgroundCell : UIComponent;
+		protected var m_placeholder : String = null;
+		protected var m_list : List;
+		protected var m_itemRendererClass : Class = ListItem;		
+
 		
 		/***************************************************************************
 		*                              Public methods                              *
 		***************************************************************************/
-		public function ComboBox() {}
-		
-		
-		
-		public function addItemWithTitleAndValue(title:String, value:*):void
+		public function ComboBox()
 		{
-			m_list.addItemWithTitleAndValue(title, value);
+		}
+
+		public function setItemRendererClass(rendererClass : Class) : void
+		{
+			m_itemRendererClass = rendererClass || ListItem;
+			m_list && m_list.setItemRendererClass(rendererClass);
+			if (m_initialized)
+			{
+				if (m_currentItemDisplay)
+				{
+					UIComponent(m_currentItemDisplay).remove();
+				}
+				m_currentItemDisplay = new m_itemRendererClass();
+				UIComponent(m_currentItemDisplay).addCSSClass('currentItem');
+				addChildAt(UIComponent(m_currentItemDisplay), 1);
+			}
+		}
+
+		public function itemRendererClass() : Class
+		{
+			return m_itemRendererClass;
+		}
+
+		
+		public function addItemWithData(data : Object) : void
+		{
+			m_list.addItemWithData(data);
 			if (m_list.selectedIndex() == -1 && m_placeholder == null)
 			{
 				m_list.setSelectedIndex(0);
-				m_label.setLabel(m_list.selectedLabel());
+				m_currentItemDisplay.setData(m_list.selectedData());
 			}
 		}
-		
+
 		public function set options(options : Array) : void
 		{
 			m_list.options = options;
@@ -68,18 +91,7 @@ package reprise.controls
 			updateLabel();
 		}
 
-		public function selectItemWithValue(value : *) : void
-		{
-			m_list.selectItemWithValue(value);
-			updateLabel();
-		}
-
-		public override function value():*
-		{
-			return m_list.value();
-		}
-		
-		public override function setValue(value:*):void
+		public override function setValue(value : *) : void
 		{
 			if (m_list.options.length)
 			{
@@ -87,21 +99,26 @@ package reprise.controls
 				updateLabel();
 			}
 		}
-		
+
+		public override function value() : *
+		{
+			return m_list.value();
+		}
+
 		/**
-		 * @private
-		 */
+		* @private
+		*/
 		public function setValueAttribute(value : String) : void
 		{
 			setValue(value);
 		}
-		
-		public function setPlaceholderAttribute(value : String):void
+
+		public function setPlaceholderAttribute(value : String) : void
 		{
 			m_placeholder = value;
 			updateLabel();
 		}
-		
+
 		public function placeHolder() : String
 		{
 			return m_placeholder;
@@ -112,30 +129,32 @@ package reprise.controls
 		/***************************************************************************
 		*                             Protected methods                            *
 		***************************************************************************/
-		protected override function initialize():void
+		protected override function initialize() : void
 		{
 			super.initialize();
-//			m_canBecomeKeyView = true;
+			//			m_canBecomeKeyView = true;
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 		}
-		
-		protected override function createChildren():void
+
+		protected override function createChildren() : void
 		{
 			m_backgroundCell = new UIComponent();
 			addChild(m_backgroundCell);
 			m_backgroundCell.addCSSClass('backgroundCell');
 			m_backgroundCell.setStyle('position', 'absolute');
 			
-			m_label = new Label();
-			addChild(m_label);
+			m_currentItemDisplay = new m_itemRendererClass();
+			UIComponent(m_currentItemDisplay).addCSSClass('currentItem');
+			addChild(UIComponent(m_currentItemDisplay));
 			
 			m_list = new List();
 			addChild(m_list);
+			m_itemRendererClass && m_list.setItemRendererClass(m_itemRendererClass);
 			m_list.addCSSClass('hidden');
 			m_list.addEventListener(Event.CHANGE, list_change);
 		}
-		
-		protected override function parseXMLContent(node:XML):void
+
+		protected override function parseXMLContent(node : XML) : void
 		{
 			m_list.removeEventListener(Event.CHANGE, list_change);
 			for each (var childNode:XML in node.children())
@@ -148,47 +167,47 @@ package reprise.controls
 				}
 				else
 				{
-					addItemWithTitleAndValue(childNode.text(), childNode.@value.toString());
+					addItemWithData({label : childNode.text(), value : childNode.@value.toString()});
 				}
 			}
 			m_list.addEventListener(Event.CHANGE, list_change);
 		}
-		
+
 		protected function updateLabel() : void
 		{
 			if (m_list.selectedIndex() == -1)
 			{
-				m_label.setLabel(m_placeholder);
+				m_currentItemDisplay.setData({label : m_placeholder});
 				addCSSClass('placeholder');
 			}
 			else
 			{
-				m_label.setLabel(m_list.selectedLabel());
+				m_currentItemDisplay.setData(m_list.selectedData());
 				removeCSSClass('placeholder');
 			}
 		}
-		
-		protected function showList():void
+
+		protected function showList() : void
 		{			
 			removeEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 			m_rootElement.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			m_list.removeCSSClass('hidden');
 		}
-		
-		protected function hideList():void
+
+		protected function hideList() : void
 		{
 			m_rootElement.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 			m_list.addCSSClass('hidden');
 		}
-		
-		protected function self_mouseDown(e:MouseEvent):void
+
+		protected function self_mouseDown(e : MouseEvent) : void
 		{
 			showList();
 			e.stopPropagation();
 		}
-		
-		protected function document_mouseDown(e:MouseEvent):void
+
+		protected function document_mouseDown(e : MouseEvent) : void
 		{
 			if (m_list.contains(DisplayObject(e.target)))
 			{
@@ -196,8 +215,8 @@ package reprise.controls
 			}
 			hideList();
 		}
-		
-		protected function list_change(e:Event):void
+
+		protected function list_change(e : Event) : void
 		{
 			updateLabel();
 			hideList();
