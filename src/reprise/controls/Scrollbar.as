@@ -65,7 +65,8 @@ package reprise.controls
 		protected var m_mouseWheelHitAreaY : Number;
 		protected var m_mouseWheelHitAreaWidth : Number;
 		protected var m_mouseWheelHitAreaHeight : Number;
-		
+		protected var m_overflowScrollMode : Boolean = true;
+
 		
 		/***************************************************************************
 		*							public methods								   *
@@ -73,8 +74,18 @@ package reprise.controls
 		public function Scrollbar()
 		{
 		}
+		
+		public function setOverflowScrollMode(standaloneMode : Boolean) : void
+		{
+			m_overflowScrollMode = standaloneMode;
+		}
+		
+		public function overflowScrollMode() : Boolean
+		{
+			return m_overflowScrollMode;
+		}
 
-
+		
 		public function delayValidation() : void
 		{
 			setTimeout(forceRedraw, 1);
@@ -297,7 +308,15 @@ package reprise.controls
 			m_scrollTrack.addEventListener(
 				MouseEventConstants.MOUSE_UP_OUTSIDE, scrollBtn_up);
 		}
-		
+
+		override protected function hookIntoDisplayList() : void
+		{
+			if (!m_overflowScrollMode)
+			{
+				super.hookIntoDisplayList();
+			}
+		}
+
 		protected override function validateAfterChildren() : void
 		{
 			top = top;

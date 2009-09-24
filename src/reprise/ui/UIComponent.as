@@ -1488,9 +1488,7 @@ package reprise.ui
 				
 				if (m_parentElement is UIComponent)
 				{
-					(m_parentElement as UIComponent).addComponentToDisplayList(this, 
-						m_positionInFlow == 1 && m_currentStyles.zIndex < 1 || 
-						m_currentStyles.zIndex < 0); 
+					hookIntoDisplayList(); 
 				}
 				if (m_firstDraw)
 				{
@@ -1543,6 +1541,13 @@ package reprise.ui
 				}
 			}
 		}
+		
+		protected function hookIntoDisplayList() : void
+		{
+			(m_parentElement as UIComponent).addComponentToDisplayList(this, 
+				m_positionInFlow == 1 && m_currentStyles.zIndex < 1 || m_currentStyles.zIndex < 0);
+		}
+
 		/**
 		 * Hook method, executed after the UIObjects' children get validated
 		 */
@@ -2693,6 +2698,7 @@ package reprise.ui
 				addChild(m_scrollbarsDisplay);
 			}
 			var scrollbar : Scrollbar = new Scrollbar();
+			scrollbar.setOverflowScrollMode(true);
 			scrollbar.setParent(this);
 			scrollbar.overrideContainingBlock(this);
 			m_scrollbarsDisplay.addChild(scrollbar);
