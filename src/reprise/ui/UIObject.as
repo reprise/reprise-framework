@@ -928,7 +928,7 @@ package reprise.ui
 			}
 			else
 			{
-				m_children.splice(m_children.indexOf(child), 1);
+				m_children.splice(index, 1);
 			}
 			child.parent && child.parent.removeChild(child);
 			child.m_parentElement = null;
