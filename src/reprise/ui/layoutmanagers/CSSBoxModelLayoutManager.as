@@ -344,7 +344,7 @@ package reprise.ui.layoutmanagers
 			for (var i : int = 0; i < m_displayStack.length; i++)
 			{
 				var element : DisplayObject = m_displayStack[i].element;
-				element.parent.setChildIndex(element, 
+				element.parent && element.parent.setChildIndex(element, 
 					element.parent == lowerContainer ? lowerIndex++ : upperIndex++);
 			}
 			m_displayStack = null;
