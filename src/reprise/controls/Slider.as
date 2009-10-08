@@ -62,9 +62,7 @@ package reprise.controls
 		{
 			value = Math.min(value, m_maxValue);
 			value = Math.max(value, m_minValue);
-			log("value: " + (value));
 			m_value = m_allowsTickMarkValuesOnly ? closestTickMarkValueToValue(value) : value;
-			log("m_value: " + (m_value));
 			if (!m_isDragging)
 			{
 				applyValue();
