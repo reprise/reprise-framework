@@ -62,7 +62,9 @@ package reprise.controls
 		{
 			value = Math.min(value, m_maxValue);
 			value = Math.max(value, m_minValue);
+			log("value: " + (value));
 			m_value = m_allowsTickMarkValuesOnly ? closestTickMarkValueToValue(value) : value;
+			log("m_value: " + (m_value));
 			if (!m_isDragging)
 			{
 				applyValue();
@@ -137,7 +139,7 @@ package reprise.controls
 		
 		public function closestTickMarkValueToValue(val:Number):Number
 		{
-			var diff:Number = (m_maxValue - m_minValue) / (m_numTickMarks - 1);
+			var diff:Number = (m_maxValue - m_minValue) / m_numTickMarks;
 			var index:int = Math.floor(val / diff);
 			if (val % diff > diff / 2) index++;
 			return index * diff;
