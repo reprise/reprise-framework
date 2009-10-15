@@ -1438,14 +1438,6 @@ package reprise.ui
 		protected override function validateElement(
 			forceValidation : Boolean = false, validateStyles : Boolean = false) : void
 		{
-			if (m_instanceStyles.hasStyle('freezeDisplay') && 
-				m_instanceStyles.getStyle('freezeDisplay').specifiedValue() == true &&
-				m_instanceStyles.getStyle('freezeDisplay').important())
-			{
-				//completely ignore element validation if it is frozen. The element is left marked 
-				//as invalid to allow for immediate validation after un-freezing.
-				return;
-			}
 			if (!m_isInvalidated && !forceValidation)
 			{
 				m_changedStyleProperties = new CSSPropertiesChangeList();
