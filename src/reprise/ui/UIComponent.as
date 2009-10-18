@@ -2335,9 +2335,16 @@ package reprise.ui
 		{
 			XML.prettyPrinting = false;
 			var childNode : XML = node.children()[0];
+			var state : Object = {nodeIsEmpty : false};
 			while (childNode)
 			{
-				childNode = preprocessTextNode(childNode);
+				childNode = preprocessTextNode(childNode, state);
+				if (state.nodeIsEmpty)
+				{
+					childNode = childNode.parent().children()[childNode.childIndex() + 1];
+					state.nodeIsEmpty = false;
+					continue;
+				}
 				var child : UIComponent = 
 					m_rootElement.uiRendererFactory().rendererByNode(childNode);
 				if (child)
@@ -2353,7 +2360,7 @@ package reprise.ui
 			}
 		}
 		
-		protected function preprocessTextNode(node : XML) : XML
+		protected function preprocessTextNode(node : XML, state : Object = null) : XML
 		{
 			var textNodeTags : String = UIRendererFactory.TEXTNODE_TAGS;
 			if (textNodeTags.indexOf(node.localName() + ",") == -1)
@@ -2384,6 +2391,10 @@ package reprise.ui
 			xmlParser.setChildren(nodesToCombine);
 			siblings[node.childIndex()] = xmlParser;
 			XML.ignoreWhitespace = true;
+			if (state && xmlParser.text().toString().search(/\S/g) == -1)
+			{
+				state.nodeIsEmpty = true;
+			}
 			return xmlParser;
 		}
 		
