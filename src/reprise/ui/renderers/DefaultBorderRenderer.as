@@ -45,10 +45,10 @@ package reprise.ui.renderers
 	
 			var borderWidth : Object = 
 			{
-				top : m_styles.borderTopWidth | 0,
-				right : m_styles.borderRightWidth | 0,
-				bottom : m_styles.borderBottomWidth | 0,
-				left : m_styles.borderLeftWidth | 0
+				top : m_styles.borderTopWidth,
+				right : m_styles.borderRightWidth,
+				bottom : m_styles.borderBottomWidth,
+				left : m_styles.borderLeftWidth
 			};
 			
 			var borderStyle : Object =
@@ -107,7 +107,7 @@ package reprise.ui.renderers
 			var topRight : Point = new Point();
 			var bottomRight : Point = new Point();
 			var bottomLeft : Point = new Point();
-			if (borderWidth.top > 0 && borderStyle.top != 'none' && borderColor.top != 0)
+			if (borderWidth.top > 0 && borderStyle.top != 'none' && borderColor.top)
 			{
 				topLeft.x = 0;
 				topLeft.y = 0;
@@ -121,7 +121,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_TOP);
 			}
 			
-			if (borderWidth.right > 0 && borderStyle.right != 'none' && borderColor.right != 0)
+			if (borderWidth.right > 0 && borderStyle.right != 'none' && borderColor.right)
 			{
 				topLeft.x = m_width;
 				topLeft.y = 0;
@@ -135,7 +135,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_RIGHT);
 			}
 	
-			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none' && borderColor.bottom != 0)
+			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none' && borderColor.bottom)
 			{
 				topLeft.x = 0;
 				topLeft.y = m_height;
@@ -149,7 +149,7 @@ package reprise.ui.renderers
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_BOTTOM);
 			}
 			
-			if (borderWidth.left > 0 && borderStyle.left != 'none' && borderColor.left != 0)
+			if (borderWidth.left > 0 && borderStyle.left != 'none' && borderColor.left)
 			{
 				topLeft.x = 0;
 				topLeft.y = 0;
