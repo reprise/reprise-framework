@@ -152,7 +152,7 @@ package reprise.controls
 		
 		public function getValue() : Object
 		{
-			return getLabel();
+			return getLabel() == m_placeholder ? '' : getLabel();
 		}
 		public override function setValue(value : *) : void
 		{
@@ -170,6 +170,11 @@ package reprise.controls
 				setLabel(value);
 			}
 		}
+		public function getPlaceholderAttribute() : String
+		{
+			return m_placeholder;
+		}
+
 		public override function didSucceed():Boolean
 		{
 			if (m_validator || !m_required || !m_placeholder)
