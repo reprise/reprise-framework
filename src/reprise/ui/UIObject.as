@@ -930,10 +930,10 @@ package reprise.ui
 			{
 				m_children.splice(index, 1);
 			}
+			child.dispatchEvent(new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
 			child.parent && child.parent.removeChild(child);
 			child.m_parentElement = null;
 			child.setRootElement(null);
-			child.dispatchEvent(new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
 			invalidate();
 		}
 		
