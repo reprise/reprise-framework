@@ -185,15 +185,12 @@ package reprise.ui.renderers
 				basePathParts.push(m_selectorPath.split(' ').pop());
 				m_selectorPath = basePathParts.join(' ');
 			}
-			log("m_selectorPath: " + (m_selectorPath));
 			if (m_selectorPath != oldPath)
 			{
-				log("m_selectorPathChanged: " + (m_selectorPathChanged));
 				m_selectorPathChanged = true;
 				return;
 			}
 			m_selectorPathChanged = false;
-			log("m_selectorPathChanged: " + (m_selectorPathChanged));
 		}
 
 		protected override function resolveContainingBlock() : void
