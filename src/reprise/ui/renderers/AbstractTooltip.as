@@ -11,6 +11,7 @@
 
 package reprise.ui.renderers
 {
+	import reprise.events.DisplayEvent;
 	import reprise.controls.Label;
 	import reprise.core.reprise;
 	import reprise.css.propertyparsers.DisplayPosition;
@@ -119,10 +120,15 @@ package reprise.ui.renderers
 		
 		public function setMousedComponent(mousedComponent:UIComponent):void
 		{
+			m_mousedComponent && m_mousedComponent.removeEventListener(
+				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
 			m_mousedComponent = mousedComponent;
-			refreshSelectorPath();
+			m_mousedComponent && m_mousedComponent.addEventListener(
+				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
+			validateElement(true, true);
+			updatePosition();
 		}
-		
+
 		public function mousedComponent():UIComponent
 		{
 			return m_mousedComponent;
@@ -137,8 +143,14 @@ package reprise.ui.renderers
 		{
 			return m_tooltipDataProvider;
 		}
-		
-		
+
+		override public function remove(...args : *) : void
+		{
+			m_mousedComponent && m_mousedComponent.removeEventListener(
+				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
+			super.remove(args);
+		}
+
 		
 		/***************************************************************************
 		*							protected methods								   *
@@ -173,14 +185,17 @@ package reprise.ui.renderers
 				basePathParts.push(m_selectorPath.split(' ').pop());
 				m_selectorPath = basePathParts.join(' ');
 			}
+			log("m_selectorPath: " + (m_selectorPath));
 			if (m_selectorPath != oldPath)
 			{
+				log("m_selectorPathChanged: " + (m_selectorPathChanged));
 				m_selectorPathChanged = true;
 				return;
 			}
 			m_selectorPathChanged = false;
+			log("m_selectorPathChanged: " + (m_selectorPathChanged));
 		}
-		
+
 		protected override function resolveContainingBlock() : void
 		{
 			m_containingBlock = m_rootElement;
@@ -226,6 +241,20 @@ package reprise.ui.renderers
 		{
 			super.validateAfterChildren();
 			applyOutOfFlowChildPositions();
+		}
+		
+		protected function mousedEvent_validationComplete(event : DisplayEvent) : void
+		{
+			m_mousedComponent.document.addEventListener(
+				DisplayEvent.DOCUMENT_VALIDATION_COMPLETE, document_validationComplete);
+		}
+		
+		protected function document_validationComplete(event : DisplayEvent) : void
+		{
+			m_mousedComponent.document.removeEventListener(
+				DisplayEvent.DOCUMENT_VALIDATION_COMPLETE, document_validationComplete);
+			validateElement(true, true);
+			updatePosition();
 		}
 	}
 }
