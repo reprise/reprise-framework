@@ -2494,7 +2494,11 @@ package reprise.ui
 			
 			if (ofx == 'visible' || ofx == null || ofx == 'hidden')
 			{
-				if (m_hScrollbar) m_hScrollbar.setVisibility(false);
+				if (m_hScrollbar)
+				{
+					m_hScrollbar.setVisibility(false);
+					hScroll = 0;
+				}
 				if (ofx == 'hidden') maskNeeded = true;
 			}
 			else
@@ -2504,7 +2508,11 @@ package reprise.ui
 			
 			if (ofy == 'visible' || ofy == null || ofy == 'hidden')
 			{
-				if (m_vScrollbar) m_vScrollbar.setVisibility(false);
+				if (m_vScrollbar)
+				{
+					m_vScrollbar.setVisibility(false);
+					vScroll = 0;
+				}
 				if (ofy == 'hidden') maskNeeded = true;
 			}
 			else
@@ -2668,6 +2676,7 @@ package reprise.ui
 				if (m_vScrollbar)
 				{
 					m_vScrollbar.setVisibility(false);
+					vScroll = 0;
 				}
 			}
 			
@@ -2687,6 +2696,7 @@ package reprise.ui
 				if (m_hScrollbar)
 				{
 					m_hScrollbar.setVisibility(false);
+					hScroll = 0;
 				}
 			}
 		}
