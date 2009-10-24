@@ -288,7 +288,7 @@ package reprise.media
 		* bandwidth calling this method leads to no immediate effect. After the buffer was filled
 		* with data the playback starts automatically.
 		*/
-		public function play():void
+		public function play(...args):void
 		{
 			if (m_status & STATUS_PAUSED_AT_END)
 			{
