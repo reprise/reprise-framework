@@ -252,7 +252,6 @@ package reprise.ui.renderers
 				DisplayEvent.DOCUMENT_VALIDATION_COMPLETE, document_validationComplete);
 			validateElement(true, true);
 			updatePosition();
-			log(m_complexStyles);
 		}
 	}
 }
