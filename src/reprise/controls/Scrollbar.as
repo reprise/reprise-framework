@@ -317,6 +317,37 @@ package reprise.controls
 			}
 		}
 
+		override protected function applyStyles() : void
+		{
+			super.applyStyles();
+			
+			switch (m_currentStyles.buttonPositioning)
+			{
+				case 'top':
+				{
+					m_children[0] = m_scrollUpBtn;
+					m_children[1] = m_scrollDownBtn;
+					m_children[2] = m_scrollTrack;
+					break;
+				}
+				case 'bottom':
+				{
+					m_children[0] = m_scrollTrack;
+					m_children[1] = m_scrollUpBtn;
+					m_children[2] = m_scrollDownBtn;
+					break;
+				}
+				case 'separated':
+				default:
+				{
+					m_children[0] = m_scrollUpBtn;
+					m_children[1] = m_scrollTrack;
+					m_children[2] = m_scrollDownBtn;
+					
+				}
+			}
+		}
+
 		protected override function validateAfterChildren() : void
 		{
 			top = top;

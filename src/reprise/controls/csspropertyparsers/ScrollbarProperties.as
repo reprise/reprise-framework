@@ -25,6 +25,7 @@ package reprise.controls.csspropertyparsers
 		{
 			autoHide : {parser : strToBoolProperty},
 			scaleScrollThumb : {parser : strToBoolProperty},
+			buttonPositioning : {parser : strToStringProperty},
 			lineScrollSize : {parser : strToIntProperty},
 			pageScrollSize : {parser : strToIntProperty}
 		};
