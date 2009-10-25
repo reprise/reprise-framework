@@ -79,7 +79,7 @@ package reprise.ui.renderers {
 		
 		protected function doShow(...rest) : void
 		{
-			opacity += .1;
+			opacity += .4;
 			if (opacity >= 1)
 			{
 				FrameCommandExecutor.instance().removeCommand(fadeIn);
@@ -91,7 +91,7 @@ package reprise.ui.renderers {
 		
 		protected function doHide(...rest) : void
 		{
-			opacity -= .1;
+			opacity -= .4;
 			if (opacity <= 0)
 			{
 				FrameCommandExecutor.instance().removeCommand(fadeOut);
