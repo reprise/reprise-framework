@@ -902,8 +902,8 @@ package reprise.controls
 				bitmap.draw(m_labelDisplay, null, null, null, null, true);
 				m_bitmapCache = new Bitmap(bitmap, 'auto', true);
 				m_contentDisplay.addChild(m_bitmapCache);
-				m_bitmapCache.x = m_labelDisplay.x - 2;
-				m_bitmapCache.y = m_labelDisplay.y - 2;
+				m_bitmapCache.x = m_labelDisplay.x;
+				m_bitmapCache.y = m_labelDisplay.y;
 			}
 			else
 			{
