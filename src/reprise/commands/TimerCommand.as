@@ -38,11 +38,14 @@ package reprise.commands
 		
 		public override function cancel():void
 		{
+			m_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timer_complete);
 			m_timer.stop();
+			super.cancel();
 		}
 		
 		protected function timer_complete(e:TimerEvent):void
 		{
+			m_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timer_complete);
 			notifyComplete(true);
 		}
 	}
