@@ -352,8 +352,21 @@ package reprise.controls
 			{
 				if (m_labelDisplay.textWidth < m_labelDisplay.width - 10)
 				{
+					var correctTextHeight : Number = m_labelDisplay.textHeight;
+					var correctTextWidth : Number = m_labelDisplay.textWidth;
+					var originalWidth : Number = m_labelDisplay.width;
 					m_labelDisplay.width = m_labelDisplay.textWidth + 10;
-					if (m_textAlignment == 'right')
+					if (m_labelDisplay.textHeight != correctTextHeight || 
+						m_labelDisplay.textWidth != correctTextWidth)
+					{
+						/* in some cases, the TextField incorrectly wraps text to the next line 
+						 * even though there's plenty enough room for it on the current line. 
+						 * In case such an incorrect wrapping occurs after shrinking the TextField, 
+						 * we have to roll it back.
+						 */
+						m_labelDisplay.width = originalWidth;
+					}
+					else if (m_textAlignment == 'right')
 					{
 						m_labelDisplay.x = m_currentStyles.paddingLeft + 
 							m_currentStyles.width - m_labelDisplay.width + 2;
