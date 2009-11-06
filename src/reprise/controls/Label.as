@@ -280,8 +280,6 @@ package reprise.controls
 			{
 				return;
 			}
-			m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
-			m_labelDisplay.y = m_currentStyles.paddingTop - 2;
 			
 			m_internalStyleIndex = 0;
 			m_textAlignment = null;
@@ -306,6 +304,23 @@ package reprise.controls
 			
 			m_textSetExternally = false;
 			applyLabel(labelXML);
+			
+			//apply final positioning
+			m_labelDisplay.y = m_currentStyles.paddingTop - 2;
+			if (m_textAlignment == 'left')
+			{
+				m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
+			}
+			else if (m_textAlignment == 'right')
+			{
+				m_labelDisplay.x = m_currentStyles.paddingLeft + 
+					m_currentStyles.width - m_labelDisplay.width + 2;
+			}
+			else if (m_textAlignment == 'center')
+			{
+				m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
+					m_currentStyles.width / 2 - m_labelDisplay.width / 2);
+			}
 		}
 		
 		protected function applyLabel(labelXML : XML) : void
@@ -347,40 +362,27 @@ package reprise.controls
 			}
 			m_labelDisplay.autoSize = 'none';
 			
+			m_overflowIsInvalid = true;
+			
 			//shrink the TextField to the smallest width possible
-			if (m_textAlignment != 'mixed' && !m_containsImages)
+			if (m_textAlignment != 'mixed' && !m_containsImages && 
+				m_labelDisplay.textWidth < m_labelDisplay.width - 10)
 			{
-				if (m_labelDisplay.textWidth < m_labelDisplay.width - 10)
+				var correctTextHeight : Number = m_labelDisplay.textHeight;
+				var correctTextWidth : Number = m_labelDisplay.textWidth;
+				var originalWidth : Number = m_labelDisplay.width;
+				m_labelDisplay.width = m_labelDisplay.textWidth + 10;
+				if (m_labelDisplay.textHeight != correctTextHeight || 
+					m_labelDisplay.textWidth != correctTextWidth)
 				{
-					var correctTextHeight : Number = m_labelDisplay.textHeight;
-					var correctTextWidth : Number = m_labelDisplay.textWidth;
-					var originalWidth : Number = m_labelDisplay.width;
-					m_labelDisplay.width = m_labelDisplay.textWidth + 10;
-					if (m_labelDisplay.textHeight != correctTextHeight || 
-						m_labelDisplay.textWidth != correctTextWidth)
-					{
-						/* in some cases, the TextField incorrectly wraps text to the next line 
-						 * even though there's plenty enough room for it on the current line. 
-						 * In case such an incorrect wrapping occurs after shrinking the TextField, 
-						 * we have to roll it back.
-						 */
-						m_labelDisplay.width = originalWidth;
-					}
-					else if (m_textAlignment == 'right')
-					{
-						m_labelDisplay.x = m_currentStyles.paddingLeft + 
-							m_currentStyles.width - m_labelDisplay.width + 2;
-					}
-					else if (m_textAlignment == 'center')
-					{
-						m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
-							m_currentStyles.width / 2 - 
-							m_labelDisplay.width / 2);
-					}
+					/* in some cases, the TextField incorrectly wraps text to the next line 
+					 * even though there's plenty enough room for it on the current line. 
+					 * In case such an incorrect wrapping occurs after shrinking the TextField, 
+					 * we have to roll it back.
+					 */
+					m_labelDisplay.width = originalWidth;
 				}
 			}
-			
-			m_overflowIsInvalid = true;
 		}
 		
 		protected override function applyInFlowChildPositions() : void
