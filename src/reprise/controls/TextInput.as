@@ -209,9 +209,8 @@ package reprise.controls
 		/**
 		 * Just pass the content on to the labelDisplay
 		 */
-		protected override function parseXMLContent(node : XML) : void
+		protected override function parseXMLContent(children : XMLList) : void
 		{
-			m_xmlDefinition = node;
 		}
 	
 		protected override function initDefaultStyles() : void

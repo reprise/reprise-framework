@@ -175,9 +175,9 @@ package reprise.controls
 			EventDispatcher(item).addEventListener(MouseEvent.CLICK, item_click);
 		}
 
-		protected override function parseXMLContent(node : XML) : void
+		protected override function parseXMLContent(children : XMLList) : void
 		{
-			for each (var childNode:XML in node.children())
+			for each (var childNode:XML in children)
 			{
 				// should we allow display objects other than list items below us?
 				if (childNode.localName().toLowerCase() != 'option')

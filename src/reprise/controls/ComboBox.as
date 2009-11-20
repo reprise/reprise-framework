@@ -154,10 +154,10 @@ package reprise.controls
 			m_list.addEventListener(Event.CHANGE, list_change);
 		}
 
-		protected override function parseXMLContent(node : XML) : void
+		protected override function parseXMLContent(children : XMLList) : void
 		{
 			m_list.removeEventListener(Event.CHANGE, list_change);
-			for each (var childNode:XML in node.children())
+			for each (var childNode:XML in children)
 			{
 				preprocessTextNode(childNode);
 				if (childNode.localName() != 'option')

@@ -240,23 +240,28 @@ package reprise.controls
 		{
 			renderLabel();
 		}
-		
-		/**
-		 * Don't do anything here: Labels don't have child elements
-		 */
-		protected override function parseXMLContent(node : XML) : void
+
+		override protected function parseXMLDefinition(xmlDefinition : XML, url : String) : void
 		{
-			m_xmlDefinition = node;
-			if (node.localName().toLowerCase() != 'p')
+			super.parseXMLDefinition(xmlDefinition, url);
+			
+			if (xmlDefinition.localName().toLowerCase() != 'p')
 			{
 				XML.prettyPrinting = false;
 				m_labelXML = <p/>;
-				m_labelXML.setChildren(node);
+				m_labelXML.setChildren(xmlDefinition);
 			}
 			else
 			{
-				m_labelXML = node;
+				m_labelXML = xmlDefinition;
 			}
+		}
+
+		/**
+		 * Don't do anything here: Labels don't have child elements
+		 */
+		protected override function parseXMLContent(children : XMLList) : void
+		{
 		}
 		
 		protected override function measure() : void

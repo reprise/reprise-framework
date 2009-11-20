@@ -251,24 +251,23 @@ package reprise.ui
 		}
 
 		/**
-		 * initializes the UIComponent structure from the given xml structure, 
+		 * initializes the UIComponent structure from the given XMLList, 
 		 * creating child views as needed.
 		 * 
 		 * Using setInnerXML, entire structures of child elements can be created based on the 
 		 * supplied XML structure. For a description of how the XML is interpreted, see the 
 		 * documentation for UIRendererFactory.
 		 * 
-		 * @param	xml	the XML structure to parse
-		 * @return		The instance that setInnerXML is invoked on, so that calls can be chained
-		 * @see 		UIRendererFactory
-		 * 
-		 * TODO: check if this method should call parseXMLDefinition to fully initialize 
-		 * using the xml data (including attributes)
+		 * @param	children	the XMLList to parse
+		 * @return				The instance that setInnerXML is invoked on, so that calls can be chained
+		 * @see 				UIRendererFactory
 		 */
-		public function setInnerXML(xml:XML) : UIComponent
+		public function setInnerXML(children : XMLList) : UIComponent
 		{
-			m_xmlDefinition.setChildren(xml.children());
-			parseXMLContent(xml);
+			//We might not have an xmlDefinition for this element at all. While we'll want to change 
+			//that later, we ignore it for now.
+			m_xmlDefinition && m_xmlDefinition.setChildren(children);
+			parseXMLContent(children);
 			return this;
 		}
 		
@@ -2217,7 +2216,7 @@ package reprise.ui
 			m_xmlDefinition = xmlDefinition;
 			m_xmlURL = url;
 			parseXMLAttributes(xmlDefinition);
-			parseXMLContent(xmlDefinition);
+			parseXMLContent(xmlDefinition.children());
 			
 			invalidateStyles();
 		}
@@ -2331,10 +2330,10 @@ package reprise.ui
 		/**
 		 * parses and displays the elements' childNodes
 		 */
-		protected function parseXMLContent(node : XML) : void
+		protected function parseXMLContent(children : XMLList) : void
 		{
 			XML.prettyPrinting = false;
-			var childNode : XML = node.children()[0];
+			var childNode : XML = children[0];
 			var state : Object = {nodeIsEmpty : false};
 			while (childNode)
 			{
