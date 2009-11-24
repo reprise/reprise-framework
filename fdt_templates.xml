@@ -149,6 +149,7 @@ interface ${enclosing_type} ${cursor}
 		*******************************************************************************************/
 		override protected function initialize() : void
 		{
+			super.initialize();
 		}
 		
 		override protected function createChildren() : void
