@@ -114,6 +114,7 @@ package reprise.controls
 		{
 			m_instanceStyles.setStyle('selectable', value ? 'true' : 'false');
 			m_labelDisplay.selectable = enabled;
+			m_labelDisplay.mouseEnabled = enabled;
 		}
 		
 		public function get enabled () : Boolean
@@ -179,7 +180,6 @@ package reprise.controls
 			m_labelDisplay = new TextField();
 			m_labelDisplay = TextField(m_contentDisplay.addChild(m_labelDisplay));
 			m_labelDisplay.name = 'labelDisplay';
-			m_labelDisplay.mouseEnabled = false;
 			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
 			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
 			m_contentDisplay.addEventListener(MouseEvent.MOUSE_MOVE, contentDisplay_mouseMove);
@@ -213,6 +213,7 @@ package reprise.controls
 //			}
 			
 			m_labelDisplay.selectable = m_currentStyles.selectable;
+			m_labelDisplay.mouseEnabled = m_currentStyles.selectable;
 			if (m_currentStyles.color)
 			{
 				m_labelDisplay.alpha = m_currentStyles.color.opacity();
@@ -895,7 +896,7 @@ package reprise.controls
 			m_cacheInvalid = false;
 			applyRasterize();
 		}
-		
+
 		/**
 		 * Applies the 'rasterize-device-fonts' CSS setting by making a bitmap copy of the text 
 		 * field and displaying that instead of the text field itself. This allows text set in 
