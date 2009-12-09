@@ -136,20 +136,44 @@ package reprise.controls.html
 			{
 				if (m_activeFormIndex == -1)
 				{
-					setActiveFormIndex(0);
+					if (m_forms.length)
+					{
+						setActiveFormIndex(0);
+					}
 					return;
 				}
 			}
 			setActiveFormIndex(m_activeFormIndex);
 		}
 		
+		protected function addForm(form : Form) : void
+		{
+			m_forms.push(form);
+			form.addEventListener(FormEvent.SUBMIT, form_submit);
+			form.addEventListener(FormEvent.BACK, form_back);
+			
+			if (m_firstDraw)
+			{
+				if (m_activeFormIndex == -1 || m_activeFormIndex == m_forms.length - 1)
+				{
+					setActiveFormIndex(m_forms.length - 1);
+				}
+			}
+		}
+		
+		protected function removeForm(form : Form) : void
+		{
+			var index:int = m_forms.indexOf(form);
+			form.removeEventListener(FormEvent.SUBMIT, form_submit);
+			form.removeEventListener(FormEvent.BACK, form_back);
+			m_forms.splice(index, 1);
+		}
+		
 		protected function self_displayObjectAdded(e:Event):void
 		{
 			if (e.target is Form)
 			{
-				m_forms.push(e.target);
-				(e.target as Form).addEventListener(FormEvent.SUBMIT, form_submit);
-				(e.target as Form).addEventListener(FormEvent.BACK, form_back);
+				addForm(Form(e.target));
 			}
 		}
 		
@@ -157,10 +181,7 @@ package reprise.controls.html
 		{
 			if (e.target is Form)
 			{
-				var index:int = m_forms.indexOf(e.target);
-				(m_forms[index] as Form).removeEventListener(FormEvent.SUBMIT, form_submit);
-				(m_forms[index] as Form).removeEventListener(FormEvent.BACK, form_back);
-				m_forms.splice(index, 1);
+				removeForm(Form(e.target));
 			}
 		}
 		
