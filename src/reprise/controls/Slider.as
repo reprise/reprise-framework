@@ -190,7 +190,7 @@ package reprise.controls
 		
 		protected function createThumb():void
 		{
-			m_thumb = SimpleButton(addComponent('thumb'));
+			m_thumb = SimpleButton(addComponent('thumb', null, SimpleButton));
 			m_thumb.setStyle('position', 'absolute');
 		}
 		
