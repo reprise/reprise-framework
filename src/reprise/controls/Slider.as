@@ -30,7 +30,7 @@ package reprise.controls
 		//*****************************************************************************************
 		//*                                  Protected Properties                                 *
 		//*****************************************************************************************
-		protected var m_thumb:UIComponent;
+		protected var m_thumb:SimpleButton;
 		protected var m_statusBar:UIComponent;
 		protected var m_track:UIComponent;
 		
@@ -190,7 +190,7 @@ package reprise.controls
 		
 		protected function createThumb():void
 		{
-			m_thumb = addComponent('thumb');
+			m_thumb = SimpleButton(addComponent('thumb'));
 			m_thumb.setStyle('position', 'absolute');
 		}
 		
