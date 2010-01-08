@@ -18,9 +18,6 @@ package reprise.debug
 	import reprise.ui.UIComponent;
 	import reprise.ui.UIObject;
 
-	import com.nesium.events.FileMonitorEvent;
-	import com.nesium.logging.FileMonitor;
-
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -62,23 +59,13 @@ package reprise.debug
 		***************************************************************************/
 		reprise function startWatchingStylesheets() : void
 		{
-			FileMonitor.instance().removeEventListener(
-				FileMonitorEvent.FILE_CHANGED, file_changed);
 			var stylesheets : Array = m_document.styleSheet.stylesheetURLs();
-			var containsLocalFiles : Boolean;
 			for each (var url : String in stylesheets)
 			{
 				if (url.indexOf('file://') == 0)
 				{
-					FileMonitor.instance().startMonitoringFile(url.substr(7));
-					containsLocalFiles = true;
+					zz_observe_file(url.substr(7), file_changed);
 				}
-			}
-			if (containsLocalFiles)
-			{
-				log('d start watching stylesheets');
-				FileMonitor.instance().addEventListener(
-					FileMonitorEvent.FILE_CHANGED, file_changed);
 			}
 		}
 		
@@ -292,7 +279,7 @@ package reprise.debug
 			}
 		}
 
-		protected function file_changed(event : FileMonitorEvent):void
+		protected function file_changed(path : String) : void
 		{
 			reloadStyles();
 		}
