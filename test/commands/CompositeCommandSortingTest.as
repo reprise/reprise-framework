@@ -55,7 +55,7 @@ package commands
 			m_compositeCommand.addEventListener(Event.COMPLETE, compositeCommand_complete);
 
 			m_compositeCommand.addCommand(m_delegate1);			
-			m_compositeCommand.addCommand(new TimerCommand(250));
+			m_compositeCommand.addCommand(new TimerCommand(25));
 			m_compositeCommand.addCommand(m_delegate3);
 			m_compositeCommand.addCommand(m_delegate2);
 			m_compositeCommand.execute();

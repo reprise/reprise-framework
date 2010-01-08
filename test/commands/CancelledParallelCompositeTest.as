@@ -29,19 +29,19 @@ package commands
 		{
 			m_composite = new CompositeCommand();
 			m_composite.setMaxParallelExecutionCount(3);
-			var i:Number = 1000;
+			var i:Number = 100;
 			while (i--)
 			{
-				if (i == 700)
+				if (i == 70)
 				{
-					var cmd:TimerCommand = new TimerCommand(10);
+					var cmd:TimerCommand = new TimerCommand(1);
 					cmd.addEventListener(Event.COMPLETE, cancelCommand_complete);
 					m_composite.addCommand(cmd);
 					continue;
 				}
-				m_composite.addCommand(new TimerCommand(10));
+				m_composite.addCommand(new TimerCommand(1));
 			}
-			trace('executing 700 TimerCommands. Please be patient ...');
+			trace('executing 70 TimerCommands. Please be patient ...');
 			m_composite.execute();
 		}
 		

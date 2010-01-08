@@ -25,12 +25,12 @@ package external
 			m_loader = new ResourceLoader();
 			m_loader.addEventListener(Event.COMPLETE, loader_complete);
 			m_loader.setMaxParallelExecutionCount(3);
-			var i:Number = 1000;
+			var i:Number = 20;
 			while (i--)
 			{
-				m_loader.addResource(new MockResource('hello world', 150));
+				m_loader.addResource(new MockResource('hello world', 1));
 			}
-			trace('loading 1000 MockResources. Please be patient ...');
+			trace('loading 20 MockResources. Please be patient ...');
 			m_loader.execute();
 		}
 		

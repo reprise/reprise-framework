@@ -24,9 +24,9 @@ package external
 		{
 			m_loader = new ResourceLoader();
 			m_loader.setMaxParallelExecutionCount(3);
-			var i:Number = 1000;
+			var i:Number = 100;
 			var j:Number = 0;
-			var durations:Array = [10, 50, 150, 250, 300, 1000];
+			var durations:Array = [1, 5, 15, 25, 30];
 			while (i--)
 			{
 				var duration:Number = durations[j++];
@@ -35,13 +35,13 @@ package external
 					j = 0;
 				}
 				var res:MockResource = new MockResource('fake_url', duration);
-				if (i == 300)
+				if (i == 30)
 				{
 					res.addEventListener(Event.COMPLETE, cancelResource_complete);
 				}
 				m_loader.addResource(res);
 			}
-			trace('loading 700 MockResources. Please be patient ...');
+			trace('loading 70 MockResources. Please be patient ...');
 			m_loader.execute();
 		}
 		

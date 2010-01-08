@@ -25,12 +25,12 @@ package commands
 			m_composite = new CompositeCommand();
 			m_composite.addEventListener(Event.COMPLETE, composite_complete);
 			m_composite.setMaxParallelExecutionCount(3);
-			var i:Number = 200;
+			var i:Number = 20;
 			while (i--)
 			{
-				m_composite.addCommand(new TimerCommand(10));
+				m_composite.addCommand(new TimerCommand(1));
 			}
-			trace('executing 200 TimerCommands. Please be patient ...');
+			trace('executing 20 TimerCommands. Please be patient ...');
 			m_composite.execute();
 		}
 		
