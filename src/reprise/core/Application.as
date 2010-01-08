@@ -128,11 +128,9 @@ package reprise.core
 		
 		protected function initialize() : void
 		{
-			CONFIG::debug
-			{
-				var className : String = getQualifiedClassName(this).split('::').pop();
-				zz_init(stage, className);
-			}
+			var className : String = getQualifiedClassName(this).split('::').pop();
+			zz_init(stage, className);
+			
 			m_appContext = new ApplicationContext(this, this.loaderInfo);
 			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
