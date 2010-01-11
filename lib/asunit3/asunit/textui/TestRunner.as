@@ -1,4 +1,5 @@
 package asunit.textui {
+	import flash.system.System;
 	import asunit.framework.Test;
 	import asunit.framework.TestResult;
 
@@ -105,6 +106,7 @@ package asunit.textui {
 			var endTime:Number = getTimer();
 			var runTime:Number = endTime - startTime;
 			getPrinter().printResult(result, runTime);
+			System.exit(0);
 		}
 
 		public function setPrinter(printer:ResultPrinter):void {
