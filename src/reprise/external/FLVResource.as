@@ -87,6 +87,11 @@ package reprise.external
 	        log("i metadata: duration=" + info.duration + " width=" + info.width + " height=" + info.height + " framerate=" + info.framerate);
 		}
 		
+		public function onXMPData(info:Object):void 
+		{
+			log("i raw XMP data:\n" + info.data);
+		}
+		
 		public function onCuePoint(info:Object):void 
 		{
 			log("i cuepoint: time=" + info.time + " name=" + info.name + " type=" + info.type);

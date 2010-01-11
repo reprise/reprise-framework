@@ -139,6 +139,11 @@ package reprise.media
 			dispatchEvent(new MediaEvent(MediaEvent.DIMENSIONS_KNOWN));
 		}
 		
+		public function onXMPData(info:Object):void 
+		{
+			log("i raw XMP data:\n" + info.data);
+		}
+		
 		public function onCuePoint(info:Object):void 
 		{
 			log("i cuepoint: time=" + info.time + " name=" + info.name + " type=" + info.type);
