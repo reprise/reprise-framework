@@ -24,6 +24,8 @@ end
 tool_task_model :compiler_model do |m|
   m.source_path = []
   m.source_path << 'src'
+  m.source_path << 'lib/penner_easing'
+  m.source_path << 'lib/cinqetdemi_JSON'
   m.library_path = []
   m.library_path << 'lib'
   m.default_size = '970 550'
@@ -56,7 +58,6 @@ task :default => :test
 compc "bin/#{project.project_name}_v#{project.version}.swc" => :compiler_model do |t|
   t.include_sources = []
   t.include_sources << 'src'
-  t.include_libraries = []
   t.include_libraries << 'lib/TrazzleCore.swc'
   t.include_libraries << 'lib/TrazzleLib.swc'
 end
