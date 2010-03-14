@@ -7,7 +7,9 @@
 
 package reprise.ui.layoutmanagers 
 {
-	import reprise.css.ComputedStyles;	
+	import flash.display.DisplayObjectContainer;
+
+	import reprise.css.ComputedStyles;
 	import reprise.core.reprise;
 	import reprise.ui.UIComponent;
 	
@@ -17,7 +19,7 @@ package reprise.ui.layoutmanagers
 	
 	use namespace reprise;
 	
-	public class CSSBoxModelLayoutManager 
+	public class CSSBoxModelLayoutManager implements ILayoutManager
 	{
 		/***************************************************************************
 		*							protected properties							   *
@@ -326,7 +328,7 @@ package reprise.ui.layoutmanagers
 			}
 		}
 		public function applyDepthSorting(
-			lowerContainer : Sprite, upperContainer : Sprite) : void
+			lowerContainer : DisplayObjectContainer, upperContainer : DisplayObjectContainer) : void
 		{
 			if (!m_displayStack || !m_displayStack.length)
 			{

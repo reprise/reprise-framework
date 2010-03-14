@@ -21,6 +21,7 @@ package reprise.ui
 	import reprise.css.transitions.CSSTransitionsManager;
 	import reprise.events.DisplayEvent;
 	import reprise.ui.layoutmanagers.CSSBoxModelLayoutManager;
+	import reprise.ui.layoutmanagers.ILayoutManager;
 	import reprise.ui.renderers.ICSSRenderer;
 	import reprise.utils.GfxUtil;
 	import reprise.utils.StringUtil;
@@ -137,7 +138,7 @@ package reprise.ui
 		protected var m_positionOffset : Point;
 		
 		//managers and renderers
-		protected var m_layoutManager : CSSBoxModelLayoutManager;
+		protected var m_layoutManager : ILayoutManager;
 		protected var m_borderRenderer : ICSSRenderer;
 		protected var m_backgroundRenderer : ICSSRenderer;
 		
