@@ -11,7 +11,7 @@ sprout 'as3'
 
 project = project_model :model do |m|
   m.project_name            = 'Reprise'
-  m.version                 = '0.5'
+  m.version                 = '0.5.1'
   m.language                = 'as3'
   m.doc_dir                  = "doc"
   m.doc_out                  = "#{m.doc_dir}/bin/asdoc"
