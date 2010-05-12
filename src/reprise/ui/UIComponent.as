@@ -170,6 +170,7 @@ package reprise.ui
 		private var m_oldOuterBoxDimension : Point;
 		private var m_invalidateStylesAfterValidation : Boolean;
 		private var m_forceChildValidation : Boolean;
+		private var m_isRenderedHasChanged:Boolean;
 
 		
 		/***************************************************************************
@@ -1482,6 +1483,8 @@ package reprise.ui
 				{
 					dispatchEvent(new DisplayEvent(DisplayEvent.ADDED_TO_DOCUMENT, true));
 				}
+
+				m_isRenderedHasChanged = isCurrentlyRendered != m_isRendered;
 				
 				if (!m_isRendered)
 				{
@@ -1671,6 +1674,17 @@ package reprise.ui
 					parentReflowNeeded = true;
 	//				log("f reason for parentReflow: flowPos changed");
 				}
+				else if (m_isRenderedHasChanged)
+				{
+					parentReflowNeeded = true;
+	//				log("f reason for parentReflow: isRendered changed");
+				}
+				else if (m_changedStyleProperties['zIndex'])
+				{
+					log(m_cssClasses, m_currentStyles.zIndex);
+					parentReflowNeeded = true;
+	//				log("f reason for parentReflow: z-index changed");
+				}
 				if (m_parentElement && m_parentElement != this)
 				{
 					if (parentReflowNeeded && !UIComponent(m_parentElement).m_isValidating)
@@ -1702,6 +1716,7 @@ package reprise.ui
 			
 			m_dimensionsChanged = false;
 			m_specifiedDimensionsChanged = false;
+			m_isRenderedHasChanged = false;
 			
 			if (m_invalidateStylesAfterValidation)
 			{
