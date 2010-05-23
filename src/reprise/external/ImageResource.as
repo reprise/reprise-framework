@@ -13,8 +13,12 @@ package reprise.external
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
+	import flash.events.ProgressEvent;
+	import flash.events.TimerEvent;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
+	import flash.system.Security;
+	import flash.utils.Timer;
 	import flash.utils.getDefinitionByName;
 
 	public class ImageResource extends AbstractResource
@@ -22,9 +26,12 @@ package reprise.external
 		/***************************************************************************
 		*							protected properties						   *
 		***************************************************************************/
+		private static const MAX_POLICYFILE_LOAD_TIME : int = 5000;
+
 		protected var m_loader : Loader;
 		protected var m_resource : DisplayObject;
 		protected var m_attachMode : Boolean;
+		private var m_policyFileLoadTimer:Timer;
 
 		
 		/***************************************************************************
@@ -155,6 +162,19 @@ package reprise.external
 		
 		protected function loader_init(event : Event) : void
 		{
+			//check to see if we can't access even though we requested a policyFile
+			if (m_checkPolicyFile && !m_loader.contentLoaderInfo.childAllowsParent)
+			{
+				//yep, can't access. We probably have been redirected by a CDN and need
+				//to load a policyFile from the new server
+				var url : String = m_loader.contentLoaderInfo.url;
+				var server : String = url.substr(0, url.lastIndexOf('/') + 1);
+				Security.loadPolicyFile(server + 'crossdomain.xml');
+				m_policyFileLoadTimer = new Timer(50);
+				m_policyFileLoadTimer.addEventListener(TimerEvent.TIMER, policyFileLoading_timer);
+				m_policyFileLoadTimer.start();
+				return;
+			}
 			m_resource = m_loader.content;
 			onData(true);
 		}
@@ -169,6 +189,28 @@ package reprise.external
 //			}
 			
 			onData(false);
+		}
+
+		private function policyFileLoading_timer(event:TimerEvent):void
+		{
+			if (m_loader.contentLoaderInfo.childAllowsParent)
+			{
+				//policyfile has been loaded: Great success!
+				m_resource = m_loader.content;
+				onData(true);
+			}
+			else if (m_policyFileLoadTimer.currentCount > MAX_POLICYFILE_LOAD_TIME / 50)
+			{
+				//max duration for timeout exceeded: Epic fail1
+				onData(false);
+			}
+			else
+			{
+				return;
+			}
+			//in case of success or fail: stop timer
+			m_policyFileLoadTimer.stop();
+			m_policyFileLoadTimer = null;
 		}
 	}
 }
