@@ -5,7 +5,7 @@
 //  Copyright (c) 2008 Fork Unstable Media GmbH. All rights reserved.
 //
 
-package commands
+package reprise.commands
 {
 	
 	import asunit.framework.AsynchronousTestCase;

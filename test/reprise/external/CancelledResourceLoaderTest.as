@@ -1,10 +1,10 @@
-package external
+package reprise.external
 {
 	
 	import asunit.framework.AsynchronousTestCase;
 	import reprise.events.CommandEvent;
 	import flash.events.Event;
-	import mock.MockResource;
+	import reprise.support.mock.MockResource;
 	import reprise.external.ResourceLoader;
 	
 	

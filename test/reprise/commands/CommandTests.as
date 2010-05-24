@@ -1,5 +1,6 @@
-package commands 
+package reprise.commands
 {
+	import commands.*;
 	import asunit.framework.TestSuite;
 
 	/**

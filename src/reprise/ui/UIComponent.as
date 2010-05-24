@@ -370,7 +370,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#top
 		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
@@ -399,7 +399,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#top 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#top
 		 * 		CSS documentation for top
 		 * @return The elements current top position
 		 */
@@ -429,7 +429,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#left
 		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
@@ -458,7 +458,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#left 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#left
 		 * 		CSS documentation for left
 		 * @return The elements current left position
 		 */
@@ -488,7 +488,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#right
 		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
@@ -516,7 +516,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#right 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#right
 		 * 		CSS documentation for right
 		 * @return The elements current right position
 		 */
@@ -547,7 +547,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#bottom
 		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */
@@ -575,7 +575,7 @@ package reprise.ui
 		 * <p>
 		 * Note that this value is only guaranteed to be available for valid elements.
 		 * 
-		 * @see http://www.reprise-framework.org/doc/css/positioning.html#bottom 
+		 * @see http://www.reprise-framework.org/doc/reprise.css/positioning.html#bottom
 		 * 		CSS documentation for bottom
 		 * @return The elements current bottom position
 		 */

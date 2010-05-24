@@ -1,4 +1,4 @@
-package mock
+package reprise.support.mock
 {
 	
 	import reprise.external.AbstractResource;

@@ -1,4 +1,4 @@
-package commands
+package reprise.commands
 {
 	
 	import asunit.framework.AsynchronousTestCase;

@@ -4,6 +4,7 @@ require 'doc/assets/ruby/help_document'
 # Load gems from a server other than rubyforge:
 set_sources 'http://gems.gemcutter.org'
 sprout 'as3'
+sprout 'sprout-flexunit4as-library'
 
 ############################################
 # Configure ProjectModel to be used by 
@@ -38,9 +39,10 @@ end
 # http://projectsprouts.org/rdoc/classes/Sprout/MXMLCTask.html
 # http://projectsprouts.org/rdoc/classes/Sprout/FlashPlayerTask.html
 
-library :asunit3
+library :flexunit4as
+library :flexunit4cilistener
 
-mxmlc "bin/#{project.project_name}Runner.swf" => [:compiler_model, :asunit3] do |t|
+mxmlc "bin/#{project.project_name}Runner.swf" => [:compiler_model, :flexunit4as] do |t|
   t.source_path << 'test'
   t.input = 'test/RepriseTestRunner.as'
 end
@@ -96,7 +98,7 @@ end
 # You may need to ensure your system default player is configured
 # correctly.
 
-mxmlc "bin/#{project.project_name}XMLRunner.swf" => [:compiler_model, :asunit3] do |t|
+mxmlc "bin/#{project.project_name}XMLRunner.swf" => [:compiler_model, :flexunit4as] do |t|
   t.source_path << 'test'
   t.input = 'test/RepriseTestRunner.as'
 end
