@@ -272,7 +272,7 @@ package reprise.ui
 		
 		reprise function markChildAsInvalid(child : UIObject) : void
 		{
-			if (m_invalidChildren.length == 0)
+			if (m_invalidChildren.length == 0 && stage != null)
 			{
 				addEventListener(Event.ENTER_FRAME, self_enterFrame, false, 0, true);
 			}
