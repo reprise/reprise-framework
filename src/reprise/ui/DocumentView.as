@@ -252,6 +252,11 @@ package reprise.ui
 			}
 		}
 
+		public function validateDocument() : void
+		{
+			validateElements();
+		}
+
 		override public function toString() : String
 		{
 			return name;
@@ -406,6 +411,7 @@ package reprise.ui
 		
 		protected function validateElements() : void
 		{
+			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			//TODO: verify this validation scheme
 			if (m_invalidChildren.length == 0)
 			{
@@ -455,7 +461,6 @@ package reprise.ui
 		
 		protected function self_enterFrame(event : Event) : void
 		{
-			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			validateElements();
 		}
 		
