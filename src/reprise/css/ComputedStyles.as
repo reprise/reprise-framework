@@ -24,7 +24,9 @@ package reprise.css
 		
 		public var width : int;
 		public var height : int;
-		
+		public var minHeight : int;
+		public var maxHeight : int = int.MAX_VALUE;
+
 		public var intrinsicWidth : int;
 		public var intrinsicHeight : int;
 		
