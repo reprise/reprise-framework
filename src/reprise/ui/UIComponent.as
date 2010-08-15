@@ -73,7 +73,9 @@ package reprise.ui
 		[
 			['top', true],
 			['bottom', true],
-			['height', true]
+			['height', true],
+			['minHeight', true],
+			['maxHeight', true]
 		];
 		protected static const OWN_WIDTH_RELATIVE_PROPERTIES:Array = 
 		[
@@ -2109,24 +2111,36 @@ package reprise.ui
 			}
 			
 			resolvePropsToValue(styles, HEIGHT_RELATIVE_PROPERTIES, parentH);
-			m_contentBoxHeight = m_currentStyles.height;
-			
-			if (borderBoxSizing && !m_autoFlags.height)
+			var usedHeight : int = m_currentStyles.height;
+            const baseHeight : int = usedHeight;
+
+            if (borderBoxSizing)
 			{
-				var baseHeight : int = styles.getStyle('height').resolveRelativeValueTo(parentH);
-				m_contentBoxHeight = baseHeight - 
-					(m_currentStyles.borderTopWidth + m_currentStyles.paddingTop + 
-					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom);
-				if (m_contentBoxHeight < 0)
-				{
-					m_contentBoxHeight = 0;
-				}
-				m_currentStyles.height = m_contentBoxHeight;
-				if (!m_changedStyleProperties.height && m_contentBoxHeight != baseHeight)
+                const subtractFromHeight : int =
+					m_currentStyles.borderTopWidth + m_currentStyles.paddingTop +
+					m_currentStyles.borderBottomWidth + m_currentStyles.paddingBottom;
+                if (!m_autoFlags.height && m_complexStyles.getStyle('height').isRelativeValue())
+                {
+                    usedHeight = Math.max(baseHeight - subtractFromHeight, 0);
+                }
+                if (m_complexStyles.hasStyle('maxHeight') && m_complexStyles.getStyle('maxHeight').isRelativeValue())
+                {
+                    m_currentStyles.maxHeight = m_currentStyles.maxHeight - subtractFromHeight;
+                }
+                if (m_complexStyles.hasStyle('minHeight') && m_complexStyles.getStyle('minHeight').isRelativeValue())
+                {
+                    m_currentStyles.minHeight = m_currentStyles.minHeight - subtractFromHeight;
+                }
+				m_currentStyles.height = usedHeight;
+				if (usedHeight != baseHeight)
 				{
 					m_changedStyleProperties.addChange('height');
 				}
 			}
+
+            usedHeight = Math.min(usedHeight, m_currentStyles.maxHeight);
+            m_contentBoxHeight = Math.max(usedHeight, m_currentStyles.minHeight);
+
 			//TODO: verify that we should really resolve the border-radii this way
 			resolvePropsToValue(styles, OWN_WIDTH_RELATIVE_PROPERTIES, 
 				m_contentBoxWidth + m_currentStyles.borderTopWidth);
@@ -2161,7 +2175,7 @@ package reprise.ui
 				else 
 				{
 					m_autoFlags[propName] = props[i][1];
-					m_currentStyles[propName] = 0;
+					m_currentStyles[propName] = ComputedStyles.BASELINE[propName];
 				}
 			}
 		}
