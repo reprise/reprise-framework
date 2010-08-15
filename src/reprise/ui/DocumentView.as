@@ -357,6 +357,7 @@ package reprise.ui
 			m_elementDefaultStyles.setStyle('height', '100%');
 			m_elementDefaultStyles.setStyle('padding', '0');
 			m_elementDefaultStyles.setStyle('margin', '0');
+			m_elementDefaultStyles.setStyle('box-sizing', 'border-box');
 			m_elementDefaultStyles.setStyle('position', 'absolute');
 			m_elementDefaultStyles.setStyle('fontFamily', '_sans');
 			m_elementDefaultStyles.setStyle('fontSize', '12px');
