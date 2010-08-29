@@ -99,6 +99,10 @@ package reprise.external
 		* <code>attach://</code> protocol are executed beforehand. Afterwards the super-
 		* implementation is called. If the <code>ResourceLoader</code> is already running, this
 		* method does nothing.
+		 *
+		 * Note that eagerly loading resources using the <code>attach://</code> protocol might lead to temporarily
+		 * exceeding the <code>maxParallelExecutionCount</code>. This is a deliberate consequence of loading attached
+		 * assets as early as possible.
 		*/
 		override public function execute(...args):void
 		{
@@ -113,9 +117,6 @@ package reprise.external
 				if (cmd is IResource && IResource(cmd).url().indexOf("attach://") == 0)
 				{
 					cmd.execute();
-					m_numResourcesLoaded++;
-					m_numBytesLoaded += IResource(cmd).bytesTotal();
-					m_pendingCommands.splice(i, 1);
 				}
 			}
 			super.execute();
