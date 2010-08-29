@@ -227,7 +227,7 @@ package reprise.ui.renderers
 				m_backgroundImageLoader.url() == m_styles.backgroundImage && 
 				m_backgroundImageLoader is ImageResource)
 			{
-				if (!m_backgroundImageLoader.isExecuting())
+				if (!m_backgroundImageLoader.didFinishLoading() && m_backgroundImageLoader.didSucceed())
 				{
 					// we force redrawing here, due to the fact that our size or 
 					// the image position could have changed

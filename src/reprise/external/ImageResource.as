@@ -13,13 +13,14 @@ package reprise.external
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
-	import flash.events.ProgressEvent;
 	import flash.events.TimerEvent;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.system.Security;
+	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 
 	public class ImageResource extends AbstractResource
 	{
@@ -99,39 +100,88 @@ package reprise.external
 		***************************************************************************/	
 		protected override function doLoad() : void
 		{
+			var useByteloader : Boolean;
+			var assetBytes : ByteArray;
 			// asset from library
 			if (m_url.indexOf('attach://') == 0)
 			{
-				var symbolId:String = m_url.split('//')[1];
+				//remove protocol
+				var symbolId:String = m_url.substr(9);
 				m_attachMode = true;
+
+				//get FQCN name of assets class that contains the requested symbol
+				var pieces:Array = symbolId.split('/');
+				var className : String = pieces.shift();
 	            try
 	            {
-					var pieces:Array = symbolId.split('.');
-					symbolId = pieces[0];
-	                var symbolClass : Class = getDefinitionByName(symbolId) as Class;
-					for (var i:int = 1; i < pieces.length; i++)
-					{
-						symbolClass = symbolClass[pieces[i]];
-					}
-					m_resource = new symbolClass() as DisplayObject;
-					m_httpStatus = new HTTPStatus(200, m_url);
-					onData(true);
-	            } 
+	                var symbol : Object = getDefinitionByName(className);
+	            }
 				catch (e : Error)
 				{
-					log('w Unable to use attach:// procotol! Symbol ' + symbolId + ' not found!');
+					log('w Unable to use attach:// procotol. Symbol ' + symbolId + ' not found or not of type Class');
 					onData(false);
 	            }
+				
+				//iterate over remaining path parts, getting nested symbols from the assets class
+				for (var i:int = 0; i < pieces.length; i++)
+				{
+					symbol = symbol[pieces[i]];
+					if (!symbol)
+					{
+						log('w Unable to use attach:// procotol! Static property ' + pieces.join('/') +
+								' not found on Class ' + className);
+						onData(false);
+						return;
+					}
+				}
+				if (!(symbol is Class))
+				{
+					log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') +
+							' on Class ' + className + ' is not of type Class.');
+					onData(false);
+					return;
+				}
+
+				var resource : Object = new (symbol as Class)();
+
+				if (resource is ByteArray)
+				{
+					useByteloader = true;
+					assetBytes = ByteArray(resource);
+				}
+				else if (resource.hasOwnProperty('bytes'))
+				{
+					useByteloader = true;
+					assetBytes = resource['bytes'];
+				}
+				else if (resource is DisplayObject)
+				{
+					m_resource = DisplayObject(resource);
+					m_httpStatus = new HTTPStatus(200, m_url);
+					onData(true);
+					return;
+				}
+				else
+				{
+					var fqcn : String = getQualifiedClassName(symbol);
+					log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') + ' on Class ' +
+							className + ' has type ' + fqcn + ', which is not supported by ImageResource');
+					onData(false);
+					return;
+				}
+			}
+
+			var context : LoaderContext = new LoaderContext(m_checkPolicyFile, ApplicationDomain.currentDomain);
+			m_loader = new Loader();
+			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
+			if (useByteloader)
+			{
+				m_loader.loadBytes(assetBytes, context);
 				return;
 			}
-			
-			m_loader = new Loader();
 			m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.contentLoaderInfo.addEventListener(
-				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
+			m_loader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			var context : LoaderContext = new LoaderContext(m_checkPolicyFile, ApplicationDomain.currentDomain);
 			m_loader.load(m_request, context);
 		}
 
