@@ -51,7 +51,7 @@ package reprise.external
 		}
 		
 		/**
-		* Adds a resource to the queue. If the resource uses the <code>attach://</code> protcol
+		* Adds a resource to the queue. If the resource uses the <code>attach://</code> protocol
 		* it is executed immediately if the <code>ResourceLoader</code> is already running.
 		* 
 		* @param cmd The resource to add to the queue
@@ -61,7 +61,15 @@ package reprise.external
 			if (m_isExecuting && cmd.url().indexOf("attach://") == 0)
 			{
 				cmd.execute();
+				m_numCommandsExecuted++;
+				//Some attached resources finish loading immediately, while others take a frame
+				if (!IResource(cmd).didFinishLoading())
+				{
+					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
+					return;
+				}
 				m_numResourcesLoaded++;
+				m_currentCommands.push(cmd);
 				m_numBytesLoaded += cmd.bytesTotal();
 				return;
 			}
@@ -117,6 +125,17 @@ package reprise.external
 				if (cmd is IResource && IResource(cmd).url().indexOf("attach://") == 0)
 				{
 					cmd.execute();
+					m_numCommandsExecuted++;
+					m_numResourcesToLoad--;
+					m_pendingCommands.splice(i, 1);
+					//Some attached resources finish loading immediately, while others take a frame
+					if (IResource(cmd).didFinishLoading())
+					{
+						m_numResourcesLoaded++;
+						continue;
+					}
+					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
+					m_currentCommands.push(cmd);
 				}
 			}
 			super.execute();
