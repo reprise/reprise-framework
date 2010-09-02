@@ -18,6 +18,10 @@ package reprise.external
 		
 		public override function content() : *
 		{
+			if (!m_data)
+			{
+				return {};
+			}
 			return JSON.parse(m_data);
 		}
 	}
