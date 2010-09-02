@@ -11,7 +11,8 @@ package reprise.external
 	import flash.events.HTTPStatusEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;	
+	import flash.net.URLRequestMethod;
+	import flash.utils.ByteArray;
 
 	public class FileResource extends AbstractResource
 	{
@@ -46,14 +47,30 @@ package reprise.external
 		{
 			return m_loader.data;
 		}
-		
+
 		public override function bytesLoaded() : int
 		{
+			if (m_attachMode)
+			{
+				return 1;
+			}
+			if (!m_loader)
+			{
+				return 0;
+			}
 			return m_loader.bytesLoaded;
 		}
-		
+
 		public override function bytesTotal() : int
 		{
+			if (m_attachMode)
+			{
+				return 1;
+			}
+			if (!m_loader)
+			{
+				return 0;
+			}
 			return m_loader.bytesTotal;
 		}
 		
@@ -64,6 +81,26 @@ package reprise.external
 		***************************************************************************/
 		protected override function doLoad() : void
 		{
+			// asset from library
+			if (m_url.indexOf('attach://') == 0)
+			{
+				var symbol : Class = resolveAttachSymbol();
+				if (!symbol)
+				{
+					onData(false);
+					return;
+				}
+				var binaryObject : Object = new symbol();
+				if (!(binaryObject is ByteArray))
+				{
+					logUnsupportedTypeMessage(symbol);
+					onData(false);
+					return;
+				}
+				m_data = ByteArray(binaryObject).toString();
+				onData(true);
+				return;
+			}
 			m_loader = new URLLoader();
 			m_loader.addEventListener(
 				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
@@ -71,6 +108,7 @@ package reprise.external
 			m_loader.load(createRequest());
 			//TODO: add error handling
 		}
+
 		protected function createRequest() : URLRequest
 		{
 			var request : URLRequest = new URLRequest(urlByAppendingTimestamp());
