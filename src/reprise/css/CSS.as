@@ -295,7 +295,14 @@ package reprise.css
 		protected function parseCSSVariables() : void
 		{
 			for (var i : int = 0; i < m_cssSegments.length; i++)
-			{	
+			{
+				if (m_cssSegments[i] is CSSImport)
+				{
+					log('w CSS import not loaded: ' + CSSImport(m_cssSegments[i]).url());
+					m_cssSegments.splice(i, 1);
+					i--;
+					continue;
+				}
 				var seg : CSSSegment = CSSSegment(m_cssSegments[i]);
 				var parts : Array = seg.content().split('@define ');
 		
@@ -465,8 +472,7 @@ package reprise.css
 		}
 		protected function imagePreloader_complete(event : CommandEvent) : void
 		{
-			log("i preloading complete");
-			dispatchEvent(new CommandEvent(Event.COMPLETE, event.success));
+			notifyComplete(true);
 		}
 		
 		protected function parseCSSSegment(segment : CSSSegment) : Boolean
