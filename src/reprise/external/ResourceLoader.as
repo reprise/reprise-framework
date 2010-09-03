@@ -62,15 +62,21 @@ package reprise.external
 			{
 				cmd.execute();
 				m_numCommandsExecuted++;
+				m_numResourcesLoaded++;
 				//Some attached resources finish loading immediately, while others take a frame
 				if (!IResource(cmd).didFinishLoading())
 				{
+					m_isExecutingAsynchronously = true;
+					cmd.id = m_nextResourceId++;
+					cmd.setQueueParent(this);
+					m_currentCommands.push(cmd);
 					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
 					return;
 				}
-				m_numResourcesLoaded++;
-				m_currentCommands.push(cmd);
-				m_numBytesLoaded += cmd.bytesTotal();
+				else
+				{
+					m_numBytesLoaded += cmd.bytesTotal();
+				}
 				return;
 			}
 			addCommand(cmd);
