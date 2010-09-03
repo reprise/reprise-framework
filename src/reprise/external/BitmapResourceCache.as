@@ -6,11 +6,12 @@
 */
 
 package reprise.external
-{ 
+{
+	import flash.events.Event;
+
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
-	
-	import flash.events.Event;
+
 	public class BitmapResourceCache
 	{
 		/***************************************************************************
@@ -44,15 +45,12 @@ package reprise.external
 				return;
 			}
 			
-			var cacheItem : BitmapResourceCacheItem = 
-				cacheItemWithURL(bitmapResource.url());
+			var cacheItem : BitmapResourceCacheItem = cacheItemWithURL(bitmapResource.url());
 			
-			if (cacheItem == null || 
-				(bitmapResource.forceReload() && cacheItem.didFinishLoading()))
+			if (cacheItem == null || (bitmapResource.forceReload() && cacheItem.didFinishLoading()))
 			{
 				var loader : ImageResource;
-				var temporaryCacheItem : BitmapResourceCacheItem = 
-					temporaryCacheItemWithURL(bitmapResource.url());
+				var temporaryCacheItem : BitmapResourceCacheItem = temporaryCacheItemWithURL(bitmapResource.url());
 				
 				if (temporaryCacheItem != null)
 				{
@@ -69,7 +67,6 @@ package reprise.external
 					}
 					return;
 				}			
-				
 				loader = imageResourceForBitmapResource(bitmapResource);
 				cacheItem = new BitmapResourceCacheItem(loader);
 				cacheItem.addTarget(bitmapResource);
@@ -103,8 +100,7 @@ package reprise.external
 			m_maxParallelExecutionCount = isNaN(count) ? 3 : count;
 			if (m_resourceLoader)
 			{
-				m_resourceLoader.setMaxParallelExecutionCount(
-					m_maxParallelExecutionCount);
+				m_resourceLoader.setMaxParallelExecutionCount(m_maxParallelExecutionCount);
 			}
 		}
 		
@@ -124,8 +120,7 @@ package reprise.external
 		protected function imageResourceForBitmapResource(
 			bmpResource:BitmapResource) : ImageResource
 		{
-			var imageResource : ImageResource = 
-				new ImageResource(bmpResource.url());
+			var imageResource : ImageResource = new ImageResource(bmpResource.url());
 			imageResource.priority = bmpResource.priority;
 			imageResource.setTimeout(bmpResource.timeout());
 			imageResource.setForceReload(bmpResource.forceReload());
@@ -138,27 +133,20 @@ package reprise.external
 		
 		protected function cacheItemWithURL(url:String) : BitmapResourceCacheItem
 		{
-			var i : int = m_cacheList.length;
-			var item : BitmapResourceCacheItem;
-			while (i--)
-			{	
-				item = BitmapResourceCacheItem(m_cacheList[i]);
-				if (item.url() == url)
-				{
-					return item;
-				}
-			}
-			return null;
+			return getItemFromListByURL(m_cacheList, url);
 		}
 		
 		protected function temporaryCacheItemWithURL(
 			url:String) : BitmapResourceCacheItem
 		{
-			var i : int = m_temporaryList.length;
-			var item : BitmapResourceCacheItem;
-			while (i--)
-			{	
-				item = BitmapResourceCacheItem(m_temporaryList[i]);
+			return getItemFromListByURL(m_temporaryList, url);
+		}
+
+		protected function getItemFromListByURL(list : IndexedArray, url : String) : BitmapResourceCacheItem
+		{
+			for (var i : int = list.length; i--;)
+			{
+				var item : BitmapResourceCacheItem = BitmapResourceCacheItem(list[i]);
 				if (item.url() == url)
 				{
 					return item;
@@ -169,15 +157,12 @@ package reprise.external
 		
 		protected function enqueueCacheItem(cacheItem:BitmapResourceCacheItem) : void
 		{
-			cacheItem.addEventListener(Event.COMPLETE, 
-			 cleanupCachingItem);
+			cacheItem.addEventListener(Event.COMPLETE, cleanupCachingItem);
 			if (m_resourceLoader == null)
 			{
 				m_resourceLoader = new ResourceLoader();
-				m_resourceLoader.setMaxParallelExecutionCount(
-					m_maxParallelExecutionCount);
-				m_resourceLoader.addEventListener(Event.COMPLETE, 
-				 cleanupLoader);
+				m_resourceLoader.setMaxParallelExecutionCount(m_maxParallelExecutionCount);
+				m_resourceLoader.addEventListener(Event.COMPLETE, cleanupLoader);
 			}
 			m_resourceLoader.addResource(cacheItem.loader());
 			if (!m_resourceLoader.isExecuting())
@@ -188,8 +173,7 @@ package reprise.external
 		
 		protected function cleanupCachingItem(e:CommandEvent) : void
 		{
-			var cacheItem : BitmapResourceCacheItem = 
-				BitmapResourceCacheItem(e.target);		
+			var cacheItem : BitmapResourceCacheItem = BitmapResourceCacheItem(e.target);
 			cacheItem.removeEventListener(Event.COMPLETE, cleanupCachingItem);
 			if (e.success && cacheItem.cacheBitmap())
 			{

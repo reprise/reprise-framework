@@ -11,8 +11,10 @@ package reprise.commands
 	
 	import reprise.data.collection.IndexedArray;
 	import reprise.events.CommandEvent;
+	import reprise.external.IResource;
+	import reprise.external.ImageResource;
 
-	
+
 	public class CompositeCommand extends AbstractAsynchronousCommand
 	{
 		
@@ -58,8 +60,7 @@ package reprise.commands
 		* The number of commands which were executed in total
 		*/
 		protected var m_numCommandsExecuted : int;
-		
-		
+
 		
 		//*****************************************************************************************
 		//*                                     Public Methods                                    *
@@ -255,8 +256,7 @@ package reprise.commands
 			
 			// we execute as much commands as defined by m_maxParallelExecutionCount
 			// if m_maxParallelExecutionCount equals 0, we execute all commands at once
-			if ((m_currentCommands.length >= m_maxParallelExecutionCount && 
-				m_maxParallelExecutionCount > 0) ||
+			if ((m_currentCommands.length >= m_maxParallelExecutionCount && m_maxParallelExecutionCount > 0) ||
 				!m_pendingCommands.length || m_isCancelled)
 			{
 				return;
@@ -268,9 +268,8 @@ package reprise.commands
 				m_prioritiesInvalid = false;
 			}
 			var currentCommand : ICommand = ICommand(m_pendingCommands.shift());
-			
-			if (currentCommand is IAsynchronousCommand && 
-				IAsynchronousCommand(currentCommand).isCancelled())
+
+			if (currentCommand is IAsynchronousCommand && IAsynchronousCommand(currentCommand).isCancelled())
 			{
 				executeNext();
 				return;
