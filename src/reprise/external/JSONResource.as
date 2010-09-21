@@ -9,7 +9,7 @@ package reprise.external
 { 
 	import com.cinqetdemi.JSON;
 	
-	public class JSONResource extends FileResource
+	public class JSONResource extends URLLoaderResource
 	{
 		public function JSONResource(url:String)
 		{

@@ -7,50 +7,28 @@
 
 package reprise.external
 {
-	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
-	 
-	public class XMLResource extends FileResource
-	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
-		protected var m_requestXML : XML;
 
-		
+	public class XMLResource extends URLLoaderResource
+	{
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
 		public function XMLResource(url:String) 
 		{
-			setRequestContentType('text/xml; charset=utf-8');
-			m_requestMethod = URLRequestMethod.POST;
 			super(url);
+			setRequestContentType('text/xml; charset=utf-8');
+			setRequestMethod(URLRequestMethod.POST);
 		}
 		
 		public function setRequestXML(xml : XML) : void
 		{
-			m_requestXML = xml;
+			setRequestData(xml.toXMLString());
 		}
 
 		public override function content() : *
 		{
-			var xml:XML = new XML(m_data.split("\r\n").join("\n"));
-			return xml;
-		}
-		
-		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
-		protected override function createRequest() : URLRequest
-		{
-			var request : URLRequest = super.createRequest();
-			if (m_requestXML)
-			{
-				request.data = m_requestXML.toXMLString();
-			}
-			return request;
+			return new XML(m_data.split("\r\n").join("\n"));
 		}
 	}
 }

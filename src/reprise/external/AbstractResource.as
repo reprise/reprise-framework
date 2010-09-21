@@ -8,7 +8,6 @@
 package reprise.external
 {
 	import flash.events.Event;
-	import flash.net.URLRequest;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getTimer;
@@ -25,7 +24,6 @@ package reprise.external
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_url : String;
-		protected var m_request : URLRequest;
 		protected var m_timeout : int = 20000;
 		protected var m_retryTimes : int = 3;
 		protected var m_failedTimes : int;
@@ -75,7 +73,6 @@ package reprise.external
 		public function setURL(theURL : String) : void
 		{		
 			m_url = theURL;
-			m_request = new URLRequest(theURL);	
 		}
 		
 		public function url() : String
@@ -129,15 +126,13 @@ package reprise.external
 		
 		public function bytesLoaded() : int
 		{
-			throw new Error(
-				'Cannot call bytesLoaded of AbstractResource directly!');
+			throw new Error('Cannot call bytesLoaded of AbstractResource directly!');
 			return null;
 		}
 		
 		public function bytesTotal() : int
 		{
-			throw new Error(
-				'Cannot call bytesTotal of AbstractResource directly!');
+			throw new Error('Cannot call bytesTotal of AbstractResource directly!');
 			return null;
 		}
 		

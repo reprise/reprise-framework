@@ -7,9 +7,9 @@
 
 package reprise.css
 {
-	import reprise.external.FileResource;
+	import reprise.external.URLLoaderResource;
 	
-	internal class CSSImport extends FileResource
+	internal class CSSImport extends URLLoaderResource
 	{
 		/***************************************************************************
 		*							public properties							   *

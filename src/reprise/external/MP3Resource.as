@@ -7,15 +7,12 @@
 
 package reprise.external
 {
-	
-	import flash.media.Sound;
 	import flash.events.Event;
-	import flash.net.URLRequest;
 	import flash.events.IOErrorEvent;
+	import flash.media.Sound;
 	import flash.utils.getDefinitionByName;
-	
-	
-	public class MP3Resource extends AbstractResource
+
+	public class MP3Resource extends URLRequestResource
 	{
 		
 		protected var m_sound:Sound;
@@ -71,7 +68,7 @@ package reprise.external
 			m_sound = new Sound();
 			m_sound.addEventListener(IOErrorEvent.IO_ERROR, sound_ioError);
 			m_sound.addEventListener(Event.COMPLETE, sound_complete);
-			m_sound.load(new URLRequest(url()));
+			m_sound.load(createRequest());
 		}
 		
 		protected function sound_complete(e:Event):void
