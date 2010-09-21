@@ -20,7 +20,7 @@ package reprise.external
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 
-	public class ImageResource extends AbstractResource
+	public class ImageResource extends URLRequestResource
 	{
 		/***************************************************************************
 		*							protected properties						   *
@@ -147,7 +147,7 @@ package reprise.external
 			m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
 			m_loader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			m_loader.load(m_request, context);
+			m_loader.load(createRequest(), context);
 		}
 
 		protected override function doCancel() : void

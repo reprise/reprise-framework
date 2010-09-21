@@ -15,6 +15,11 @@ package reprise.external
 		{
 			super(url);
 		}
+
+		public function setRequestJSON(json : Object) : void
+		{
+			setRequestData(JSON.stringify(json));
+		}
 		
 		public override function content() : *
 		{
