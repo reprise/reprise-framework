@@ -17,12 +17,12 @@ package reprise.data.collection
 		***************************************************************************/
 		public function IndexedArray()
 		{
-			AS3::splice.apply(this, ([0, 0]).concat(arguments));
+			splice.apply(this, ([0, 0]).concat(arguments));
 		}
 			
 		public function init() : void
 		{
-			AS3::splice(0, this.length);
+			splice(0, this.length);
 		}
 		
 		public function addObjectsFromArray(arr:Array):void
@@ -50,7 +50,7 @@ package reprise.data.collection
 			{
 				return false;
 			}
-			removeObjectAtIndex(i);
+			splice(i, 1);
 			return true;
 		}
 		
@@ -60,13 +60,13 @@ package reprise.data.collection
 			{
 				return false;
 			}
-			AS3::splice(index, 1);
+			splice(index, 1);
 			return true;			
 		}
 		
 		public function insertObjectAtIndex(o:Object, index:int) : void
 		{
-			AS3::splice(index, 0, o);
+			splice(index, 0, o);
 		}
 		
 		public function replaceObjectWithObject(objectToReplace:Object, objectToUse:Object) : Boolean

@@ -128,34 +128,10 @@ package reprise.utils
 		
 		public static function lastPathComponent(path:String) : String
 		{
-			var sepIndex:int = path.lastIndexOf('/');
-			var component : String;
-			
-			if (sepIndex == -1)
-			{
-				component = '';
-			}
-			else
-			{
-				if (sepIndex == path.length - 1)
-				{
-					if (sepIndex == 0)
-					{
-						component = '';
-					}
-					else
-					{
-						component = lastPathComponent(path.substring(0, sepIndex));
-					}
-				}
-				else
-				{
-					component = path.substring(sepIndex + 1);
-				}
-			}
-			return component;
+			var endIndex : int = path.charAt(path.length-1) == '/'?path.length - 2 : path.length - 1;
+			return endIndex == -1 ? '' : path.substring(path.lastIndexOf('/', endIndex) + 1, endIndex + 1);
 		}
-		
+
 		public static function stringByDeletingLastPathComponent(path:String) : String
 		{		
 			var index:int = path.lastIndexOf(lastPathComponent(path));

@@ -15,7 +15,7 @@ package reprise.ui.renderers
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import reprise.commands.CompositeCommand;
 	import reprise.css.CSSProperty;
 	import reprise.css.propertyparsers.Background;
@@ -28,6 +28,7 @@ package reprise.ui.renderers
 	import reprise.external.ImageResource;
 	import reprise.utils.GfxUtil;
 	import reprise.utils.Gradient;
+
 	public class DefaultBackgroundRenderer extends AbstractCSSRenderer
 	{
 		/***************************************************************************
@@ -227,7 +228,7 @@ package reprise.ui.renderers
 				m_backgroundImageLoader.url() == m_styles.backgroundImage && 
 				m_backgroundImageLoader is ImageResource)
 			{
-				if (!m_backgroundImageLoader.didFinishLoading() && m_backgroundImageLoader.didSucceed())
+				if (m_backgroundImageLoader.didFinishLoading() && m_backgroundImageLoader.didSucceed())
 				{
 					// we force redrawing here, due to the fact that our size or 
 					// the image position could have changed
@@ -518,7 +519,7 @@ package reprise.ui.renderers
 			}
 			var imgContainer : Sprite = m_activeBackgroundAnimationContainer;
 			imgContainer.addChild(m_backgroundImageLoader.content());
-			
+
 			if (m_backgroundImageLoader.content() is MovieClip && 
 				m_styles.backgroundAnimationControl)
 			{

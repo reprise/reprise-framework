@@ -7,14 +7,15 @@
 
 package reprise.external
 {
+	import flash.events.Event;
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
+	import flash.utils.getTimer;
+
 	import reprise.commands.AbstractAsynchronousCommand;
 	import reprise.commands.TimeCommandExecutor;
-	import reprise.utils.Delegate;
 	import reprise.events.ResourceEvent;
-	
-	import flash.events.Event;
-	import flash.net.URLRequest;
-	import flash.utils.getTimer; 
+	import reprise.utils.Delegate;
 
 	public class AbstractResource extends AbstractAsynchronousCommand
 		implements IResource
@@ -23,7 +24,6 @@ package reprise.external
 		*							protected properties							   *
 		***************************************************************************/
 		protected var m_url : String;
-		protected var m_request : URLRequest;
 		protected var m_timeout : int = 20000;
 		protected var m_retryTimes : int = 3;
 		protected var m_failedTimes : int;
@@ -34,10 +34,12 @@ package reprise.external
 		protected var m_lastCheckTime : int;
 		protected var m_httpStatus : HTTPStatus;
 		protected var m_didFinishLoading : Boolean = false;		
-		private var m_failureReason : int;
 		protected var m_checkPolicyFile : Boolean;
+		protected var m_attachMode : Boolean;
 
-		
+		private var m_failureReason : int;
+
+
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
@@ -71,7 +73,6 @@ package reprise.external
 		public function setURL(theURL : String) : void
 		{		
 			m_url = theURL;
-			m_request = new URLRequest(theURL);	
 		}
 		
 		public function url() : String
@@ -125,15 +126,13 @@ package reprise.external
 		
 		public function bytesLoaded() : int
 		{
-			throw new Error(
-				'Cannot call bytesLoaded of AbstractResource directly!');
+			throw new Error('Cannot call bytesLoaded of AbstractResource directly!');
 			return null;
 		}
 		
 		public function bytesTotal() : int
 		{
-			throw new Error(
-				'Cannot call bytesTotal of AbstractResource directly!');
+			throw new Error('Cannot call bytesTotal of AbstractResource directly!');
 			return null;
 		}
 		
@@ -316,6 +315,65 @@ package reprise.external
 		protected function loader_httpStatus(statusCode : int) : void
 		{
 			m_httpStatus = new HTTPStatus(statusCode, m_url);
+		}
+
+		protected function resolveAttachSymbol() : Class
+		{
+			if (!(m_url && m_url.indexOf('attach://') == 0))
+			{
+				m_attachMode = false;
+				return null;
+			}
+			m_attachMode = true;
+			//remove protocol
+			var symbolId:String = m_url.substr(9);
+
+			//get FQCN name of assets class that contains the requested symbol
+			var pieces:Array = symbolId.split('/');
+			var className : String = pieces.shift();
+			try
+			{
+				var symbol : Object = getDefinitionByName(className);
+			}
+			catch (e : Error)
+			{
+				log('w Unable to use attach:// procotol. Symbol ' + symbolId + ' not found.');
+				return null;
+			}
+
+			//iterate over remaining path parts, getting nested symbols from the assets class
+			for (var i:int = 0; i < pieces.length; i++)
+			{
+				symbol = symbol[pieces[i]];
+				if (!symbol)
+				{
+					log('w Unable to use attach:// procotol! Static property ' + pieces.join('/') +
+							' not found on Class ' + className);
+					return null;
+				}
+			}
+			if (!(symbol is Class))
+			{
+				log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') +
+						' on Class ' + className + ' is not of type Class.');
+				return null;
+			}
+			return symbol as Class;
+		}
+
+		/**
+		 * Logs a warning message informing about an incompatible Class type in an asset loaded via "attach://"
+		 * @param symbol The symbol with the unsupported type
+		 */
+		protected function logUnsupportedTypeMessage(symbol : Class) : void
+		{
+			var symbolId : String = m_url.substr(9);
+			var className : String = symbolId.substr(0, symbolId.indexOf('/'));
+			var propertyName : String = symbolId.substr(symbolId.indexOf('/') + 1);
+			var fqcn : String = getQualifiedClassName(symbol);
+			var resourceName : String = getQualifiedClassName(this['constructor']);
+			log('w Unable to use attach:// procotol. Static property ' + propertyName + ' on Class ' +
+					className + ' has type ' + fqcn + ', which is not supported by ' + resourceName);
 		}
 	}
 }

@@ -1,101 +1,20 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2010 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
-package reprise.external 
+package reprise.external
 {
-	import flash.events.Event;
-	import flash.events.HTTPStatusEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;	
-
-	public class FileResource extends AbstractResource
+	public class FileResource extends URLLoaderResource
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
-		protected var m_loader : URLLoader;
-		protected var m_requestContentType : String;
-		protected var m_requestMethod : String;
-		protected var m_data : String;
-		
-		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
-		public function FileResource(url:String = null)
+		/*******************************************************************************************
+		 *								public methods											   *
+		 *******************************************************************************************/
+		public function FileResource()
 		{
-			super(url);
-		}
-		
-		public function setRequestContentType(contentType : String) : void
-		{
-			m_requestContentType = contentType;
-		}
-		
-		public function data() : String
-		{
-			return m_data;
-		}
-		
-		public override function content() : *
-		{
-			return m_loader.data;
-		}
-		
-		public override function bytesLoaded() : int
-		{
-			return m_loader.bytesLoaded;
-		}
-		
-		public override function bytesTotal() : int
-		{
-			return m_loader.bytesTotal;
-		}
-		
-		
-		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
-		protected override function doLoad() : void
-		{
-			m_loader = new URLLoader();
-			m_loader.addEventListener(
-				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.load(createRequest());
-			//TODO: add error handling
-		}
-		protected function createRequest() : URLRequest
-		{
-			var request : URLRequest = new URLRequest(urlByAppendingTimestamp());
-			if (m_requestContentType)
-			{
-				request.contentType = m_requestContentType;
-			}
-			request.method = m_requestMethod || URLRequestMethod.GET;
-			return request;
-		}
-		
-		protected override function doCancel() : void
-		{
-			m_loader.removeEventListener(
-				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.removeEventListener(Event.COMPLETE, loader_complete);
-			m_loader.load(null);
-			m_loader = null;
-		}	
-		
-		// LoadVars event	
-		protected function loader_complete(event : Event) : void
-		{
-			m_data = m_loader.data;
-			onData(true);
+			log('w FileResource is deprecated. Use URLLoaderResource instead.');
 		}
 	}
 }

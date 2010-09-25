@@ -19,10 +19,8 @@ package reprise.external
 	import flash.system.Security;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
 
-	public class ImageResource extends AbstractResource
+	public class ImageResource extends URLRequestResource
 	{
 		/***************************************************************************
 		*							protected properties						   *
@@ -31,7 +29,6 @@ package reprise.external
 
 		protected var m_loader : Loader;
 		protected var m_resource : DisplayObject;
-		protected var m_attachMode : Boolean;
 		private var m_policyFileLoadTimer:Timer;
 
 		
@@ -105,39 +102,9 @@ package reprise.external
 			// asset from library
 			if (m_url.indexOf('attach://') == 0)
 			{
-				//remove protocol
-				var symbolId:String = m_url.substr(9);
-				m_attachMode = true;
-
-				//get FQCN name of assets class that contains the requested symbol
-				var pieces:Array = symbolId.split('/');
-				var className : String = pieces.shift();
-	            try
-	            {
-	                var symbol : Object = getDefinitionByName(className);
-	            }
-				catch (e : Error)
+				var symbol : Class = resolveAttachSymbol();
+				if (!symbol)
 				{
-					log('w Unable to use attach:// procotol. Symbol ' + symbolId + ' not found or not of type Class');
-					onData(false);
-	            }
-				
-				//iterate over remaining path parts, getting nested symbols from the assets class
-				for (var i:int = 0; i < pieces.length; i++)
-				{
-					symbol = symbol[pieces[i]];
-					if (!symbol)
-					{
-						log('w Unable to use attach:// procotol! Static property ' + pieces.join('/') +
-								' not found on Class ' + className);
-						onData(false);
-						return;
-					}
-				}
-				if (!(symbol is Class))
-				{
-					log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') +
-							' on Class ' + className + ' is not of type Class.');
 					onData(false);
 					return;
 				}
@@ -149,10 +116,10 @@ package reprise.external
 					useByteloader = true;
 					assetBytes = ByteArray(resource);
 				}
-				else if (resource.hasOwnProperty('bytes'))
+				else if (resource.hasOwnProperty('movieClipData'))
 				{
 					useByteloader = true;
-					assetBytes = resource['bytes'];
+					assetBytes = ByteArray(resource['movieClipData']);
 				}
 				else if (resource is DisplayObject)
 				{
@@ -163,9 +130,7 @@ package reprise.external
 				}
 				else
 				{
-					var fqcn : String = getQualifiedClassName(symbol);
-					log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') + ' on Class ' +
-							className + ' has type ' + fqcn + ', which is not supported by ImageResource');
+					logUnsupportedTypeMessage(symbol);
 					onData(false);
 					return;
 				}
@@ -182,7 +147,7 @@ package reprise.external
 			m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
 			m_loader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
 			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			m_loader.load(m_request, context);
+			m_loader.load(createRequest(), context);
 		}
 
 		protected override function doCancel() : void

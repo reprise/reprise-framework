@@ -51,7 +51,7 @@ package reprise.external
 		}
 		
 		/**
-		* Adds a resource to the queue. If the resource uses the <code>attach://</code> protcol
+		* Adds a resource to the queue. If the resource uses the <code>attach://</code> protocol
 		* it is executed immediately if the <code>ResourceLoader</code> is already running.
 		* 
 		* @param cmd The resource to add to the queue
@@ -61,8 +61,22 @@ package reprise.external
 			if (m_isExecuting && cmd.url().indexOf("attach://") == 0)
 			{
 				cmd.execute();
+				m_numCommandsExecuted++;
 				m_numResourcesLoaded++;
-				m_numBytesLoaded += cmd.bytesTotal();
+				//Some attached resources finish loading immediately, while others take a frame
+				if (!IResource(cmd).didFinishLoading())
+				{
+					m_isExecutingAsynchronously = true;
+					cmd.id = m_nextResourceId++;
+					cmd.setQueueParent(this);
+					m_currentCommands.push(cmd);
+					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
+					return;
+				}
+				else
+				{
+					m_numBytesLoaded += cmd.bytesTotal();
+				}
 				return;
 			}
 			addCommand(cmd);
@@ -117,6 +131,17 @@ package reprise.external
 				if (cmd is IResource && IResource(cmd).url().indexOf("attach://") == 0)
 				{
 					cmd.execute();
+					m_numCommandsExecuted++;
+					m_numResourcesToLoad--;
+					m_pendingCommands.splice(i, 1);
+					//Some attached resources finish loading immediately, while others take a frame
+					if (IResource(cmd).didFinishLoading())
+					{
+						m_numResourcesLoaded++;
+						continue;
+					}
+					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
+					m_currentCommands.push(cmd);
 				}
 			}
 			super.execute();
