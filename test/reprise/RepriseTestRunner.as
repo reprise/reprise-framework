@@ -6,8 +6,6 @@ reprise{
 	import org.flexunit.listeners.CIListener;
 	import org.flexunit.runner.FlexUnitCore;
 
-	import reprise.RepriseTestSuite;
-
 	public class RepriseTestRunner extends Sprite
 	{
 
