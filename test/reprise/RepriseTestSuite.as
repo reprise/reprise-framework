@@ -8,15 +8,15 @@
 package reprise
 {
 	import reprise.layout.CSS2BoxModelLayoutTestSuite;
+	import reprise.ui.UIComponentTestSuite;
 	import reprise.utils.UtilsTestSuite;
 
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class RepriseTestSuite
 	{
-//		public var cssTests : CSSTestSuite;
 		public var layoutTests : CSS2BoxModelLayoutTestSuite;
-//		public var domTests : HTMLDOMTestSuite;
 		public var utilsTests : UtilsTestSuite;
+		public var uiComponentTests : UIComponentTestSuite;
 	}
 }
