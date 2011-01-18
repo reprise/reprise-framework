@@ -1,423 +1,369 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2006-2010 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
-package reprise.commands 
+package reprise.commands
 {
 	import flash.events.Event;
-	
-	import reprise.data.collection.IndexedArray;
+
 	import reprise.events.CommandEvent;
-	import reprise.external.IResource;
-	import reprise.external.ImageResource;
 
-
-	public class CompositeCommand extends AbstractAsynchronousCommand
+	public class CompositeCommand extends AsyncCommandBase
 	{
-		
-		//*****************************************************************************************
-		//*                                  Protected Properties                                 *
-		//*****************************************************************************************
+		////////////////////////       Private / Protected Properties       ////////////////////////
 		/**
-		* The number of commands which should be executed concurrently.
-		*/
-		protected var m_maxParallelExecutionCount : int = 1;
+		 * The number of commands which should be executed concurrently
+		 */
+		protected var _maxParallelExecutionCount : uint = 1;
 		/**
-		* flag that signifies a change in command priorities. If set, the queue has to be re-sorted 
-		* before the next command is executed.
-		*/
-		protected var m_prioritiesInvalid : Boolean;
+		 * flag that signifies a change in command priorities. If set, the queue has to be re-sorted
+		 * before the next command is executed
+		 */
+		protected var _prioritiesInvalid : Boolean;
 		/**
-		* Holds the commands in the queue.
-		*/
-		protected var m_pendingCommands : IndexedArray;
+		 * Holds the commands in the queue
+		 */
+		protected var _pendingCommands : Vector.<ICommand>;
 		/**
-		* Holds the commands, which are currently being executed.
-		*/
-		protected var m_currentCommands : IndexedArray;
+		 * Holds the AsyncCommands which are currently being executed
+		 */
+		protected var _currentCommands : Vector.<IAsyncCommand>;
 		/**
-		* Is true, if there are or were any asynchronous commands in the queue. If so an event
-		* is dispatched after completion.
-		*/
-		protected var m_isExecutingAsynchronously : Boolean;
+		 * Indicates whether the CompositeCommand should abort if any of the queued commands
+		 * returns with an error
+		 */
+		protected var _abortOnFailure : Boolean = true;
 		/**
-		* Indicates whether the CompositeCommand should abort if any of the queued commands
-		* returns with an error.
-		*/
-		protected var m_abortOnFailure : Boolean = true;
+		 * An internal counter used to have a reliable sorting
+		 */
+		protected var _nextResourceId : uint;
 		/**
-		* An internal counter used to have a reliable sorting.
-		*/
-		protected var m_nextResourceId : int;
+		 * The number of commands which failed execution
+		 */
+		protected var _failedCommandsCount : uint;
 		/**
-		* The number of commands which failed execution
-		*/
-		protected var m_numCommandsFailed : int;
-		/**
-		* The number of commands which were executed in total
-		*/
-		protected var m_numCommandsExecuted : int;
+		 * The number of commands which were executed in total
+		 */
+		protected var _completedCommandsCount : int;
 
-		
-		//*****************************************************************************************
-		//*                                     Public Methods                                    *
-		//*****************************************************************************************
-		public function CompositeCommand() 
+
+		////////////////////////               Public Methods               ////////////////////////
+		public function CompositeCommand()
 		{
 			reset();
 		}
-		
+
 		public function invalidatePriorities() : void
 		{
-			m_prioritiesInvalid = true;
+			_prioritiesInvalid = true;
 		}
 
-		
+
 		/**
-		* Executes the command, which in return runs all queued commands it contains.
-		*/
-		public override function execute(...args):void
+		 * Executes the command, which in return runs all queued commands it contains
+		 */
+		public override function execute() : void
 		{
-			if (m_isExecuting)
+			if (_isExecuting)
 			{
 				return;
 			}
 			super.execute();
 			executeNext();
 		}
-		
+
 		/**
-		* Adds a command to the queue. You can add commands if CompositeCommand is already running
-		* without problems. If the CompositeCommand has been run before and finished execution
-		* it will be automatically reset, thus <code>didSucceed()</code> will return true.
-		* 
-		* @param cmd The command to be added
-		*/
-		public function addCommand(cmd:ICommand):void
+		 * Adds a command to the queue. You can add commands if CompositeCommand is already running
+		 * without problems. If the CompositeCommand has been run before and finished execution
+		 * it will be automatically reset, thus <code>didSucceed()</code> will return true.
+		 *
+		 * @param command The command to be added
+		 */
+		public function addCommand(command : ICommand) : void
 		{
 			// we automatically reset everything for a new run
-			if (!m_isExecuting && !m_pendingCommands.length)
+			if (!_isExecuting && !_pendingCommands.length)
 			{
 				reset();
 			}
 
-			m_isExecutingAsynchronously ||= commandExecutesAsynchronously(cmd);
-			cmd.id = m_nextResourceId++;
-			cmd.setQueueParent(this);
-			m_pendingCommands.push(cmd);
-			
-			if (m_isExecuting)
+			command.id = _nextResourceId++;
+			command.queue = this;
+			_pendingCommands.push(command);
+
+			// If the queue was previously empty, we might need to execute the new command
+			// immediately
+			if (_isExecuting && _pendingCommands.length == 1)
 			{
 				executeNext();
 			}
 		}
-		
+
 		/**
-		* Removes a command from the queue. If the command is not contained in the queue, this 
-		* method does nothing.
-		* 
-		* @param cmd The command to be removed
-		*/
-		public function removeCommand(cmd:ICommand):void
+		 * Removes a command from the queue. If the command is not contained in the queue, this
+		 * method does nothing.
+		 *
+		 * @param command The command to be removed
+		 */
+		public function removeCommand(command : ICommand) : void
 		{
-			if (m_currentCommands.objectExists(cmd))
+			var commandIndex : Number = _currentCommands.indexOf(command);
+			if (commandIndex == -1)
 			{
 				return;
 			}
-			m_pendingCommands.remove(cmd);
+			_pendingCommands.splice(commandIndex, 1);
 		}
-		
+
 		/**
-		* Returns whether the <code>CompositeCommand</code> should abort the execution after 
-		* any of the contained commands was executed with an error.
-		*/
-		public function abortOnFailure():Boolean
+		 * Returns whether the <code>CompositeCommand</code> should abort the execution after
+		 * any of the contained commands was executed with an error.
+		 */
+		public function get abortOnFailure() : Boolean
 		{
-			return m_abortOnFailure;
+			return _abortOnFailure;
 		}
-		
+
 		/**
-		* Sets whether the <code>CompositeCommand</code> should abort the execution after 
-		* any of the contained commands was executed with an error.
-		* 
-		* @param val The flag whether the <code>CompositeCommand</code> should abort on a failure
-		* or not
-		*/
-		public function setAbortOnFailure(val:Boolean):void
+		 * Sets whether the <code>CompositeCommand</code> should abort the execution after
+		 * any of the contained commands was executed with an error.
+		 *
+		 * @param value The flag whether the <code>CompositeCommand</code> should abort on a failure
+		 * or not
+		 */
+		public function set abortOnFailure(value : Boolean) : void
 		{
-			m_abortOnFailure = val;
+			_abortOnFailure = value;
 		}
-		
+
 		/**
-		* Specifies how many commands should be executed concurrently. If <code>value</code> is 
-		* set to <code>0</code> then all commands will be executed in one run.
-		* 
-		* @param value The number of commands to be run concurrently. Set to <code>0</code> if you
-		* want all commands to be executed in one run.
-		*/
-		public function setMaxParallelExecutionCount(value : int) : void
+		 * Specifies how many commands should be executed concurrently. If <code>value</code> is
+		 * set to <code>0</code> then all commands will be executed in one run.
+		 *
+		 * @param value The number of commands to be run concurrently. Set to <code>0</code> if you
+		 * want all commands to be executed in one run.
+		 */
+		public function setMaxParallelExecutionCount(value : uint) : void
 		{
-			m_maxParallelExecutionCount = value;
-			if (m_isExecuting)
+			_maxParallelExecutionCount = value;
+			if (_isExecuting)
 			{
 				// make sure that the queue is filled up appropriately
 				executeNext();
 			}
 		}
-		
+
 		/**
-		* Returns the sum of commands which are currently being executed or waiting in the queue.
-		*/
-		public function length():uint
+		 * Returns the sum of commands which are currently being executed or waiting in the queue.
+		 */
+		public function length() : uint
 		{
-			if (!m_pendingCommands)
+			if (!_pendingCommands)
 			{
 				return 0;
 			}
-			return m_pendingCommands.length + m_currentCommands.length;
-		}
-		
-		/**
-		* Calls <code>cancel()</code> on all commands which are currently running and 
-		* calls the super-implementation of <code>cancel()</code> afterwards.
-		* 
-		* @see AbstractAsynchronousCommand#cancel
-		*/
-		public override function cancel() : void
-		{
-			failGracefully(true);
-		}
-		
-		/**
-		* Returns <code>true</code> if any of the contained commands is an instance of 
-		* AsynchronousCommand.
-		*/
-		public function executesAsynchronously() : Boolean
-		{
-			return m_isExecutingAsynchronously;
-		}
-		
-		/**
-		* Returns the number of commands executed in total. This number is increased not until 
-		* a command completely finished its execution.
-		*/
-		public function numExecutedCommands():int
-		{
-			return m_numCommandsExecuted;
-		}
-		
-		/**
-		* Returns the number of commands which failed execution.
-		*/
-		public function numFailedCommands():int
-		{
-			return m_numCommandsFailed;
+			return _pendingCommands.length + _currentCommands.length;
 		}
 
 		/**
-		* @inheritDoc
-		*/
-		override public function reset():void
+		 * Calls <code>cancel()</code> on all commands which are currently running and
+		 * calls the super-implementation of <code>cancel()</code> afterwards.
+		 *
+		 * @see AsyncCommandBase#cancel
+		 */
+		public override function cancel() : void
 		{
-			m_pendingCommands = new IndexedArray();
-			m_currentCommands = new IndexedArray();
-			m_isExecutingAsynchronously = false;
-			m_didSucceed = true;
-			m_nextResourceId = 0;
-			m_numCommandsExecuted = 0;
-			m_numCommandsFailed = 0;
+			cancelCurrentCommands();
+			super.cancel();
+		}
+
+		/**
+		 * Returns the number of commands executed in total. This number is increased not until
+		 * a command completely finished its execution.
+		 */
+		public function get completedCommandsCount() : int
+		{
+			return _completedCommandsCount;
+		}
+
+		/**
+		 * Returns the number of commands which failed execution
+		 */
+		public function get failedCommandsCount() : int
+		{
+			return _failedCommandsCount;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		override public function reset() : void
+		{
+			_success = true;
+			_nextResourceId = 0;
+			_pendingCommands.length = 0;
+			_currentCommands.length = 0;
+			_completedCommandsCount = 0;
+			_failedCommandsCount = 0;
 			super.reset();
 		}
-		
-		
-		
-		//*****************************************************************************************
-		//*                                   Protected Methods                                   *
-		//*****************************************************************************************
+
+
+		////////////////////////         Private / Protected Methods        ////////////////////////
 		/**
-		* This method is the working horse of the composite command. It sorts the command based 
-		* on their priority and executes them respecting the given settings.
-		*/
+		 * This method is the working horse of the composite command. It sorts the command based
+		 * on their priority and executes them respecting the given settings.
+		 */
 		protected function executeNext() : void
 		{
-			if (m_pendingCommands.length == 0 && m_currentCommands.length == 0)
+			if (_pendingCommands.length===0)
 			{
-				m_isExecuting = false;
-				// we only dispatch a event if we're executing asynchronously
-				if (m_isExecutingAsynchronously)
+				if (_currentCommands.length===0)
 				{
-					notifyComplete(m_didSucceed);
+					notifyComplete(_success);
 				}
 				return;
 			}
-			
-			// we execute as much commands as defined by m_maxParallelExecutionCount
-			// if m_maxParallelExecutionCount equals 0, we execute all commands at once
-			if ((m_currentCommands.length >= m_maxParallelExecutionCount && m_maxParallelExecutionCount > 0) ||
-				!m_pendingCommands.length || m_isCancelled)
-			{
-				return;
-			}
-			if (m_prioritiesInvalid)
-			{
-				m_pendingCommands.sortOn(['priority', 'id'], 
-					[Array.NUMERIC | Array.DESCENDING, Array.NUMERIC]);
-				m_prioritiesInvalid = false;
-			}
-			var currentCommand : ICommand = ICommand(m_pendingCommands.shift());
 
-			if (currentCommand is IAsynchronousCommand && IAsynchronousCommand(currentCommand).isCancelled())
+			// we execute as much commands as defined by _maxParallelExecutionCount
+			// if _maxParallelExecutionCount equals 0, we execute all commands at once
+			if (_currentCommands.length >= _maxParallelExecutionCount &&
+					_maxParallelExecutionCount > 0)
 			{
-				executeNext();
 				return;
 			}
-			
-			if (commandExecutesAsynchronously(currentCommand))
+
+			// executeNext should not be called after the CompositeCommand is canceled, but it
+			// still might if one of the contained commands' cancel-method is buggy, so we guard
+			// for that here
+			if (_isCancelled)
 			{
-				registerListenersForAsynchronousCommand(IAsynchronousCommand(currentCommand));
-				m_currentCommands.push(currentCommand);
+				return;
+			}
+
+			if (_prioritiesInvalid)
+			{
+				//TODO: implement priority-sorting
+				_prioritiesInvalid = false;
+			}
+
+			var currentCommand : ICommand = _pendingCommands.shift();
+
+			if (currentCommand is IAsyncCommand)
+			{
+				if (IAsyncCommand(currentCommand).isCancelled)
+				{
+					executeNext();
+					return;
+				}
+				addListenersForAsyncCommand(IAsyncCommand(currentCommand));
+				_currentCommands.push(currentCommand);
 				currentCommand.execute();
 			}
 			else
 			{
 				currentCommand.execute();
-				m_numCommandsExecuted++;
-				if (!currentCommand.didSucceed())
+				_completedCommandsCount++;
+				if (!currentCommand.success)
 				{
-					m_numCommandsFailed++;
-					m_didSucceed = false;
-					if (m_abortOnFailure)
+					_failedCommandsCount++;
+					_success = false;
+					if (_abortOnFailure)
 					{
-						failGracefully(false);
+						cancelCurrentCommands();
+						notifyComplete(false);
 						return;
 					}
 				}
 			}
 			executeNext();
 		}
-		
+
 		/**
-		* Registers listeners for the <code>COMPLETE</code> and <code>CANCEL</code> events of a 
-		* given command.
-		* 
-		* @param cmd The command to which the listeners should be attached to
-		*/
-		protected function registerListenersForAsynchronousCommand(
-			cmd:IAsynchronousCommand):void
+		 * Adds listeners for the <code>COMPLETE</code> and <code>CANCEL</code> events of a
+		 * given command
+		 *
+		 * @param command The command to which the listeners should be attached to
+		 */
+		protected function addListenersForAsyncCommand(command : IAsyncCommand) : void
 		{
-			cmd.addEventListener(Event.COMPLETE, command_complete);
-			cmd.addEventListener(Event.CANCEL, command_cancel);
+			command.addEventListener(Event.COMPLETE, command_complete);
+			command.addEventListener(Event.CANCEL, command_cancel);
 		}
-		
+
 		/**
-		* Unregisters listeners for the <code>COMPLETE</code> and <code>CANCEL</code> events of 
-		* a given command.
-		* 
-		* @param cmd The command from which the listeners should be removed
-		*/
-		protected function unregisterListenersForAsynchronousCommand(
-			cmd:IAsynchronousCommand):void
+		 * Removes listeners for the <code>COMPLETE</code> and <code>CANCEL</code> events of
+		 * a given command
+		 *
+		 * @param command The command from which the listeners should be removed
+		 */
+		protected function removeListenersForAsyncCommand(command : IAsyncCommand) : void
 		{
-			cmd.removeEventListener(Event.COMPLETE, command_complete);
-			cmd.removeEventListener(Event.CANCEL, command_cancel);
+			command.removeEventListener(Event.COMPLETE, command_complete);
+			command.removeEventListener(Event.CANCEL, command_cancel);
 		}
-		
+
 		/**
-		* Unregisters listeners from all commands which are currently being executed asynchronously
-		* and calls <code>cancel()</code> on them. Afterwards <code>didSucceed</code> is set to 
-		* false and either <code>notifyComplete</code> called with the negative result or the
-		* super-implementation of <code>cancel()</code>.
-		* 
-		* @param userInterrupt Specifies if either the command fails because <code>cancel()</code>
-		* was called (<code>true</code>) or any of the executed commands failed (<code>false</code>).
-		*/
-		protected function failGracefully(userInterrupt:Boolean):void
+		 * Removes listeners from all commands which are currently being executed asynchronously
+		 * and calls <code>cancel()</code> on them
+		 */
+		protected function cancelCurrentCommands() : void
 		{
-			var i : int = m_currentCommands.length;
-			while (i--)
+			for (var i : int = _currentCommands.length; i--;)
 			{
-				var cmd:ICommand = ICommand(m_currentCommands[i]);
-				if (commandExecutesAsynchronously(cmd))
-				{
-					unregisterListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
-					IAsynchronousCommand(cmd).cancel();
-				}
+				var command : IAsyncCommand = _currentCommands[i];
+				removeListenersForAsyncCommand(command);
+				command.cancel();
 			}
-			userInterrupt ? super.cancel() : notifyComplete(m_didSucceed);
 		}
-		
+
+
+		////////////////////////                Event Handlers              ////////////////////////
 		/**
-		* Checks if a given command should be executed asynchronously. Returns <code>true</code> 
-		* if the command is either an <code>AsynchronousCommand</code> and/or has a property or 
-		* a method <code>executesAsynchronously</code> which returns <code>true</code>.
-		* 
-		* @param cmd The command which should be examined
-		* @param ...rest varargs to enable the use of this function in one of the built-in 
-		* <code>Array</code> methods
-		*/
-		protected function commandExecutesAsynchronously(cmd:ICommand, ...rest) : Boolean
+		 * If the command dispatching the event executed with a failure and
+		 * <code>abortOnFailure()</code> is set to <code>true</code>, the
+		 * <code>CompositeCommand</code> stops
+		 *
+		 * @param event The received event
+		 */
+		protected function command_complete(event : CommandEvent) : void
 		{
-			var executesAsynchronously : Boolean = cmd is IAsynchronousCommand;
-			if ((cmd as Object).hasOwnProperty('executesAsynchronously'))
+			var completedCommand : IAsyncCommand = IAsyncCommand(event.target);
+			removeListenersForAsyncCommand(completedCommand);
+			_currentCommands.splice(_currentCommands.indexOf(completedCommand), 1);
+			_completedCommandsCount++;
+			if (!completedCommand.success)
 			{
-				executesAsynchronously = 
-					cmd['executesAsynchronously'] is Function 
-					? cmd['executesAsynchronously']()
-					: cmd['executesAsynchronously'];
-			}
-			return executesAsynchronously;
-		}
-		
-		
-		
-		//*****************************************************************************************
-		//*                                     Event Handling                                    *
-		//*****************************************************************************************
-		/**
-		* Called by a <code>COMPLETE</code> event of an executed asynchronous command. The command 
-		* will be removed from the queue. If the command executed with a failure and 
-		* <code>abortOnFailure()</code> is set to <code>true</code>, the <code>CompositeCommand</code>
-		* stops.
-		* 
-		* @param e The received event
-		*/
-		protected function command_complete(e:CommandEvent):void
-		{
-			var completedCommand:IAsynchronousCommand = 
-				IAsynchronousCommand(e.target);
-			unregisterListenersForAsynchronousCommand(completedCommand);
-			m_currentCommands.remove(e.target);
-			m_numCommandsExecuted++;
-			if (!completedCommand.didSucceed())
-			{
-				m_didSucceed = false;
-				m_numCommandsFailed++;
-				if (m_abortOnFailure)
+				_success = false;
+				_failedCommandsCount++;
+				if (_abortOnFailure)
 				{
-					failGracefully(false);
+					cancelCurrentCommands();
+					notifyComplete(false);
 					return;
 				}
 			}
 			executeNext();
 		}
-		
+
 		/**
-		* Called by a <code>CANCEL</code> event of an executed asynchronous command. The command is 
-		* handled the same way as if it was completed successfully and is essentially just skipped.
-		* 
-		* @param e The received event
-		*/
+		 * Called by a <code>CANCEL</code> event of an executed asynchronous command. The command is
+		 * handled the same way as if it was completed successfully and is essentially just skipped.
+		 *
+		 * @param event The received event
+		 */
 		protected function command_cancel(event : CommandEvent) : void
 		{
-			// cancel makes no difference to us to a unsuccessful command
-			var completeEvent:Event = new ((event as Object).constructor)(Event.COMPLETE, true);
-			IAsynchronousCommand(event.target).dispatchEvent(completeEvent);
 			// since execution is counted after a command completed its execution, cancelled
-			// commands don't fall into this category
-			m_numCommandsExecuted--;
+			// commands don't fall into this category. To reduce code duplication, we reuse
+			// the handling of completed commands, but reduce their count beforehand to keep it
+			// correct in the end.
+			_completedCommandsCount--;
+
+			command_complete(event);
 		}
 	}
 }

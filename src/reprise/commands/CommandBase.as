@@ -1,74 +1,75 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2006-2010 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package reprise.commands
 {
-
-	import reprise.commands.ICommand;
 	import flash.events.EventDispatcher;
-	
-	public class AbstractCommand extends EventDispatcher 
-		implements ICommand
+
+	public class CommandBase extends EventDispatcher implements ICommand
 	{
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
-		protected var m_didSucceed : Boolean;
-		protected var m_id:int = 0;
-		protected var m_priority:int = 0;
-		protected var m_queueParent : CompositeCommand;
+		////////////////////////       Private / Protected Properties       ////////////////////////
+		protected var _success : Boolean;
+		protected var _id : int = 0;
+		protected var _priority : int = 0;
 		
-		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
-		public function AbstractCommand() {}
-		
-		
-		public function execute(...rest) : void
+		private var _queue : CompositeCommand;
+
+
+		////////////////////////               Public Methods               ////////////////////////
+		public function CommandBase()
 		{
-			
 		}
-		
-		public function get priority():int
+
+
+		public function execute() : void
 		{
-			return m_priority;
 		}
-		
-		public function set priority(value:int):void
+
+		public function get priority() : int
 		{
-			if (value != m_priority)
+			return _priority;
+		}
+
+		public function set priority(value : int) : void
+		{
+			if (value == _priority)
 			{
-				m_priority = value;
-				if (m_queueParent)
-				{
-					m_queueParent.invalidatePriorities();
-				}
+				return;
+			}
+			_priority = value;
+			if (_queue)
+			{
+				_queue.invalidatePriorities();
 			}
 		}
-		
-		public function get id():int
+
+		public function get id() : int
 		{
-			return m_id;
+			return _id;
 		}
-		
-		public function set id(value:int):void
+
+		public function set id(value : int) : void
 		{
-			m_id = value;
+			_id = value;
 		}
-		
-		public function didSucceed() : Boolean
+
+		public function get success() : Boolean
 		{
-			return m_didSucceed;
+			return _success;
 		}
-		
-		public function setQueueParent(queue : CompositeCommand) : void
+
+		public function get queue() : CompositeCommand
 		{
-			m_queueParent = queue;
+			return _queue;
+		}
+
+		public function set queue(queue : CompositeCommand) : void
+		{
+			_queue = queue;
 		}
 	}
 }
