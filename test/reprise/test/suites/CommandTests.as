@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2010-2011 the original author or authors
+ * Copyright (c) 2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package reprise.test
+package reprise.test.suites
 {
-	import reprise.test.suites.CommandTests;
+	import reprise.test.areas.commands.CommandBaseTests;
 
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
-	public class RepriseTestSuite
+	public class CommandTests
 	{
-		public var commandTests : CommandTests;
+		public var commandBaseTests : CommandBaseTests;
 	}
 }

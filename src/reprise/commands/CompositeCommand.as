@@ -26,11 +26,11 @@ package reprise.commands
 		/**
 		 * Holds the commands in the queue
 		 */
-		protected var _pendingCommands : Vector.<ICommand>;
+		protected var _pendingCommands : Vector.<ICommand> = new <ICommand>[];
 		/**
 		 * Holds the AsyncCommands which are currently being executed
 		 */
-		protected var _currentCommands : Vector.<IAsyncCommand>;
+		protected var _currentCommands : Vector.<IAsyncCommand> = new <IAsyncCommand>[];
 		/**
 		 * Indicates whether the CompositeCommand should abort if any of the queued commands
 		 * returns with an error
