@@ -78,33 +78,7 @@ package reprise.controls.html
 		
 		public function setActiveFormIndex(index:int):void
 		{
-			index = Math.max(Math.min(index, m_forms.length - 1), 0);
-			
-			if (index == m_activeFormIndex)
-			{
-				return;
-			}
-			if (m_activeFormIndex != -1)
-			{
-				Form(m_forms[m_activeFormIndex]).deactivate();
-			}
-			var oldIndex:int = m_activeFormIndex;
-			var newIndex:int = index;
-			Form(m_forms[index]).activate();
-			var event:FormEvent;
-			if (m_activeFormIndex != -1)
-			{
-				event = new FormEvent(FormEvent.FORM_WILL_CHANGE);
-				event.oldIndex = oldIndex;
-				event.newIndex = newIndex;
-				dispatchEvent(event);
-			}
-			m_activeFormIndex = index;
-			event = new FormEvent(FormEvent.FORM_CHANGE);
-			event.oldIndex = oldIndex;
-			event.newIndex = newIndex;
-			invalidate();
-			dispatchEvent(event);
+			applyFormIndex(index, false);
 		}
 		
 		public function setValidationDisabled(bFlag:Boolean):void
@@ -138,12 +112,53 @@ package reprise.controls.html
 				{
 					if (m_forms.length)
 					{
-						setActiveFormIndex(0);
+						applyFormIndex(0, false);
 					}
 					return;
 				}
 			}
-			setActiveFormIndex(m_activeFormIndex);
+			applyFormIndex(m_activeFormIndex, false);
+		}
+
+		protected function applyFormIndex(index:int, dispatchEvents : Boolean) : void
+		{
+			index = Math.max(Math.min(index, m_forms.length - 1), 0);
+			if (index == m_activeFormIndex)
+			{
+				return;
+			}
+
+			var oldIndex:int = m_activeFormIndex;
+			var newIndex:int = index;
+			
+			var event:FormEvent;
+			if (dispatchEvents && m_activeFormIndex != -1)
+			{
+				event = new FormEvent(FormEvent.FORM_WILL_CHANGE, false, true);
+				event.oldIndex = oldIndex;
+				event.newIndex = newIndex;
+				dispatchEvent(event);
+				if (event.isDefaultPrevented())
+				{
+					return;
+				}
+			}
+
+			if (m_activeFormIndex != -1)
+			{
+				Form(m_forms[m_activeFormIndex]).deactivate();
+			}
+			Form(m_forms[index]).activate();
+			m_activeFormIndex = index;
+			invalidate();
+
+			event = new FormEvent(FormEvent.FORM_CHANGE);
+			event.oldIndex = oldIndex;
+			event.newIndex = newIndex;
+			if (dispatchEvents)
+			{
+				dispatchEvent(event);
+			}
 		}
 		
 		protected function addForm(form : Form) : void
@@ -156,7 +171,7 @@ package reprise.controls.html
 			{
 				if (m_activeFormIndex == -1 || m_activeFormIndex == m_forms.length - 1)
 				{
-					setActiveFormIndex(m_forms.length - 1);
+					applyFormIndex(m_forms.length - 1, false);
 				}
 			}
 		}
@@ -193,13 +208,13 @@ package reprise.controls.html
 			}
 			else
 			{
-				setActiveFormIndex(m_activeFormIndex + 1);
+				applyFormIndex(m_activeFormIndex + 1, true);
 			}
 		}
 		
 		protected function form_back(e:FormEvent):void
 		{
-			setActiveFormIndex(m_activeFormIndex - 1);
+			applyFormIndex(m_activeFormIndex - 1, true);
 		}
 	}
 }
