@@ -7,6 +7,7 @@
 
 package reprise.test.suites
 {
+	import reprise.test.areas.commands.AsyncCommandBaseTests;
 	import reprise.test.areas.commands.CommandBaseTests;
 
 	[Suite]
@@ -14,5 +15,6 @@ package reprise.test.suites
 	public class CommandTests
 	{
 		public var commandBaseTests : CommandBaseTests;
+		public var asyncCommandBaseTests : AsyncCommandBaseTests;
 	}
 }
