@@ -15,9 +15,12 @@ package reprise.test.areas.commands
 
 	import org.flexunit.async.Async;
 	import org.hamcrest.assertThat;
+	import org.hamcrest.object.hasPropertyWithValue;
+	import org.hamcrest.object.notNullValue;
 
 	import reprise.commands.AsyncCommandBase;
 	import reprise.commands.CompositeCommand;
+	import reprise.events.CommandEvent;
 
 	public class AsyncCommandBaseTests
 	{
@@ -41,6 +44,27 @@ package reprise.test.areas.commands
 			command.priority = 10;
 
 			assertThat(composite, received().method('invalidatePriorities'));
+		}
+
+		[Test]
+		public function executeDispatchesComplete() : void
+		{
+			var command : AsyncCommandBase = new AsyncCommandBase();
+			var receivedEvent : CommandEvent;
+			command.addEventListener(Event.COMPLETE, function(event : CommandEvent) : void
+			{
+				receivedEvent = event;
+			});
+			command.execute();
+			assertThat(command, notNullValue());
+		}
+
+		[Test]
+		public function cancelSetsIsCancelledFlag() : void
+		{
+			var command : AsyncCommandBase = new AsyncCommandBase();
+			command.cancel();
+			assertThat(command, hasPropertyWithValue('isCancelled', true));
 		}
 
 		

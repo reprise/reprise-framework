@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2010 the original author or authors
+ * Copyright (c) 2006-2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -15,11 +15,11 @@ package reprise.commands
 	{
 		////////////////////////       Private / Protected Properties       ////////////////////////
 		/**
-		 * <code>True</code> if the receiver is executing
+		 * <code>True</code> if the command is executing
 		 */
 		protected var _isExecuting : Boolean;
 		/**
-		 * <code>True</code> if the execution of the receiver was cancelled
+		 * <code>True</code> if the command's execution was cancelled
 		 */
 		protected var _isCancelled : Boolean;
 
