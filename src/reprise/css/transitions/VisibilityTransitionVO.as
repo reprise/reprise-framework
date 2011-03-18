@@ -20,7 +20,12 @@ package reprise.css.transitions
 		{
 			if (startValue == 'hidden' || startValue == 'none')
 			{
-				return ratio == 0 ? startValue : endValue;
+				//For visibility and display, we want to switch to the "on"-state 
+				//immediately instead of waiting another frame. This makes sense 
+				//and prevents severe problems with validation caused by using 
+				//display:none in transitions
+				log('start!',startValue);
+				return endValue;
 			}
 			return ratio == 1 ? endValue : startValue;
 		}
