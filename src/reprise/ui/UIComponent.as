@@ -1824,6 +1824,7 @@ package reprise.ui
 		 */
 		protected function calculateStyles() : void
 		{
+			var oldSelectorPath : String = m_selectorPath;
 			refreshSelectorPath();
 			
 			var styles : CSSDeclaration = new CSSDeclaration();
@@ -1872,6 +1873,8 @@ package reprise.ui
 				styles.getStyle('display').specifiedValue() == 'none') && m_rootElement;
 			if (!m_isRendered)
 			{
+				//We want changes to the selectorPath picked up during the next real validation
+				m_selectorPath = oldSelectorPath;
 				return;
 			}
 			
