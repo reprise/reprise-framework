@@ -24,7 +24,6 @@ package reprise.css.transitions
 				//immediately instead of waiting another frame. This makes sense 
 				//and prevents severe problems with validation caused by using 
 				//display:none in transitions
-				log('start!',startValue);
 				return endValue;
 			}
 			return ratio == 1 ? endValue : startValue;
