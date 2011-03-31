@@ -164,9 +164,9 @@ package reprise.external
 				return;
 			}
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
+			doCancel();
 			m_isExecuting = false;
 			m_isCancelled = true;
-			doCancel();
 			dispatchEvent(new ResourceEvent(Event.CANCEL));
 		}
 		
