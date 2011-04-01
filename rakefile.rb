@@ -6,7 +6,7 @@ require 'rake/clean'
 require 'flashsdk'
 require 'asunit4'
 
-version = '0.5.9'
+version = '0.5.10'
 
 ##############################
 # SWC
