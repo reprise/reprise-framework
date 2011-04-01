@@ -14,6 +14,7 @@ package reprise.ui
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingHelper;
 	import reprise.debug.DebugInterface;
 	import reprise.events.DisplayEvent;
 	import reprise.utils.DisplayListUtil;
@@ -53,6 +54,7 @@ package reprise.ui
 		protected var m_tooltipManager : TooltipManager;
 		
 		protected var m_parentDocument : DocumentView;
+		protected var m_baseURL : String = '';
 		
 		protected var m_invalidChildren : Array;
 		protected var m_validatedElementsCount : int;
@@ -189,7 +191,8 @@ package reprise.ui
 		 */
 		public function initFromXML(xml : XML, url : String = '') : DocumentView
 		{
-			parseXMLDefinition(xml, url);
+			baseURL = url;
+			parseXMLDefinition(xml);
 			return this;
 		}
 		
@@ -215,6 +218,21 @@ package reprise.ui
 				return m_styleSheet;
 			}
 			return g_defaultStyleSheet;
+		}
+		
+		public function get baseURL() : String
+		{
+			return m_baseURL || '';
+		}
+		
+		public function set baseURL(url : String) : void
+		{
+			m_baseURL = url || '';
+		}
+		
+		public function resolveURL(url : String) : String
+		{
+			return CSSParsingHelper.resolvePathAgainstPath(url, m_baseURL);
 		}
 		
 		/**
@@ -322,6 +340,10 @@ package reprise.ui
 			m_rootElement = this;
 			m_containingBlock = this;
 			m_invalidChildren = [];
+			if (!m_baseURL)
+			{
+				m_baseURL = loaderInfo.url.substr(0, loaderInfo.url.lastIndexOf('/') + 1);
+			}
 			stage.addEventListener(Event.RESIZE, stage_resize, false, 0, true);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage, false, 0, true);
 			super.initialize();
