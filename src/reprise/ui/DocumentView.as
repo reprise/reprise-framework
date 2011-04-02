@@ -191,7 +191,10 @@ package reprise.ui
 		 */
 		public function initFromXML(xml : XML, url : String = '') : DocumentView
 		{
-			baseURL = url;
+			if (url)
+			{
+				baseURL = url;
+			}
 			parseXMLDefinition(xml);
 			return this;
 		}
