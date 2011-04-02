@@ -60,6 +60,11 @@ package reprise.external
 		{
 			m_stream.play(url());
 		}
+
+		override protected function doCancel() : void
+		{
+			m_connection && m_connection.close();
+		}
 		
 		protected override function checkProgress(...rest : Array) : void
 		{
