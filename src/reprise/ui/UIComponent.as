@@ -1551,6 +1551,7 @@ package reprise.ui
 			var oldIntrinsicWidth : int = m_intrinsicWidth;
 			var oldIntrinsicHeight : int = m_intrinsicHeight;
 			applyInFlowChildPositions();
+			m_layoutManager.applyDepthSorting(m_lowerContentDisplay, m_upperContentDisplay);
 			
 			measure();
 			
@@ -1651,7 +1652,7 @@ package reprise.ui
 				applyOverflowProperty();
 			}
 			
-			if (!(m_parentElement is UIComponent && m_parentElement != this && 
+			if (!(m_parentElement is UIComponent && m_parentElement != this &&
 				UIComponent(m_parentElement).m_isValidating))
 			{
 				if ((m_oldInFlowStatus == -1 || m_dimensionsChanged) && !m_positionInFlow)
@@ -1680,7 +1681,6 @@ package reprise.ui
 				}
 				else if (m_changedStyleProperties['zIndex'])
 				{
-					log(m_cssClasses, m_currentStyles.zIndex);
 					parentReflowNeeded = true;
 	//				log("f reason for parentReflow: z-index changed");
 				}
@@ -1705,7 +1705,6 @@ package reprise.ui
 					applyOutOfFlowChildPositions();
 				}
 			}
-			m_layoutManager.applyDepthSorting(m_lowerContentDisplay, m_upperContentDisplay);
 			
 			applyTransform();
 		}
