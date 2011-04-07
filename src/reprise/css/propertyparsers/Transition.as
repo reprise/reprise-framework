@@ -18,6 +18,7 @@ package reprise.css.propertyparsers
 	import com.robertpenner.easing.Bounce;
 	import com.robertpenner.easing.Circ;
 	import com.robertpenner.easing.Cubic;
+	import com.robertpenner.easing.Expo;
 	import com.robertpenner.easing.Linear;
 	import com.robertpenner.easing.Quad;
 	import com.robertpenner.easing.Quart;
@@ -51,11 +52,11 @@ package reprise.css.propertyparsers
 			Back : Back,
 			Bounce : Bounce,
 			Circ : Circ,
-			Sine : Sine
+			Sine : Sine,
+			Expo : Expo
 		};
 		
-		public static function parseRepriseTransition(
-			val:String, file:String) : CSSParsingResult
+		public static function parseRepriseTransition(val:String, file:String) : CSSParsingResult
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			var important : Boolean = obj.important;
