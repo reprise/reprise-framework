@@ -66,7 +66,6 @@ package reprise.ui
 		protected var m_tooltipRenderer : String = null;
 		protected var m_tooltipDelay : int = 0;
 		
-		protected var m_delayedMethods : Array;
 		protected var m_childArrayCleanupNeeded : Boolean;
 
 		
@@ -430,7 +429,8 @@ package reprise.ui
 		public function setTooltipData(data:Object) : void
 		{
 			m_tooltipData = data;
-			dispatchEvent(new DisplayEvent(DisplayEvent.TOOLTIPDATA_CHANGED));
+			hasEventListener(DisplayEvent.TOOLTIPDATA_CHANGED) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.TOOLTIPDATA_CHANGED));
 		}
 		/**
 		 * Returns the delay after which a tooltip is shown for this element if the 
@@ -535,7 +535,6 @@ package reprise.ui
 					break;
 				}
 			}
-			m_rootElement.markChildAsValid(this);
 			validateElement(true);
 		}	
 		/**
@@ -615,7 +614,8 @@ package reprise.ui
 			{
 				visible = visibility;
 			}
-			dispatchEvent(new DisplayEvent(DisplayEvent.VISIBLE_CHANGED));
+			hasEventListener(DisplayEvent.VISIBLE_CHANGED) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.VISIBLE_CHANGED));
 		}
 		/**
 		 * Returns the elements visibility
@@ -827,7 +827,6 @@ package reprise.ui
 		protected function preinitialize() : void
 		{
 			name = m_elementType + '_' + g_elementIDCounter++;
-			m_delayedMethods = [];
 			createDisplayClips();
 			m_keyOrder = [];
 			m_tabIndex = 0;
@@ -854,12 +853,9 @@ package reprise.ui
 		protected function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
-			if (((m_parentElement && m_parentElement != this && 
-				m_parentElement.m_isInvalidated) || 
-				!m_isInvalidated) && !forceValidation /*|| !m_display._url*/)
+			if (!m_isInvalidated && !forceValidation)
 			{
-				//TODO: restore ability to ignore validation after the event has 
-				//been removed, or make sure that validation doesn't occur in that case
+				validateChildren();
 				return;
 			}
 			
@@ -889,7 +885,8 @@ package reprise.ui
 			draw();
 			
 			finishValidation();
-			dispatchEvent(new DisplayEvent(DisplayEvent.VALIDATION_COMPLETE));
+			hasEventListener(DisplayEvent.VALIDATION_COMPLETE) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.VALIDATION_COMPLETE));
 		}
 		protected function validateChildren() : void
 		{
@@ -935,12 +932,14 @@ package reprise.ui
 		
 		protected function show_complete(event : Event = null) : void
 		{
-			dispatchEvent(new DisplayEvent(DisplayEvent.SHOW_COMPLETE));
+			hasEventListener(DisplayEvent.SHOW_COMPLETE) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.SHOW_COMPLETE));
 		}
 		protected function hide_complete(event : Event = null) : void
 		{
 			setVisibility(false);
-			dispatchEvent(new DisplayEvent(DisplayEvent.HIDE_COMPLETE));
+			hasEventListener(DisplayEvent.HIDE_COMPLETE) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.HIDE_COMPLETE));
 		}
 		
 		
@@ -977,16 +976,6 @@ package reprise.ui
 			m_lastKeyChild = keyOrder[len - 1];
 			m_firstKeyChild.setPreviousKeyView(this);
 			m_keyOrder = keyOrder;
-		}
-		
-		internal function validation_execute() : void
-		{
-			validateElement();
-			for each (var method : Function in m_delayedMethods)
-			{
-				method();
-			}
-			m_delayedMethods = [];
 		}
 		
 		
