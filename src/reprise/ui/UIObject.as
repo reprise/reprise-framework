@@ -846,6 +846,7 @@ package reprise.ui
 		protected function createDisplayClips() : void
 		{
 			m_contentDisplay = new Sprite();
+			m_contentDisplay.mouseEnabled = false;
 			m_contentDisplay.name = 'content';
 			super.addChild(m_contentDisplay);
 		}
