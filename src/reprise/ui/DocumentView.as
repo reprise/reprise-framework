@@ -61,8 +61,6 @@ package reprise.ui
 
 		protected var m_widthIsRelative : Boolean;
 		protected var m_heightIsRelative : Boolean;
-		
-		protected var m_debugInterface : DebugInterface;
 
 		
 		/***************************************************************************
@@ -206,7 +204,7 @@ package reprise.ui
 			invalidateStyles();
 			if (m_styleSheet)
 			{
-				m_debugInterface.reprise::startWatchingStylesheets();
+				DebugInterface.reprise::startWatchingStylesheets(this);
 			}
 		}
 		/**
@@ -340,7 +338,7 @@ package reprise.ui
 				m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
 			}
 			
-			m_debugInterface = new DebugInterface(this);
+			DebugInterface.addDocument(this);
 		}
 
 		override protected function createDisplayClips() : void
@@ -370,7 +368,7 @@ package reprise.ui
 			m_elementDefaultStyles.setStyle('height', '100%');
 			m_elementDefaultStyles.setStyle('padding', '0');
 			m_elementDefaultStyles.setStyle('margin', '0');
-			m_elementDefaultStyles.setStyle('box-sizing', 'border-box');
+			m_elementDefaultStyles.setStyle('boxSizing', 'border-box');
 			m_elementDefaultStyles.setStyle('position', 'absolute');
 			m_elementDefaultStyles.setStyle('fontFamily', '_sans');
 			m_elementDefaultStyles.setStyle('fontSize', '12px');
