@@ -252,24 +252,34 @@ package reprise.debug
 		{
 			if (event.shiftKey && event.ctrlKey)
 			{
-				if (event.keyCode == 4) //'d'
+				var key : String = String.fromCharCode(event.keyCode).toLowerCase();
+				if (key == 'd')
 				{
 					toggleDebuggingMode();
 					return;
 				}
-				if (event.keyCode == 19 && m_currentDebugElement) //'s'
+				if (key == 's' && m_currentDebugElement)
 				{
 					log('Complex styles:\n' + m_currentDebugElement.valueForKey('m_complexStyles'));
 					return;
 				}
-				if (event.keyCode == 18) //'r'
+				if (key == 'r')
 				{
 					reloadStyles();
 					return;
 				}
-				if (event.keyCode == 23) //'w'
+				if (key == 'w')
 				{
 					startWatchingStylesheets();
+					return;
+				}
+				if (key == 'h')
+				{
+					log('debug keys:\n' +
+						'd - toggle debug mode\n' +
+							's - log currently debugged element\'s complex styles\n' +
+							'r - reload stylesheets\n' +
+							'w - start watching stylesheets');
 					return;
 				}
 			}
