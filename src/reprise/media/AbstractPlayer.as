@@ -567,8 +567,8 @@ package reprise.media
 		{
 			if (m_options & OPTIONS_LOOP)
 			{
-				stop();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
+				seek(0);
 				play();
 				return;
 			}
