@@ -11,6 +11,7 @@ package reprise.debug
 	import flash.utils.Dictionary;
 
 	import reprise.core.reprise;
+	import reprise.css.CSS;
 	import reprise.css.ComputedStyles;
 	import reprise.events.DebugEvent;
 	import reprise.ui.DocumentView;
@@ -301,12 +302,19 @@ package reprise.debug
 		
 		protected function reloadStyles() : void
 		{
+			var treatedStylesheets : Dictionary = new Dictionary();
 			//TODO: make sure that CSS variables are treated correctly when reloading
 			for each (var document : DocumentView in _documentsByReference)
 			{
-				document.styleSheet.addEventListener(Event.COMPLETE, styleSheet_complete);
-				document.styleSheet.reset();
-				document.styleSheet.execute();
+				var stylesheet : CSS = document.styleSheet;
+				if (treatedStylesheets[stylesheet])
+				{
+					continue;
+				}
+				stylesheet.addEventListener(Event.COMPLETE, styleSheet_complete);
+				stylesheet.reset();
+				stylesheet.execute();
+				treatedStylesheets[stylesheet] = true;
 			}
 		}
 
@@ -357,11 +365,18 @@ package reprise.debug
 		
 		protected function styleSheet_complete(event : Event) : void
 		{
-			var document : DocumentView = DocumentView(event.target);
-			document.styleSheet.removeEventListener(Event.COMPLETE, styleSheet_complete);
-			document.dispatchEvent(new DebugEvent(DebugEvent.WILL_RESET_STYLES));
-			document.resetStyles();
-			document.dispatchEvent(new DebugEvent(DebugEvent.DID_RESET_STYLES));
+			var stylesheet : CSS = CSS(event.target);
+			stylesheet.removeEventListener(Event.COMPLETE, styleSheet_complete);
+			for each (var document : DocumentView in _documentsByReference)
+			{
+				if (document.styleSheet != stylesheet)
+				{
+					continue;
+				}
+				document.dispatchEvent(new DebugEvent(DebugEvent.WILL_RESET_STYLES));
+				document.resetStyles();
+				document.dispatchEvent(new DebugEvent(DebugEvent.DID_RESET_STYLES));
+			}
 		}
 
 		protected function debugging_mouseOver(event : MouseEvent) : void
