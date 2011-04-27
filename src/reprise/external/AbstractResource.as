@@ -59,13 +59,13 @@ package reprise.external
 			{
 				throw new Error('You didn\'t specify an URL for your ' + 
 					'resource! Make sure you do this before calling execute!');
-				return;
 			}
-				
+
+			super.execute();
 			m_failedTimes = 0;
 			m_lastBytesLoaded = 0;
 			m_lastCheckTime = getTimer();
-			super.execute();
+			m_controlDelegate = new Delegate(this, checkProgress);
 			TimeCommandExecutor.instance().addCommand(m_controlDelegate, 150);
 			doLoad();
 		}
@@ -127,13 +127,11 @@ package reprise.external
 		public function bytesLoaded() : int
 		{
 			throw new Error('Cannot call bytesLoaded of AbstractResource directly!');
-			return null;
 		}
 		
 		public function bytesTotal() : int
 		{
 			throw new Error('Cannot call bytesTotal of AbstractResource directly!');
-			return null;
 		}
 		
 		public function progress() : Number
@@ -164,6 +162,7 @@ package reprise.external
 				return;
 			}
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
+			m_controlDelegate = null;
 			doCancel();
 			m_isExecuting = false;
 			m_isCancelled = true;
@@ -180,7 +179,6 @@ package reprise.external
 			{
 				setURL(url);
 			}
-			m_controlDelegate = new Delegate(this, checkProgress);		
 		}
 		
 		protected function doLoad() : void
@@ -273,6 +271,7 @@ package reprise.external
 			// needed to guarantee a 100% value for progress broadcasted to listeners
 			dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
 			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
+			m_controlDelegate = null;
 			
 			if (!success && ++m_failedTimes < m_retryTimes && 
 				!(httpStatus() && httpStatus().cancelRetry()))
@@ -298,6 +297,7 @@ package reprise.external
 						break;
 						
 					case ResourceEvent.ERROR_UNKNOWN :
+					default:
 						errMsg += 'There was an unknown error. ' + 
 							'Make sure that the file exists!';
 				}
