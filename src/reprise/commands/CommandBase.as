@@ -13,12 +13,12 @@ package reprise.commands
 
 	public class CommandBase extends EventDispatcher implements ICommand
 	{
-		////////////////////////       Private / Protected Properties       ////////////////////////
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var _success : Boolean;
 		protected var _priority : int = 0;
 
 
-		////////////////////////               Public Methods               ////////////////////////
+		//----------------------               Public Methods               ----------------------//
 		public function CommandBase()
 		{
 		}

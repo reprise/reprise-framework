@@ -11,7 +11,7 @@ package reprise.commands
 
 	public class AsyncCommandBase extends CommandBase implements IAsyncCommand
 	{
-		////////////////////////       Private / Protected Properties       ////////////////////////
+		//----------------------       Private / Protected Properties       ----------------------//
 		/**
 		 * <code>True</code> if the command is executing
 		 */
@@ -22,7 +22,7 @@ package reprise.commands
 		protected var _isCancelled : Boolean;
 
 
-		////////////////////////               Public Methods               ////////////////////////
+		//----------------------               Public Methods               ----------------------//
 		public function AsyncCommandBase()
 		{
 		}
@@ -86,7 +86,7 @@ package reprise.commands
 		}
 
 
-		////////////////////////         Private / Protected Methods        ////////////////////////
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		 * Sends out an <code>CommandCompleteEvent.COMPLETE</code> with the given success value.
 		 * <code>isExecuting</code> is set to <code>false</code> and <code>didSucceed</code> to the
