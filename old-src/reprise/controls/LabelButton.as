@@ -80,10 +80,6 @@ package reprise.controls
 		{
 			super.applyStyles();
 			
-			if (m_changedStyleProperties['selectable'])
-			{
-				m_labelDisplay.setStyle('selectable', String(m_currentStyles.selectable));
-			}
 			if (m_changedStyleProperties['cursor'])
 			{
 				m_labelDisplay.setStyle('cursor', m_currentStyles.cursor);

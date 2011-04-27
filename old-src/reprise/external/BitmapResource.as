@@ -33,6 +33,8 @@ package reprise.external {
 			cacheBitmap:Boolean = true, cloneBitmap:Boolean = true)
 		{
 			m_url = url;
+			m_cacheBitmap = cacheBitmap;
+			m_cloneBitmap = cloneBitmap;
 			m_checkPolicyFile = true;
 		}
 

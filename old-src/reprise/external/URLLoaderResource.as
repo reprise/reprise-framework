@@ -109,16 +109,21 @@ package reprise.external
 		
 		protected override function doCancel() : void
 		{
-			m_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.removeEventListener(Event.COMPLETE, loader_complete);
-			m_loader.load(null);
-			m_loader = null;
+			if (m_isExecuting)
+			{
+				m_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+				m_loader.removeEventListener(Event.COMPLETE, loader_complete);
+				m_loader.close();
+				m_loader = null;
+			}
 		}	
 		
 		// LoadVars event	
 		protected function loader_complete(event : Event) : void
 		{
 			m_data = m_loader.data;
+			m_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			m_loader.removeEventListener(Event.COMPLETE, loader_complete);
 			onData(true);
 		}
 	}

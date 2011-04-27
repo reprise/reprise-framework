@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -14,6 +14,7 @@ package reprise.ui
 	import reprise.core.reprise;
 	import reprise.css.CSS;
 	import reprise.css.CSSDeclaration;
+	import reprise.css.CSSParsingHelper;
 	import reprise.debug.DebugInterface;
 	import reprise.events.DisplayEvent;
 	import reprise.utils.DisplayListUtil;
@@ -24,8 +25,6 @@ package reprise.ui
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	use namespace reprise;
-
 	public class DocumentView extends UIComponent
 	{
 		/***************************************************************************
@@ -53,16 +52,15 @@ package reprise.ui
 		protected var m_tooltipManager : TooltipManager;
 		
 		protected var m_parentDocument : DocumentView;
+		protected var m_baseURL : String = '';
 		
-		protected var m_invalidChildren : Array;
 		protected var m_validatedElementsCount : int;
 		protected var m_currentFrameTime : int;
+		protected var m_documentIsInvalidated : Boolean;
 		protected var m_documentIsValidating : Boolean;
-		
+
 		protected var m_widthIsRelative : Boolean;
 		protected var m_heightIsRelative : Boolean;
-		
-		protected var m_debugInterface : DebugInterface;
 
 		
 		/***************************************************************************
@@ -189,7 +187,11 @@ package reprise.ui
 		 */
 		public function initFromXML(xml : XML, url : String = '') : DocumentView
 		{
-			parseXMLDefinition(xml, url);
+			if (url)
+			{
+				baseURL = url;
+			}
+			parseXMLDefinition(xml);
 			return this;
 		}
 		
@@ -202,7 +204,7 @@ package reprise.ui
 			invalidateStyles();
 			if (m_styleSheet)
 			{
-				m_debugInterface.startWatchingStylesheets();
+				DebugInterface.reprise::startWatchingStylesheets(this);
 			}
 		}
 		/**
@@ -215,6 +217,21 @@ package reprise.ui
 				return m_styleSheet;
 			}
 			return g_defaultStyleSheet;
+		}
+		
+		public function get baseURL() : String
+		{
+			return m_baseURL || '';
+		}
+		
+		public function set baseURL(url : String) : void
+		{
+			m_baseURL = url || '';
+		}
+		
+		public function resolveURL(url : String) : String
+		{
+			return CSSParsingHelper.resolvePathAgainstPath(url, m_baseURL);
 		}
 		
 		/**
@@ -277,30 +294,16 @@ package reprise.ui
 		
 		reprise function markChildAsInvalid(child : UIObject) : void
 		{
-			if (m_invalidChildren.length == 0 && stage != null)
+			if (!m_documentIsInvalidated && stage != null)
 			{
+				m_documentIsInvalidated = true;
 				addEventListener(Event.ENTER_FRAME, self_enterFrame, false, 0, true);
-			}
-			//TODO: check if child.toString() is ok to use
-			m_invalidChildren.push({element : child, path : child.toString()});
-		}
-		
-		reprise function markChildAsValid(child : UIObject) : void
-		{
-			var path : String = child.toString();
-			var i : int = m_invalidChildren.length;
-			while (i--)
-			{
-				if (m_invalidChildren[i].path.indexOf(path) == 0)
-				{
-					m_invalidChildren.splice(i, 1);
-				}
 			}
 		}
 		
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
-			return m_focusManager.setFocusedElement(element, method);
+			return m_focusManager.reprise::setFocusedElement(element, method);
 		}
 		
 		
@@ -321,7 +324,10 @@ package reprise.ui
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			m_rootElement = this;
 			m_containingBlock = this;
-			m_invalidChildren = [];
+			if (!m_baseURL)
+			{
+				m_baseURL = loaderInfo.url.substr(0, loaderInfo.url.lastIndexOf('/') + 1);
+			}
 			stage.addEventListener(Event.RESIZE, stage_resize, false, 0, true);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage, false, 0, true);
 			super.initialize();
@@ -332,7 +338,7 @@ package reprise.ui
 				m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
 			}
 			
-			m_debugInterface = new DebugInterface(this);
+			DebugInterface.addDocument(this);
 		}
 
 		override protected function createDisplayClips() : void
@@ -362,7 +368,7 @@ package reprise.ui
 			m_elementDefaultStyles.setStyle('height', '100%');
 			m_elementDefaultStyles.setStyle('padding', '0');
 			m_elementDefaultStyles.setStyle('margin', '0');
-			m_elementDefaultStyles.setStyle('box-sizing', 'border-box');
+			m_elementDefaultStyles.setStyle('boxSizing', 'border-box');
 			m_elementDefaultStyles.setStyle('position', 'absolute');
 			m_elementDefaultStyles.setStyle('fontFamily', '_sans');
 			m_elementDefaultStyles.setStyle('fontSize', '12px');
@@ -412,41 +418,37 @@ package reprise.ui
 		protected function validateElements() : void
 		{
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
-			//TODO: verify this validation scheme
-			if (m_invalidChildren.length == 0)
+
+			if (!m_documentIsInvalidated)
 			{
 				return;
 			}
+			m_documentIsInvalidated = false;
 			m_documentIsValidating = true;
 			m_currentFrameTime = getTimer();
 			m_validatedElementsCount = 0;
-			var lastValidatedPath : String;
-			var sortedElements : Array = m_invalidChildren.sortOn('path', Array.DESCENDING);
-			m_invalidChildren = [];
-			for(var i : int = sortedElements.length; i--;)
+
+			if (m_isInvalidated)
 			{
-				var path : String = sortedElements[i].path;
-				if (path.indexOf(lastValidatedPath) == 0)
-				{
-//					log("d skip validation of: " + path);
-					continue;
-				}
-//				log("d validate " + path);
-				lastValidatedPath = path + '.';
-				var element : UIObject = UIObject(sortedElements[i].element);
-				element.validation_execute();
+				validateElement();
 			}
+			else
+			{
+				validateChildren();
+			}
+
 			g_totalValidationTime += getTimer() - m_currentFrameTime;
 			log('d validated ' + m_validatedElementsCount + 
 				' elements in ' + (getTimer() - m_currentFrameTime) + 'ms. ' + 
 				'Total validation time: ' + g_totalValidationTime);
-			dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
+			hasEventListener(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE) &&
+					dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
+			m_documentIsValidating = false;
 			//validate elements that have been marked as invalid during validation
-			if (m_invalidChildren.length)
+			if (m_documentIsInvalidated)
 			{
 				addEventListener(Event.ENTER_FRAME, self_enterFrame);
 			}
-			m_documentIsValidating = false;
 		}
 		
 		protected function stage_resize(event : Event) : void

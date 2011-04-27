@@ -238,9 +238,9 @@ package reprise.controls
 			renderLabel();
 		}
 
-		override protected function parseXMLDefinition(xmlDefinition : XML, url : String) : void
+		override protected function parseXMLDefinition(xmlDefinition : XML) : void
 		{
-			super.parseXMLDefinition(xmlDefinition, url);
+			super.parseXMLDefinition(xmlDefinition);
 			
 			if (xmlDefinition.localName().toLowerCase() != 'p')
 			{

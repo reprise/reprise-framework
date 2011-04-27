@@ -61,19 +61,22 @@ package reprise.controls
 		
 		protected function createBitmapDisplay(bmpData : BitmapData) : void
 		{
+			var oldWidth : int;
+			var oldHeight : int;
+			
 			!m_lowerContentDisplay && createLowerContentDisplay();
-			if (!m_firstDraw)
-			{
-				m_imageDisplayed = false;
-				m_lowerContentDisplay.visible = false;
-			}
 			if (m_image && m_image.parent)
 			{
+				oldWidth = m_image.width;
+				oldHeight = m_image.height;
 				m_image.parent.removeChild(m_image);
 			}
 			m_image = new Bitmap(bmpData, 'auto', m_smoothing);
 			m_lowerContentDisplay.addChild(m_image);
-			invalidate();
+			if (!m_firstDraw)
+			{
+				validateAfterChildren();
+			}
 		}
 
 		override protected function applyInFlowChildPositions() : void

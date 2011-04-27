@@ -40,9 +40,7 @@ package reprise.css.propertyparsers
 			leading : {parser : strToIntProperty, inheritable : true},
 			multiline : {parser : strToBoolProperty, transition : BooleanTransitionVO},
 			wordWrap : {parser : strToStringProperty},
-			selectable : {parser : strToBoolProperty, transition : BooleanTransitionVO}, 
-			fontVariant : {parser : strToStringProperty},
-			fixLineEndings : {parser : parseFixLineEndings},
+			selectable : {parser : strToBoolProperty, inheritable : true, transition : BooleanTransitionVO},
 			lineHeight : {parser : strToIntProperty}
 		};
 		

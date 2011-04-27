@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -7,10 +7,11 @@
 
 package reprise.commands
 {
-	import reprise.core.ApplicationRegistry;
-	import reprise.data.collection.HashMap;
-	
+	import flash.display.Shape;
 	import flash.events.Event;
+
+	import reprise.data.collection.HashMap;
+
 	public class FrameCommandExecutor
 	{
 	
@@ -20,6 +21,7 @@ package reprise.commands
 		protected static var g_instance : FrameCommandExecutor;
 		private	var m_commands : HashMap;
 		protected var m_nextKeyIndex : int;
+		private var m_enterFrameDispatcher : Shape;
 		
 	
 	
@@ -49,8 +51,7 @@ package reprise.commands
 			
 			if (!m_commands.size())
 			{
-				ApplicationRegistry.instance().applicationForURL('').stage.
-					addEventListener(Event.ENTER_FRAME, enterFrame);
+				m_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 			
 			var wrapper : Object =
@@ -65,8 +66,7 @@ package reprise.commands
 			m_commands.removeObject(wrapperForCommand(cmd));
 			if (!m_commands.size())
 			{
-				ApplicationRegistry.instance().applicationForURL('').stage.
-					removeEventListener(Event.ENTER_FRAME, enterFrame);
+				m_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 		}
 		
@@ -75,8 +75,7 @@ package reprise.commands
 			m_commands.removeObject(wrapperForName(key));
 			if (!m_commands.size())
 			{
-				ApplicationRegistry.instance().applicationForURL('').stage.
-					removeEventListener(Event.ENTER_FRAME, enterFrame);
+				m_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 		}
 		
@@ -89,8 +88,7 @@ package reprise.commands
 			
 			if (!m_commands.size())
 			{
-				ApplicationRegistry.instance().applicationForURL('').stage.
-					addEventListener(Event.ENTER_FRAME, enterFrame);
+				m_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 			
 			var wrapper : Object =
@@ -127,6 +125,7 @@ package reprise.commands
 		{
 			m_commands = new HashMap();
 			m_nextKeyIndex = 0;
+			m_enterFrameDispatcher = new Shape();
 		}
 		
 		protected function containsCommand(cmd : ICommand) : Boolean

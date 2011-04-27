@@ -43,6 +43,10 @@ package reprise.media
 		
 		public override function setResource(resource:IResource):void
 		{
+			if (m_stream)
+			{
+				cleanupStream();
+			}
 			super.setResource(resource);
 			m_stream = NetStream(FLVResource(resource).content());
 			m_stream.client = this;
@@ -153,20 +157,27 @@ package reprise.media
 		protected override function doLoad():void
 		{
 			m_video.attachNetStream(m_stream);
-			m_stream.play(m_source.url());
+			m_source.execute();
 			m_stream.pause();
 			m_video.clear();
 		}
 
 		protected override function doUnload():void
 		{
-			m_stream.close();
-			m_video.clear();
+			m_stream && cleanupStream();
+			m_video && m_video.clear();
 		}
 
 		protected override function doPlay():void
 		{
-			m_stream.resume();
+			if (!m_source.isExecuting())
+			{
+				m_source.execute();
+			}
+			else
+			{
+				m_stream.resume();
+			}
 		}
 
 		protected override function doPause():void
@@ -189,6 +200,14 @@ package reprise.media
 		{
 			m_soundTransform.volume = vol;
 			m_stream.soundTransform = m_soundTransform;
+		}
+
+		protected function cleanupStream() : void
+		{
+			m_source.reset();
+			m_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
+			m_stream.soundTransform = null;
+			m_stream = null;
 		}
 		
 		protected function stream_netStatus(e:NetStatusEvent):void

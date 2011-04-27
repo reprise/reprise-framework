@@ -265,6 +265,14 @@ package reprise.media
 		public function unload():void
 		{
 			stop();
+			doUnload();
+			m_buffer.reset();
+			m_source.reset();
+			m_statusObserverTimer.reset();
+			m_statusObserverTimer.removeEventListener(TimerEvent.TIMER, observeStatus);
+			m_statusObserverTimer = null;
+			m_source = null;
+			
 			if (m_status & STATUS_LOAD_FINISHED)
 			{
 				return;
@@ -272,9 +280,7 @@ package reprise.media
 			
 			m_status &= ~STATUS_IS_LOADING; // no more loading
 			m_status &= ~STATUS_SHOULD_PLAY; // no more need to play
-			
-			m_buffer.reset();
-			doUnload();
+
 			setState(STATE_IDLE);
 		}
 		
@@ -557,7 +563,7 @@ package reprise.media
 			var evt:MediaEvent = new MediaEvent(MediaEvent.ERROR);
 			evt.message = msg;
 			dispatchEvent(evt);
-			if (unloadMedia == true)
+			if (unloadMedia)
 			{
 				unload();
 			}
@@ -567,8 +573,8 @@ package reprise.media
 		{
 			if (m_options & OPTIONS_LOOP)
 			{
-				stop();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
+				seek(0);
 				play();
 				return;
 			}
@@ -608,24 +614,21 @@ package reprise.media
 			{
 				return;
 			}
-			
+
 			if (state == STATE_IDLE)
 			{
 				m_statusObserverTimer.stop();
 			}
-			
-			var oldState:uint = m_state;
+
+			var oldState : uint = m_state;
 			dispatchEvent(new StateChangeEvent(StateChangeEvent.STATE_WILL_CHANGE, m_state, state));
 			m_state = state;
 			dispatchEvent(new StateChangeEvent(StateChangeEvent.STATE_DID_CHANGE, oldState, state));
-			
-			if (state != STATE_IDLE)
+
+			if (state != STATE_IDLE && !m_statusObserverTimer.running)
 			{
-				if (!m_statusObserverTimer.running)
-				{
-					m_statusObserverTimer.reset();
-					m_statusObserverTimer.start();
-				}
+				m_statusObserverTimer.reset();
+				m_statusObserverTimer.start();
 			}
 		}
 		

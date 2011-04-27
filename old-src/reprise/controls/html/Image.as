@@ -8,7 +8,6 @@
 package reprise.controls.html
 {
 	import reprise.controls.BitmapElement;
-	import reprise.css.CSSParsingHelper;
 	import reprise.events.DisplayEvent;
 	import reprise.events.ResourceEvent;
 	import reprise.external.BitmapResource;
@@ -48,7 +47,7 @@ package reprise.controls.html
 			{
 				return;
 			}
-			src = CSSParsingHelper.resolvePathAgainstPath(src, m_xmlURL);
+			src = document.resolveURL(src);
 			m_loaded = false;
 			if (m_imageLoader)
 			{
