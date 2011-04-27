@@ -5,24 +5,19 @@
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.external
+package reprise.resources
 {
 	import flash.events.Event;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getTimer;
 
-	import reprise.commands.AbstractAsynchronousCommand;
-	import reprise.commands.TimeCommandExecutor;
-	import reprise.events.ResourceEvent;
-	import reprise.utils.Delegate;
+	import reprise.commands.AsyncCommandBase;
 
-	public class AbstractResource extends AbstractAsynchronousCommand
+	public class ResourceBase extends AsyncCommandBase
 		implements IResource
 	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_url : String;
 		protected var m_timeout : int = 20000;
 		protected var m_retryTimes : int = 3;
@@ -40,9 +35,7 @@ package reprise.external
 		private var m_failureReason : int;
 
 
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function load(url : String = null) : void
 		{
 			setURL(url);
@@ -70,51 +63,50 @@ package reprise.external
 			doLoad();
 		}
 			
-		public function setURL(theURL : String) : void
+		public function set url(url : String) : void
 		{		
-			m_url = theURL;
+			m_url = url;
 		}
-		
-		public function url() : String
+		public function get url() : String
 		{
 			return m_url;
 		}
 		
-		public function timeout() : int
-		{
-			return m_timeout;
-		}
-	
-		public function setTimeout(timeout : int) : void
+		public function set timeout(timeout : uint) : void
 		{
 			m_timeout = timeout;
 		}
-		
-		public function retryTimes() : int
+
+		public function get timeout() : uint
+		{
+			return m_timeout;
+		}
+
+		public function get retryTimes() : uint
 		{
 			return m_retryTimes;
 		}
 	
-		public function setRetryTimes(times : int) : void
+		public function set retryTimes(times : uint) : void
 		{
 			m_retryTimes = times;
 		}
 		
-		public function forceReload() : Boolean
+		public function get forceReload() : Boolean
 		{
 			return m_forceReload;
 		}
 	
-		public function setForceReload(bFlag : Boolean) : void
+		public function set forceReload(forceReload : Boolean) : void
 		{
-			m_forceReload = bFlag;
+			m_forceReload = forceReload;
 		}
 		
-		public function setCheckPolicyFile(checkPolicyFile : Boolean) : void
+		public function set checkPolicyFile(checkPolicyFile : Boolean) : void
 		{
 			m_checkPolicyFile = checkPolicyFile;
 		}
-		public function checkPolicyFile() : Boolean
+		public function get checkPolicyFile() : Boolean
 		{
 			return m_checkPolicyFile;
 		}
@@ -122,32 +114,6 @@ package reprise.external
 		public function content() : *
 		{
 			return m_content;
-		}
-		
-		public function bytesLoaded() : int
-		{
-			throw new Error('Cannot call bytesLoaded of AbstractResource directly!');
-		}
-		
-		public function bytesTotal() : int
-		{
-			throw new Error('Cannot call bytesTotal of AbstractResource directly!');
-		}
-		
-		public function progress() : Number
-		{
-			var progress : Number = 
-				Math.round(bytesLoaded() / (bytesTotal() / 100));
-			if (isNaN(progress))
-			{
-				progress = 0;
-			}
-			return progress;
-		}
-		
-		public function httpStatus() : HTTPStatus
-		{
-			return m_httpStatus;
 		}
 		
 		public function didFinishLoading() : Boolean
@@ -168,16 +134,14 @@ package reprise.external
 			m_isCancelled = true;
 			dispatchEvent(new ResourceEvent(Event.CANCEL));
 		}
-		
-		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
-		public function AbstractResource(url:String = null)
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
+		public function ResourceBase(url : String = null)
 		{
 			if (url)
 			{
-				setURL(url);
+				this.url = url;
 			}
 		}
 		
