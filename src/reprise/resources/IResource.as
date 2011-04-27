@@ -5,7 +5,7 @@
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.external
+package reprise.resources
 { 
 	import reprise.commands.IProgressCommand;
 	
