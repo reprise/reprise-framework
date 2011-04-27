@@ -1,29 +1,31 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
 */
 
 package reprise.resources
-{ 
-	import reprise.commands.IProgressCommand;
-	
-	
-	public interface IResource extends IProgressCommand
+{
+	import reprise.commands.IAsyncCommand;
+
+	public interface IResource extends IAsyncCommand
 	{
-		function load( url : String = null) : void;
-		function didFinishLoading() : Boolean;	
-		function setURL( src : String ) : void;
-		function url() : String;
+		function load(url : String = null) : void;
+		function didFinishLoading() : Boolean;
+
+		function set url(url : String) : void;
+		function get url() : String;
+
 		function content() : *;
-		function setTimeout( timeout : int ) : void;
-		function timeout() : int;
-		function setForceReload( bFlag : Boolean ) : void;
-		function forceReload() : Boolean;
-		function setRetryTimes( times : int ) : void;
-		function retryTimes() : int;
-		function bytesLoaded() : int;
-		function bytesTotal() : int;
+
+		function set timeout(timeout : uint) : void;
+		function get timeout() : uint;
+
+		function set forceReload(forceReload : Boolean) : void;
+		function get forceReload() : Boolean;
+
+		function set retryTimes(times : uint) : void;
+		function get retryTimes() : uint;
 	}
 }
