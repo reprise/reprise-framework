@@ -9,6 +9,7 @@ package reprise.test.suites
 {
 	import reprise.test.areas.commands.AsyncCommandBaseTests;
 	import reprise.test.areas.commands.CommandBaseTests;
+	import reprise.test.areas.commands.CompositeCommandTests;
 
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
@@ -16,5 +17,6 @@ package reprise.test.suites
 	{
 		public var commandBaseTests : CommandBaseTests;
 		public var asyncCommandBaseTests : AsyncCommandBaseTests;
+		public var compositeCommandTests : CompositeCommandTests;
 	}
 }

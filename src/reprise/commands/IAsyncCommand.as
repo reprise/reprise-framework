@@ -9,7 +9,7 @@ package reprise.commands
 {
 	import flash.events.IEventDispatcher;
 
-	public interface IAsyncCommand extends ICommand, IEventDispatcher
+	public interface IAsyncCommand extends ICommand
 	{
 		function cancel() : void;
 

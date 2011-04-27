@@ -7,18 +7,15 @@
 
 package reprise.commands
 {
-	public interface ICommand
+	import flash.events.IEventDispatcher;
+
+	public interface ICommand extends IEventDispatcher
 	{
 		function execute() : void;
 
 		function get priority() : int;
 		function set priority(value : int) : void;
 
-		function get id() : int;
-		function set id(value : int) : void;
-
 		function get success() : Boolean;
-
-		function set queue(queue : CompositeCommand) : void;
 	}
 }

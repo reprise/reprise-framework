@@ -7,9 +7,7 @@
 
 package reprise.commands
 {
-	import flash.events.Event;
-
-	import reprise.events.CommandEvent;
+	import reprise.commands.events.CommandEvent;
 
 	public class AsyncCommandBase extends CommandBase implements IAsyncCommand
 	{
@@ -55,14 +53,14 @@ package reprise.commands
 
 		/**
 		 * Cancels execution of the command. <code>isExecuting</code> is set to <code>false</code>,
-		 * <code>isCancelled</code> to <code>true</code>. Afterwards <code>Event.CANCEL</code> is
-		 * dispatched.
+		 * <code>isCancelled</code> to <code>true</code>. Afterwards
+		 * <code>CommandCancelEvent.CANCEL</code> is dispatched.
 		 */
 		public function cancel() : void
 		{
 			_isExecuting = false;
 			_isCancelled = true;
-			dispatchEvent(new CommandEvent(Event.CANCEL, true));
+			dispatchEvent(new CommandEvent(CommandEvent.CANCEL));
 		}
 
 		/**
@@ -90,7 +88,7 @@ package reprise.commands
 
 		////////////////////////         Private / Protected Methods        ////////////////////////
 		/**
-		 * Sends out an <code>Event.COMPLETE</code> with the given success value.
+		 * Sends out an <code>CommandCompleteEvent.COMPLETE</code> with the given success value.
 		 * <code>isExecuting</code> is set to <code>false</code> and <code>didSucceed</code> to the
 		 * respective value of the passed argument.
 		 *
@@ -100,7 +98,7 @@ package reprise.commands
 		{
 			_isExecuting = false;
 			_success = success;
-			dispatchEvent(new CommandEvent(Event.COMPLETE, success));
+			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 		}
 	}
 }

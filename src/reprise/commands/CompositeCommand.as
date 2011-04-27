@@ -7,30 +7,34 @@
 
 package reprise.commands
 {
-	import flash.events.Event;
+	import flash.utils.Dictionary;
 
-	import reprise.events.CommandEvent;
+	import reprise.commands.events.CommandEvent;
 
 	public class CompositeCommand extends AsyncCommandBase
 	{
-		////////////////////////       Private / Protected Properties       ////////////////////////
+		//----------------------       Private / Protected Properties       ----------------------//
 		/**
-		 * The number of commands which should be executed concurrently
+		 * The number of commands which should be executed concurrently. When set to 0, no limit
+		 * is imposed
 		 */
 		protected var _maxParallelExecutionCount : uint = 1;
 		/**
-		 * flag that signifies a change in command priorities. If set, the queue has to be re-sorted
-		 * before the next command is executed
-		 */
-		protected var _prioritiesInvalid : Boolean;
-		/**
 		 * Holds the commands in the queue
 		 */
-		protected var _pendingCommands : Vector.<ICommand> = new <ICommand>[];
+		protected const _pendingCommands : Vector.<ICommand> = new <ICommand>[];
 		/**
 		 * Holds the AsyncCommands which are currently being executed
 		 */
-		protected var _currentCommands : Vector.<IAsyncCommand> = new <IAsyncCommand>[];
+		protected const _currentCommands : Vector.<IAsyncCommand> = new <IAsyncCommand>[];
+
+		/**
+		 * Stores IDs for all commands managed by the queue
+		 *
+		 * The IDs are used to guarantee insertion order in absence or equivalence of priorities.
+		 */
+		protected var _commandIDs : Dictionary;
+
 		/**
 		 * Indicates whether the CompositeCommand should abort if any of the queued commands
 		 * returns with an error
@@ -39,7 +43,7 @@ package reprise.commands
 		/**
 		 * An internal counter used to have a reliable sorting
 		 */
-		protected var _nextResourceId : uint;
+		protected var _nextCommandID : uint;
 		/**
 		 * The number of commands which failed execution
 		 */
@@ -50,17 +54,11 @@ package reprise.commands
 		protected var _completedCommandsCount : int;
 
 
-		////////////////////////               Public Methods               ////////////////////////
+		//----------------------               Public Methods               ----------------------//
 		public function CompositeCommand()
 		{
 			reset();
 		}
-
-		public function invalidatePriorities() : void
-		{
-			_prioritiesInvalid = true;
-		}
-
 
 		/**
 		 * Executes the command, which in return runs all queued commands it contains
@@ -84,15 +82,20 @@ package reprise.commands
 		 */
 		public function addCommand(command : ICommand) : void
 		{
+			if (_pendingCommands.indexOf(command) !== -1)
+			{
+				throw new Error('Command already contained in CompositeCommand.');
+			}
 			// we automatically reset everything for a new run
 			if (!_isExecuting && !_pendingCommands.length)
 			{
 				reset();
 			}
 
-			command.id = _nextResourceId++;
-			command.queue = this;
-			_pendingCommands.push(command);
+			_commandIDs[command] = _nextCommandID++;
+
+			applyListPosition(command);
+			command.addEventListener(CommandEvent.PRIORITY_CHANGE, command_priorityChange);
 
 			// If the queue was previously empty, we might need to execute the new command
 			// immediately
@@ -103,18 +106,20 @@ package reprise.commands
 		}
 
 		/**
-		 * Removes a command from the queue. If the command is not contained in the queue, this
+		 * Removes a command from the queue. If the command is not pending (meaning it is either
+		 * not contained in this CompositeCommand at all or has already been executed), this
 		 * method does nothing.
 		 *
 		 * @param command The command to be removed
 		 */
 		public function removeCommand(command : ICommand) : void
 		{
-			var commandIndex : Number = _currentCommands.indexOf(command);
+			var commandIndex : int = _pendingCommands.indexOf(command);
 			if (commandIndex == -1)
 			{
-				return;
+				throw new Error('Command not contained in CompositeCommand.');
 			}
+			command.removeEventListener(CommandEvent.PRIORITY_CHANGE, command_priorityChange);
 			_pendingCommands.splice(commandIndex, 1);
 		}
 
@@ -159,12 +164,8 @@ package reprise.commands
 		/**
 		 * Returns the sum of commands which are currently being executed or waiting in the queue.
 		 */
-		public function length() : uint
+		public function get length() : uint
 		{
-			if (!_pendingCommands)
-			{
-				return 0;
-			}
 			return _pendingCommands.length + _currentCommands.length;
 		}
 
@@ -202,26 +203,35 @@ package reprise.commands
 		 */
 		override public function reset() : void
 		{
+			for each (var command : ICommand in _pendingCommands)
+			{
+				removeCommand(command);
+			}
+			for each (var asyncCommand : IAsyncCommand in _currentCommands)
+			{
+				removeListenersForAsyncCommand(asyncCommand);
+			}
 			_success = true;
-			_nextResourceId = 0;
+			_nextCommandID = 0;
 			_pendingCommands.length = 0;
 			_currentCommands.length = 0;
+			_commandIDs = new Dictionary(true);
 			_completedCommandsCount = 0;
 			_failedCommandsCount = 0;
 			super.reset();
 		}
 
 
-		////////////////////////         Private / Protected Methods        ////////////////////////
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		 * This method is the working horse of the composite command. It sorts the command based
 		 * on their priority and executes them respecting the given settings.
 		 */
 		protected function executeNext() : void
 		{
-			if (_pendingCommands.length===0)
+			if (_pendingCommands.length === 0)
 			{
-				if (_currentCommands.length===0)
+				if (_currentCommands.length === 0)
 				{
 					notifyComplete(_success);
 				}
@@ -244,13 +254,9 @@ package reprise.commands
 				return;
 			}
 
-			if (_prioritiesInvalid)
-			{
-				//TODO: implement priority-sorting
-				_prioritiesInvalid = false;
-			}
-
 			var currentCommand : ICommand = _pendingCommands.shift();
+			currentCommand.removeEventListener(
+					CommandEvent.PRIORITY_CHANGE, command_priorityChange);
 
 			if (currentCommand is IAsyncCommand)
 			{
@@ -290,8 +296,8 @@ package reprise.commands
 		 */
 		protected function addListenersForAsyncCommand(command : IAsyncCommand) : void
 		{
-			command.addEventListener(Event.COMPLETE, command_complete);
-			command.addEventListener(Event.CANCEL, command_cancel);
+			command.addEventListener(CommandEvent.COMPLETE, command_complete);
+			command.addEventListener(CommandEvent.CANCEL, command_cancel);
 		}
 
 		/**
@@ -302,8 +308,8 @@ package reprise.commands
 		 */
 		protected function removeListenersForAsyncCommand(command : IAsyncCommand) : void
 		{
-			command.removeEventListener(Event.COMPLETE, command_complete);
-			command.removeEventListener(Event.CANCEL, command_cancel);
+			command.removeEventListener(CommandEvent.COMPLETE, command_complete);
+			command.removeEventListener(CommandEvent.CANCEL, command_cancel);
 		}
 
 		/**
@@ -312,7 +318,7 @@ package reprise.commands
 		 */
 		protected function cancelCurrentCommands() : void
 		{
-			for (var i : int = _currentCommands.length; i--;)
+			for (var i : uint = _currentCommands.length; i--;)
 			{
 				var command : IAsyncCommand = _currentCommands[i];
 				removeListenersForAsyncCommand(command);
@@ -320,8 +326,35 @@ package reprise.commands
 			}
 		}
 
+		private function applyListPosition(command : ICommand) : void
+		{
+			var priority : int = command.priority;
+			var id : uint = _commandIDs[command];
+			for (var i : uint = _pendingCommands.length; i--;)
+			{
+				var otherCommand : ICommand = _pendingCommands[i];
+				var otherPriority : int = otherCommand.priority;
+				if (otherPriority > priority || otherPriority === priority &&
+					_commandIDs[otherCommand] < id)
+				{
+					break;
+				}
+			}
+			i++;
+			var currentIndex : int = _pendingCommands.indexOf(command);
+			if (currentIndex == i)
+			{
+				return;
+			}
+			if (currentIndex != -1)
+			{
+				_pendingCommands.splice(currentIndex, 1);
+			}
+			_pendingCommands.splice(i, 0, command);
+		}
 
-		////////////////////////                Event Handlers              ////////////////////////
+
+		//----------------------               Event Handlers               ----------------------//
 		/**
 		 * If the command dispatching the event executed with a failure and
 		 * <code>abortOnFailure()</code> is set to <code>true</code>, the
@@ -364,6 +397,17 @@ package reprise.commands
 			_completedCommandsCount--;
 
 			command_complete(event);
+		}
+
+		/**
+		 * Called by a <code>PRIORITY_CHANGE</code> event of a command contained in the
+		 * CompositeCommand and results in re-ordering of the contained commands by priority.
+		 *
+		 * @param event The received event
+		 */
+		protected function command_priorityChange(event : CommandEvent) : void
+		{
+			applyListPosition(ICommand(event.target));
 		}
 	}
 }

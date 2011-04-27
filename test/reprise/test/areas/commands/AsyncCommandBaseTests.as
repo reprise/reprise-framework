@@ -7,43 +7,36 @@
 
 package reprise.test.areas.commands
 {
+	import asmock.framework.Expect;
+	import asmock.framework.MockRepository;
+	import asmock.integration.flexunit.IncludeMocksRule;
+
 	import flash.events.Event;
 
-	import mockolate.nice;
-	import mockolate.prepare;
-	import mockolate.received;
-
-	import org.flexunit.async.Async;
 	import org.hamcrest.assertThat;
 	import org.hamcrest.object.hasPropertyWithValue;
 	import org.hamcrest.object.notNullValue;
 
 	import reprise.commands.AsyncCommandBase;
 	import reprise.commands.CompositeCommand;
-	import reprise.events.CommandEvent;
+	import reprise.commands.events.CommandEvent;
 
 	public class AsyncCommandBaseTests
 	{
-		//----------------------       Private / Protected Properties       ----------------------//
+		//----------------------              Public Properties             ----------------------//
+		[Rule] public var includeMocks : IncludeMocksRule = new IncludeMocksRule(
+				[CompositeCommand]);
+
+
+		////////////////////////       Private / Protected Properties       ////////////////////////
+		private var _mockRepository : MockRepository;
 
 
 		//----------------------               Public Methods               ----------------------//
-		[Before(async, timeout=5000)]
-		public function prepareMockolates():void
+		[Before]
+		public function beforeTest() : void
 		{
-			Async.proceedOnEvent(this,
-					prepare(CompositeCommand),
-					Event.COMPLETE);
-		}
-
-		[Test] public function changingPriorityNotifiesQueue() : void
-		{
-			var command : AsyncCommandBase = new AsyncCommandBase();
-			var composite : CompositeCommand = nice(CompositeCommand);
-			command.queue = composite;
-			command.priority = 10;
-
-			assertThat(composite, received().method('invalidatePriorities'));
+			_mockRepository = new MockRepository();
 		}
 
 		[Test]

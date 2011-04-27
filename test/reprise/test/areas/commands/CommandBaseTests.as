@@ -7,43 +7,45 @@
 
 package reprise.test.areas.commands
 {
-	import flash.events.Event;
+	import asmock.framework.MockRepository;
+	import asmock.integration.flexunit.IncludeMocksRule;
 
-	import mockolate.nice;
-	import mockolate.prepare;
-	import mockolate.received;
-
-	import org.flexunit.assertThat;
-	import org.flexunit.async.Async;
+	import org.flexunit.asserts.assertTrue;
 
 	import reprise.commands.CommandBase;
 	import reprise.commands.CompositeCommand;
+	import reprise.commands.events.CommandEvent;
 
 	public class CommandBaseTests
 	{
-		[Before(async, timeout=5000)]
-		public function prepareMockolates():void
-		{
-			Async.proceedOnEvent(this,
-					prepare(CompositeCommand),
-					Event.COMPLETE);
-		}
-
-
+		//----------------------              Public Properties             ----------------------//
+		[Rule] public var includeMocks : IncludeMocksRule = new IncludeMocksRule(
+				[CompositeCommand]);
 
 
 		////////////////////////       Private / Protected Properties       ////////////////////////
+		private var _mockRepository : MockRepository;
 
 
-		////////////////////////               Public Methods               ////////////////////////
-		[Test] public function changingPriorityNotifiesQueue() : void
+		//----------------------               Public Methods               ----------------------//
+		[Before]
+		public function beforeTest() : void
+		{
+			_mockRepository = new MockRepository();
+		}
+
+		[Test] public function changingPriorityDispatchesPriorityChangeEvent() : void
 		{
 			var command : CommandBase = new CommandBase();
-			var composite : CompositeCommand = nice(CompositeCommand);
-			command.queue = composite;
+			var listenerInvoked : Boolean;
+			command.addEventListener(CommandEvent.PRIORITY_CHANGE,
+					function(event : CommandEvent) : void
+					{
+						listenerInvoked = true;
+					});
 			command.priority = 10;
 
-			assertThat(composite, received().method('invalidatePriorities'));
+			assertTrue('PRIORITY_CHANGE is dispatched on priority change', listenerInvoked);
 		}
 
 		////////////////////////         Private / Protected Methods        ////////////////////////

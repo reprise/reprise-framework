@@ -12,13 +12,12 @@ package reprise.commands.events
 	public class CommandEvent extends Event
 	{
 		public static const COMPLETE : String = 'commandComplete';
+		public static const CANCEL : String = 'commandCancel';
+		public static const PRIORITY_CHANGE : String = 'commandPriorityChange';
 		
-		public var success : Boolean;
-
-		public function CommandEvent(type : String, success : Boolean)
+		public function CommandEvent(type : String)
 		{
 			super(type);
-			this.success = success;
 		}
 	}
 }
