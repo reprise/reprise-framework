@@ -5,12 +5,14 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package reprise.events
+package reprise.commands.events
 {
 	import flash.events.Event;
 
 	public class CommandEvent extends Event
 	{
+		public static const COMPLETE : String = 'commandComplete';
+		
 		public var success : Boolean;
 
 		public function CommandEvent(type : String, success : Boolean)
