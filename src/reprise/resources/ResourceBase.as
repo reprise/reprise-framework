@@ -1,194 +1,191 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2006-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package reprise.resources
 {
 	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getTimer;
 
 	import reprise.commands.AsyncCommandBase;
+	import reprise.commands.events.CommandEvent;
+	import reprise.resources.HTTPStatus;
+	import reprise.resources.events.ResourceEvent;
 
-	public class ResourceBase extends AsyncCommandBase
-		implements IResource
+	public class ResourceBase extends AsyncCommandBase implements IResource
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_url : String;
-		protected var m_timeout : int = 20000;
-		protected var m_retryTimes : int = 3;
-		protected var m_failedTimes : int;
-		protected var m_forceReload : Boolean;
-		protected var m_content : Object;
-		protected var m_controlDelegate : Delegate;
-		protected var m_lastBytesLoaded : int;
-		protected var m_lastCheckTime : int;
-		protected var m_httpStatus : HTTPStatus;
-		protected var m_didFinishLoading : Boolean = false;		
-		protected var m_checkPolicyFile : Boolean;
-		protected var m_attachMode : Boolean;
+		protected static const PROGRESS_CHECK_TIMER : Timer = new Timer(150);
+		protected static var PROGRESS_CHECK_TIMER_CLIENTS : uint = 0;
 
-		private var m_failureReason : int;
+		protected var _url : String;
+		protected var _content : Object;
+		protected var _checkPolicyFile : Boolean;
+		protected var _attachMode : Boolean;
+
+		protected var _timeout : int = 20000;
+		protected var _retryTimes : int = 3;
+		protected var _failedTimes : int;
+		protected var _lastBytesLoaded : int;
+		protected var _lastCheckTime : int;
+
+		protected var _didFinishLoading : Boolean;
+		protected var _httpStatusCode : int;
+		protected var _failureReason : int;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function load(url : String = null) : void
-		{
-			setURL(url);
-			execute();
-		}
-		
-		public override function execute(...rest) : void
-		{	
-			if (m_isExecuting)
-			{
-				return;
-			}
-			if (m_url == null)
-			{
-				throw new Error('You didn\'t specify an URL for your ' + 
-					'resource! Make sure you do this before calling execute!');
-			}
-
-			super.execute();
-			m_failedTimes = 0;
-			m_lastBytesLoaded = 0;
-			m_lastCheckTime = getTimer();
-			m_controlDelegate = new Delegate(this, checkProgress);
-			TimeCommandExecutor.instance().addCommand(m_controlDelegate, 150);
-			doLoad();
-		}
-			
-		public function set url(url : String) : void
-		{		
-			m_url = url;
-		}
-		public function get url() : String
-		{
-			return m_url;
-		}
-		
-		public function set timeout(timeout : uint) : void
-		{
-			m_timeout = timeout;
-		}
-
-		public function get timeout() : uint
-		{
-			return m_timeout;
-		}
-
-		public function get retryTimes() : uint
-		{
-			return m_retryTimes;
-		}
-	
-		public function set retryTimes(times : uint) : void
-		{
-			m_retryTimes = times;
-		}
-		
-		public function get forceReload() : Boolean
-		{
-			return m_forceReload;
-		}
-	
-		public function set forceReload(forceReload : Boolean) : void
-		{
-			m_forceReload = forceReload;
-		}
-		
-		public function set checkPolicyFile(checkPolicyFile : Boolean) : void
-		{
-			m_checkPolicyFile = checkPolicyFile;
-		}
-		public function get checkPolicyFile() : Boolean
-		{
-			return m_checkPolicyFile;
-		}
-		
-		public function content() : *
-		{
-			return m_content;
-		}
-		
-		public function didFinishLoading() : Boolean
-		{
-			return m_didFinishLoading;
-		}
-		
-		public override function cancel() : void
-		{
-			if (m_didFinishLoading)
-			{
-				return;
-			}
-			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
-			m_controlDelegate = null;
-			doCancel();
-			m_isExecuting = false;
-			m_isCancelled = true;
-			dispatchEvent(new ResourceEvent(Event.CANCEL));
-		}
-
-
-		//----------------------         Private / Protected Methods        ----------------------//
 		public function ResourceBase(url : String = null)
+		{
+			this.url = url;
+		}
+
+		public function load(url : String = null) : void
 		{
 			if (url)
 			{
 				this.url = url;
 			}
+			execute();
 		}
-		
+
+		public override function execute() : void
+		{
+			if (_isExecuting)
+			{
+				return;
+			}
+			if (!_url)
+			{
+				throw new Error('You didn\'t specify an URL for your ' +
+						'resource! Make sure you do this before calling execute!');
+			}
+
+			super.execute();
+			_failedTimes = 0;
+			_lastBytesLoaded = 0;
+			_lastCheckTime = getTimer();
+			startProgressListening();
+			doLoad();
+		}
+
+		public function set url(url : String) : void
+		{
+			_url = url;
+		}
+
+		public function get url() : String
+		{
+			return _url;
+		}
+
+		public function set timeout(timeout : uint) : void
+		{
+			_timeout = timeout;
+		}
+
+		public function get timeout() : uint
+		{
+			return _timeout;
+		}
+
+		public function get retryTimes() : uint
+		{
+			return _retryTimes;
+		}
+
+		public function set retryTimes(times : uint) : void
+		{
+			_retryTimes = times;
+		}
+
+		public function set checkPolicyFile(checkPolicyFile : Boolean) : void
+		{
+			_checkPolicyFile = checkPolicyFile;
+		}
+
+		public function get checkPolicyFile() : Boolean
+		{
+			return _checkPolicyFile;
+		}
+
+		public function content() : *
+		{
+			return _content;
+		}
+
+		public function didFinishLoading() : Boolean
+		{
+			return _didFinishLoading;
+		}
+
+		public override function cancel() : void
+		{
+			if (_didFinishLoading)
+			{
+				return;
+			}
+			stopProgressListening();
+			doCancel();
+			_isExecuting = false;
+			_isCancelled = true;
+			dispatchEvent(new ResourceEvent(
+					CommandEvent.CANCEL, false, ResourceEvent.ERROR_CANCELLED));
+		}
+
+		public function get bytesLoaded() : int
+		{
+			return 0;
+		}
+		public function set bytesLoaded(bytes : int) : void
+		{
+		}
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function doLoad() : void
 		{
-			throw new Error(
-				'Cannot call doLoad of AbstractResource directly!');
+			throw new Error('Cannot call doLoad of AbstractResource directly!');
 		}
-		
+
 		protected function doCancel() : void
 		{
-			throw new Error(
-				'Cannot call doCancel of AbstractResource directly!');		
+			throw new Error('Cannot call doCancel of AbstractResource directly!');
 		}
-		
-		protected function timestamp() : String
+
+		protected function startProgressListening() : void
 		{
-			var d : Date = new Date();
-			return d.getTime().toString();
-		}
-		
-		protected function urlByAppendingTimestamp() : String
-		{
-			var urlSeparator : String = m_url.indexOf('?') != -1 ? '&' : '?';
-			var url : String;
-			//TODO: find a replacement for _root._url
-			if (true)//_root._url.indexOf("http://") != 0 && m_url.indexOf("http://") != 0)
+			if (PROGRESS_CHECK_TIMER_CLIENTS++ === 0)
 			{
-				url = m_url;
+				PROGRESS_CHECK_TIMER.start();
 			}
-			else
-			{
-			 	url = m_url + (m_forceReload ? 
-			 		urlSeparator + 'forcereload=' + timestamp() : '');
-			}
-	
-			return ResourceProxy.instance().modifiedURLStringForString(url);
+			PROGRESS_CHECK_TIMER.addEventListener(TimerEvent.TIMER, checkProgress);
 		}
-		
-		//TODO: probably don't call using delegate and check the args
-		protected function checkProgress(...rest : Array) : void
+
+		protected function stopProgressListening() : void
 		{
-			// no progress this time
-			if (m_lastBytesLoaded == bytesLoaded())
+			if (--PROGRESS_CHECK_TIMER_CLIENTS === 0)
+			{
+				PROGRESS_CHECK_TIMER.stop();
+			}
+			PROGRESS_CHECK_TIMER.removeEventListener(TimerEvent.TIMER, checkProgress);
+		}
+
+		protected function checkProgress(event : TimerEvent) : void
+		{
+			var bytesLoaded : int = this.bytesLoaded;
+			var currentTime : int = getTimer();
+			if (_lastBytesLoaded === bytesLoaded)
 			{
 				// resource received timeout
-				if (getTimer() - m_lastCheckTime >= m_timeout)
+				if (currentTime - _lastCheckTime >= _timeout)
 				{
 					setFailureReason(ResourceEvent.ERROR_TIMEOUT);
 					notifyComplete(false);
@@ -197,103 +194,99 @@ package reprise.resources
 				// we'll wait until there happens something or we receive a timeout
 				return;
 			}
-			
-			m_lastBytesLoaded = bytesLoaded();
-			m_lastCheckTime = getTimer();
-			
+
+			_lastBytesLoaded = bytesLoaded;
+			_lastCheckTime = currentTime;
+
 			dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
 		}
-		
+
 		protected function onData(success : Boolean) : void
 		{
-			if (m_httpStatus && m_httpStatus.isError() && !success)
-			{
-				setFailureReason(ResourceEvent.ERROR_HTTP);
-				notifyComplete(false);
-				return;
-			}
 			if (!success)
 			{
-				setFailureReason(ResourceEvent.ERROR_UNKNOWN);
-				notifyComplete(false);
-				return;
+				if (_httpStatusCode && HTTPStatus.isError(_httpStatusCode))
+				{
+					setFailureReason(ResourceEvent.ERROR_HTTP);
+				}
+				else
+				{
+					setFailureReason(ResourceEvent.ERROR_UNKNOWN);
+				}
 			}
 			notifyComplete(success);
 		}
-		
-		protected function setHttpStatus(httpStatus : HTTPStatus) : void
+
+		protected function setHttpStatusCode(httpCode : int) : void
 		{
-			m_httpStatus = httpStatus;
+			_httpStatusCode = httpCode;
 		}
-		protected function setFailureReason(failureReason:int) : void
+
+		protected function setFailureReason(failureReason : int) : void
 		{
-			m_failureReason = failureReason;
+			_failureReason = failureReason;
 		}
-		
-		protected override function notifyComplete(success:Boolean) : void
+
+		protected override function notifyComplete(success : Boolean) : void
 		{
 			// needed to guarantee a 100% value for progress broadcasted to listeners
 			dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
-			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
-			m_controlDelegate = null;
-			
-			if (!success && ++m_failedTimes < m_retryTimes && 
-				!(httpStatus() && httpStatus().cancelRetry()))
+
+			stopProgressListening();
+
+			if (!success && ++_failedTimes < _retryTimes &&
+				!(HTTPStatus.cancelRetryAfterReceving(_httpStatusCode)))
 			{
 				doLoad();
 				return;
 			}
-			
+
 			if (!success)
 			{
-				var errMsg : String = 'w Loading of resource "' + 
-					m_url + '" failed. ';
-				
-				switch (m_failureReason)
+				var errMsg : String = 'w Loading of resource "' + _url + '" failed. ';
+
+				switch (_failureReason)
 				{
 					case ResourceEvent.ERROR_HTTP :
-						errMsg += 'There was an HTTP error. ' + 
-							m_httpStatus.description();
+					{
+						errMsg += 'HTTP error: ' +
+							HTTPStatus.description(_httpStatusCode);
 						break;
-						
-					case ResourceEvent.ERROR_TIMEOUT : 
-						errMsg += 'Timeout (' + m_timeout + ') exceeded.';
+					}
+					case ResourceEvent.ERROR_TIMEOUT :
+					{
+						errMsg += 'Timeout (' + _timeout + ') exceeded.';
 						break;
-						
+					}
 					case ResourceEvent.ERROR_UNKNOWN :
 					default:
-						errMsg += 'There was an unknown error. ' + 
-							'Make sure that the file exists!';
+					{
+						errMsg += 'Unknown error. Make sure the resource exists.';
+					}
 				}
 				log(errMsg);
 			}
-			
-			m_didSucceed = success;
-			m_isExecuting = false;
-			m_didFinishLoading = true;
-			
-			dispatchEvent(new ResourceEvent(Event.COMPLETE, 
-				success, m_failureReason, m_httpStatus));
-		}
-		
-		protected function loader_httpStatus(statusCode : int) : void
-		{
-			m_httpStatus = new HTTPStatus(statusCode, m_url);
+
+			_success = success;
+			_isExecuting = false;
+			_didFinishLoading = true;
+
+			dispatchEvent(new ResourceEvent(Event.COMPLETE, success, _failureReason));
 		}
 
 		protected function resolveAttachSymbol() : Class
 		{
-			if (!(m_url && m_url.indexOf('attach://') == 0))
+			if (!(_url && _url.indexOf('attach://') === 0))
 			{
-				m_attachMode = false;
+				_attachMode = false;
 				return null;
 			}
-			m_attachMode = true;
+			_attachMode = true;
 			//remove protocol
-			var symbolId:String = m_url.substr(9);
+			var symbolId : String = _url.substr(9);
 
 			//get FQCN name of assets class that contains the requested symbol
-			var pieces:Array = symbolId.split('/');
+			var pieces : Array = symbolId.split('/');
 			var className : String = pieces.shift();
 			try
 			{
@@ -305,13 +298,19 @@ package reprise.resources
 				return null;
 			}
 
+			// For URLs of the form "attach://symbol/", strip the trailing "/" and just use "symbol"
+			if (pieces.length == 1 && pieces[0].length === 0)
+			{
+				pieces.length = 0;
+			}
+
 			//iterate over remaining path parts, getting nested symbols from the assets class
-			for (var i:int = 0; i < pieces.length; i++)
+			for (var i : int = 0; i < pieces.length; i++)
 			{
 				symbol = symbol[pieces[i]];
 				if (!symbol)
 				{
-					log('w Unable to use attach:// procotol! Static property ' + pieces.join('/') +
+					log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') +
 							' not found on Class ' + className);
 					return null;
 				}
@@ -326,18 +325,22 @@ package reprise.resources
 		}
 
 		/**
-		 * Logs a warning message informing about an incompatible Class type in an asset loaded via "attach://"
+		 * Logs a warning message informing about an incompatible Class type in an asset loaded via
+		 * "attach://"
+		 * 
 		 * @param symbol The symbol with the unsupported type
 		 */
 		protected function logUnsupportedTypeMessage(symbol : Class) : void
 		{
-			var symbolId : String = m_url.substr(9);
+			var symbolId : String = _url.substr(9);
 			var className : String = symbolId.substr(0, symbolId.indexOf('/'));
 			var propertyName : String = symbolId.substr(symbolId.indexOf('/') + 1);
 			var fqcn : String = getQualifiedClassName(symbol);
 			var resourceName : String = getQualifiedClassName(this['constructor']);
-			log('w Unable to use attach:// procotol. Static property ' + propertyName + ' on Class ' +
-					className + ' has type ' + fqcn + ', which is not supported by ' + resourceName);
+			log('w Unable to use attach:// procotol. Static property ' + propertyName +
+					' on Class ' +
+					className + ' has type ' + fqcn + ', which is not supported by ' +
+					resourceName);
 		}
 	}
 }

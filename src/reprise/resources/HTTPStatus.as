@@ -105,7 +105,7 @@ package reprise.resources
 			// request went fine
 			if (httpCode < 300)
 			{
-				return '';
+				return 'Ok';
 			}
 			
 			// request was redirected
@@ -140,7 +140,7 @@ package reprise.resources
 						return 'HTTP version not supported';
 				}
 			}
-			throw new Error('invalid HTTP code: ' + httpCode);
+			throw new Error('Invalid HTTP code: ' + httpCode);
 		}
 	}
 }

@@ -1,53 +1,44 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2006-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package reprise.resources.events
-{ 
-	import reprise.external.HTTPStatus;
-	
+{
 	import flash.events.Event;
-	
+
+	import reprise.commands.events.CommandEvent;
+
 	public class ResourceEvent extends CommandEvent
-	{		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+	{
 		public static const PROGRESS : String = 'resourceProgress';
-		
-		public static const ERROR_TIMEOUT : int = 1;
-		public static const ERROR_HTTP : int = 2;
-		public static const ERROR_UNKNOWN : int = 3;
-		public static const ERROR_NO_ERROR : int = 4; //for the sake of completeness
-		public static const USER_CANCELLED : int = 5;
-			
-		public var httpStatus : HTTPStatus;
-		public var reason : int;
-		
-		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
-		public function ResourceEvent(type:String, didSucceed:Boolean = false, 
-			reason:int = -1, status:HTTPStatus = null)
+
+		public static const ERROR_TIMEOUT : uint = 1;
+		public static const ERROR_HTTP : uint = 2;
+		public static const ERROR_UNKNOWN : uint = 3;
+		public static const ERROR_CANCELLED : uint = 4;
+
+		public var success : Boolean;
+		public var error : uint;
+
+
+		public function ResourceEvent(type : String, success : Boolean = true, error : int = -1)
 		{
 			super(type);
-			if (type == COMPLETE && !didSucceed && reason == -1)
+			if (type === COMPLETE && !success && error === -1)
 			{
-				log("ResourceEvent with negative success called " + 
-					"without specifying a reason!");
+				log("w ResourceEvent with negative success called " +
+						"without specifying an error code");
 			}
-			success = didSucceed;
-			httpStatus = status;
+			this.error = error;
+			this.success = success;
 		}
-		
+
 		public override function clone() : Event
 		{
-			return new ResourceEvent(
-				type, success, reason, httpStatus ? httpStatus.clone() : null);
+			return new ResourceEvent(type, success, error);
 		}
 	}
 }

@@ -18,14 +18,5 @@ package reprise.resources
 		function get url() : String;
 
 		function content() : *;
-
-		function set timeout(timeout : uint) : void;
-		function get timeout() : uint;
-
-		function set forceReload(forceReload : Boolean) : void;
-		function get forceReload() : Boolean;
-
-		function set retryTimes(times : uint) : void;
-		function get retryTimes() : uint;
 	}
 }
