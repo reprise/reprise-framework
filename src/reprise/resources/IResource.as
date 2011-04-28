@@ -17,6 +17,8 @@ package reprise.resources
 		function set url(url : String) : void;
 		function get url() : String;
 
+		function get bytesLoaded() : int;
+
 		function content() : *;
 	}
 }

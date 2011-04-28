@@ -21,10 +21,12 @@ package reprise.resources.events
 		public static const ERROR_CANCELLED : uint = 4;
 
 		public var success : Boolean;
-		public var error : uint;
+		public var error : int;
+		public var httpStatusCode : int;
 
 
-		public function ResourceEvent(type : String, success : Boolean = true, error : int = -1)
+		public function ResourceEvent(
+				type : String, success : Boolean = true, error : int = -1, httpStatusCode : int = 0)
 		{
 			super(type);
 			if (type === COMPLETE && !success && error === -1)
@@ -34,11 +36,12 @@ package reprise.resources.events
 			}
 			this.error = error;
 			this.success = success;
+			this.httpStatusCode = httpStatusCode;
 		}
 
 		public override function clone() : Event
 		{
-			return new ResourceEvent(type, success, error);
+			return new ResourceEvent(type, success, error, httpStatusCode);
 		}
 	}
 }
