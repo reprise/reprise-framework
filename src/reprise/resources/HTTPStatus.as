@@ -1,26 +1,17 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.external
-{ 
+package reprise.resources
+{
+	import flash.utils.Dictionary;
+
 	public class HTTPStatus
 	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
-		protected var m_statusCode : int;
-		protected var m_description : String;
-		protected	var m_url : String;
-		protected var m_isError : Boolean;
-		
-		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		// for future versions of HTTP
 		public static const HTTP_STATUS_CONTINUE					: int		= 100;
 		public static const HTTP_STATUS_SWITCHING_PROTOCOLS			: int		= 101;
@@ -72,135 +63,84 @@ package reprise.external
 		public static const HTTP_STATUS_GATEWAY_TIMEOUT				: int		= 504;
 		public static const HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED	: int		= 505;
 		
-		public static var g_cancelRetryStates : Array;
-		
-		
-		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
-		public function HTTPStatus( code : int, url : String )
+		public static const CANCEL_RETRY_STATES : Dictionary = new Dictionary();
 		{
-			m_url = url;
-			setStatusCode( code );
-			
-			if (g_cancelRetryStates == null)
-			{
-				g_cancelRetryStates = new Array();
-				g_cancelRetryStates[401] = true;
-				g_cancelRetryStates[403] = true;
-				g_cancelRetryStates[404] = true;
-			}
+			CANCEL_RETRY_STATES[401] = true;
+			CANCEL_RETRY_STATES[403] = true;
+			CANCEL_RETRY_STATES[404] = true;
+		}
+
+
+
+		//----------------------               Public Methods               ----------------------//
+		public static function isError(code : uint) : Boolean
+		{
+			return code < 100 || code >= 400;
 		}	
 		
-		public function setStatusCode( code : int ) : void
+		public static function description(httpCode : int) : String
 		{
-			m_statusCode = code;
-			generateMessage();
-		}	
-			
-		public function isError() : Boolean
-		{
-			return m_isError;
-		}	
-		
-		public function description() : String
-		{
-			return m_description;
+			return generateMessage(httpCode) + ' HTTP code: ' + httpCode;
 		}
 		
-		public function clone() : HTTPStatus
+		public static function cancelRetryAfterReceving(httpCode : int) : Boolean
 		{
-			return new HTTPStatus(m_statusCode, m_url);
+			return CANCEL_RETRY_STATES[httpCode] === true;
 		}
-		
-		public function cancelRetry() : Boolean
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
+		private static function generateMessage(httpCode : int) : String
 		{
-			return g_cancelRetryStates[m_statusCode] == true;
-		}
-		
-		public function toString() : String
-		{
-			return '[HTTPStatus] error: ' + m_isError + ' description: ' + m_description;
-		}
-		
-		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
-		protected function generateMessage() : void
-		{
-			var err : Boolean = false;
-			var msg : String = '';
-					
 			// flash error
-		    if ( m_statusCode < 100 ) 
+			if (httpCode < 100)
 			{
-				err = true;
-				msg = 'Flash encountered an internal error while loading from ' + m_url +
-				 	'. This may also be a security problem!';
-		    }
-			// should never get here
-		    else if ( m_statusCode < 200 ) 
+				return 'Internal error while loading resource. ' +
+						'Might be caused by sandbox restrictions';
+			}
+			if (httpCode < 200)
 			{
-				// do nothing
-		    }
+				throw new Error('invalid HTTP code: ' + httpCode);
+			}
 			// request went fine
-		    else if( m_statusCode < 300 ) 
+			if (httpCode < 300)
 			{
-				// do nothing
-		    }
+				return '';
+			}
+			
 			// request was redirected
-		    else if( m_statusCode < 400 ) 
+			if (httpCode < 400)
 			{
-				msg = 'Request was redirected';
-		    }
+				return 'Request redirected';
+			}
 			// client error
-		    else if( m_statusCode < 500 ) 
+			if (httpCode < 500)
 			{
-				err = true;			
-				switch ( m_statusCode )
+				switch (httpCode)
 				{
-					case HTTP_STATUS_BAD_REQUEST :
-						msg = 'Flash sent bad request';
-						break;
-					case HTTP_STATUS_FORBIDDEN :
-						msg = 'Flash tried to receive a protected file';
-						break;
-					case HTTP_STATUS_NOT_FOUND :
-						msg = 'Flash requested a file which does not exist';
-						break;
-					case HTTP_STATUS_REQUEST_TIMEOUT :
-						msg = 'Flash received a timeout';
-						break;
-					case HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE :
-						msg = 'Flash sent an unsupported MIME type';
-						break;
+					case HTTP_STATUS_BAD_REQUEST :              return 'Bad request';
+					case HTTP_STATUS_FORBIDDEN :                return 'Forbidden';
+					case HTTP_STATUS_NOT_FOUND :                return 'Not found';
+					case HTTP_STATUS_REQUEST_TIMEOUT :          return 'Request timed out';
+					case HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE :   return 'MIME type not supported';
 				}
-		    }
+			}
 			// server error
-		    else if( m_statusCode < 600 ) 
+			else if (httpCode < 600)
 			{
-				err = true;
-				switch ( m_statusCode )
+				switch (httpCode)
 				{
 					case HTTP_STATUS_INTERNAL_SERVER_ERROR :
-						msg = 'Server sent an internal error message';
-						break;
+						return 'Internal server error';
 					case HTTP_STATUS_BAD_GATEWAY :
-						msg = 'Server sent a bad gateway message';
-						break;
+						return 'Bad gateway';
 					case HTTP_STATUS_SERVICE_UNAVAILABLE :
-						msg = 'Server is currently unavailable';
-						break;
+						return 'Service unavailable';
 					case HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED :
-						msg = 'Server does not support the HTTP version we sent';
-						break;
+						return 'HTTP version not supported';
 				}
 			}
-			
-			m_isError = err;
-			m_description = msg + ' (HTTP Status Code: ' + m_statusCode + ')';		
-		}	
+			throw new Error('invalid HTTP code: ' + httpCode);
+		}
 	}
 }

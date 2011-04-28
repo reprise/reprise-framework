@@ -5,7 +5,7 @@
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.events
+package reprise.resources.events
 { 
 	import reprise.external.HTTPStatus;
 	
