@@ -14,21 +14,14 @@ package reprise.controls
 	 */
 	public class LabelButton extends AbstractButton
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_labelDisplay : Label;
 		protected var m_label : String = '';
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function LabelButton(label:String = null)
 		{
 			m_label = label || '';
@@ -55,9 +48,7 @@ package reprise.controls
 				labelStr.indexOf(">") + 1, labelStr.lastIndexOf("<"));	
 		}
 
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function createChildren() : void
 		{
 			m_labelDisplay = Label(addComponent('label', null, Label));

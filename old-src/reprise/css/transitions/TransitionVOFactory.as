@@ -8,16 +8,11 @@
 package reprise.css.transitions
 {
 	public class TransitionVOFactory
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_propertyHandlerClasses : Object = {};
 		
 	
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function TransitionVOFactory()
 		{
 		}

@@ -18,23 +18,17 @@ package reprise.controls
 	public class List extends AbstractInput
 	{
 
-		/***************************************************************************
-		 *                             Public properties                            *
-		 ***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
 		
-		/***************************************************************************
-		 *                           Protected properties                           *
-		 ***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_itemRendererClass : Class = ListItem;
 		protected var m_items : Array;
 		protected var m_selectedIndex : int = -1;
 
 		
 		
-		/***************************************************************************
-		 *                              Public methods                              *
-		 ***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function List() 
 		{
 		}
@@ -153,9 +147,7 @@ package reprise.controls
 
 		
 		
-		/***************************************************************************
-		 *                             Protected methods                            *
-		 ***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

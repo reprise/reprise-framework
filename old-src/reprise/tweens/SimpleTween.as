@@ -16,16 +16,11 @@ package reprise.tweens
 
 	public class SimpleTween extends AbstractAsynchronousCommand
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const DIRECTION_FORWARD : int = 1;
 		public static const DIRECTION_BACKWARD : int = -1;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const g_frameEventDispatcher : Shape = new Shape();
 		
 		protected var m_direction : int;
@@ -42,9 +37,7 @@ package reprise.tweens
 		protected var m_timeAdjust : int;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function SimpleTween(
 			duration:int = 1, delay : uint = 0, normalizeToFrameRate : uint = 0)
 		{
@@ -320,9 +313,7 @@ package reprise.tweens
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		 * executes all actions needed in a timerTick
 		 */

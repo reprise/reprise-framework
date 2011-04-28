@@ -18,15 +18,11 @@ package reprise.controls.html
 
 	public class Image extends BitmapElement
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const className:String = "img";
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_imageLoader:BitmapResource;
 		protected var m_loaded : Boolean;
 		
@@ -34,9 +30,7 @@ package reprise.controls.html
 		private var m_cacheBitmap : Boolean = true;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Image()
 		{
 		}
@@ -110,9 +104,7 @@ package reprise.controls.html
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function imageLoaded(event : ResourceEvent) : void
 		{
 			if (!event.success)

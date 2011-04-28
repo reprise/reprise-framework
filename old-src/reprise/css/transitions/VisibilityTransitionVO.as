@@ -9,9 +9,7 @@ package reprise.css.transitions
 {
 	public class VisibilityTransitionVO extends PropertyTransitionVO
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function VisibilityTransitionVO()
 		{
 		}

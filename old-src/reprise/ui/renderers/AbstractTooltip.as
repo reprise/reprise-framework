@@ -21,24 +21,18 @@ package reprise.ui.renderers
 	public class AbstractTooltip extends UIComponent
 	{
 			
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var className : String = "AbstractTooltip";
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_mousedElement : DisplayObject;
 		protected var m_mousedComponent : UIComponent;
 		protected var m_tooltipDataProvider : Object;
 		protected var m_label : Label;
 			
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/	
+		//----------------------               Public Methods               ----------------------//
 		public function AbstractTooltip()
 		{
 		}
@@ -148,9 +142,7 @@ package reprise.ui.renderers
 		}
 
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function createChildren() : void
 		{
 			m_label = Label(addChild(new Label()));

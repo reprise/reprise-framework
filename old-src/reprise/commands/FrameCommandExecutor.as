@@ -14,10 +14,7 @@ package reprise.commands
 
 	public class FrameCommandExecutor
 	{
-	
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : FrameCommandExecutor;
 		private	var m_commands : HashMap;
 		protected var m_nextKeyIndex : int;
@@ -25,9 +22,7 @@ package reprise.commands
 		
 	
 	
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/	
+		//----------------------               Public Methods               ----------------------//
 		public static function instance() : FrameCommandExecutor
 		{
 			if (!g_instance)
@@ -118,9 +113,7 @@ package reprise.commands
 		
 			
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function FrameCommandExecutor()
 		{
 			m_commands = new HashMap();

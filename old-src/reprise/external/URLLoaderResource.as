@@ -15,17 +15,13 @@ package reprise.external
 
 	public class URLLoaderResource extends URLRequestResource
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_loader : URLLoader;
 		protected var m_data : String;
 		protected var m_dataFormat : String;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function URLLoaderResource(url:String = null)
 		{
 			super(url);
@@ -74,9 +70,7 @@ package reprise.external
 		
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doLoad() : void
 		{
 			// asset from library

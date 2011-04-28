@@ -17,17 +17,13 @@ package reprise.controls.html
 	public class FormSet extends UIComponent
 	{
 		
-		/***************************************************************************
-		*                           protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_forms:Array;
 		protected var m_activeFormIndex:int;
 		
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function FormSet() 
 		{
 		}
@@ -91,9 +87,7 @@ package reprise.controls.html
 		
 		
 		
-		/***************************************************************************
-		*                             protected methods                            *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

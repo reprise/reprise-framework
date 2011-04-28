@@ -19,9 +19,7 @@ package reprise.css.propertyparsers
 	
 	public class Border extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			border : {parser : parseBorder},

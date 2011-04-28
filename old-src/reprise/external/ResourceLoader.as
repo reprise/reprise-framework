@@ -18,9 +18,7 @@ package reprise.external
 		implements IProgressCommand
 	{
 		
-		//*****************************************************************************************
-		//*                                  Protected Properties                                 *
-		//*****************************************************************************************
+		//----------------------       Private / Protected Properties       ----------------------//
 		/**
 		* The default number of how many resources are loaded concurrently
 		*/
@@ -41,9 +39,7 @@ package reprise.external
 		
 		
 		
-		//*****************************************************************************************
-		//*                                     Public Methods                                    *
-		//*****************************************************************************************
+		//----------------------               Public Methods               ----------------------//
 		public function ResourceLoader()
 		{
 			m_abortOnFailure = false;
@@ -200,9 +196,7 @@ package reprise.external
 		
 		
 		
-		//*****************************************************************************************
-		//*                                   Protected Methods                                   *
-		//*****************************************************************************************
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		* Returns the progress of the resources currently being executed as a percentage value.
 		*/

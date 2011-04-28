@@ -22,9 +22,7 @@ package reprise.external
 
 	public class ImageResource extends URLRequestResource
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private static const MAX_POLICYFILE_LOAD_TIME : int = 5000;
 
 		protected var m_loader : Loader;
@@ -32,9 +30,7 @@ package reprise.external
 		private var m_policyFileLoadTimer:Timer;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ImageResource(url:String = null)
 		{
 			super(url);
@@ -92,9 +88,7 @@ package reprise.external
 		
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/	
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doLoad() : void
 		{
 			var useByteloader : Boolean;

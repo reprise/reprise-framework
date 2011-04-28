@@ -28,16 +28,11 @@ package reprise.css
 
 	public class CSSDeclaration
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		reprise static const TEXT_STYLESHEET : StyleSheet = new StyleSheet();
 		public static const INHERITABLE_PROPERTIES : Object = {};
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const TEXT_PROPERTIES : Object = 
 		{
 			'textAlign' : true,
@@ -73,9 +68,7 @@ package reprise.css
 		protected static var m_thrownErrors : Object	= {};
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclaration()
 		{
 			m_properties = {};
@@ -343,9 +336,7 @@ package reprise.css
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		// internal handling of getting and setting properties
 		reprise function setValueForKeyDefinedInFile(
 			val:String, key:String, file:String = '', weak : Boolean = false) : void

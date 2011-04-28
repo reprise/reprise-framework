@@ -21,23 +21,14 @@ package reprise.controls
 
 	public class AbstractButton extends AbstractInput
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
-		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_isToggleButton : Boolean = false;
 	
 		protected var m_selected : Boolean = false;
 		protected var m_enabled : Boolean = true;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		/**
 		 * setter for the isToggleButton property
 		 */
@@ -134,9 +125,7 @@ package reprise.controls
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function AbstractButton()
 		{
 		}

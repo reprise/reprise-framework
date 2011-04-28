@@ -19,9 +19,7 @@ package reprise.controls
 	public class RadioButtonGroup extends EventDispatcher
 	{
 		
-		/***************************************************************************
-		*                           protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_radioGroups:Object;
 		protected var m_radioButtons:Array;
 		protected var m_name:String;
@@ -29,9 +27,7 @@ package reprise.controls
 		
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function RadioButtonGroup(name:String)
 		{
 			m_name = name;

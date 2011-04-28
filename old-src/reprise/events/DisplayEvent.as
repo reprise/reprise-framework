@@ -14,9 +14,7 @@ package reprise.events
 	 */
 	public class DisplayEvent extends Event
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const ADDED_TO_DOCUMENT : String = 'addedToDocument';
 		public static const REMOVED_FROM_DOCUMENT : String = 'removedFromDocument';
 		
@@ -33,9 +31,7 @@ package reprise.events
 			'documentValidationComplete';
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DisplayEvent(type:String, 
 			bubbles : Boolean = false, cancelable : Boolean = false)
 		{

@@ -18,15 +18,10 @@ package reprise.core
 
 	public class UIRendererFactory 
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var TEXTNODE_TAGS : String = "span,br,strong,i,null,";
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_idHandlers : Object;
 		protected var m_classHandlers : Object;
 		protected var m_tagHandlers : Object;
@@ -40,9 +35,7 @@ package reprise.core
 		protected var m_defaultTooltipRenderer : Class;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function UIRendererFactory()
 		{
 			m_idHandlers = {};
@@ -290,9 +283,7 @@ package reprise.core
 			return new renderer();
 		}
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function registerDefaultRenderers() : Boolean
 		{
 			m_defaultBorderRenderer = DefaultBorderRenderer;

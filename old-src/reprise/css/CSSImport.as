@@ -11,15 +11,11 @@ package reprise.css
 	
 	internal class CSSImport extends URLLoaderResource
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		protected var m_owner : CSS;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSImport(owner:CSS, url:String = null)
 		{
 			m_owner = owner;
@@ -27,9 +23,7 @@ package reprise.css
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function notifyComplete(success:Boolean) : void
 		{
 			if (success)

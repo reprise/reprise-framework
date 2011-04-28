@@ -16,10 +16,7 @@ package reprise.ui.renderers
 		implements ICSSRenderer
 	{
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_styles : ComputedStyles;
 		protected var m_complexStyles : CSSDeclaration;
 		protected var m_width : Number;
@@ -30,9 +27,7 @@ package reprise.ui.renderers
 			
 	
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function setId(id : String) : void
 		{
 			m_id = id;
@@ -110,9 +105,7 @@ package reprise.ui.renderers
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function AbstractCSSRenderer() {}
 	
 	}

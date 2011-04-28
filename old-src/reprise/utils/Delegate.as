@@ -10,18 +10,13 @@ package reprise.utils
 	import reprise.commands.AbstractCommand;	 
 
 	public class Delegate extends AbstractCommand
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_scope : Object;
 		protected var m_method : Function;
 		protected var m_args : Array;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Delegate(scope:Object, method:Function, args:Array = null)
 		{
 			m_scope = scope;

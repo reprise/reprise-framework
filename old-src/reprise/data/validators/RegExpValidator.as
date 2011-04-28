@@ -15,16 +15,12 @@ package reprise.data.validators
 	 */
 	public class RegExpValidator extends AbstractCommand implements IValidator 
 	{
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_value : *;
 		protected var m_regexp : RegExp;
 
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function RegExpValidator(expression : String)
 		{
 			var parts : Array = expression.substr(1).split('/');

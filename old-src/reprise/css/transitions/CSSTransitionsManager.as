@@ -22,10 +22,7 @@ package reprise.css.transitions
 	use namespace reprise;
 	
 	public class CSSTransitionsManager
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static const DEFAULT_DURATION : Array = initDefaultDuration();
 		protected static const DEFAULT_DELAY : Array = initDefaultDelay();
 		protected static const DEFAULT_EASING : Array = [Linear.easeNone];
@@ -43,9 +40,7 @@ package reprise.css.transitions
 		protected var m_frameDuration : int;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSTransitionsManager(target : EventDispatcher)
 		{
 			m_target = target;
@@ -302,9 +297,7 @@ package reprise.css.transitions
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected static function initDefaultDuration() : Array
 		{
 			var property : CSSProperty = new CSSProperty();

@@ -31,9 +31,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function FLVPlayer(resource:IResource, host:Video)
 		{
 			super();
@@ -151,9 +149,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doLoad():void
 		{
 			m_video.attachNetStream(m_stream);

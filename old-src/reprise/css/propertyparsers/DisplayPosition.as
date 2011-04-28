@@ -19,9 +19,7 @@ package reprise.css.propertyparsers
 	
 	public class DisplayPosition extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			display : {parser : strToStringProperty, transition : VisibilityTransitionVO},

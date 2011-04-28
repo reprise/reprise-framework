@@ -32,9 +32,7 @@ package reprise.debug
 	
 	public class DebugInterface 
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const _instance : DebugInterface = new DebugInterface();
 
 
@@ -52,9 +50,7 @@ package reprise.debug
 		private var _stage : Stage;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DebugInterface()
 		{
 		}
@@ -131,9 +127,7 @@ package reprise.debug
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function startWatchingStylesheets(document : DocumentView) : void
 		{
 			var stylesheets : Array = document.styleSheet.stylesheetURLs();

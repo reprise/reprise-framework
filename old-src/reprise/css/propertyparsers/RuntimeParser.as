@@ -19,9 +19,7 @@ package reprise.css.propertyparsers
 		public static var KNOWN_PROPERTIES : Object = [];
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function registerProperty(
 			name : String, type : uint, inheritable : Boolean, 
 			transition : Class = null, parserMethod : Function = null) : void
@@ -78,9 +76,7 @@ package reprise.css.propertyparsers
 		}
 		
 		
-		/***************************************************************************
-		*							private methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function RuntimeParser()
 		{
 		}

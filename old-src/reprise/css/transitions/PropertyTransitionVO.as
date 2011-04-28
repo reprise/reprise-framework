@@ -8,18 +8,13 @@
 package reprise.css.transitions
 {
 	public class PropertyTransitionVO
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_startValue : *;
 		protected var m_endValue : *;
 		protected var m_currentValue : *;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function PropertyTransitionVO()
 		{
 		}

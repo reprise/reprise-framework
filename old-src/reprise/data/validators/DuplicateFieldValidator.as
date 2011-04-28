@@ -13,17 +13,13 @@ package reprise.data.validators
 	
 	public class DuplicateFieldValidator extends AbstractCommand implements IValidator 
 	{
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_value : *;
 		protected var m_field : IInput;
 		protected var m_regexp : RegExp;
 
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DuplicateFieldValidator(field:IInput)
 		{
 			m_field = field;

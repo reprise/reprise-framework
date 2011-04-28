@@ -30,10 +30,7 @@ package reprise.ui.renderers
 	import reprise.utils.Gradient;
 
 	public class DefaultBackgroundRenderer extends AbstractCSSRenderer
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_backgroundImageContainer : Sprite;
 		protected var m_activeBackgroundAnimationContainer : Sprite;
 		protected var m_inactiveBackgroundAnimationContainer : Sprite;
@@ -47,9 +44,7 @@ package reprise.ui.renderers
 		protected var m_animationControls : CompositeCommand;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DefaultBackgroundRenderer() {}
 	
 		
@@ -139,9 +134,7 @@ package reprise.ui.renderers
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function clearBackgroundImage() : void
 		{
 			if (m_backgroundImageContainer != null)

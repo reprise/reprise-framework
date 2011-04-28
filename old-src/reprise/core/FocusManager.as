@@ -21,25 +21,19 @@ package reprise.core
 
 	public class FocusManager
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const FOCUS_METHOD_KEYBOARD : String = 'keyboard';
 		public static const FOCUS_METHOD_MOUSE : String = 'mouse';
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_document : DocumentView;
 		protected var m_focus : UIObject;
 		protected var m_inFocusHandling : Boolean;
 		protected var m_lastTabPress : int;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function FocusManager(document : DocumentView)
 		{
 			m_document = document;
@@ -89,9 +83,7 @@ package reprise.core
 			return false;
 		}
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function document_keyFocusChange(e:FocusEvent):void
 		{
 			if (m_inFocusHandling)

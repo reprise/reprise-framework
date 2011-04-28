@@ -20,16 +20,11 @@ package reprise.ui.layoutmanagers
 	use namespace reprise;
 	
 	public class CSSBoxModelLayoutManager implements ILayoutManager
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		private var m_displayStack : Array;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/ 
+		//----------------------               Public Methods               ----------------------//
 		public function applyFlowPositions(
 			element : UIComponent, children : Array) : void
 		{
@@ -349,9 +344,7 @@ package reprise.ui.layoutmanagers
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function applyVerticalPositionsInLineBox(
 			lineBoxTop : int, lineBoxHeight : int, lineBoxChildren : Array) : void
 		{

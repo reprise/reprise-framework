@@ -14,10 +14,7 @@ package reprise.external {
 	import flash.events.EventDispatcher;
 	public class BitmapResourceCacheItem extends EventDispatcher
 	{
-	
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_isLoading : Boolean;
 		protected var m_loader : ImageResource;
 		protected var m_url : String;
@@ -34,9 +31,7 @@ package reprise.external {
 			
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function BitmapResourceCacheItem(loader : ImageResource)
 		{
 			m_loader = loader;
@@ -107,9 +102,7 @@ package reprise.external {
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function removeTarget(target:BitmapResource) : void
 		{
 			var index : int = m_targets.indexOf(target);

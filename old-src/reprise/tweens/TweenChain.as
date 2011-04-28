@@ -15,9 +15,7 @@ package reprise.tweens {
 	 */
 	public class TweenChain extends EventDispatcher
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const EVENT_START : String = "start";
 		public static const EVENT_TICK : String = "tick";
 		public static const EVENT_FINISH_TWEEN : String = "finishTween";
@@ -26,19 +24,14 @@ package reprise.tweens {
 		public static const DIRECTION_FORWARD:int = 1;
 		public static const DIRECTION_BACKWARD:int = -1;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_tweens : Array;
 		protected var m_currentTween : SimpleTween;
 		protected var m_currentTweenIndex : int;
 		protected var m_isRunning : Boolean;
 		protected var m_direction:Number;
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function TweenChain(...rest)
 		{
 	 		m_tweens = [];
@@ -144,9 +137,7 @@ package reprise.tweens {
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		 * event handler, invoked on each tick of the current tween
 		 */

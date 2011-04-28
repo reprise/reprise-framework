@@ -17,17 +17,13 @@ package reprise.controls
 	 
 	public class BitmapElement extends UIComponent
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_smoothing : Boolean = true;
 		protected var m_image : Bitmap;
 		protected var m_imageDisplayed : Boolean;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function setSmoothing(enabled : Boolean) : void
 		{
 			m_smoothing = enabled;
@@ -51,9 +47,7 @@ package reprise.controls
 			return m_image.bitmapData;
 		}
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initDefaultStyles() : void
 		{
 			m_elementDefaultStyles.setStyle('display', 'inline');

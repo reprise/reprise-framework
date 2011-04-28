@@ -14,9 +14,7 @@ package reprise.events
 	 */
 	public class TransitionEvent extends Event 
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const TRANSITION_START : String = 'transitionStart';
 		public static const TRANSITION_COMPLETE : String = 'transitionComplete';
 		public static const ALL_TRANSITIONS_COMPLETE : String = 'allTransitionComplete';
@@ -51,17 +49,12 @@ package reprise.events
 			m_elapsedTime = time;
 		}
 
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_propertyName : String;
 		protected var m_elapsedTime : int;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function TransitionEvent(type : String, bubbles : Boolean = false)
 		{
 			super(type, bubbles);

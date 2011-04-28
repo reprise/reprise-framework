@@ -14,18 +14,14 @@ package reprise.utils
 
 	public class AsynchronousDelegate extends AbstractAsynchronousCommand
 	{
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected var m_executionDelegate : Delegate;
 		protected var m_waitsForEvent : Boolean = false;
 		protected var m_commandCompleteEventName : String;
 		protected var m_successEvaluationFunction : Function;
 	
 	
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function AsynchronousDelegate(scope:Object, method:Function, 
 			args:Array, commandCompleteEventName:String = null)
 		{
@@ -87,9 +83,7 @@ package reprise.utils
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function execution_complete(event : Event) : void
 		{
 			EventDispatcher(m_executionDelegate.scope()).removeEventListener(

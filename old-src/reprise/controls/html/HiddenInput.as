@@ -14,15 +14,11 @@ package reprise.controls.html
 	 */
 	public class HiddenInput extends AbstractInput
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_value : *;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public override function value() : *
 		{
 			return m_value;
@@ -33,9 +29,7 @@ package reprise.controls.html
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods					
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initDefaultStyles() : void
 		{
 			super.initDefaultStyles();

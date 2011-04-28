@@ -12,9 +12,7 @@ package reprise.tweens
 	
 	public class ColorTweenPropertyVO extends TweenedPropertyVO
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ColorTweenPropertyVO(
 			scope:Object, property:String, startValue:Number, 
 			targetValue:Number, tweenFunction:Function, roundResults:Boolean, 
@@ -25,9 +23,7 @@ package reprise.tweens
 		}
 
 		
-		/***************************************************************************
-		*							private methods								   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		public override function tweenFunction(
 			time:int, start:Number, change:Number, duration:int, ...rest) : Number
 		{

@@ -13,15 +13,10 @@ package reprise.ui.renderers {
 	public class DefaultTooltipRenderer extends AbstractTooltip
 	{
 			
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var className : String = "DefaultTooltipRenderer";
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var fadeIn : Delegate;
 		protected var fadeOut : Delegate;
 		protected var isFadingIn : Boolean;
@@ -29,9 +24,7 @@ package reprise.ui.renderers {
 		protected var isVisible : Boolean;
 			
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/	
+		//----------------------               Public Methods               ----------------------//
 		public function DefaultTooltipRenderer()
 		{
 		}
@@ -59,9 +52,7 @@ package reprise.ui.renderers {
 		}
 	
 	
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

@@ -13,9 +13,7 @@ package reprise.tweens {
 	 */
 	public class TweenedPropertyVO
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public var scope:Object;
 		public var property:String;
 		public var startValue:Number;

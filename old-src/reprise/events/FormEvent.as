@@ -11,9 +11,7 @@ package reprise.events
 	
 	public class FormEvent extends Event
 	{
-		/***************************************************************************
-		*                           public properties	                           *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const SUBMIT : String = 'formSubmit';
 		public static const SUBMIT_SET : String = 'formSubmitSet';
 		public static const BACK : String = 'formBack';

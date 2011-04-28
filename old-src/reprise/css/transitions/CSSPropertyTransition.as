@@ -16,9 +16,7 @@ package reprise.css.transitions
 	
 	public class CSSPropertyTransition
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public var property : String;
 		public var shortcut : String;
 		public var duration : CSSProperty;
@@ -30,10 +28,7 @@ package reprise.css.transitions
 		
 		public var hasCompleted : Boolean;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_startTime : int;
 		protected var m_startValue : CSSProperty;
 		protected var m_endValue : CSSProperty;
@@ -43,9 +38,7 @@ package reprise.css.transitions
 		protected var m_propertyTransition : PropertyTransitionVO;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSPropertyTransition(name : String, shortcut : String = null)
 		{
 			property = name;

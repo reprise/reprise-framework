@@ -21,9 +21,7 @@ package reprise.css.propertyparsers
 	
 	public class Background extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			background : {parser : parseBackground},

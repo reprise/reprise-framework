@@ -16,16 +16,12 @@ package reprise.core
 	public class CoreResourceLoader extends ResourceLoader
 	{
 	
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_appContext:ApplicationContext;
 		
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CoreResourceLoader(appContext:ApplicationContext)
 		{
 			super();
@@ -41,9 +37,7 @@ package reprise.core
 		
 		
 		
-		/***************************************************************************
-		*                             Protected methods                            *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function rewriteURLOfResource(res:IResource):void
 		{
 			res.setURL(CSSParsingHelper.resolvePathAgainstPath(res.url(), 

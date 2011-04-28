@@ -41,14 +41,9 @@ package reprise.ui
 
 	public class UIComponent extends UIObject implements ICSSCalculationContext
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const WIDTH_RELATIVE_PROPERTIES : Array = 
 		[
 			['marginTop', false],
@@ -159,9 +154,7 @@ package reprise.ui
 		protected var m_dropShadowFilter : DropShadowFilter;
 		
 		
-		/***************************************************************************
-		*							private properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var m_explicitContainingBlock : UIComponent;
 		private var m_transitionsManager : CSSTransitionsManager;
 		private var m_scrollbarsDisplay : Sprite;
@@ -172,9 +165,7 @@ package reprise.ui
 		private var m_isRenderedHasChanged:Boolean;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/ 
+		//----------------------               Public Methods               ----------------------//
 		public function UIComponent()
 		{
 		}
@@ -1349,9 +1340,7 @@ package reprise.ui
 		}
 		
 
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function preinitialize() : void
 		{
 			super.preinitialize();

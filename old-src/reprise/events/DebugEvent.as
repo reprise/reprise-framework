@@ -14,9 +14,7 @@ package reprise.events
 	 */
 	public class DebugEvent extends Event 
 	{
-		/***************************************************************************
-		*                           public properties	                           *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const WILL_RESET_STYLES : String = 'willResetStyles';
 		public static const DID_RESET_STYLES : String = 'didResetStyles';
 		

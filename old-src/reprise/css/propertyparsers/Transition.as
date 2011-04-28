@@ -29,9 +29,7 @@ package reprise.css.propertyparsers
 
 	public class Transition extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			RepriseTransition : {parser : parseRepriseTransition},

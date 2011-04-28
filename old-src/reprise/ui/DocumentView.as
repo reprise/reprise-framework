@@ -27,17 +27,12 @@ package reprise.ui
 	
 	public class DocumentView extends UIComponent
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var className : String = "body";
 		
 		public var stageDimensionsChanged : Boolean;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_defaultStyleSheet : CSS = new CSS();
 		protected static var g_totalValidationTime : int = 0;
 		
@@ -63,9 +58,7 @@ package reprise.ui
 		protected var m_heightIsRelative : Boolean;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DocumentView()
 		{
 			m_rendererFactory = new UIRendererFactory();
@@ -316,9 +309,7 @@ package reprise.ui
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;

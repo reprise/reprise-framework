@@ -12,9 +12,7 @@ package reprise.utils
 	
 	public class PathUtil
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function pathComponents(path:String) : Array
 		{
 			var components : Array = path.split('/');
@@ -296,9 +294,7 @@ package reprise.utils
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function PathUtil() {}	
 	}
 }

@@ -11,9 +11,7 @@ package reprise.external
 
 	public class XMLResource extends URLLoaderResource
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function XMLResource(url:String) 
 		{
 			super(url);

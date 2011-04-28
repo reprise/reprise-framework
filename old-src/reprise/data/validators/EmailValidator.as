@@ -11,9 +11,7 @@ package reprise.data.validators
 	
 	public class EmailValidator extends RegExpValidator 
 	{
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function EmailValidator()
 		{
 			super('/.+@.+[.].+/');

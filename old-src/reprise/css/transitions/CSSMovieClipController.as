@@ -18,16 +18,11 @@ package reprise.css.transitions
 		extends AbstractAsynchronousCommand
 	{
 		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const DIRECTION_FORWARDS : int = 1;
 		public static const DIRECTION_BACKWARDS : int = -1;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_target : MovieClip;
 		protected var m_direction : int = 1;
 		protected var m_frameDelay : int = 1;
@@ -40,9 +35,7 @@ package reprise.css.transitions
 		protected var m_playedLoops : int;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSMovieClipController(target:MovieClip) 
 		{
 			setTarget(target);
@@ -221,9 +214,7 @@ package reprise.css.transitions
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function notifyComplete(success:Boolean) : void
 		{
 			m_target.removeEventListener(Event.ENTER_FRAME, target_enterFrame);

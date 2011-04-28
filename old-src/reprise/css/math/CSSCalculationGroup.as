@@ -13,18 +13,13 @@ package reprise.css.math
 
 	public class CSSCalculationGroup extends AbstractCSSCalculation
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const OPERATOR_PLUS : String = '+';
 		public static const OPERATOR_MINUS : String = '-';
 		public static const OPERATOR_MULTIPLY : String = '*';
 		public static const OPERATOR_DIVIDE : String = '/';
 		public static const OPERATOR_MODULO : String = 'mod';
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_operations : Object = initializeOperations();
 		//note that we ignore absolute value suffixes (ie, pt and px) for now
 		protected static var g_tokenizer : RegExp = 
@@ -35,9 +30,7 @@ package reprise.css.math
 		protected var m_operator : String;
 		protected var m_operation : Function;
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function PrepareCalculation(
 			expression : String) : CSSCalculationGroup
 		{
@@ -85,9 +78,7 @@ package reprise.css.math
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected static function initializeOperations() : Object
 		{
 			var operations : Object = {};

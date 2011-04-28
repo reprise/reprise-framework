@@ -14,9 +14,7 @@ package reprise.controls.csspropertyparsers
 	 */
 	public class ScrollbarProperties extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object = 
 		{
 			autoHide : {parser : strToBoolProperty},

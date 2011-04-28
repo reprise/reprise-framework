@@ -8,16 +8,11 @@
 package reprise.css.transitions
 {
 	public class ColorListTransitionVO extends PropertyTransitionVO
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_transitions : Array;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public override function set startValue(value : *) : void
 		{
 			m_startValue = value;

@@ -15,9 +15,7 @@ package reprise.css.propertyparsers
 	
 	public class Padding extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			padding : {parser : parsePadding},

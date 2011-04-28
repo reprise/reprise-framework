@@ -8,10 +8,7 @@
 package reprise.data
 { 
 	public class URL
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static const URL_PARSER : RegExp = new RegExp(
 			'(?:' +										//match absolute path parts only if a 
 														//protocol is given
@@ -37,9 +34,7 @@ package reprise.data
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function URL(urlString:String = null)
 		{
 			if (urlString)
@@ -209,9 +204,7 @@ package reprise.data
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function parseURL(urlString : String) : void
 		{
 			var match : Array = URL_PARSER.exec(urlString);

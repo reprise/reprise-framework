@@ -12,9 +12,7 @@ package reprise.data.collection
 	public dynamic class IndexedArray extends Array
 	{
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function IndexedArray()
 		{
 			splice.apply(this, ([0, 0]).concat(arguments));

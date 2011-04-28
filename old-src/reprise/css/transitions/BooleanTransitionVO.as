@@ -9,9 +9,7 @@ package reprise.css.transitions
 {
 	public class BooleanTransitionVO extends PropertyTransitionVO
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function BooleanTransitionVO()
 		{
 		}

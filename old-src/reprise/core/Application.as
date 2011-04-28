@@ -24,14 +24,9 @@ package reprise.core
 
 	public class Application extends Sprite
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const CSS_URL : String = 'flash.css';		
 		protected var m_rootElement : DocumentView;
 		protected var m_currentView : UIObject;
@@ -42,9 +37,7 @@ package reprise.core
 		protected var m_css : CSS;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Application()
 		{
 			if (stage)
@@ -113,9 +106,7 @@ package reprise.core
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function self_addedToStage(event : Event) : void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, self_addedToStage);

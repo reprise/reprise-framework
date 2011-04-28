@@ -9,9 +9,7 @@ package reprise.external
 {
 	public class FileResource extends URLLoaderResource
 	{
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function FileResource()
 		{
 			log('w FileResource is deprecated. Use URLLoaderResource instead.');

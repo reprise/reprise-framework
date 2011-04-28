@@ -13,17 +13,13 @@ package reprise.css.math
 	public class CSSCalculationBinding 
 		extends AbstractCSSCalculation 
 	{
-		/***************************************************************************
-		*							private properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_selector : String;
 		protected var m_value : String;
 		protected var m_property : String;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSCalculationBinding(value : String)
 		{
 			m_value = value;

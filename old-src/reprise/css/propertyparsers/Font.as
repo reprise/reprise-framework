@@ -17,9 +17,7 @@ package reprise.css.propertyparsers
 	
 	public class Font extends CSSPropertyParser
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const KNOWN_PROPERTIES : Object =
 		{
 			color : {parser : strToColorProperty, inheritable : true, transition : ColorTransitionVO},
@@ -46,9 +44,7 @@ package reprise.css.propertyparsers
 		
 		public function Font() {}
 		
-		/***************************************************************************
-		*							private methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		private static function parseEmbedFonts(val:String, file:String) : CSSProperty
 		{		
 			return strToBoolProperty(val, file, ['embed']);

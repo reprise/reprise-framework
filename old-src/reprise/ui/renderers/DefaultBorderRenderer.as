@@ -17,10 +17,7 @@ package reprise.ui.renderers
 	public class DefaultBorderRenderer extends AbstractCSSRenderer
 	{
 	
-	
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	//----------------------       Private / Protected Properties       ----------------------//
 		protected static var SIDE_TOP : int = 1;
 		protected static var SIDE_RIGHT : int = 2;
 		protected static var SIDE_BOTTOM : int = 3;
@@ -28,9 +25,7 @@ package reprise.ui.renderers
 	
 	
 	
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function DefaultBorderRenderer() {}
 		
 		
@@ -162,9 +157,7 @@ package reprise.ui.renderers
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function drawBorderInRect(color : AdvancedColor, style : String, 
 			width : Number, pt1 : Point, pt2 : Point, pt3 : Point, pt4 : Point, 
 			side : int) : void

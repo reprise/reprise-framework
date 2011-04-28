@@ -13,16 +13,12 @@ package reprise.utils
 	public class GeomUtil 
 	{
 		
-		/***************************************************************************
-		*							private properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private static const MATRIX_MAPPINGS : Array = ['a', 'c', 'b', 'd', 'tx', 'ty'];
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function GeomUtil()
 		{
 			throw new Error("You don't instantiate the GeomUtil!");

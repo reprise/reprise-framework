@@ -14,9 +14,7 @@ package reprise.controls
 	public class ListItem extends LabelButton implements IListItem
 	{
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		override public function setData(data : *) : void
 		{
 			super.setData(data);

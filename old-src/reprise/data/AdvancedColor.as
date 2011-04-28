@@ -14,9 +14,7 @@ package reprise.data
 	public class AdvancedColor implements Cloneable
 	{
 		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var g_htmlColors : Object =
 		{
 			black: 0x0,
@@ -38,18 +36,13 @@ package reprise.data
 			magenta: 0xff00ff
 		};	
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_value : int;
 		protected var m_opacity : Number;
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function AdvancedColor(rgb : int = 0, opacity : Number = 1)
 		{
 			setRGB(rgb);

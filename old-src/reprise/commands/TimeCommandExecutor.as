@@ -14,19 +14,14 @@ package reprise.commands {
 	import flash.utils.setInterval;
 	public class TimeCommandExecutor
 	{
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance:TimeCommandExecutor;
 		protected	var m_commands:HashMap;
 		protected var m_nextKeyIndex:Number;
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/	
+		//----------------------               Public Methods               ----------------------//
 		public static function instance():TimeCommandExecutor
 		{
 			if (!g_instance)
@@ -124,9 +119,7 @@ package reprise.commands {
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function TimeCommandExecutor()
 		{
 			m_commands = new HashMap();

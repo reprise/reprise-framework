@@ -18,9 +18,7 @@ package reprise.utils
 	
 	public class GfxUtil 
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		/**
 		 * draws a rect in the given context
 		 * TODO: change interface to Rectangle
@@ -427,9 +425,7 @@ package reprise.utils
 		}
 		
 			
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		 * protected constructor to prevent static class from being instantiated
 		 */

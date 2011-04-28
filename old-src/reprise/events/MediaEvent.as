@@ -14,9 +14,7 @@ package reprise.events
 	 */
 	public class MediaEvent extends Event
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const PLAYBACK_START : String = "playbackStart";
 		public static const PLAYBACK_PAUSE : String = "playbackPause";
 		public static const PLAYBACK_FINISH : String = "playbackFinish";
@@ -34,9 +32,7 @@ package reprise.events
 		public var message : String;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function MediaEvent(type : String, bubbles : Boolean = false)
 		{
 			super(type, bubbles);

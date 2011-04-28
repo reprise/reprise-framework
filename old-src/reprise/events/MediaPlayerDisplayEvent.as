@@ -14,17 +14,13 @@ package reprise.events
 	 */
 	public class MediaPlayerDisplayEvent extends Event
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const PLAY_CLICK : String = "playClickEvent";
 		public static const PAUSE_CLICK : String = "pauseClickEvent";
 		public static const STOP_CLICK : String = "stopClickEvent";
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function MediaPlayerDisplayEvent(type : String, bubbles : Boolean = false)
 		{
 			super(type, bubbles);

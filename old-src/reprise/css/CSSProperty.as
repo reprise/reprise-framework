@@ -19,9 +19,7 @@ package reprise.css
 	// @see http://www.w3.org/TR/REC-CSS2/cascade.html
 	public class CSSProperty implements Cloneable
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const UNIT_PIXEL : String = 'px';
 		public static const UNIT_EM : String = 'em';
 		public static const UNIT_PERCENT : String = '%';
@@ -30,10 +28,7 @@ package reprise.css
 		public static const INHERIT_FLAG : String = 'inherit';
 		public static const AUTO_FLAG : String = 'auto';
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_id : int = 0;
 		
 		protected var m_important : Boolean = false;
@@ -55,9 +50,7 @@ package reprise.css
 		protected var m_isWeak : Boolean;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSProperty()
 		{
 			m_id = g_id++;
@@ -300,9 +293,7 @@ package reprise.css
 			return prop;
 		}
 	
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function preprocessCalculation(val : Object) : void
 		{
 			var expression : String = val.substring(5, val.length - 1);

@@ -14,10 +14,7 @@ package reprise.css
 	use namespace reprise;
 	
 	internal class CSSDeclarationList
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_items : Array;
 		protected var m_declarationIndex : int = 0;
 		protected var m_declarationCache : Array;
@@ -25,9 +22,7 @@ package reprise.css
 		protected var m_starSelectors : Array = [];
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclarationList()
 		{
 			m_items = [];

@@ -11,18 +11,13 @@ package reprise.external
 	
 	public class ResourceProxy
 	{
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : ResourceProxy;
 		protected var m_delegate : IResourceProxyDelegate;
 		
 		
 			
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function instance() : ResourceProxy
 		{
 			if (g_instance == null)
@@ -53,9 +48,7 @@ package reprise.external
 		
 			
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function ResourceProxy() {}
 	}
 }

@@ -23,14 +23,9 @@ package reprise.ui
 	
 	public class UIObject extends Sprite
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_elementIDCounter : int = 0;
 		
 		protected var m_class : Class;
@@ -69,9 +64,7 @@ package reprise.ui
 		protected var m_childArrayCleanupNeeded : Boolean;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function UIObject()
 		{
 			m_class = Class(Object(this).constructor);
@@ -821,9 +814,7 @@ package reprise.ui
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function preinitialize() : void
 		{
 			name = m_elementType + '_' + g_elementIDCounter++;

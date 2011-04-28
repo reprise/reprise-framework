@@ -16,9 +16,7 @@ package reprise.controls
 
 	public class ComboBox extends AbstractInput
 	{
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_currentItemDisplay : IListItem;
 		protected var m_toggleBtn : SimpleButton;
 		protected var m_backgroundCell : UIComponent;
@@ -27,9 +25,7 @@ package reprise.controls
 		protected var m_itemRendererClass : Class = ListItem;		
 
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ComboBox()
 		{
 		}
@@ -126,9 +122,7 @@ package reprise.controls
 
 		
 		
-		/***************************************************************************
-		*                             Protected methods                            *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

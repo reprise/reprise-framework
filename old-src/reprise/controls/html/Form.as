@@ -23,9 +23,7 @@ package reprise.controls.html
 	public class Form extends UIComponent
 	{
 		
-		/***************************************************************************
-		*                           protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_fields:Array;
 		protected var m_customValidators:Array;
 		protected var m_submitButtons:Array;
@@ -35,9 +33,7 @@ package reprise.controls.html
 		protected var m_validationDisabled:Boolean = false;
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Form() 
 		{
 			m_fields = [];
@@ -185,9 +181,7 @@ package reprise.controls.html
 		
 		
 		
-		/***************************************************************************
-		*                             protected methods                            *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize():void
 		{
 			super.initialize();

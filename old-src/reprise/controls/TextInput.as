@@ -20,15 +20,11 @@ package reprise.controls
 	
 	public class TextInput extends Label
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const className : String = "TextInput";
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_enabled : Boolean;
 		protected var m_labelStr : String = '';
 		protected var m_verticalScrollingOn : Boolean;
@@ -36,9 +32,7 @@ package reprise.controls
 		
 		protected var m_placeholder : String;
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function TextInput ()
 		{
 			
@@ -184,9 +178,7 @@ package reprise.controls
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods					
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

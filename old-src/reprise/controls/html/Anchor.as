@@ -16,22 +16,16 @@ package reprise.controls.html
 
 	public class Anchor extends AbstractButton
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static var className : String = "a";
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_href : String;
 		protected var m_target : String;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Anchor() {}	
 		
 		public function setHrefAttribute(value : String) : void
@@ -43,9 +37,7 @@ package reprise.controls.html
 			m_target = value;
 		}
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
 			var htmlEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, true);

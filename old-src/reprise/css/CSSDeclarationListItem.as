@@ -13,24 +13,18 @@ package reprise.css
 	
 	internal class CSSDeclarationListItem
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public var declarationSpecificity : int;
 		public var declarationIndex : int;
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_selector : String;
 		protected var m_selectorPattern : Array;
 		protected var m_declaration : CSSDeclaration;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclarationListItem(selector : String, 
 			declaration : CSSDeclaration, index : int, file : String = null) 
 		{
@@ -157,9 +151,7 @@ package reprise.css
 //		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function specificityForSelector(selector:String) : int
 		{
 			var patterns : Array = selector.split(' ');

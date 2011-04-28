@@ -11,9 +11,7 @@ package reprise.css
 
 	public dynamic class ComputedStyles 
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const BASELINE : ComputedStyles = new ComputedStyles();
 		
 		
@@ -142,9 +140,7 @@ package reprise.css
 		public var color : AdvancedColor;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ComputedStyles()
 		{
 		}

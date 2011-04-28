@@ -14,15 +14,11 @@ package reprise.events {
 	 */
 	public class EventBroadcaster extends EventDispatcher
 	{
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : EventBroadcaster;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function instance() : EventBroadcaster
 		{
 			if ( g_instance == null )
@@ -36,9 +32,7 @@ package reprise.events {
 		{		
 			dispatchEvent(event);
 		} 
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function EventBroadcaster()
 		{
 		}

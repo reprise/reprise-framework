@@ -12,18 +12,14 @@ package reprise.external
 
 	public class URLRequestResource extends AbstractResource
 	{
-		/*******************************************************************************************
-		 *								protected/ private properties							   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_request : URLRequest;
 		protected var m_requestContentType : String;
 		protected var m_requestMethod : String;
 		protected var m_requestData : Object;
 
 
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function URLRequestResource(url:String)
 		{
 			super(url);
@@ -44,9 +40,7 @@ package reprise.external
 			m_requestData = data;
 		}
 
-		/*******************************************************************************************
-		 *								protected/ private methods								 *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected function createRequest() : URLRequest
 		{
 			var request : URLRequest = new URLRequest(urlByAppendingTimestamp());

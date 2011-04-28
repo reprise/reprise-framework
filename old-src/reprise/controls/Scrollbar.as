@@ -22,16 +22,11 @@ package reprise.controls
 
 	public class Scrollbar extends UIComponent
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const ORIENTATION_VERTICAL : String = 'vertical';
 		public static const ORIENTATION_HORIZONTAL : String = 'horizontal';
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const SCROLL_DIR_UP : int = -1;
 		protected static const SCROLL_DIR_DOWN : int = 1;
 		
@@ -64,9 +59,7 @@ package reprise.controls
 		protected var m_overflowScrollMode : Boolean = true;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Scrollbar()
 		{
 		}
@@ -248,9 +241,7 @@ package reprise.controls
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize() : void
 		{
 			super.initialize();

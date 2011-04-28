@@ -21,17 +21,13 @@ package reprise.ui
 	public class AbstractInput extends UIComponent 
 		implements IInput
 	{
-		/***************************************************************************
-		*                             Public properties                            *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		/* @TODO: properties probably should be namespaced */
 		public var m_priority : int = 0;
 		public var m_id : int;
 		
 		
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_autovalidates : Boolean = true;
 		protected var m_validator : IValidator;
 		protected var m_required : Boolean;
@@ -40,9 +36,7 @@ package reprise.ui
 		protected var m_queueParent : CompositeCommand;
 
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function AbstractInput() {}
 		
 		
@@ -274,9 +268,7 @@ package reprise.ui
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function self_keyDown(event : KeyboardEvent) : void
 		{
 			if (handleKeyEvent(event))

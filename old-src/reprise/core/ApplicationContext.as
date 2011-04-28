@@ -17,17 +17,13 @@ package reprise.core
 
 	public class ApplicationContext
 	{
-		/***************************************************************************
-		*                             Public properties                            *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public var coreResourceLoader:CoreResourceLoader;
 		public var applicationURL:String;
 		public var applicationParameters:Object;
 		
 		
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_mainContext:ApplicationContext;
 		protected var m_application:Application;
 		
@@ -35,9 +31,7 @@ package reprise.core
 		protected var m_trackingService : ITrackingService;
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ApplicationContext(application:Application, loaderInfo:LoaderInfo)
 		{
 //			if (!g_mainContext)

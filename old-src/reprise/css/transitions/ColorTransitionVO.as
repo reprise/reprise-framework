@@ -11,9 +11,7 @@ package reprise.css.transitions
 
 	public class ColorTransitionVO extends PropertyTransitionVO
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ColorTransitionVO()
 		{
 		}

@@ -14,17 +14,12 @@ package reprise.core
 	import flash.events.Event; 
 
 	public class FrontController
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_commands : Object;
 		protected var m_view : DocumentView;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function FrontController() 
 		{
 			m_commands = {};
@@ -91,9 +86,7 @@ package reprise.core
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function getCommand(name:String) : Class
 		{
 			var command : Class = m_commands[name];

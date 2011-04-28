@@ -12,9 +12,7 @@ package reprise.media
 	public class AbstractBuffer
 	{
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_userBandwidth:Number; // Bytes per second
 		protected var m_mediaLength:Number; // Seconds
 		protected var m_mediaSize:Number; // Bytes
@@ -27,9 +25,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function AbstractBuffer(ply:AbstractPlayer) 
 		{
 			reset();

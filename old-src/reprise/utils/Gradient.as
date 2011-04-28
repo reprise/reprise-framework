@@ -15,9 +15,7 @@ package reprise.utils {
 	public class Gradient
 	{
 		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const LINEAR:String = Background.GRADIENT_TYPE_LINEAR;
 		public static const RADIAL:String = Background.GRADIENT_TYPE_RADIAL;
 		
@@ -29,10 +27,7 @@ package reprise.utils {
 		public static const INTERPOLATION_RGB:String = 'RGB';
 		
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_fillType:String;
 		protected var m_colors:Array;
 		protected var m_alphas:Array;
@@ -49,9 +44,7 @@ package reprise.utils {
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Gradient(fillType:String = null, colors:Array = null, alphas:Array = null, 
 			ratios:Array = null, matrix:Matrix = null, spreadMethod:String = null, 
 			interpolationMethod:String = null, focalPointRatio:Number = 1)
@@ -272,9 +265,7 @@ package reprise.utils {
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function initDefaultAlphas() : void
 		{
 			m_alphas = [];

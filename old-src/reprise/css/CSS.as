@@ -24,9 +24,7 @@ package reprise.css
 
 	public class CSS extends AbstractResource
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const PROPERTY_TYPE_STRING : uint = 1;
 		public static const PROPERTY_TYPE_INT : uint = 2;
 		public static const PROPERTY_TYPE_FLOAT : uint = 3;
@@ -34,10 +32,7 @@ package reprise.css
 		public static const PROPERTY_TYPE_URL : uint = 5;
 		public static const PROPERTY_TYPE_COLOR : uint = 6;
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var g_idSource : int;
 		
 		
@@ -59,9 +54,7 @@ package reprise.css
 		private var m_stylesheetURLs : Array;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSS(url : String = null)
 		{
 			m_id = g_idSource++;
@@ -289,9 +282,7 @@ package reprise.css
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function parseCSSVariables() : void
 		{
 			for (var i : int = 0; i < m_cssSegments.length; i++)

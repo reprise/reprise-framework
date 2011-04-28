@@ -32,14 +32,9 @@ package reprise.controls
 
 	public class Label extends AbstractInput
 	{
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var AS_LINK_PREFIX : String = "event:";
 		
 		protected var m_labelDisplay : TextField;
@@ -61,9 +56,7 @@ package reprise.controls
 		protected var m_lastHoverIndex : int;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function Label ()
 		{
 		}
@@ -160,9 +153,7 @@ package reprise.controls
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initialize () : void
 		{
 			super.initialize();

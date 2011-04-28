@@ -16,16 +16,12 @@ package reprise.commands
 		extends AbstractAsynchronousCommand
 	{
 		
-		/***************************************************************************
-		*							public properties							   *
-		***************************************************************************/
+		//----------------------             Public Properties              ----------------------//
 		public static const DIRECTION_FORWARDS : int = 1;
 		public static const DIRECTION_BACKWARDS : int = 2;
+
 		
-		
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_target : MovieClip;
 		protected var m_direction : int = 1;
 		protected var m_frameDelay : int = 1;
@@ -34,9 +30,7 @@ package reprise.commands
 		protected var m_resetOnExecute : Boolean = false;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function MovieClipController(target:MovieClip) 
 		{
 			setTarget(target);
@@ -140,9 +134,7 @@ package reprise.commands
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function notifyComplete(success:Boolean) : void
 		{
 			m_target.removeEventListener(Event.ENTER_FRAME, enterFrame);

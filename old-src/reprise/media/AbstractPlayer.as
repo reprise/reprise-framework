@@ -51,9 +51,7 @@ package reprise.media
 	public class AbstractPlayer extends EventDispatcher
 	{
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static var SETTINGS_TIMEOUT_DURATION:uint = 10;
 		
 		/** 
@@ -145,9 +143,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							protected properties						   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const OPTIONS_AUTOPLAY:uint = 1 << 0;
 		protected static const OPTIONS_LOOP:uint = 1 << 1;
 		protected static const OPTIONS_REVERSE_ON_COMPLETE:uint = 1 << 2;
@@ -178,9 +174,7 @@ package reprise.media
 				
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function AbstractPlayer()
 		{
 			m_buffer = new AbstractBuffer(this);
@@ -529,9 +523,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		/**
 		* This should be overridden by concrete subclasses to do something useful
 		**/

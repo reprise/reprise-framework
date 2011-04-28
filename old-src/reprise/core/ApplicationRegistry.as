@@ -8,19 +8,14 @@
 package reprise.core
 { 
 	public class ApplicationRegistry
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : ApplicationRegistry;
 		
 		protected var m_applications : Object;
 		protected var m_defaultApplication : Application;
 
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function instance() : ApplicationRegistry
 		{
 			if (!g_instance)
@@ -54,9 +49,7 @@ package reprise.core
 		}
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function ApplicationRegistry() 
 		{
 			m_applications = {};

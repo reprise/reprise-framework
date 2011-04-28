@@ -28,9 +28,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function SWFPlayer(resource:IResource, host:DisplayObjectContainer)
 		{
 			super();
@@ -73,9 +71,7 @@ package reprise.media
 		
 		
 		
-		/***************************************************************************
-		*							protected methods							   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doStop():void 
 		{
 			MovieClip(m_loader.content).stop();

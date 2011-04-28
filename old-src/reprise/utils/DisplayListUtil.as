@@ -13,9 +13,7 @@ package reprise.utils
 
 	public final class DisplayListUtil
 	{
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function locateElementContainingDisplayObject(
 			displayObject : DisplayObject, keyViewsOnly : Boolean = false) : UIObject
 		{

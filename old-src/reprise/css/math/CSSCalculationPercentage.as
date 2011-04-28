@@ -13,14 +13,10 @@ package reprise.css.math
 	public class CSSCalculationPercentage 
 		extends AbstractCSSCalculation 
 	{
-		/***************************************************************************
-		*							private properties							   *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var m_value : Number;
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function CSSCalculationPercentage(valueString : String)
 		{
 			//TODO: check if we have to use parseFloat or parseInt

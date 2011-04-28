@@ -12,10 +12,7 @@ package reprise.external {
 	
 	
 	public class BitmapResource extends AbstractResource
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_cacheBitmap : Boolean;
 		protected var m_cloneBitmap : Boolean;
 		protected var m_bytesLoaded : int;
@@ -26,9 +23,7 @@ package reprise.external {
 		protected var m_containingImageResource : ImageResource;
 		
 		
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function BitmapResource(url:String = null, 
 			cacheBitmap:Boolean = true, cloneBitmap:Boolean = true)
 		{
@@ -132,9 +127,7 @@ package reprise.external {
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doLoad() : void
 		{
 			var cache : BitmapResourceCache = BitmapResourceCache.instance();

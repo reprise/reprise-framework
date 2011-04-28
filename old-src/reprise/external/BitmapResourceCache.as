@@ -13,10 +13,7 @@ package reprise.external
 	import reprise.events.CommandEvent;
 
 	public class BitmapResourceCache
-	{
-		/***************************************************************************
-		*							protected properties							   *
-		***************************************************************************/
+	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : BitmapResourceCache;
 		
 		protected var m_imageHolders : Object;
@@ -26,9 +23,7 @@ package reprise.external
 		protected var m_maxParallelExecutionCount : int = 3;
 	
 	
-		/***************************************************************************
-		*							public methods								   *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public static function instance() : BitmapResourceCache
 		{
 			if (g_instance == null)
@@ -106,9 +101,7 @@ package reprise.external
 		
 		
 		
-		/***************************************************************************
-		*							protected methods								   *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		public function BitmapResourceCache()
 		{
 			m_cacheList = new IndexedArray();

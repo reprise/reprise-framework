@@ -23,9 +23,7 @@ package reprise.core
 	public class TooltipManager
 	{
 		
-		/***************************************************************************
-		*                           Protected properties                           *
-		***************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const TOOLTIP_SHOW_ANIMATION:uint = 1;
 		protected static const TOOLTIP_VISIBLE:uint = 2;
 		protected static const TOOLTIP_HIDE_ANIMATION:uint = 3;
@@ -42,9 +40,7 @@ package reprise.core
 		
 		
 		
-		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function TooltipManager(rootView:DocumentView, container : Sprite)
 		{
 			m_rootView = rootView;
@@ -57,9 +53,7 @@ package reprise.core
 		}
 		
 		
-		/***************************************************************************
-		*                             Protected methods                            *
-		***************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function rootView_mouseOver(e:MouseEvent):void
 		{
 			updateTooltipForElement(DisplayObject(e.target));

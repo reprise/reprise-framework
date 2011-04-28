@@ -16,16 +16,12 @@ package reprise.controls
 	public class Slider extends UIComponent
 	{
 		
-		//*****************************************************************************************
-		//*                                  public Properties                                 *
-		//*****************************************************************************************
+		//----------------------             Public Properties              ----------------------//
 		public static const DIRECTION_VERTICAL : String = 'vertical';
 		public static const DIRECTION_HORIZONTAL : String = 'horizontal';
 		
 
-		//*****************************************************************************************
-		//*                                  Protected Properties                                 *
-		//*****************************************************************************************
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_thumb:SimpleButton;
 		protected var m_statusBar:UIComponent;
 		protected var m_track:UIComponent;
@@ -48,9 +44,7 @@ package reprise.controls
 		protected var m_direction : String;
 		
 		
-		//*****************************************************************************************
-		//*                                     Public Methods                                    *
-		//*****************************************************************************************
+		//----------------------               Public Methods               ----------------------//
 		public function Slider() {}
 		
 		
@@ -150,9 +144,7 @@ package reprise.controls
 		}
 		
 		
-		//*****************************************************************************************
-		//*                                   Protected Methods                                   *
-		//*****************************************************************************************
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function initialize():void
 		{
 			super.initialize();

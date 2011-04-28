@@ -19,9 +19,7 @@ package reprise.external
 	public class AMFResource extends AbstractResource
 	{
 		
-		//*****************************************************************************************
-		//*                                  Protected Properties                                 *
-		//*****************************************************************************************
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var m_netConnection:NetConnection;
 		protected var m_service:String;
 		protected var m_method:String;
@@ -31,9 +29,7 @@ package reprise.external
 		
 		
 		
-		//*****************************************************************************************
-		//*                                     Public Methods                                    *
-		//*****************************************************************************************
+		//----------------------               Public Methods               ----------------------//
 		public function AMFResource(url:String = null, service:String = null, method:String = null, 
 			args:Array = null)
 		{
@@ -106,9 +102,7 @@ package reprise.external
 		
 		
 		
-		//*****************************************************************************************
-		//*                                   Protected Methods                                   *
-		//*****************************************************************************************
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function doLoad():void
 		{
 			m_netConnection = new NetConnection();
