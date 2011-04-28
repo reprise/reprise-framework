@@ -28,54 +28,54 @@ package reprise.ui
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_elementIDCounter : int = 0;
 		
-		protected var m_class : Class;
-		protected var m_elementType : String;	
+		protected var _class : Class;
+		protected var _elementType : String;
 		
-		protected var m_parentElement : UIObject;
-		protected var m_children : Array = [];
-		protected var m_rootElement : DocumentView;
+		protected var _parentElement : UIObject;
+		protected var _children : Array = [];
+		protected var _rootElement : DocumentView;
 		
-		protected var m_isFirstChild : Boolean;
-		protected var m_isLastChild : Boolean;
+		protected var _isFirstChild : Boolean;
+		protected var _isLastChild : Boolean;
 		
-		protected var m_initialized : Boolean;
-		protected var m_firstDraw : Boolean;
-		protected var m_visible : Boolean = true;
-		protected var m_isRendered : Boolean = true;
-		protected var m_isInvalidated : Boolean;
-		protected var m_isValidating : Boolean;
+		protected var _initialized : Boolean;
+		protected var _firstDraw : Boolean;
+		protected var _visible : Boolean = true;
+		protected var _isRendered : Boolean = true;
+		protected var _isInvalidated : Boolean;
+		protected var _isValidating : Boolean;
 	
-		protected var m_tabIndex : int;
+		protected var _tabIndex : int;
 	
-		protected var m_contentDisplay : DisplayObjectContainer;
-		protected var m_filters : Array;
+		protected var _contentDisplay : DisplayObjectContainer;
+		protected var _filters : Array;
 		
-		protected var m_canBecomeKeyView : Boolean;
-		protected var m_nextKeyView : UIObject;
-		protected var m_previousKeyView : UIObject;
-		protected var m_firstKeyChild : UIObject;
-		protected var m_lastKeyChild : UIObject;
-		protected var m_keyOrder : Array;
+		protected var _canBecomeKeyView : Boolean;
+		protected var _nextKeyView : UIObject;
+		protected var _previousKeyView : UIObject;
+		protected var _firstKeyChild : UIObject;
+		protected var _lastKeyChild : UIObject;
+		protected var _keyOrder : Array;
 		
-		protected var m_tooltipData : Object = null;
-		protected var m_tooltipRenderer : String = null;
-		protected var m_tooltipDelay : int = 0;
+		protected var _tooltipData : Object = null;
+		protected var _tooltipRenderer : String = null;
+		protected var _tooltipDelay : int = 0;
 		
-		protected var m_childArrayCleanupNeeded : Boolean;
+		protected var _childArrayCleanupNeeded : Boolean;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function UIObject()
 		{
-			m_class = Class(Object(this).constructor);
-			if (m_class['className'])
+			_class = Class(Object(this).constructor);
+			if (_class['className'])
 			{
-				m_elementType = m_class['className'];
+				_elementType = _class['className'];
 			}
 			else
 			{
 				var className : String = getQualifiedClassName(this);
-				m_elementType =  className.substr(className.indexOf('::') + 2);
+				_elementType =  className.substr(className.indexOf('::') + 2);
 			}
 			preinitialize();
 		}
@@ -86,7 +86,7 @@ package reprise.ui
 		 */
 		public function get document() : DocumentView
 		{
-			return m_rootElement;
+			return _rootElement;
 		}
 
 		override public function get stage() : Stage
@@ -95,7 +95,7 @@ package reprise.ui
 			{
 				return super.stage;
 			}
-			return m_parentElement && m_rootElement ? UIObject(m_rootElement).realStage() : null;
+			return _parentElement && _rootElement ? UIObject(_rootElement).realStage() : null;
 		}
 		
 		protected function realStage() : Stage
@@ -113,7 +113,7 @@ package reprise.ui
 		
 		public function elementType():String
 		{
-			return m_elementType;
+			return _elementType;
 		}
 		
 		/**
@@ -126,10 +126,10 @@ package reprise.ui
 		 */
 		public function setParent(parent:UIObject) : UIObject
 		{
-			m_parentElement = parent;
-			setRootElement(parent.m_rootElement);
+			_parentElement = parent;
+			setRootElement(parent._rootElement);
 			
-			if (!m_initialized)
+			if (!_initialized)
 			{
 				initialize();
 			}
@@ -143,17 +143,17 @@ package reprise.ui
 		 */
 		public function parentElement() : UIObject
 		{
-			return m_parentElement == this ? null : m_parentElement;
+			return _parentElement == this ? null : _parentElement;
 		}
 
 		protected function setRootElement(rootElement : DocumentView) : void
 		{
-			if (rootElement == m_rootElement)
+			if (rootElement == _rootElement)
 			{
 				return;
 			}
-			m_rootElement = rootElement;
-			for each (var child : UIObject in m_children)
+			_rootElement = rootElement;
+			for each (var child : UIObject in _children)
 			{
 				child.setRootElement(rootElement);
 			}
@@ -166,7 +166,7 @@ package reprise.ui
 		 */
 		public function children() : Array
 		{
-			return m_children;
+			return _children;
 		}
 		
 		/**
@@ -180,7 +180,7 @@ package reprise.ui
 		 */
 		public function elementForName(name : String) : UIObject
 		{
-			for each (var child : UIObject in m_children)
+			for each (var child : UIObject in _children)
 			{
 				if (child.name == name)
 				{
@@ -194,7 +194,7 @@ package reprise.ui
 		{
 			if (child is UIObject)
 			{
-				return addChildAt(child, m_children.length);
+				return addChildAt(child, _children.length);
 			}
 			else
 			{
@@ -214,7 +214,7 @@ package reprise.ui
 
 		override public function removeChildAt(index : int) : DisplayObject
 		{
-			var child : UIObject = m_children[index];
+			var child : UIObject = _children[index];
 			if (child)
 			{
 				unregisterChildView(child);
@@ -229,13 +229,13 @@ package reprise.ui
 			if (child is UIObject)
 			{
 				var element : UIObject = UIObject(child);
-				if (element.m_parentElement == this)
+				if (element._parentElement == this)
 				{
 					return element;
 				}
-				if (element.m_parentElement)
+				if (element._parentElement)
 				{
-					element.m_parentElement.unregisterChildView(element);
+					element._parentElement.unregisterChildView(element);
 				}
 				addChildToContentDisplay(element, index);
 				element.setParent(this);
@@ -243,32 +243,32 @@ package reprise.ui
 				
 				if (index == 0)
 				{
-					element.m_isFirstChild = true;
-					if (m_children.length)
+					element._isFirstChild = true;
+					if (_children.length)
 					{
-						UIObject(m_children[0]).m_isFirstChild = false;
+						UIObject(_children[0])._isFirstChild = false;
 					}
 				}
 				//if the child is reparented, the value needs to be reset
 				else
 				{
-					element.m_isFirstChild = false;
+					element._isFirstChild = false;
 				}
-				if (index == m_children.length)
+				if (index == _children.length)
 				{
-					element.m_isLastChild = true;
-					if (m_children.length)
+					element._isLastChild = true;
+					if (_children.length)
 					{
-						UIObject(m_children[m_children.length-1]).m_isLastChild = false;
+						UIObject(_children[_children.length-1])._isLastChild = false;
 					}
 				}
 				//if the child is reparented, the value needs to be reset
 				else
 				{
-					element.m_isLastChild = false;
+					element._isLastChild = false;
 				}
 				
-				m_children.splice(index, 0, child);
+				_children.splice(index, 0, child);
 				invalidate();
 			}
 			else
@@ -280,8 +280,8 @@ package reprise.ui
 		
 		protected function addChildToContentDisplay(child : UIObject, index : int) : void
 		{
-			m_contentDisplay.addChildAt(
-				child, Math.min(m_contentDisplay.numChildren, index));
+			_contentDisplay.addChildAt(
+				child, Math.min(_contentDisplay.numChildren, index));
 		}
 
 		/**
@@ -289,24 +289,24 @@ package reprise.ui
 		 */
 		public function nextKeyView() : UIObject
 		{
-			if (m_children.length)
+			if (_children.length)
 			{
-				return m_firstKeyChild;
+				return _firstKeyChild;
 			}
-			return m_nextKeyView;
+			return _nextKeyView;
 		}
 		/**
 		 * TODO: write a description of this method
 		 */
 		public function setNextKeyView(nextKeyView : UIObject) : void
 		{		
-			m_nextKeyView = nextKeyView;
+			_nextKeyView = nextKeyView;
 			var prevKeyView : UIObject = this;
 			
-			if (m_children.length)
+			if (_children.length)
 			{
-				m_lastKeyChild && m_lastKeyChild.setNextKeyView(nextKeyView);
-				prevKeyView = m_lastKeyChild;
+				_lastKeyChild && _lastKeyChild.setNextKeyView(nextKeyView);
+				prevKeyView = _lastKeyChild;
 			}
 			
 			if (nextKeyView)
@@ -326,7 +326,7 @@ package reprise.ui
 			}
 			else
 			{
-				nextValidKey = m_nextKeyView;
+				nextValidKey = _nextKeyView;
 			}
 			while (true)
 			{
@@ -345,14 +345,14 @@ package reprise.ui
 		 */
 		public function previousKeyView() : UIObject
 		{
-			return m_previousKeyView;
+			return _previousKeyView;
 		}
 		/**
 		 * TODO: write a description of this method
 		 */
 		public function setPreviousKeyView(previousKeyView : UIObject) : void
 		{
-			m_previousKeyView = previousKeyView;
+			_previousKeyView = previousKeyView;
 		}
 		/**
 		 * TODO: write a description of this method
@@ -377,7 +377,7 @@ package reprise.ui
 		 */
 		public function canBecomeKeyView() : Boolean
 		{
-			return m_canBecomeKeyView && !isOffScreen();
+			return _canBecomeKeyView && !isOffScreen();
 		}
 		
 		/**
@@ -405,7 +405,7 @@ package reprise.ui
 		 */
 		public function tooltipData() : Object
 		{
-			return m_tooltipData;
+			return _tooltipData;
 		}
 		/**
 		 * Takes an object to be used as the tooltip data associated with this 
@@ -421,7 +421,7 @@ package reprise.ui
 		 */
 		public function setTooltipData(data:Object) : void
 		{
-			m_tooltipData = data;
+			_tooltipData = data;
 			hasEventListener(DisplayEvent.TOOLTIPDATA_CHANGED) &&
 					dispatchEvent(new DisplayEvent(DisplayEvent.TOOLTIPDATA_CHANGED));
 		}
@@ -439,7 +439,7 @@ package reprise.ui
 		 */
 		public function tooltipDelay() : int
 		{
-			return m_tooltipDelay;
+			return _tooltipDelay;
 		}
 		/**
 		 * Takes a delay in milliseconds after which a tooltip is shown for this 
@@ -452,7 +452,7 @@ package reprise.ui
 		 */
 		public function setTooltipDelay(delay:int) : void
 		{
-			m_tooltipDelay = delay;
+			_tooltipDelay = delay;
 		}
 		/**
 		 * Returns the id of the tooltip renderer used to render the tooltip for 
@@ -470,7 +470,7 @@ package reprise.ui
 		 */
 		public function tooltipRenderer() : String
 		{
-			return m_tooltipRenderer;
+			return _tooltipRenderer;
 		}
 		/**
 		 * Takes an id that identifies the tooltip renderer to be used to render 
@@ -485,7 +485,7 @@ package reprise.ui
 		 */
 		public function setTooltipRenderer(renderer:String) : void
 		{
-			m_tooltipRenderer = renderer;
+			_tooltipRenderer = renderer;
 		}
 		
 		/**
@@ -505,24 +505,24 @@ package reprise.ui
 			//code:
 			/*
 			var validatableElement : UIObject = this;
-			while(validatableElement.m_parentElement && 
-				validatableElement.m_parentElement.m_isInvalidated)
+			while(validatableElement._parentElement &&
+				validatableElement._parentElement._isInvalidated)
 			{
-				validatableElement = validatableElement.m_parentElement;
+				validatableElement = validatableElement._parentElement;
 			}
 			validatableElement.validateElement(true);
 			*/
 			var validatableElement : UIObject = this;
-			while(validatableElement.m_parentElement && 
-				validatableElement.m_parentElement != validatableElement)
+			while(validatableElement._parentElement &&
+				validatableElement._parentElement != validatableElement)
 			{
-				validatableElement = validatableElement.m_parentElement;
-				if (validatableElement.m_isInvalidated)
+				validatableElement = validatableElement._parentElement;
+				if (validatableElement._isInvalidated)
 				{
 					log('w Be ye warned: The element you are calling ' + 
 					'forceRedraw on has invalid ascendants. This might cause ' + 
 					'styling and all sorts of other things not to work as ' + 
-					'expected. Consider calling m_rootElement.forceRedraw ' + 
+					'expected. Consider calling _rootElement.forceRedraw ' +
 					'instead.\nAfflicted element: ' + this + 
 					'\ninvalid parent: ' + validatableElement);
 					break;
@@ -561,7 +561,7 @@ package reprise.ui
 		 */
 		public function remove(...args) : void
 		{
-			m_parentElement && m_parentElement.unregisterChildView(this);
+			_parentElement && _parentElement.unregisterChildView(this);
 		}
 		
 		/**
@@ -574,7 +574,7 @@ package reprise.ui
 		 */
 		public function getPositionRelativeToContext(context:UIObject) : Point
 		{
-			return getPositionRelativeToDisplayObject(context.m_contentDisplay);
+			return getPositionRelativeToDisplayObject(context._contentDisplay);
 		}
 		/**
 		 * returns a point for this views position relative to the given context.
@@ -602,8 +602,8 @@ package reprise.ui
 		 */
 		public function setVisibility(visibility : Boolean) : void
 		{
-			m_visible = visibility;
-			if (!m_firstDraw)
+			_visible = visibility;
+			if (!_firstDraw)
 			{
 				visible = visibility;
 			}
@@ -617,7 +617,7 @@ package reprise.ui
 		 */
 		public function visibility() : Boolean
 		{
-			return m_visible;
+			return _visible;
 		}
 		
 		/**
@@ -644,7 +644,7 @@ package reprise.ui
 		 */
 		public function isRendered() : Boolean
 		{
-			return m_isRendered;
+			return _isRendered;
 		}
 		
 		/**
@@ -660,9 +660,9 @@ package reprise.ui
 				return true;
 			}
 			var ancestor : UIObject = this;
-			while (ancestor.m_parentElement != ancestor)
+			while (ancestor._parentElement != ancestor)
 			{
-				ancestor = ancestor.m_parentElement;
+				ancestor = ancestor._parentElement;
 				if (!ancestor.visibility())
 				{
 					return true;
@@ -694,18 +694,18 @@ package reprise.ui
 		public function invalidate() : void
 		{
 			//TODO: check if we need this:
-			if (!m_rootElement)
+			if (!_rootElement)
 			{
 				//we don't validate without a display
-				m_isInvalidated = true;
+				_isInvalidated = true;
 				return;
 			}
-			if ((!m_parentElement || !m_parentElement.m_isInvalidated) && 
-				!m_isInvalidated && m_rootElement)
+			if ((!_parentElement || !_parentElement._isInvalidated) &&
+				!_isInvalidated && _rootElement)
 			{
-				m_rootElement.markChildAsInvalid(this);
+				_rootElement.markChildAsInvalid(this);
 			}
-			m_isInvalidated = true;
+			_isInvalidated = true;
 		}
 		
 		/**
@@ -713,7 +713,7 @@ package reprise.ui
 		 */
 		public function isValid() : Boolean
 		{
-			return m_isInvalidated;
+			return _isInvalidated;
 		}
 
 		/**
@@ -726,14 +726,14 @@ package reprise.ui
 		{	
 			tagName = tagName.toLowerCase();
 			
-			var len:int = m_children.length;
+			var len:int = _children.length;
 			var elements:Array = [];
 			var subElements:Array;
 			
 			for (var i : int = 0; i < len; i++)
 			{
-				var childView : UIObject = m_children[i] as UIObject;
-				if (childView.m_elementType.toLowerCase() == tagName)
+				var childView : UIObject = _children[i] as UIObject;
+				if (childView._elementType.toLowerCase() == tagName)
 				{
 					elements.push(childView);
 				}
@@ -758,16 +758,16 @@ package reprise.ui
 		 */
 		public function addFilter(filter : Object) : void
 		{
-			if (!m_filters)
+			if (!_filters)
 			{
-				m_filters = [];
+				_filters = [];
 			}
-			if (m_filters.indexOf(filter) != -1)
+			if (_filters.indexOf(filter) != -1)
 			{
 				return;
 			}
-			m_filters.push(filter);
-			m_contentDisplay.filters = m_filters;
+			_filters.push(filter);
+			_contentDisplay.filters = _filters;
 		}
 		
 		/**
@@ -784,15 +784,15 @@ package reprise.ui
 		 */
 		public function removeFilter(filter : Object) : void
 		{
-			if (!m_filters)
+			if (!_filters)
 			{
 				return;
 			}
-			var filterIndex : int = m_filters.indexOf(filter);
+			var filterIndex : int = _filters.indexOf(filter);
 			if (filterIndex != -1)
 			{
-				m_filters.splice(filterIndex, 1);
-				m_contentDisplay.filters = m_filters;
+				_filters.splice(filterIndex, 1);
+				_contentDisplay.filters = _filters;
 			}
 		}
 		
@@ -801,7 +801,7 @@ package reprise.ui
 		 */
 		public function clearFilters() : void
 		{
-			m_contentDisplay.filters = null;
+			_contentDisplay.filters = null;
 		}
 		
 		/**
@@ -810,23 +810,23 @@ package reprise.ui
 		 */
 		public override function toString() : String
 		{
-			return (m_parentElement && (m_parentElement.toString() + '.') || '') + name;
+			return (_parentElement && (_parentElement.toString() + '.') || '') + name;
 		}
 		
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function preinitialize() : void
 		{
-			name = m_elementType + '_' + g_elementIDCounter++;
+			name = _elementType + '_' + g_elementIDCounter++;
 			createDisplayClips();
-			m_keyOrder = [];
-			m_tabIndex = 0;
+			_keyOrder = [];
+			_tabIndex = 0;
 		}
 		
 		protected function initialize() : void
 		{
-			m_initialized = true;
-			m_firstDraw = true;
+			_initialized = true;
+			_firstDraw = true;
 			visible = false;
 			createChildren();
 		}
@@ -836,29 +836,29 @@ package reprise.ui
 		 */
 		protected function createDisplayClips() : void
 		{
-			m_contentDisplay = new Sprite();
-			m_contentDisplay.mouseEnabled = false;
-			m_contentDisplay.name = 'content';
-			super.addChild(m_contentDisplay);
+			_contentDisplay = new Sprite();
+			_contentDisplay.mouseEnabled = false;
+			_contentDisplay.name = 'content';
+			super.addChild(_contentDisplay);
 		}
 		
 		protected function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
 		{
-			if (!m_isInvalidated && !forceValidation)
+			if (!_isInvalidated && !forceValidation)
 			{
 				validateChildren();
 				return;
 			}
 			
-			m_isInvalidated = false;
-			m_isValidating = true;
+			_isInvalidated = false;
+			_isValidating = true;
 			
 			validateBeforeChildren();
-			if (!m_isRendered)
+			if (!_isRendered)
 			{
 				visible = false;
-				m_isValidating = false;
+				_isValidating = false;
 				finishValidation();
 				return;
 			}
@@ -867,10 +867,10 @@ package reprise.ui
 			
 			calculateKeyLoop();
 			
-			if (m_firstDraw)
+			if (_firstDraw)
 			{
-				visible = m_visible;
-				m_firstDraw = false;
+				visible = _visible;
+				_firstDraw = false;
 				//call hook method:
 				beforeFirstDraw();
 			}
@@ -882,15 +882,15 @@ package reprise.ui
 		}
 		protected function validateChildren() : void
 		{
-			for (var i : int = 0; i < m_children.length; i++)
+			for (var i : int = 0; i < _children.length; i++)
 			{
-				validateChild(UIObject(m_children[i]));
+				validateChild(UIObject(_children[i]));
 			}
-			if (m_childArrayCleanupNeeded)
+			if (_childArrayCleanupNeeded)
 			{
-				m_children = m_children.filter(function(
+				_children = _children.filter(function(
 					item : Object, index : int, array : Array) : Boolean {return item != null;});
-				m_childArrayCleanupNeeded = false;
+				_childArrayCleanupNeeded = false;
 			}
 		}
 		protected function validateChild(child:UIObject) : void
@@ -900,24 +900,24 @@ package reprise.ui
 		
 		protected function unregisterChildView(child:UIObject) : void
 		{
-			var index : int = m_children.indexOf(child);
+			var index : int = _children.indexOf(child);
 			if (index == -1)
 			{
 				return;
 			}
 			
-			if (m_isValidating)
+			if (_isValidating)
 			{
-				m_childArrayCleanupNeeded = true;
-				m_children[index] = null;
+				_childArrayCleanupNeeded = true;
+				_children[index] = null;
 			}
 			else
 			{
-				m_children.splice(index, 1);
+				_children.splice(index, 1);
 			}
 			child.dispatchEvent(new DisplayEvent(DisplayEvent.REMOVED_FROM_DOCUMENT, true));
 			child.parent && child.parent.removeChild(child);
-			child.m_parentElement = null;
+			child._parentElement = null;
 			child.setRootElement(null);
 			invalidate();
 		}
@@ -937,13 +937,13 @@ package reprise.ui
 		
 		protected function calculateKeyLoop() : void
 		{
-			if (m_children.length == 0)
+			if (_children.length == 0)
 			{
 				return;
 			}
-			var len : int = m_children.length;
+			var len : int = _children.length;
 			var i : int;
-			var keyOrder : Array = m_children.concat();
+			var keyOrder : Array = _children.concat();
 			keyOrder.sortOn(["tabIndex", "y", "x"], Array.NUMERIC);
 			
 			var currKey : UIObject;
@@ -959,15 +959,15 @@ package reprise.ui
 				}
 				else
 				{
-					nextKey = m_parentElement == this ? this : m_nextKeyView;
+					nextKey = _parentElement == this ? this : _nextKeyView;
 				}
 				currKey.setNextKeyView(nextKey);
 			}
 			
-			m_firstKeyChild = keyOrder[0];
-			m_lastKeyChild = keyOrder[len - 1];
-			m_firstKeyChild.setPreviousKeyView(this);
-			m_keyOrder = keyOrder;
+			_firstKeyChild = keyOrder[0];
+			_lastKeyChild = keyOrder[len - 1];
+			_firstKeyChild.setPreviousKeyView(this);
+			_keyOrder = keyOrder;
 		}
 		
 		
@@ -1029,7 +1029,7 @@ package reprise.ui
 		 */
 		protected function finishValidation() : void
 		{
-			m_isValidating = false;
+			_isValidating = false;
 		}
 	}
 }

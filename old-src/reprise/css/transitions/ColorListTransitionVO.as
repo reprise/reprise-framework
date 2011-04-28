@@ -9,19 +9,19 @@ package reprise.css.transitions
 {
 	public class ColorListTransitionVO extends PropertyTransitionVO
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_transitions : Array;
+		protected var _transitions : Array;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public override function set startValue(value : *) : void
 		{
-			m_startValue = value;
-			m_transitions = null;
+			_startValue = value;
+			_transitions = null;
 		}
 		public override function set endValue(value : *) : void
 		{
-			m_endValue = value;
-			m_transitions = null;
+			_endValue = value;
+			_transitions = null;
 		}
 		
 		public function ColorListTransitionVO()
@@ -36,9 +36,9 @@ package reprise.css.transitions
 			
 			var i : int;
 			var transition : ColorTransitionVO;
-			if (!m_transitions)
+			if (!_transitions)
 			{
-				m_transitions = [];
+				_transitions = [];
 				i = startValues.length;
 				while (i--)
 				{
@@ -46,13 +46,13 @@ package reprise.css.transitions
 					transition.startValue = startValues[i];
 					transition.endValue = endValues[i];
 					transition.currentValue = currentValues[i];
-					m_transitions[i] = transition;
+					_transitions[i] = transition;
 				}
 			}
-			i = m_transitions.length;
+			i = _transitions.length;
 			while (i--)
 			{
-				transition = m_transitions[i];
+				transition = _transitions[i];
 				transition.setCurrentValueToRatio(ratio);
 			}
 			

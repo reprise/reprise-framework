@@ -148,38 +148,38 @@ package reprise.media
 		protected static const OPTIONS_LOOP:uint = 1 << 1;
 		protected static const OPTIONS_REVERSE_ON_COMPLETE:uint = 1 << 2;
 		
-		protected var m_debug:Boolean = false;
+		protected var _debug:Boolean = false;
 		
 		/**
 		* Current state of the player
 		* @see #state()
 		*/
-		protected var m_state:uint;
-		protected var m_status:uint;
-		protected var m_options:uint = OPTIONS_REVERSE_ON_COMPLETE;
+		protected var _state:uint;
+		protected var _status:uint;
+		protected var _options:uint = OPTIONS_REVERSE_ON_COMPLETE;
 		
-		protected var m_buffer:AbstractBuffer;
-		protected var m_statusObserverTimer:Timer;
-		protected var m_source:IResource;
-		protected var m_volume:Number = 100;
-		protected var m_duration:Number = 0;
-		protected var m_recentPosition:Number = 0;
+		protected var _buffer:AbstractBuffer;
+		protected var _statusObserverTimer:Timer;
+		protected var _source:IResource;
+		protected var _volume:Number = 100;
+		protected var _duration:Number = 0;
+		protected var _recentPosition:Number = 0;
 		
-		protected var m_startTime:uint;
-		protected var m_speed:Number;
-		protected var m_lastLoadProgress:uint = 0;
-		protected var m_lastSpeedCheck:uint;
-		protected var m_muteTween:SimpleTween;
-		protected var m_volumeBeforeFade:Number;
+		protected var _startTime:uint;
+		protected var _speed:Number;
+		protected var _lastLoadProgress:uint = 0;
+		protected var _lastSpeedCheck:uint;
+		protected var _muteTween:SimpleTween;
+		protected var _volumeBeforeFade:Number;
 				
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function AbstractPlayer()
 		{
-			m_buffer = new AbstractBuffer(this);
-			m_statusObserverTimer = new Timer(100, 0);
-			m_statusObserverTimer.addEventListener(TimerEvent.TIMER, observeStatus);
+			_buffer = new AbstractBuffer(this);
+			_statusObserverTimer = new Timer(100, 0);
+			_statusObserverTimer.addEventListener(TimerEvent.TIMER, observeStatus);
 		}
 		
 		
@@ -191,7 +191,7 @@ package reprise.media
 		*/
 		public function setResource(resource:IResource):void
 		{
-			m_source = resource;
+			_source = resource;
 		}
 		
 		/**
@@ -235,21 +235,21 @@ package reprise.media
 		*/
 		public function load():void
 		{
-			if (m_status & STATUS_LOAD_FINISHED || m_status & STATUS_IS_LOADING)
+			if (_status & STATUS_LOAD_FINISHED || _status & STATUS_IS_LOADING)
 			{
 				return;
 			}
 			
 			// reset everything
-			m_status &= ~STATUS_BUFFER_FULL;
-			m_status &= ~STATUS_DURATION_KNOWN;
-			m_status &= ~STATUS_FILESIZE_KNOWN;
-			m_status &= ~STATUS_BANDWIDTH_KNOWN;
+			_status &= ~STATUS_BUFFER_FULL;
+			_status &= ~STATUS_DURATION_KNOWN;
+			_status &= ~STATUS_FILESIZE_KNOWN;
+			_status &= ~STATUS_BANDWIDTH_KNOWN;
 			
 			setState(STATE_PREBUFFERING);
 			
-			m_status |= STATUS_IS_LOADING;
-			m_startTime = m_lastSpeedCheck = getTimer();
+			_status |= STATUS_IS_LOADING;
+			_startTime = _lastSpeedCheck = getTimer();
 			doLoad();
 		}
 		
@@ -260,20 +260,20 @@ package reprise.media
 		{
 			stop();
 			doUnload();
-			m_buffer.reset();
-			m_source.reset();
-			m_statusObserverTimer.reset();
-			m_statusObserverTimer.removeEventListener(TimerEvent.TIMER, observeStatus);
-			m_statusObserverTimer = null;
-			m_source = null;
+			_buffer.reset();
+			_source.reset();
+			_statusObserverTimer.reset();
+			_statusObserverTimer.removeEventListener(TimerEvent.TIMER, observeStatus);
+			_statusObserverTimer = null;
+			_source = null;
 			
-			if (m_status & STATUS_LOAD_FINISHED)
+			if (_status & STATUS_LOAD_FINISHED)
 			{
 				return;
 			}
 			
-			m_status &= ~STATUS_IS_LOADING; // no more loading
-			m_status &= ~STATUS_SHOULD_PLAY; // no more need to play
+			_status &= ~STATUS_IS_LOADING; // no more loading
+			_status &= ~STATUS_SHOULD_PLAY; // no more need to play
 
 			setState(STATE_IDLE);
 		}
@@ -286,13 +286,13 @@ package reprise.media
 		*/
 		public function play(...args):void
 		{
-			if (m_status & STATUS_PAUSED_AT_END)
+			if (_status & STATUS_PAUSED_AT_END)
 			{
 				stop();
 			}
 			
 			load();
-			m_status |= STATUS_SHOULD_PLAY;
+			_status |= STATUS_SHOULD_PLAY;
 			
 			// prebuffering means, that we have no clue about the user bandwidth, the filesize, etc.
 			// we need a little time to figure these things out and present some proper status to
@@ -313,14 +313,14 @@ package reprise.media
 		{
 			// what's ever happening right now, but we notice that the user wishes to 
 			// stop the mediafile
-			m_status &= ~STATUS_SHOULD_PLAY;
+			_status &= ~STATUS_SHOULD_PLAY;
 			
-			if (m_state != STATE_PLAYING)
+			if (_state != STATE_PLAYING)
 			{
 				return;
 			}
 			
-			m_recentPosition = position();
+			_recentPosition = position();
 			setState(STATE_PAUSED);
 			doPause();
 			goIdle();
@@ -334,10 +334,10 @@ package reprise.media
 		{
 			// again: what's ever happening right now, but we notice that the user wishes to 
 			// stop the mediafile
-			m_status &= ~STATUS_SHOULD_PLAY;
-			m_status &= ~STATUS_PAUSED_AT_END;
+			_status &= ~STATUS_SHOULD_PLAY;
+			_status &= ~STATUS_PAUSED_AT_END;
 			
-			if (m_state != STATE_PLAYING && m_state != STATE_PAUSED)
+			if (_state != STATE_PLAYING && _state != STATE_PAUSED)
 			{
 				return;
 			}
@@ -360,9 +360,9 @@ package reprise.media
 		*/
 		public function seek(offset:Number):void
 		{
-			m_status &= ~STATUS_PAUSED_AT_END;
-			if ([STATE_PLAYING, STATE_PAUSED, STATE_IDLE].indexOf(m_state) == -1 ||
-				(!(m_status & STATUS_IS_LOADING) && !(m_status & STATUS_LOAD_FINISHED)))
+			_status &= ~STATUS_PAUSED_AT_END;
+			if ([STATE_PLAYING, STATE_PAUSED, STATE_IDLE].indexOf(_state) == -1 ||
+				(!(_status & STATUS_IS_LOADING) && !(_status & STATUS_LOAD_FINISHED)))
 			{
 				return;
 			}
@@ -397,7 +397,7 @@ package reprise.media
 		{
 			vol = Math.max(0, vol);
 			vol = Math.min(1, vol);
-			m_volume = vol;
+			_volume = vol;
 			doSetVolume(vol);
 		}
 		
@@ -409,17 +409,17 @@ package reprise.media
 		*/
 		public function muteAndPause(duration:uint):void
 		{
-			if (m_state != STATE_PLAYING)
+			if (_state != STATE_PLAYING)
 			{
 				return;
 			}
-			m_volumeBeforeFade = volume();
+			_volumeBeforeFade = volume();
 			cancelMuteTween();
-			m_muteTween = new SimpleTween(duration);
-			m_muteTween.addTweenProperty(this, 'setVolume', m_volumeBeforeFade, 0, 
+			_muteTween = new SimpleTween(duration);
+			_muteTween.addTweenProperty(this, 'setVolume', _volumeBeforeFade, 0,
 				Linear.easeNone, false, true);
-			m_muteTween.addEventListener(Event.COMPLETE, muteTween_complete);
-			m_muteTween.execute();
+			_muteTween.addEventListener(Event.COMPLETE, muteTween_complete);
+			_muteTween.execute();
 		}
 		
 		/**
@@ -427,7 +427,7 @@ package reprise.media
 		*/
 		public function volume():Number
 		{
-			return m_volume;
+			return _volume;
 		}
 		
 		/**
@@ -453,22 +453,22 @@ package reprise.media
 		*/
 		public function duration():Number
 		{
-			return m_duration;
+			return _duration;
 		}
 		
 		public function state():uint
 		{
-			return m_state;
+			return _state;
 		}
 		
 		public function status():uint
 		{
-			return m_status;
+			return _status;
 		}
 		
 		public function isPlaying():Boolean
 		{
-			return m_state == STATE_PLAYING;
+			return _state == STATE_PLAYING;
 		}
 		
 		public function position():Number
@@ -483,37 +483,37 @@ package reprise.media
 		
 		public function estimatedBufferTime():Number
 		{
-			return m_buffer.requiredBufferDuration();
+			return _buffer.requiredBufferDuration();
 		}
 		
 		public function isBuffered():Boolean
 		{
-			return isLoaded() || m_buffer.bufferFill() >= 100;
+			return isLoaded() || _buffer.bufferFill() >= 100;
 		}		
 
 		public function bufferStatus():Number
 		{
-			return m_buffer.bufferFill();
+			return _buffer.bufferFill();
 		}
 		
 		public function remainingBufferingDuration():Number
 		{
-			return m_buffer.remainingBufferingDuration();
+			return _buffer.remainingBufferingDuration();
 		}
 
 		public function durationLoaded():Number
 		{
-			return m_buffer.loadedMediaLength();
+			return _buffer.loadedMediaLength();
 		}
 
 		public function isLoaded():Boolean
 		{
-			return Boolean(m_status & STATUS_LOAD_FINISHED);
+			return Boolean(_status & STATUS_LOAD_FINISHED);
 		}
 
 		public function loadStartTime():uint
 		{
-			return m_startTime;
+			return _startTime;
 		}
 		
 		public function loadProgress():Number
@@ -537,16 +537,16 @@ package reprise.media
 		
 		protected function updateBuffer():void
 		{
-			m_buffer.setPlayheadPosition(position());
-			m_buffer.setUserBandwidth(m_speed);
-			m_buffer.setBytesLoaded(bytesLoaded());
-			m_buffer.setMediaSize(bytesTotal());
-			m_buffer.setMediaLength(duration());
+			_buffer.setPlayheadPosition(position());
+			_buffer.setUserBandwidth(_speed);
+			_buffer.setBytesLoaded(bytesLoaded());
+			_buffer.setMediaSize(bytesTotal());
+			_buffer.setMediaLength(duration());
 		}
 		
 		protected function log(msg:String):void
 		{
-			trace('[AbstractPlayer] Source: ' + m_source.url() + '\nMessage: ' + msg);
+			trace('[AbstractPlayer] Source: ' + _source.url() + '\nMessage: ' + msg);
 		}
 	
 		protected function broadcastError(msg:String, unloadMedia:Boolean):void
@@ -563,28 +563,28 @@ package reprise.media
 		
 		protected function mediaReachedEnd():void
 		{
-			if (m_options & OPTIONS_LOOP)
+			if (_options & OPTIONS_LOOP)
 			{
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				seek(0);
 				play();
 				return;
 			}
-			if (m_options & OPTIONS_REVERSE_ON_COMPLETE)
+			if (_options & OPTIONS_REVERSE_ON_COMPLETE)
 			{
 				stop();
 				goIdle();
 				dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 				return;
 			}
-			m_status |= STATUS_PAUSED_AT_END;
+			_status |= STATUS_PAUSED_AT_END;
 			pause();
 			dispatchEvent(new CommandEvent(CommandEvent.COMPLETE));
 		}
 
 		protected function goIdle():void
 		{
-			if (m_state == STATE_PLAYING || m_status & STATUS_IS_LOADING || STATE_PAUSED)
+			if (_state == STATE_PLAYING || _status & STATUS_IS_LOADING || STATE_PAUSED)
 			{
 				return;
 			}
@@ -593,34 +593,34 @@ package reprise.media
 		
 		protected function cancelMuteTween():void
 		{
-			if (m_muteTween && m_muteTween.isRunning())
+			if (_muteTween && _muteTween.isRunning())
 			{
-				m_muteTween.removeEventListener(CommandEvent.COMPLETE, muteTween_complete);
-				m_muteTween.cancel();
+				_muteTween.removeEventListener(CommandEvent.COMPLETE, muteTween_complete);
+				_muteTween.cancel();
 			}
 		}
 		
 		protected function setState(state:uint):void
 		{
-			if (m_state == state)
+			if (_state == state)
 			{
 				return;
 			}
 
 			if (state == STATE_IDLE)
 			{
-				m_statusObserverTimer.stop();
+				_statusObserverTimer.stop();
 			}
 
-			var oldState : uint = m_state;
-			dispatchEvent(new StateChangeEvent(StateChangeEvent.STATE_WILL_CHANGE, m_state, state));
-			m_state = state;
+			var oldState : uint = _state;
+			dispatchEvent(new StateChangeEvent(StateChangeEvent.STATE_WILL_CHANGE, _state, state));
+			_state = state;
 			dispatchEvent(new StateChangeEvent(StateChangeEvent.STATE_DID_CHANGE, oldState, state));
 
-			if (state != STATE_IDLE && !m_statusObserverTimer.running)
+			if (state != STATE_IDLE && !_statusObserverTimer.running)
 			{
-				m_statusObserverTimer.reset();
-				m_statusObserverTimer.start();
+				_statusObserverTimer.reset();
+				_statusObserverTimer.start();
 			}
 		}
 		
@@ -633,7 +633,7 @@ package reprise.media
 		protected function stateToString():String
 		{
 			var state:String = 'PLAYING';
-			switch (m_state)
+			switch (_state)
 			{
 				case STATE_PAUSED:
 					state = 'PAUSED';
@@ -668,30 +668,30 @@ package reprise.media
 			{
 				return;
 			}
-			m_status |= STATUS_FILESIZE_KNOWN;
+			_status |= STATUS_FILESIZE_KNOWN;
 			dispatchEvent(new MediaEvent(MediaEvent.LOAD_PROGRESS));
 			measureSpeed();
 			
-			if (m_debug)
+			if (_debug)
 			{
 				var str:String = '';
-				str += 'bw/rem/avg/lps time: ' + MathUtil.round(m_speed / 1024, 1) + ' KB/s | ' + 
-					MathUtil.round(m_buffer.remainingDownloadDuration() / 60, 2) + ' min. | ' + 
-					MathUtil.round(m_buffer.averageUserBandwidth() / 1024, 1) + ' KB/s | ' + 
-					MathUtil.round(m_buffer.loadedMediaLengthPerSecond(), 2) + ' s/s\n';
+				str += 'bw/rem/avg/lps time: ' + MathUtil.round(_speed / 1024, 1) + ' KB/s | ' +
+					MathUtil.round(_buffer.remainingDownloadDuration() / 60, 2) + ' min. | ' +
+					MathUtil.round(_buffer.averageUserBandwidth() / 1024, 1) + ' KB/s | ' +
+					MathUtil.round(_buffer.loadedMediaLengthPerSecond(), 2) + ' s/s\n';
 				str += 'media size (ttl/load/%/br): ' + MathUtil.round(bytesTotal() / 1024, 2) + 
 					' KB | ' + MathUtil.round(bytesLoaded() / 1024, 2) + ' KB | ' + 
 					MathUtil.round(bytesLoaded() / (bytesTotal() / 100), 1) + '% | ' + 
-					MathUtil.round(m_buffer.mediaBitrate() / 1024, 2) + ' KB/s\n';
+					MathUtil.round(_buffer.mediaBitrate() / 1024, 2) + ' KB/s\n';
 				str += 'media length (ttl/load/ply/%): ' + MathUtil.round(duration() / 60, 2) + 
 					' min. | ' + MathUtil.round(durationLoaded() / 60, 2) + ' min. | ' + 
 					MathUtil.round(position() / 60, 2) + ' min. | ' + 
 					MathUtil.round(positionPercent(), 1) + '%\n';
 				str += 'buffer (req/load/%/rem): ' + MathUtil.round(
-						m_buffer.requiredBufferLength() / 60, 2) + ' min. | ' + 
-					MathUtil.round(m_buffer.loadedBufferLength() / 60, 2) + ' min. | ' + 
+						_buffer.requiredBufferLength() / 60, 2) + ' min. | ' +
+					MathUtil.round(_buffer.loadedBufferLength() / 60, 2) + ' min. | ' +
 					MathUtil.round(bufferStatus(), 1) + '% | ' +
-					MathUtil.round(m_buffer.remainingBufferingDuration()) + ' s\n';
+					MathUtil.round(_buffer.remainingBufferingDuration()) + ' s\n';
 				str += 'state: ' + stateToString();
 				log('>>>\n' + str + '\n<<<');
 			}
@@ -705,33 +705,33 @@ package reprise.media
 		protected function measureSpeed():void
 		{
 			var t:Number = getTimer();
-			var startDif:Number = t - m_startTime;
-			var curDif:Number = t - m_lastSpeedCheck; 
+			var startDif:Number = t - _startTime;
+			var curDif:Number = t - _lastSpeedCheck;
 		
-			if (startDif < 3000 || !(m_status & STATUS_FILESIZE_KNOWN) || 
-				m_status & STATUS_BANDWIDTH_KNOWN && curDif < 5000 )
+			if (startDif < 3000 || !(_status & STATUS_FILESIZE_KNOWN) ||
+				_status & STATUS_BANDWIDTH_KNOWN && curDif < 5000 )
 			{
 				return;
 			}
 
 			var seconds:Number = curDif / 1000;
-			var bLoaded:Number = bytesLoaded() - m_lastLoadProgress;
-			m_lastLoadProgress = bytesLoaded();
-			m_lastSpeedCheck = t;
-			m_speed = bLoaded / seconds; // b/s
+			var bLoaded:Number = bytesLoaded() - _lastLoadProgress;
+			_lastLoadProgress = bytesLoaded();
+			_lastSpeedCheck = t;
+			_speed = bLoaded / seconds; // b/s
 		
 			// see if we have a valid value
-			if (m_speed < 0 || isNaN(m_speed))
+			if (_speed < 0 || isNaN(_speed))
 			{
 				// if we tried too long, we give up, throw an error event and unload our media file
 				if (startDif >= SETTINGS_TIMEOUT_DURATION)
 				{
 					broadcastError('Timeout exceeded. Please double-check if the file ' + 
-						m_source + ' exists on the server', true);
+						_source + ' exists on the server', true);
 				}
 				return;
 			}
-			m_status |= STATUS_BANDWIDTH_KNOWN;
+			_status |= STATUS_BANDWIDTH_KNOWN;
 		}
 		
 		protected function loadFinished():void
@@ -741,8 +741,8 @@ package reprise.media
 			{
 				return;
 			}
-			m_status |= STATUS_LOAD_FINISHED;
-			m_status &= ~STATUS_IS_LOADING;
+			_status |= STATUS_LOAD_FINISHED;
+			_status &= ~STATUS_IS_LOADING;
 			updateBuffer();
 			goIdle();
 			dispatchEvent(new MediaEvent(MediaEvent.LOAD_COMPLETE));
@@ -752,29 +752,29 @@ package reprise.media
 		{
 			if (value)
 			{
-				m_options |= flag;
+				_options |= flag;
 			}
 			else
 			{
-				m_options &= ~flag;
+				_options &= ~flag;
 			}
 		}
 	
 		protected function observeStatus(e:TimerEvent):void
 		{
-			if (m_state == STATE_IDLE)
+			if (_state == STATE_IDLE)
 			{
 				return;
 			}
 		
 			// udpate play status when playing
-			if (m_state == STATE_PLAYING && m_status & STATUS_DURATION_KNOWN)
+			if (_state == STATE_PLAYING && _status & STATUS_DURATION_KNOWN)
 			{
 				checkPlayProgress();
 			}
 			
 			// update load status when loading
-			if (!(m_status & STATUS_LOAD_FINISHED) && m_status & STATUS_IS_LOADING)
+			if (!(_status & STATUS_LOAD_FINISHED) && _status & STATUS_IS_LOADING)
 			{
 				checkLoadProgress();
 			}
@@ -782,19 +782,19 @@ package reprise.media
 			// check if we know how long our media file is
 			if (duration() > 0 && !isNaN(duration()))
 			{
-				m_status |= STATUS_DURATION_KNOWN;
+				_status |= STATUS_DURATION_KNOWN;
 			}
 			
 			// go no further if we know not enough to feed our buffer with information
-			if (m_state == STATE_PREBUFFERING && 
-				!((m_status & BUFFERING_RELEVANT_STATUS) == BUFFERING_RELEVANT_STATUS) && 
-				!(m_status & STATUS_LOAD_FINISHED))
+			if (_state == STATE_PREBUFFERING &&
+				!((_status & BUFFERING_RELEVANT_STATUS) == BUFFERING_RELEVANT_STATUS) &&
+				!(_status & STATUS_LOAD_FINISHED))
 			{
 				return;
 			}
 		
 			// do go further if we know enough
-			if (m_state == STATE_PREBUFFERING && m_status & BUFFERING_RELEVANT_STATUS)
+			if (_state == STATE_PREBUFFERING && _status & BUFFERING_RELEVANT_STATUS)
 			{
 				setState(STATE_BUFFERING);
 			}
@@ -803,29 +803,29 @@ package reprise.media
 			updateBuffer();
 
 			// play when we should
-			if ((isBuffered() || m_status & STATUS_LOAD_FINISHED) && 
-				!(m_status & STATUS_BUFFER_FULL) &&
-				(m_status & STATUS_SHOULD_PLAY || 
-					(m_options & OPTIONS_AUTOPLAY && !(m_status & STATUS_DID_AUTOPLAY))))
+			if ((isBuffered() || _status & STATUS_LOAD_FINISHED) &&
+				!(_status & STATUS_BUFFER_FULL) &&
+				(_status & STATUS_SHOULD_PLAY ||
+					(_options & OPTIONS_AUTOPLAY && !(_status & STATUS_DID_AUTOPLAY))))
 			{
-				m_status |= STATUS_DID_AUTOPLAY;
-				m_status |= STATUS_BUFFER_FULL;
-				if (m_state != STATE_PLAYING)
+				_status |= STATUS_DID_AUTOPLAY;
+				_status |= STATUS_BUFFER_FULL;
+				if (_state != STATE_PLAYING)
 				{
 					play();
 				}
 			}
 			// pause on buffer underrun
-			else if (!isBuffered() && !(m_status & STATUS_LOAD_FINISHED))
+			else if (!isBuffered() && !(_status & STATUS_LOAD_FINISHED))
 			{
-				m_status &= ~STATUS_BUFFER_FULL;
+				_status &= ~STATUS_BUFFER_FULL;
 				// if buffer is equal or less than .5 percent filled, we pause
 				if (bufferStatus() <= .5)
 				{
-					if (m_state == STATE_PLAYING)
+					if (_state == STATE_PLAYING)
 					{
 						pause();
-						m_status |= STATUS_SHOULD_PLAY;
+						_status |= STATUS_SHOULD_PLAY;
 					}
 				}
 			}
@@ -834,7 +834,7 @@ package reprise.media
 		protected function muteTween_complete(e:CommandEvent):void
 		{
 			pause();
-			setVolume(m_volumeBeforeFade);
+			setVolume(_volumeBeforeFade);
 		}
 	}
 }

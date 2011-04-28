@@ -25,19 +25,19 @@ package reprise.tweens {
 		public static const DIRECTION_BACKWARD:int = -1;
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_tweens : Array;
-		protected var m_currentTween : SimpleTween;
-		protected var m_currentTweenIndex : int;
-		protected var m_isRunning : Boolean;
-		protected var m_direction:Number;
+		protected var _tweens : Array;
+		protected var _currentTween : SimpleTween;
+		protected var _currentTweenIndex : int;
+		protected var _isRunning : Boolean;
+		protected var _direction:Number;
 		
 		//----------------------               Public Methods               ----------------------//
 		public function TweenChain(...rest)
 		{
-	 		m_tweens = [];
+	 		_tweens = [];
 	 		for (var i : Number = 0; i < rest.length; i++)
 	 		{
-	 			m_tweens.push(rest[i]);
+	 			_tweens.push(rest[i]);
 	 		}
 	 	}
 		
@@ -45,18 +45,18 @@ package reprise.tweens {
 		 * adds a tween to the end of the chain
 		 */
 		public function addTween (tween:SimpleTween):void {
-			m_tweens.push(tween);
+			_tweens.push(tween);
 		}
 		
 		/**
 		 * starts the tweenChain
 		 */
 		public function startTweenChain ():void {
-			if (!m_currentTween) {
-				m_currentTweenIndex = 0;
-				m_currentTween = m_tweens[0];
+			if (!_currentTween) {
+				_currentTweenIndex = 0;
+				_currentTween = _tweens[0];
 			}
-			m_isRunning = true;
+			_isRunning = true;
 			startTween();
 		}
 		
@@ -65,15 +65,15 @@ package reprise.tweens {
 		 */
 		public function resetTweenChain() : void
 		{
-			if (m_currentTween)
+			if (_currentTween)
 			{
-				m_currentTween.resetTween();
-				m_currentTween.removeEventListener(
+				_currentTween.resetTween();
+				_currentTween.removeEventListener(
 					Event.COMPLETE, tween_finish);
-				m_currentTween.removeEventListener(
+				_currentTween.removeEventListener(
 					TweenEvent.TICK, tween_tick);
-				m_currentTween = null;
-				m_isRunning = false;
+				_currentTween = null;
+				_isRunning = false;
 			}
 		}
 		
@@ -82,10 +82,10 @@ package reprise.tweens {
 		 */
 		public function stopTweenChain() : void
 		{
-			if (m_currentTween)
+			if (_currentTween)
 			{
-				m_currentTween.stopTween();
-				m_isRunning = false;
+				_currentTween.stopTween();
+				_isRunning = false;
 			}
 		}
 		/**
@@ -96,15 +96,15 @@ package reprise.tweens {
 		 */
 		public function reverse() : void
 		{
-			m_direction = (m_direction == DIRECTION_FORWARD ? 
+			_direction = (_direction == DIRECTION_FORWARD ?
 				DIRECTION_BACKWARD : DIRECTION_FORWARD);
 			
-			m_tweens.reverse();
-			for (var i : Number = 0; i < m_tweens.length; i++)
+			_tweens.reverse();
+			for (var i : Number = 0; i < _tweens.length; i++)
 			{
-				SimpleTween(m_tweens[i]).reverse();
+				SimpleTween(_tweens[i]).reverse();
 			}
-			m_currentTweenIndex = m_tweens.length - 1 - m_currentTweenIndex;
+			_currentTweenIndex = _tweens.length - 1 - _currentTweenIndex;
 		}
 		
 		/**
@@ -112,7 +112,7 @@ package reprise.tweens {
 		 */
 		public function getDirection () : Number
 		{
-			return m_direction;
+			return _direction;
 		}
 		
 		/**
@@ -120,7 +120,7 @@ package reprise.tweens {
 		 */
 		public function setDirection (newDirection:Number) : void
 		{
-			m_direction = newDirection;
+			_direction = newDirection;
 		}
 		
 		/**
@@ -128,7 +128,7 @@ package reprise.tweens {
 		 */
 		public function isRunning () : Boolean
 		{
-			return m_isRunning;
+			return _isRunning;
 		}
 		
 		public override function toString() : String
@@ -150,22 +150,22 @@ package reprise.tweens {
 		 */
 		protected function tween_finish(event:Event) : void
 		{
-			m_currentTween.removeEventListener(
+			_currentTween.removeEventListener(
 				Event.COMPLETE, tween_finish);
-			m_currentTween.removeEventListener(
+			_currentTween.removeEventListener(
 				TweenEvent.TICK, tween_tick);
-			m_currentTween.resetTween();
+			_currentTween.resetTween();
 			dispatchEvent(new Event(EVENT_FINISH_TWEEN));
-			if (m_currentTweenIndex < m_tweens.length - 1)
+			if (_currentTweenIndex < _tweens.length - 1)
 			{
-				m_currentTweenIndex++;
-				m_currentTween = SimpleTween(m_tweens[m_currentTweenIndex]);
+				_currentTweenIndex++;
+				_currentTween = SimpleTween(_tweens[_currentTweenIndex]);
 				startTween();
 			}
 			else
 			{
-				m_currentTween = null;
-				m_isRunning = false;
+				_currentTween = null;
+				_isRunning = false;
 				dispatchEvent(new Event(EVENT_FINISH_CHAIN));
 			}
 		}
@@ -175,9 +175,9 @@ package reprise.tweens {
 		 */
 		protected function startTween() : void
 		{
-			m_currentTween.addEventListener(TweenEvent.TICK, tween_tick);
-			m_currentTween.addEventListener(Event.COMPLETE, tween_finish);
-			m_currentTween.startTween();
+			_currentTween.addEventListener(TweenEvent.TICK, tween_tick);
+			_currentTween.addEventListener(Event.COMPLETE, tween_finish);
+			_currentTween.startTween();
 		}
 	}
 }

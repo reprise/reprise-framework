@@ -24,7 +24,7 @@ package reprise.tweens {
 		public var extraParams:Array;
 		
 		
-		private var m_easingFunction : Function;
+		private var _easingFunction : Function;
 		
 		
 		public function TweenedPropertyVO(scope:Object, property:String, 
@@ -48,7 +48,7 @@ package reprise.tweens {
 			valueChange = targetValue - startValue;
 			if (tweenFunction != null)
 			{
-				m_easingFunction = tweenFunction;
+				_easingFunction = tweenFunction;
 			}
 			setPropertyType(propertyIsMethod);
 		}
@@ -74,10 +74,10 @@ package reprise.tweens {
 		public function tweenFunction(
 			time:int, start:Number, change:Number, duration:int, ...rest) : Number
 		{
-			if (m_easingFunction != null)
+			if (_easingFunction != null)
 			{
-				return m_easingFunction.apply(null, [time, start, change, duration].concat(rest));
-				//return m_easingFunction(time, start, change, duration);
+				return _easingFunction.apply(null, [time, start, change, duration].concat(rest));
+				//return _easingFunction(time, start, change, duration);
 			}
 			return change * time / duration + start;
 		}

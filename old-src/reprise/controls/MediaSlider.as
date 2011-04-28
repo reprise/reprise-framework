@@ -15,8 +15,8 @@ package reprise.controls
 	public class MediaSlider extends Slider
 	{
 		
-		protected var m_loadStatusBar:UIComponent;
-		protected var m_loadValue:Number = 0;
+		protected var _loadStatusBar:UIComponent;
+		protected var _loadValue:Number = 0;
 		
 		
 		
@@ -26,7 +26,7 @@ package reprise.controls
 		
 		public override function setValue(value:Number):void
 		{
-			value = Math.min(value, m_maxValue / 100 * m_loadValue);
+			value = Math.min(value, _maxValue / 100 * _loadValue);
 			super.setValue(value);
 		}
 		
@@ -34,13 +34,13 @@ package reprise.controls
 		{
 			status = Math.max(0, status);
 			status = Math.min(100, status);
-			m_loadValue = status;
+			_loadValue = status;
 			applyLoadValue();
 		}
 		
 		public function loadValue():Number
 		{
-			return m_loadValue;
+			return _loadValue;
 		}
 		
 		
@@ -49,7 +49,7 @@ package reprise.controls
 		protected override function createTrack():void
 		{
 			super.createTrack();
-			m_loadStatusBar = addComponent('load_status_bar');
+			_loadStatusBar = addComponent('load_status_bar');
 		}
 		
 		protected override function beforeFirstDraw():void
@@ -59,7 +59,7 @@ package reprise.controls
 		
 		protected function applyLoadValue():void
 		{
-			m_loadStatusBar.width = valueToPosition(m_loadValue, 0, 100);
+			_loadStatusBar.width = valueToPosition(_loadValue, 0, 100);
 		}
 	}
 }

@@ -16,9 +16,9 @@ package reprise.external
 	public class URLLoaderResource extends URLRequestResource
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_loader : URLLoader;
-		protected var m_data : String;
-		protected var m_dataFormat : String;
+		protected var _loader : URLLoader;
+		protected var _data : String;
+		protected var _dataFormat : String;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -29,43 +29,43 @@ package reprise.external
 		
 		public function data() : String
 		{
-			return m_data;
+			return _data;
 		}
 		
 		public override function content() : *
 		{
-			return m_loader.data;
+			return _loader.data;
 		}
 
 		public function setDataFormat(format : String) : void
 		{
-			m_dataFormat = format;
+			_dataFormat = format;
 		}
 
 		public override function bytesLoaded() : int
 		{
-			if (m_attachMode)
+			if (_attachMode)
 			{
 				return 1;
 			}
-			if (!m_loader)
+			if (!_loader)
 			{
 				return 0;
 			}
-			return m_loader.bytesLoaded;
+			return _loader.bytesLoaded;
 		}
 
 		public override function bytesTotal() : int
 		{
-			if (m_attachMode)
+			if (_attachMode)
 			{
 				return 1;
 			}
-			if (!m_loader)
+			if (!_loader)
 			{
 				return 0;
 			}
-			return m_loader.bytesTotal;
+			return _loader.bytesTotal;
 		}
 		
 		
@@ -74,7 +74,7 @@ package reprise.external
 		protected override function doLoad() : void
 		{
 			// asset from library
-			if (m_url.indexOf('attach://') == 0)
+			if (_url.indexOf('attach://') == 0)
 			{
 				var symbol : Class = resolveAttachSymbol();
 				if (!symbol)
@@ -89,35 +89,35 @@ package reprise.external
 					onData(false);
 					return;
 				}
-				m_data = ByteArray(binaryObject).toString();
+				_data = ByteArray(binaryObject).toString();
 				onData(true);
 				return;
 			}
-			m_loader = new URLLoader();
-			m_loader.dataFormat = m_dataFormat || URLLoaderDataFormat.TEXT;
-			m_loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.load(createRequest());
+			_loader = new URLLoader();
+			_loader.dataFormat = _dataFormat || URLLoaderDataFormat.TEXT;
+			_loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			_loader.addEventListener(Event.COMPLETE, loader_complete);
+			_loader.load(createRequest());
 			//TODO: add error handling
 		}
 		
 		protected override function doCancel() : void
 		{
-			if (m_isExecuting)
+			if (_isExecuting)
 			{
-				m_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-				m_loader.removeEventListener(Event.COMPLETE, loader_complete);
-				m_loader.close();
-				m_loader = null;
+				_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+				_loader.removeEventListener(Event.COMPLETE, loader_complete);
+				_loader.close();
+				_loader = null;
 			}
 		}	
 		
 		// LoadVars event	
 		protected function loader_complete(event : Event) : void
 		{
-			m_data = m_loader.data;
-			m_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.removeEventListener(Event.COMPLETE, loader_complete);
+			_data = _loader.data;
+			_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			_loader.removeEventListener(Event.COMPLETE, loader_complete);
 			onData(true);
 		}
 	}

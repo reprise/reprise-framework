@@ -21,8 +21,8 @@ package reprise.controls.html
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_href : String;
-		protected var m_target : String;
+		protected var _href : String;
+		protected var _target : String;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -30,19 +30,19 @@ package reprise.controls.html
 		
 		public function setHrefAttribute(value : String) : void
 		{
-			m_href = value;
+			_href = value;
 		}
 		public function setTargetAttribute(value : String) : void
 		{
-			m_target = value;
+			_target = value;
 		}
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function buttonDisplay_click(event : MouseEvent) : void
 		{
 			var htmlEvent : LabelEvent = new LabelEvent(LabelEvent.LINK_CLICK, true);
-			htmlEvent.href = m_href;
-			htmlEvent.linkTarget = m_target;
+			htmlEvent.href = _href;
+			htmlEvent.linkTarget = _target;
 			dispatchEvent(htmlEvent);
 			
 			if (!htmlEvent.isDefaultPrevented())

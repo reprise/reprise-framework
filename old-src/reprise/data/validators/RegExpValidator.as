@@ -16,8 +16,8 @@ package reprise.data.validators
 	public class RegExpValidator extends AbstractCommand implements IValidator 
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_value : *;
-		protected var m_regexp : RegExp;
+		protected var _value : *;
+		protected var _regexp : RegExp;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -26,22 +26,22 @@ package reprise.data.validators
 			var parts : Array = expression.substr(1).split('/');
 			var exp : String = parts[0];
 			var options : String = parts[1] || '';
-			m_regexp = new RegExp(exp, options);
+			_regexp = new RegExp(exp, options);
 		}
 		
 		public override function execute(...args) : void
 		{
-			m_didSucceed = m_regexp.test(m_value);
+			_didSucceed = _regexp.test(_value);
 		}
 
 		public function setValue(value : *) : void
 		{
-			m_value = value;
+			_value = value;
 		}
 		
 		public function value() : *
 		{
-			return m_value;
+			return _value;
 		}
 	}
 }

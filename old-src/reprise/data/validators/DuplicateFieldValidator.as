@@ -14,34 +14,34 @@ package reprise.data.validators
 	public class DuplicateFieldValidator extends AbstractCommand implements IValidator 
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_value : *;
-		protected var m_field : IInput;
-		protected var m_regexp : RegExp;
+		protected var _value : *;
+		protected var _field : IInput;
+		protected var _regexp : RegExp;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function DuplicateFieldValidator(field:IInput)
 		{
-			m_field = field;
+			_field = field;
 		}
 		
 		public override function execute(...args) : void
 		{
-			m_didSucceed = m_field.didSucceed() && m_field.value() == m_value;
-			if (!m_didSucceed)
+			_didSucceed = _field.didSucceed() && _field.value() == _value;
+			if (!_didSucceed)
 			{
-				m_field.markAsInvalid();
+				_field.markAsInvalid();
 			}
 		}
 
 		public function setValue(value : *) : void
 		{
-			m_value = value;
+			_value = value;
 		}
 		
 		public function value() : *
 		{
-			return m_value;
+			return _value;
 		}
 	}
 }

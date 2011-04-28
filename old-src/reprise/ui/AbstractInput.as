@@ -23,17 +23,17 @@ package reprise.ui
 	{
 		//----------------------             Public Properties              ----------------------//
 		/* @TODO: properties probably should be namespaced */
-		public var m_priority : int = 0;
-		public var m_id : int;
+		public var _priority : int = 0;
+		public var _id : int;
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_autovalidates : Boolean = true;
-		protected var m_validator : IValidator;
-		protected var m_required : Boolean;
-		protected var m_fieldname : String;
-		protected var m_data : *;
-		protected var m_queueParent : CompositeCommand;
+		protected var _autovalidates : Boolean = true;
+		protected var _validator : IValidator;
+		protected var _required : Boolean;
+		protected var _fieldname : String;
+		protected var _data : *;
+		protected var _queueParent : CompositeCommand;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -42,16 +42,16 @@ package reprise.ui
 		
 		public function performValidation():void
 		{
-			if (!m_validator)
+			if (!_validator)
 			{
 				return;
 			}
-			if (m_validator is IAsynchronousCommand)
+			if (_validator is IAsynchronousCommand)
 			{
-				m_validator.addEventListener(Event.COMPLETE, validator_complete);
+				_validator.addEventListener(Event.COMPLETE, validator_complete);
 			}
-			m_validator.setValue(value());
-			m_validator.execute();
+			_validator.setValue(value());
+			_validator.execute();
 		}
 		
 		public function execute(...rest):void
@@ -61,12 +61,12 @@ package reprise.ui
 		
 		public function setValidator(validator:IValidator):void
 		{
-			m_validator = validator;
+			_validator = validator;
 		}
 		
 		public function validator():IValidator
 		{
-			return m_validator;
+			return _validator;
 		}
 		
 		public function markAsInvalid():void
@@ -81,7 +81,7 @@ package reprise.ui
 		
 		public function setRequired(value : Boolean) : void
 		{
-			m_required = value;
+			_required = value;
 		}
 		
 		/**
@@ -89,7 +89,7 @@ package reprise.ui
 		 */
 		public function setRequiredAttribute(value : String):void
 		{
-			m_required = (value == 'required' || value == 'true');
+			_required = (value == 'required' || value == 'true');
 		}
 		
 		public function setFormat(format : String) : void
@@ -121,12 +121,12 @@ package reprise.ui
 		
 		public function required():Boolean
 		{
-			return m_required;
+			return _required;
 		}
 		
 		public function executesAsynchronously():Boolean
 		{
-			return m_validator ? m_validator is IAsynchronousCommand : false;
+			return _validator ? _validator is IAsynchronousCommand : false;
 		}
 		
 		public function validator_complete(e:CommandEvent):void
@@ -137,9 +137,9 @@ package reprise.ui
 		public function didSucceed():Boolean
 		{
 			var success:Boolean = false;
-			if (!m_validator)
+			if (!_validator)
 			{
-				if (m_required)
+				if (_required)
 				{
 					success = value() != null && value() != '';
 				}
@@ -150,7 +150,7 @@ package reprise.ui
 			}
 			else
 			{
-				success = m_validator.didSucceed();
+				success = _validator.didSucceed();
 			}
 			success ? markAsValid() : markAsInvalid();
 			return success;
@@ -169,22 +169,22 @@ package reprise.ui
 		
 		public function setData(theData:*):void
 		{
-			m_data = theData;
+			_data = theData;
 		}
 		
 		public function data():*
 		{
-			return m_data;
+			return _data;
 		}
 		
 		public function setFieldName(aName:String):void
 		{
-			m_fieldname = aName;
+			_fieldname = aName;
 		}
 		
 		public function fieldName():String
 		{
-			return m_fieldname;
+			return _fieldname;
 		}
 		
 		public function setName(aName:String):void
@@ -194,59 +194,59 @@ package reprise.ui
 		
 		public function get priority():int
 		{
-			return m_priority;
+			return _priority;
 		}
 		
 		public function set priority(value:int):void
 		{
-			m_priority = value;
+			_priority = value;
 		}
 		
 		public function get id():int
 		{
-			return m_id;
+			return _id;
 		}
 		
 		public function set id(value:int):void
 		{
-			m_id = value;
+			_id = value;
 		}
 		
 		public function setQueueParent(queue : CompositeCommand) : void
 		{
-			m_queueParent = queue;
+			_queueParent = queue;
 		}
 		
 		public function cancel() : void
 		{
-			if (m_validator is IAsynchronousCommand)
+			if (_validator is IAsynchronousCommand)
 			{
-				(m_validator as IAsynchronousCommand).cancel();
+				(_validator as IAsynchronousCommand).cancel();
 			}
 		}
 		
 		public function isCancelled() : Boolean
 		{
-			if (m_validator is IAsynchronousCommand)
+			if (_validator is IAsynchronousCommand)
 			{
-				return (m_validator as IAsynchronousCommand).isCancelled();
+				return (_validator as IAsynchronousCommand).isCancelled();
 			}
 			return false;
 		}
 		
 		public function reset():void
 		{
-			if (m_validator is IAsynchronousCommand)
+			if (_validator is IAsynchronousCommand)
 			{
-				(m_validator as IAsynchronousCommand).reset();
+				(_validator as IAsynchronousCommand).reset();
 			}
 		}
 		
 		public function isExecuting():Boolean
 		{
-			if (m_validator is IAsynchronousCommand)
+			if (_validator is IAsynchronousCommand)
 			{
-				return (m_validator as IAsynchronousCommand).isExecuting();
+				return (_validator as IAsynchronousCommand).isExecuting();
 			}
 			return false;
 		}
@@ -257,7 +257,7 @@ package reprise.ui
 		public override function setFocus(value : Boolean, method : String) : void
 		{
 			super.setFocus(value, method);
-			if (value && m_canBecomeKeyView)
+			if (value && _canBecomeKeyView)
 			{
 				this.addEventListener(KeyboardEvent.KEY_DOWN, self_keyDown);
 			}

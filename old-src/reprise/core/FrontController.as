@@ -15,14 +15,14 @@ package reprise.core
 
 	public class FrontController
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_commands : Object;
-		protected var m_view : DocumentView;
+		protected var _commands : Object;
+		protected var _view : DocumentView;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function FrontController() 
 		{
-			m_commands = {};
+			_commands = {};
 		}
 		
 		public function executeCommand(event : Event) : void
@@ -34,54 +34,54 @@ package reprise.core
 		
 		public function addGlobalCommand(name:String, command:Class) : void
 		{
-			if (m_commands[name] != null)
+			if (_commands[name] != null)
 			{
 				throw new Error("command already registered");
 			}
-			m_commands[name] = command;
+			_commands[name] = command;
 			EventBroadcaster.instance().addEventListener(name, executeCommand);
 		}
 		
 		public function removeGlobalCommand(name:String) : void
 		{
-			if (m_commands[name] == null)
+			if (_commands[name] == null)
 			{
 				throw new Error('command not registered');
 			}
 			EventBroadcaster.instance().removeEventListener(name, executeCommand);
-			delete m_commands[name];
-			m_commands[name] = null;
+			delete _commands[name];
+			_commands[name] = null;
 		}
 		
 		public function addCommand(name:String, command:Class) : void
 		{
-			if (m_commands[name] != null)
+			if (_commands[name] != null)
 			{
 				throw new Error("command already registered");
 			}
-			m_commands[name] = command;
-			m_view.addEventListener(name, executeCommand);
+			_commands[name] = command;
+			_view.addEventListener(name, executeCommand);
 		}
 		
 		public function removeCommand(name:String) : void
 		{
-			if (m_commands[name] == null)
+			if (_commands[name] == null)
 			{
 				throw new Error('command not registered');
 			}
-			m_view.removeEventListener(name, executeCommand);
-			delete m_commands[name];
-			m_commands[name] = null;		
+			_view.removeEventListener(name, executeCommand);
+			delete _commands[name];
+			_commands[name] = null;
 		}
 		
 		public function view() : DocumentView
 		{
-			return m_view;
+			return _view;
 		}
 	
 		public function setView(val:DocumentView) : void
 		{
-			m_view = val;
+			_view = val;
 			initCommands();
 		}
 		
@@ -89,7 +89,7 @@ package reprise.core
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function getCommand(name:String) : Class
 		{
-			var command : Class = m_commands[name];
+			var command : Class = _commands[name];
 			if (command == null)
 			{
 				throw new Error("command " + name + " not found");

@@ -13,28 +13,28 @@ package reprise.css
 	
 	public class CSSParsingResult
 	{
-		protected var m_properties : Object;
+		protected var _properties : Object;
 		
 		public function CSSParsingResult() 
 		{
-			m_properties = {};
+			_properties = {};
 		}
 		
 		
 		
 		reprise function addPropertyForKey( prop : CSSProperty, key : String ) : void
 		{
-			m_properties[ key ] = prop;
+			_properties[ key ] = prop;
 		}
 		
 		reprise function propertyForKey( key : String ) : CSSProperty
 		{
-			return CSSProperty( m_properties[ key ] );
+			return CSSProperty( _properties[ key ] );
 		}
 		
 		reprise function properties() : Object
 		{
-			return m_properties;
+			return _properties;
 		}
 		
 		reprise function addEntriesFromResult( res : CSSParsingResult ) : void
@@ -79,8 +79,8 @@ package reprise.css
 		public function toString() : String
 		{
 			var str : String = '';
-			for (var key : String in m_properties)
-				str += key + ': ' + m_properties[key] + '\n';
+			for (var key : String in _properties)
+				str += key + ': ' + _properties[key] + '\n';
 			return str;
 		}
 	}

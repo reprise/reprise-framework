@@ -22,9 +22,9 @@ package reprise.controls
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_itemRendererClass : Class = ListItem;
-		protected var m_items : Array;
-		protected var m_selectedIndex : int = -1;
+		protected var _itemRendererClass : Class = ListItem;
+		protected var _items : Array;
+		protected var _selectedIndex : int = -1;
 
 		
 		
@@ -35,26 +35,26 @@ package reprise.controls
 
 		public function addItemWithData(data : Object) : void
 		{
-			(m_data as Array).push(data);
-			var item : IListItem = new m_itemRendererClass() as IListItem;
+			(_data as Array).push(data);
+			var item : IListItem = new _itemRendererClass() as IListItem;
 			item.setData(data);
 			addItem(item);
 		}
 
 		public function setItemRendererClass(rendererClass : Class) : void
 		{
-			m_itemRendererClass = rendererClass;
+			_itemRendererClass = rendererClass;
 		}
 
 		public function itemRendererClass() : Class
 		{
-			return m_itemRendererClass;
+			return _itemRendererClass;
 		}
 
 		public function set options(options : Array) : void
 		{
 			removeAllItems();
-			m_data = [];
+			_data = [];
 			for each (var item : Object in options)
 			{
 				addItemWithData(item);
@@ -64,23 +64,23 @@ package reprise.controls
 
 		public function removeAllItems() : void
 		{
-			var itemsCopy : Array = m_items.concat();
+			var itemsCopy : Array = _items.concat();
 			for each (var item : IListItem in itemsCopy)
 			{
 				removeItem(item);
 			}
-			m_data = [];
+			_data = [];
 		}
 
 		public function removeItem(item : IListItem) : void
 		{
-			m_items.splice(m_items.indexOf(item), 1);
+			_items.splice(_items.indexOf(item), 1);
 			UIComponent(item).remove();
 		}
 
 		public function get options() : Array
 		{
-			return m_data as Array;
+			return _data as Array;
 		}
 
 		public override function setData(theData : *) : void
@@ -91,45 +91,45 @@ package reprise.controls
 
 		public function setSelectedItem(item : IListItem) : void
 		{
-			setSelectedIndex(m_items.indexOf(item));
+			setSelectedIndex(_items.indexOf(item));
 		}
 		public function selectedItem() : IListItem
 		{
-			return m_items[m_selectedIndex]; 
+			return _items[_selectedIndex];
 		}
 		
 		public function setSelectedData(data : Object) : void
 		{
-			setSelectedIndex((m_data as Array).indexOf(data));
+			setSelectedIndex((_data as Array).indexOf(data));
 		}
 		public function selectedData() : Object
 		{
-			return m_data[m_selectedIndex];
+			return _data[_selectedIndex];
 		}
 
 		public function setSelectedIndex(index : int) : void
 		{
 			//TODO: use interface here, instead
-			if (m_items[m_selectedIndex] is AbstractButton)
+			if (_items[_selectedIndex] is AbstractButton)
 			{
-				AbstractButton(m_items[m_selectedIndex]).selected = false;
+				AbstractButton(_items[_selectedIndex]).selected = false;
 			}
-			m_selectedIndex = Math.min(Math.max(index, -1), m_items.length - 1);
-			if (m_items[m_selectedIndex] is AbstractButton)
+			_selectedIndex = Math.min(Math.max(index, -1), _items.length - 1);
+			if (_items[_selectedIndex] is AbstractButton)
 			{
-				AbstractButton(m_items[m_selectedIndex]).selected = true;
+				AbstractButton(_items[_selectedIndex]).selected = true;
 			}
 		}
 		public function selectedIndex() : int
 		{
-			return m_selectedIndex;
+			return _selectedIndex;
 		}
 
 		public override function setValue(value : *) : void
 		{
-			for (var i : int = (m_data as Array).length; i--;)
+			for (var i : int = (_data as Array).length; i--;)
 			{
-				if (m_data.value == value)
+				if (_data.value == value)
 				{
 					setSelectedIndex(i);
 					return;
@@ -138,11 +138,11 @@ package reprise.controls
 		}
 		public override function value() : *
 		{
-			if (m_selectedIndex == -1)
+			if (_selectedIndex == -1)
 			{
 				return null;
 			}
-			return m_data[m_selectedIndex].value;
+			return _data[_selectedIndex].value;
 		}
 
 		
@@ -151,14 +151,14 @@ package reprise.controls
 		protected override function initialize() : void
 		{
 			super.initialize();
-			m_items = [];
-			m_data = [];
+			_items = [];
+			_data = [];
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 		}
 
 		protected function addItem(item : IListItem) : void
 		{
-			m_items.push(item);
+			_items.push(item);
 			addChild(DisplayObject(item));
 			EventDispatcher(item).addEventListener(MouseEvent.CLICK, item_click);
 		}
@@ -172,7 +172,7 @@ package reprise.controls
 				{
 					log('Unsupported tag ' + childNode.localName() + 'below <list>');
 				}
-				var item : IListItem = new m_itemRendererClass() as IListItem;
+				var item : IListItem = new _itemRendererClass() as IListItem;
 				var data : Object = {label:childNode.text()};
 				data.value = data.label;
 				item.setData(data);
@@ -182,9 +182,9 @@ package reprise.controls
 
 		protected function item_click(e : Event) : void
 		{
-			var selectedIndex : int = m_selectedIndex;
+			var selectedIndex : int = _selectedIndex;
 			setSelectedItem(e.target as IListItem);
-			if (m_selectedIndex != selectedIndex)
+			if (_selectedIndex != selectedIndex)
 			{
 				dispatchEvent(new Event(Event.CHANGE));
 			}

@@ -13,15 +13,15 @@ package reprise.media
 	{
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_userBandwidth:Number; // Bytes per second
-		protected var m_mediaLength:Number; // Seconds
-		protected var m_mediaSize:Number; // Bytes
-		protected var m_playheadPosition:Number; // Seconds
-		protected var m_bytesLoaded:Number; // Bytes
-		protected var m_player:AbstractPlayer;
-		protected var m_bandwidthUpdates:Number;
-		protected var m_bandwidthSum:Number;
-		protected var m_bitrate:Number;
+		protected var _userBandwidth:Number; // Bytes per second
+		protected var _mediaLength:Number; // Seconds
+		protected var _mediaSize:Number; // Bytes
+		protected var _playheadPosition:Number; // Seconds
+		protected var _bytesLoaded:Number; // Bytes
+		protected var _player:AbstractPlayer;
+		protected var _bandwidthUpdates:Number;
+		protected var _bandwidthSum:Number;
+		protected var _bitrate:Number;
 		
 		
 		
@@ -29,86 +29,86 @@ package reprise.media
 		public function AbstractBuffer(ply:AbstractPlayer) 
 		{
 			reset();
-			m_player = ply;
+			_player = ply;
 		}
 	
 		public function reset():void
 		{
-			m_userBandwidth = 0;
-			m_mediaLength = 0;
-			m_mediaSize = 0;
-			m_playheadPosition = 0;
-			m_bytesLoaded = 0;
-			m_bitrate = 0;
-			m_bandwidthUpdates = 0;
-			m_bandwidthSum = 0;
+			_userBandwidth = 0;
+			_mediaLength = 0;
+			_mediaSize = 0;
+			_playheadPosition = 0;
+			_bytesLoaded = 0;
+			_bitrate = 0;
+			_bandwidthUpdates = 0;
+			_bandwidthSum = 0;
 		}	
 	
 		public function userBandwidth():Number
 		{
-			return m_userBandwidth;
+			return _userBandwidth;
 		}
 
 		public function setUserBandwidth(val:Number):void
 		{
-			m_bandwidthUpdates++;
-			m_bandwidthSum += val;
-			m_userBandwidth = val;
+			_bandwidthUpdates++;
+			_bandwidthSum += val;
+			_userBandwidth = val;
 		}
 		
 		public function averageUserBandwidth():Number
 		{
-			return m_bandwidthSum / m_bandwidthUpdates;
+			return _bandwidthSum / _bandwidthUpdates;
 		}
 	
 		public function mediaLength():Number
 		{
-			return m_mediaLength;
+			return _mediaLength;
 		}
 
 		public function setMediaLength(val:Number):void
 		{
-			m_mediaLength = val;
+			_mediaLength = val;
 		}
 	
 		public function mediaSize():Number
 		{
-			return m_mediaSize;
+			return _mediaSize;
 		}
 
 		public function setMediaSize(val:Number):void
 		{
-			m_mediaSize = val;
+			_mediaSize = val;
 		}
 		
 		public function remainingMediaSize():Number
 		{
-			return m_mediaSize - m_bytesLoaded;
+			return _mediaSize - _bytesLoaded;
 		}
 	
 		public function playheadPosition():Number
 		{
-			return m_playheadPosition;
+			return _playheadPosition;
 		}
 
 		public function setPlayheadPosition(val:Number):void
 		{
-			m_playheadPosition = val;
+			_playheadPosition = val;
 		}
 		
 		public function remainingMediaLength():Number
 		{
-			return m_mediaLength - m_playheadPosition;
+			return _mediaLength - _playheadPosition;
 		}
 	
 		public function bytesLoaded():Number
 		{
-			return m_bytesLoaded;
+			return _bytesLoaded;
 		}
 
 		public function setBytesLoaded(val:Number):void
 		{
-			m_bytesLoaded = val;
+			_bytesLoaded = val;
 		}	
 	
 		public function downloadDuration():Number
@@ -153,12 +153,12 @@ package reprise.media
 	
 		public function loadedMediaLength():Number
 		{
-			return m_bytesLoaded / mediaBitrate();
+			return _bytesLoaded / mediaBitrate();
 		}
 		
 		public function loadedMediaLengthPerSecond():Number
 		{
-			return m_userBandwidth / mediaBitrate();
+			return _userBandwidth / mediaBitrate();
 		}
 		
 		public function remainingBufferingDuration():Number
@@ -182,7 +182,7 @@ package reprise.media
 	
 		public function setMediaBitrate(bitrate:Number):void
 		{
-			m_bitrate = bitrate;
+			_bitrate = bitrate;
 		}
 	
 		/**
@@ -191,7 +191,7 @@ package reprise.media
 		**/
 		public function mediaBitrate():Number
 		{
-			return m_bitrate || m_mediaSize / m_mediaLength;
+			return _bitrate || _mediaSize / _mediaLength;
 		}
 	}
 }

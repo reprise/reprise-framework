@@ -13,7 +13,7 @@ package reprise.external
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : ResourceProxy;
-		protected var m_delegate : IResourceProxyDelegate;
+		protected var _delegate : IResourceProxyDelegate;
 		
 		
 			
@@ -29,21 +29,21 @@ package reprise.external
 		
 		public function delegate() : IResourceProxyDelegate
 		{
-			return m_delegate;
+			return _delegate;
 		}
 	
 		public function setDelegate(val:IResourceProxyDelegate) : void
 		{
-			m_delegate = val;
+			_delegate = val;
 		}
 		
 		public function modifiedURLStringForString(url:String) : String
 		{
-			if (m_delegate == null)
+			if (_delegate == null)
 			{
 				return url;
 			}
-			return m_delegate.modifiedURLStringForString(url);
+			return _delegate.modifiedURLStringForString(url);
 		}
 		
 			

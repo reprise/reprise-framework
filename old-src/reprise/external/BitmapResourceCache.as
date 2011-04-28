@@ -16,11 +16,11 @@ package reprise.external
 	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : BitmapResourceCache;
 		
-		protected var m_imageHolders : Object;
-		protected var m_cacheList : IndexedArray;
-		protected var m_temporaryList : IndexedArray;
-		protected var m_resourceLoader : ResourceLoader;
-		protected var m_maxParallelExecutionCount : int = 3;
+		protected var _imageHolders : Object;
+		protected var _cacheList : IndexedArray;
+		protected var _temporaryList : IndexedArray;
+		protected var _resourceLoader : ResourceLoader;
+		protected var _maxParallelExecutionCount : int = 3;
 	
 	
 		//----------------------               Public Methods               ----------------------//
@@ -56,9 +56,9 @@ package reprise.external
 					}
 					else
 					{
-						m_temporaryList.remove(temporaryCacheItem);
+						_temporaryList.remove(temporaryCacheItem);
 						temporaryCacheItem.setIsTemporary(false);
-						m_cacheList.push(temporaryCacheItem);
+						_cacheList.push(temporaryCacheItem);
 					}
 					return;
 				}			
@@ -69,11 +69,11 @@ package reprise.external
 				if (bitmapResource.forceReload())
 				{
 					cacheItem.setIsTemporary(true);
-					m_temporaryList.push(cacheItem);
+					_temporaryList.push(cacheItem);
 				}
 				else
 				{
-					m_cacheList.push(cacheItem);				
+					_cacheList.push(cacheItem);
 				}			
 				enqueueCacheItem(cacheItem);
 			}
@@ -87,15 +87,15 @@ package reprise.external
 		{
 			var cacheItem : BitmapResourceCacheItem = cacheItemWithURL(url);
 			cacheItem.destroy();
-			m_cacheList.remove(cacheItem);
+			_cacheList.remove(cacheItem);
 		}
 		
 		public function setMaxParallelExecutionCount(count : int) : void
 		{
-			m_maxParallelExecutionCount = isNaN(count) ? 3 : count;
-			if (m_resourceLoader)
+			_maxParallelExecutionCount = isNaN(count) ? 3 : count;
+			if (_resourceLoader)
 			{
-				m_resourceLoader.setMaxParallelExecutionCount(m_maxParallelExecutionCount);
+				_resourceLoader.setMaxParallelExecutionCount(_maxParallelExecutionCount);
 			}
 		}
 		
@@ -104,10 +104,10 @@ package reprise.external
 		//----------------------         Private / Protected Methods        ----------------------//
 		public function BitmapResourceCache()
 		{
-			m_cacheList = new IndexedArray();
-			m_temporaryList = new IndexedArray();
-			m_resourceLoader = null;
-			m_imageHolders = {};
+			_cacheList = new IndexedArray();
+			_temporaryList = new IndexedArray();
+			_resourceLoader = null;
+			_imageHolders = {};
 		}
 		
 		protected function imageResourceForBitmapResource(
@@ -126,13 +126,13 @@ package reprise.external
 		
 		protected function cacheItemWithURL(url:String) : BitmapResourceCacheItem
 		{
-			return getItemFromListByURL(m_cacheList, url);
+			return getItemFromListByURL(_cacheList, url);
 		}
 		
 		protected function temporaryCacheItemWithURL(
 			url:String) : BitmapResourceCacheItem
 		{
-			return getItemFromListByURL(m_temporaryList, url);
+			return getItemFromListByURL(_temporaryList, url);
 		}
 
 		protected function getItemFromListByURL(list : IndexedArray, url : String) : BitmapResourceCacheItem
@@ -151,16 +151,16 @@ package reprise.external
 		protected function enqueueCacheItem(cacheItem:BitmapResourceCacheItem) : void
 		{
 			cacheItem.addEventListener(Event.COMPLETE, cleanupCachingItem);
-			if (m_resourceLoader == null)
+			if (_resourceLoader == null)
 			{
-				m_resourceLoader = new ResourceLoader();
-				m_resourceLoader.setMaxParallelExecutionCount(m_maxParallelExecutionCount);
-				m_resourceLoader.addEventListener(Event.COMPLETE, cleanupLoader);
+				_resourceLoader = new ResourceLoader();
+				_resourceLoader.setMaxParallelExecutionCount(_maxParallelExecutionCount);
+				_resourceLoader.addEventListener(Event.COMPLETE, cleanupLoader);
 			}
-			m_resourceLoader.addResource(cacheItem.loader());
-			if (!m_resourceLoader.isExecuting())
+			_resourceLoader.addResource(cacheItem.loader());
+			if (!_resourceLoader.isExecuting())
 			{
-				m_resourceLoader.execute();
+				_resourceLoader.execute();
 			}
 		}
 		
@@ -175,18 +175,18 @@ package reprise.external
 	
 			if (cacheItem.isTemporary())
 			{
-				m_temporaryList.remove(cacheItem);
+				_temporaryList.remove(cacheItem);
 			}
 			else
 			{
-				m_cacheList.remove(cacheItem);
+				_cacheList.remove(cacheItem);
 			}
 		}
 		
 		protected function cleanupLoader(event : CommandEvent) : void
 		{
-			m_resourceLoader.removeEventListener(Event.COMPLETE, cleanupLoader);
-			m_resourceLoader = null;
+			_resourceLoader.removeEventListener(Event.COMPLETE, cleanupLoader);
+			_resourceLoader = null;
 		}
 	}
 }

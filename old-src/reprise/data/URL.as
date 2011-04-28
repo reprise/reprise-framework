@@ -22,15 +22,15 @@ package reprise.data
 			'(?:[#](?P<anchor>.*))?'					//match anchor part
 			, '');
 		
-		protected var m_scheme : String;
-		protected var m_host : String = '';
-		protected var m_user : String;
-		protected var m_password : String;
-		protected var m_path : String;
-		protected var m_port : int;
-		protected var m_query : String;
-		protected var m_queryObject : Object;
-		protected var m_fragment : String;
+		protected var _scheme : String;
+		protected var _host : String = '';
+		protected var _user : String;
+		protected var _password : String;
+		protected var _path : String;
+		protected var _port : int;
+		protected var _query : String;
+		protected var _queryObject : Object;
+		protected var _fragment : String;
 		
 		
 		
@@ -45,7 +45,7 @@ package reprise.data
 		
 		public function scheme() : String
 		{
-			return m_scheme ? m_scheme + '://' : null;
+			return _scheme ? _scheme + '://' : null;
 		}
 	
 		public function setScheme(val:String) : void
@@ -54,69 +54,69 @@ package reprise.data
 			{
 				val = val.substr(0, val.indexOf('://'));
 			}
-			m_scheme = val;
+			_scheme = val;
 		}
 		
 		public function host() : String
 		{
-			return m_host;
+			return _host;
 		}
 	
 		public function setHost(val:String) : void
 		{
-			m_host = val;
+			_host = val;
 		}
 		
 		public function user() : String
 		{
-			return m_user;
+			return _user;
 		}
 	
 		public function setUser(val:String) : void
 		{
-			m_user = val;
+			_user = val;
 		}
 		
 		public function password() : String
 		{
-			return m_password;
+			return _password;
 		}
 	
 		public function setPassword(val:String) : void
 		{
-			m_password = val;
+			_password = val;
 		}
 		
 		public function path() : String
 		{
-			return m_path;
+			return _path;
 		}
 	
 		public function setPath(val:String) : void
 		{
-			m_path = val;
+			_path = val;
 		}
 		
 		public function port() : int
 		{
-			return m_port;
+			return _port;
 		}
 	
 		public function setPort(val:int) : void
 		{
-			m_port = val;
+			_port = val;
 		}
 		
 		public function query() : String
 		{
-			return m_query;
+			return _query;
 		}
 	
 		public function setQuery(val:String) : void
 		{
-			m_query = val;
-			m_queryObject = {};
-			var parts:Array = m_query.split('&');
+			_query = val;
+			_queryObject = {};
+			var parts:Array = _query.split('&');
 			for each (var part:String in parts)
 			{
 				if (!part || !part.length)
@@ -124,75 +124,75 @@ package reprise.data
 					continue;
 				}
 				var keyValueParts:Array = part.split('=');
-				m_queryObject[keyValueParts[0]] = keyValueParts[1];
+				_queryObject[keyValueParts[0]] = keyValueParts[1];
 			}
 		}
 		
 		public function queryObject():Object
 		{
-			return m_queryObject;
+			return _queryObject;
 		}
 		
 		public function fragment() : String
 		{
-			return m_fragment;
+			return _fragment;
 		}
 	
 		public function setFragment(val:String) : void
 		{
-			m_fragment = val;
+			_fragment = val;
 		}
 		
 		public function isFileURL() : Boolean
 		{
-			return m_scheme == 'file';
+			return _scheme == 'file';
 		}
 		
 		public function isAbsoluteURL() : Boolean
 		{
-			return m_path.indexOf('/') == 0;
+			return _path.indexOf('/') == 0;
 		}
 		
 		
 		public function valueOf() : String
 		{
 			var str : String = '';
-			if (m_scheme)
+			if (_scheme)
 			{
-				str += m_scheme + '://';
+				str += _scheme + '://';
 			}
-			if (m_user)
+			if (_user)
 			{
-				str += m_user;
-				if (m_password)
+				str += _user;
+				if (_password)
 				{
-					str += ':' + m_password;
+					str += ':' + _password;
 				}
 				str += '@';
 			}
-			if (m_host)
+			if (_host)
 			{
-				str += m_host;
-				if (!isNaN(m_port))
+				str += _host;
+				if (!isNaN(_port))
 				{
-					str += ':' + m_port;
+					str += ':' + _port;
 				}
-				if (m_path.charAt(0) != '/')
+				if (_path.charAt(0) != '/')
 				{
 					str += '/';
 				}
 			}
-			if (m_path)
+			if (_path)
 			{
-				str += m_path;
+				str += _path;
 			}
-			if (m_query)
+			if (_query)
 			{
-				str += '?' + m_query;
+				str += '?' + _query;
 			}
-			if (m_fragment)
+			if (_fragment)
 			{
-				str += '#' + m_fragment;
+				str += '#' + _fragment;
 			}
 			return str;
 		}
@@ -208,15 +208,15 @@ package reprise.data
 		protected function parseURL(urlString : String) : void
 		{
 			var match : Array = URL_PARSER.exec(urlString);
-			m_scheme = match['protocol'];
+			_scheme = match['protocol'];
 			var credentials : Array = match['credentials'].split(':');
-			m_user = credentials[0];
-			m_password = credentials[1] || '';
-			m_host = match['host'];
-			m_port = parseInt(match['port']);
-			m_path = match['path'];
+			_user = credentials[0];
+			_password = credentials[1] || '';
+			_host = match['host'];
+			_port = parseInt(match['port']);
+			_path = match['path'];
 			setQuery(match['query']);
-			m_fragment = match['anchor'];
+			_fragment = match['anchor'];
 		}	
 	}
 }

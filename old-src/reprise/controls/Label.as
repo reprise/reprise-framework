@@ -37,23 +37,23 @@ package reprise.controls
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var AS_LINK_PREFIX : String = "event:";
 		
-		protected var m_labelDisplay : TextField;
-		protected var m_textSetExternally : Boolean;
+		protected var _labelDisplay : TextField;
+		protected var _textSetExternally : Boolean;
 		
-		protected var m_internalStyleIndex : int;
+		protected var _internalStyleIndex : int;
 	
-		protected var m_labelXML : XML;
-		protected var m_usedLabelXML : XML;
-		protected var m_nodesMap : Array;
-		protected var m_textLinkHrefs : Array;
+		protected var _labelXML : XML;
+		protected var _usedLabelXML : XML;
+		protected var _nodesMap : Array;
+		protected var _textLinkHrefs : Array;
 	
-		protected var m_textAlignment : String;
-		protected var m_containsImages : Boolean;	
-		protected var m_overflowIsInvalid : Boolean;
+		protected var _textAlignment : String;
+		protected var _containsImages : Boolean;
+		protected var _overflowIsInvalid : Boolean;
 		
-		protected var m_bitmapCache : Bitmap;
-		protected var m_cacheInvalid : Boolean;
-		protected var m_lastHoverIndex : int;
+		protected var _bitmapCache : Bitmap;
+		protected var _cacheInvalid : Boolean;
+		protected var _lastHoverIndex : int;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -67,15 +67,15 @@ package reprise.controls
 		public function setLabel(label:String) : void
 		{
 			XML.ignoreWhitespace = false;
-			m_labelXML = new XML('<p>' + label + '</p>');
+			_labelXML = new XML('<p>' + label + '</p>');
 			XML.ignoreWhitespace = true;
-			m_textSetExternally = true;
+			_textSetExternally = true;
 			invalidate();
 		}
 		public function getLabel() : String
 		{
 			XML.prettyPrinting = false;
-			var labelStr:String = m_labelXML.toXMLString();
+			var labelStr:String = _labelXML.toXMLString();
 			return labelStr;
 		}
 	
@@ -101,24 +101,24 @@ package reprise.controls
 		
 		public function set enabled(value:Boolean) : void
 		{
-			m_instanceStyles.setStyle('selectable', value ? 'true' : 'false');
-			m_labelDisplay.selectable = enabled;
-			m_labelDisplay.mouseEnabled = enabled;
+			_instanceStyles.setStyle('selectable', value ? 'true' : 'false');
+			_labelDisplay.selectable = enabled;
+			_labelDisplay.mouseEnabled = enabled;
 		}
 		
 		public function get enabled () : Boolean
 		{
-			return m_currentStyles.selectable;
+			return _currentStyles.selectable;
 		}
 		
 		public function get textWidth() : Number
 		{
-			return m_labelDisplay.textWidth;
+			return _labelDisplay.textWidth;
 		}
 		
 		public function get textHeight() : Number
 		{
-			return m_labelDisplay.textHeight;
+			return _labelDisplay.textHeight;
 		}
 	
 		/**
@@ -130,7 +130,7 @@ package reprise.controls
 		{
 			//set oldOpacity to an impossible value if it doesn't exist 
 			//to make comparison easy
-			var oldOpacity : Number = m_currentStyles.opacity || -1;
+			var oldOpacity : Number = _currentStyles.opacity || -1;
 			if (value == oldOpacity)
 			{
 				return;
@@ -158,28 +158,28 @@ package reprise.controls
 		{
 			super.initialize();
 			
-			m_labelXML = <p/>;
-			m_textLinkHrefs = [];
-			m_nodesMap = [];
+			_labelXML = <p/>;
+			_textLinkHrefs = [];
+			_nodesMap = [];
 		}
 		protected override function createChildren() : void
 		{
-			m_labelDisplay = new TextField();
-			m_labelDisplay = TextField(m_contentDisplay.addChild(m_labelDisplay));
-			m_labelDisplay.name = 'labelDisplay';
-			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
-			m_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
-			m_contentDisplay.addEventListener(MouseEvent.MOUSE_MOVE, contentDisplay_mouseMove);
-			m_contentDisplay.addEventListener(MouseEvent.MOUSE_OUT, contentDisplay_mouseOut);
-			m_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
+			_labelDisplay = new TextField();
+			_labelDisplay = TextField(_contentDisplay.addChild(_labelDisplay));
+			_labelDisplay.name = 'labelDisplay';
+			_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
+			_contentDisplay.addEventListener(MouseEvent.CLICK, labelDisplay_click);
+			_contentDisplay.addEventListener(MouseEvent.MOUSE_MOVE, contentDisplay_mouseMove);
+			_contentDisplay.addEventListener(MouseEvent.MOUSE_OUT, contentDisplay_mouseOut);
+			_labelDisplay.addEventListener(TextEvent.LINK, labelDisplay_link);
 		}
 		
 		protected override function initDefaultStyles() : void
 		{
-			m_elementDefaultStyles.setStyle('selectable', 'true');
-			m_elementDefaultStyles.setStyle('display', 'inline');
-			m_elementDefaultStyles.setStyle('wordWrap', 'wrap');
-			m_elementDefaultStyles.setStyle('multiline', 'true');
+			_elementDefaultStyles.setStyle('selectable', 'true');
+			_elementDefaultStyles.setStyle('display', 'inline');
+			_elementDefaultStyles.setStyle('wordWrap', 'wrap');
+			_elementDefaultStyles.setStyle('multiline', 'true');
 		}
 		
 		protected override function applyStyles() : void
@@ -188,10 +188,10 @@ package reprise.controls
 			
 			//TODO: find a way to re-enable tab stops
 //			var fmt : TextFormat = new TextFormat();
-//			if (m_currentStyles.tabStops)
+//			if (_currentStyles.tabStops)
 //			{
 //				var tabStops : Array = 
-//					m_currentStyles.tabStops.split(", ").join(",").split(",");
+//					_currentStyles.tabStops.split(", ").join(",").split(",");
 //				fmt.tabStops = tabStops;
 //			}
 //			else
@@ -199,29 +199,29 @@ package reprise.controls
 //				fmt.tabStops = null;
 //			}
 			
-			m_labelDisplay.selectable = m_currentStyles.selectable;
-			m_labelDisplay.mouseEnabled = m_currentStyles.selectable;
-			if (m_currentStyles.color)
+			_labelDisplay.selectable = _currentStyles.selectable;
+			_labelDisplay.mouseEnabled = _currentStyles.selectable;
+			if (_currentStyles.color)
 			{
-				m_labelDisplay.alpha = m_currentStyles.color.opacity();
+				_labelDisplay.alpha = _currentStyles.color.opacity();
 			}
 			else
 			{
-				m_labelDisplay.alpha = 1;
+				_labelDisplay.alpha = 1;
 			}
 			
-			m_labelDisplay.embedFonts = m_currentStyles.embedFonts;
-			m_labelDisplay.antiAliasType = m_currentStyles.antiAliasType || 
+			_labelDisplay.embedFonts = _currentStyles.embedFonts;
+			_labelDisplay.antiAliasType = _currentStyles.antiAliasType ||
 				AntiAliasType.NORMAL;
-			if (m_labelDisplay.antiAliasType == AntiAliasType.ADVANCED)
+			if (_labelDisplay.antiAliasType == AntiAliasType.ADVANCED)
 			{
-				m_labelDisplay.gridFitType = 
-					m_currentStyles.gridFitType || GridFitType.PIXEL;
-				m_labelDisplay.sharpness = m_currentStyles.sharpness || 0;
-				m_labelDisplay.thickness = m_currentStyles.thickness || 0;
+				_labelDisplay.gridFitType =
+					_currentStyles.gridFitType || GridFitType.PIXEL;
+				_labelDisplay.sharpness = _currentStyles.sharpness || 0;
+				_labelDisplay.thickness = _currentStyles.thickness || 0;
 			}
-			m_labelDisplay.wordWrap = m_currentStyles.wordWrap == 'wrap';
-			m_labelDisplay.multiline = m_currentStyles.multiline;
+			_labelDisplay.wordWrap = _currentStyles.wordWrap == 'wrap';
+			_labelDisplay.multiline = _currentStyles.multiline;
 		}
 
 		override protected function validateChildren() : void
@@ -236,12 +236,12 @@ package reprise.controls
 			if (xmlDefinition.localName().toLowerCase() != 'p')
 			{
 				XML.prettyPrinting = false;
-				m_labelXML = <p/>;
-				m_labelXML.setChildren(xmlDefinition);
+				_labelXML = <p/>;
+				_labelXML.setChildren(xmlDefinition);
 			}
 			else
 			{
-				m_labelXML = xmlDefinition;
+				_labelXML = xmlDefinition;
 			}
 		}
 
@@ -254,32 +254,32 @@ package reprise.controls
 		
 		protected override function measure() : void
 		{
-			if (m_labelDisplay.text == '')
+			if (_labelDisplay.text == '')
 			{
-				m_intrinsicWidth = 0;
-				m_intrinsicHeight = 0;
+				_intrinsicWidth = 0;
+				_intrinsicHeight = 0;
 			}
 			else
 			{
 				//TODO: find a way to make measuring work if the TextField contains IMGs
-				m_intrinsicWidth = Math.ceil(m_labelDisplay.textWidth);
-				m_intrinsicHeight = Math.ceil(m_labelDisplay.height - 4);
+				_intrinsicWidth = Math.ceil(_labelDisplay.textWidth);
+				_intrinsicHeight = Math.ceil(_labelDisplay.height - 4);
 			}
 		}
 		
 		protected function renderLabel() : void
 		{
-			if (!(m_stylesInvalidated || m_textSetExternally))
+			if (!(_stylesInvalidated || _textSetExternally))
 			{
 				return;
 			}
 			
-			m_internalStyleIndex = 0;
-			m_textAlignment = null;
-			m_containsImages = false;
+			_internalStyleIndex = 0;
+			_textAlignment = null;
+			_containsImages = false;
 			
 			XML.prettyPrinting = false;
-			var labelString : String = m_labelXML.toXMLString();
+			var labelString : String = _labelXML.toXMLString();
 			labelString = resolveBindings(labelString);
 			XML.ignoreWhitespace = false;
 			var labelXML : XML;
@@ -292,27 +292,27 @@ package reprise.controls
 				labelXML = new XML('<p style="color: red;">malformed content</p>');
 			}
 			XML.ignoreWhitespace = true;
-			m_nodesMap.length = 0;
-			cleanNode(labelXML, m_selectorPath, m_rootElement.styleSheet, new NodeCleanupConfig());
+			_nodesMap.length = 0;
+			cleanNode(labelXML, _selectorPath, _rootElement.styleSheet, new NodeCleanupConfig());
 			
-			m_textSetExternally = false;
+			_textSetExternally = false;
 			applyLabel(labelXML);
 			
 			//apply final positioning
-			m_labelDisplay.y = m_currentStyles.paddingTop - 2;
-			if (m_textAlignment == 'left')
+			_labelDisplay.y = _currentStyles.paddingTop - 2;
+			if (_textAlignment == 'left')
 			{
-				m_labelDisplay.x = m_currentStyles.paddingLeft - 2;
+				_labelDisplay.x = _currentStyles.paddingLeft - 2;
 			}
-			else if (m_textAlignment == 'right')
+			else if (_textAlignment == 'right')
 			{
-				m_labelDisplay.x = m_currentStyles.paddingLeft + 
-					m_currentStyles.width - m_labelDisplay.width + 2;
+				_labelDisplay.x = _currentStyles.paddingLeft +
+					_currentStyles.width - _labelDisplay.width + 2;
 			}
-			else if (m_textAlignment == 'center')
+			else if (_textAlignment == 'center')
 			{
-				m_labelDisplay.x = m_currentStyles.paddingLeft + Math.round(
-					m_currentStyles.width / 2 - m_labelDisplay.width / 2);
+				_labelDisplay.x = _currentStyles.paddingLeft + Math.round(
+					_currentStyles.width / 2 - _labelDisplay.width / 2);
 			}
 		}
 		
@@ -321,59 +321,59 @@ package reprise.controls
 			XML.prettyPrinting = false;
 			var text : String = labelXML.toXMLString();
 			text = text.substr(0, text.length - 3);
-			var textChanged : Boolean = text != m_labelDisplay.htmlText;
+			var textChanged : Boolean = text != _labelDisplay.htmlText;
 			
-			if (!textChanged && m_oldContentBoxWidth == m_contentBoxWidth && 
-				m_oldContentBoxHeight == m_contentBoxHeight)
+			if (!textChanged && _oldContentBoxWidth == _contentBoxWidth &&
+				_oldContentBoxHeight == _contentBoxHeight)
 			{
 				return;
 			}
 			
-			m_cacheInvalid = true;
+			_cacheInvalid = true;
 			
-			if (m_currentStyles.width)
+			if (_currentStyles.width)
 			{
-				m_labelDisplay.width = m_currentStyles.width + 6;
+				_labelDisplay.width = _currentStyles.width + 6;
 			}
 			else
 			{
-				m_labelDisplay.autoSize = 'left';
+				_labelDisplay.autoSize = 'left';
 			}
 			if (textChanged)
 			{
-				m_labelDisplay.htmlText = text;
-				m_usedLabelXML = labelXML;
+				_labelDisplay.htmlText = text;
+				_usedLabelXML = labelXML;
 			}
-			if (m_labelDisplay.wordWrap)
+			if (_labelDisplay.wordWrap)
 			{
-				m_labelDisplay.autoSize = 'left';
-				var enforceUpdate : Number = m_labelDisplay.height;
+				_labelDisplay.autoSize = 'left';
+				var enforceUpdate : Number = _labelDisplay.height;
 			}
 			else
 			{
-				m_labelDisplay.height = m_labelDisplay.textHeight + 8;
+				_labelDisplay.height = _labelDisplay.textHeight + 8;
 			}
-			m_labelDisplay.autoSize = 'none';
+			_labelDisplay.autoSize = 'none';
 			
-			m_overflowIsInvalid = true;
+			_overflowIsInvalid = true;
 			
 			//shrink the TextField to the smallest width possible
-			if (m_textAlignment != 'mixed' && !m_containsImages && 
-				m_labelDisplay.textWidth < m_labelDisplay.width - 10)
+			if (_textAlignment != 'mixed' && !_containsImages &&
+				_labelDisplay.textWidth < _labelDisplay.width - 10)
 			{
-				var correctTextHeight : Number = m_labelDisplay.textHeight;
-				var correctTextWidth : Number = m_labelDisplay.textWidth;
-				var originalWidth : Number = m_labelDisplay.width;
-				m_labelDisplay.width = m_labelDisplay.textWidth + 10;
-				if (m_labelDisplay.textHeight != correctTextHeight || 
-					m_labelDisplay.textWidth != correctTextWidth)
+				var correctTextHeight : Number = _labelDisplay.textHeight;
+				var correctTextWidth : Number = _labelDisplay.textWidth;
+				var originalWidth : Number = _labelDisplay.width;
+				_labelDisplay.width = _labelDisplay.textWidth + 10;
+				if (_labelDisplay.textHeight != correctTextHeight ||
+					_labelDisplay.textWidth != correctTextWidth)
 				{
 					/* in some cases, the TextField incorrectly wraps text to the next line 
 					 * even though there's plenty enough room for it on the current line. 
 					 * In case such an incorrect wrapping occurs after shrinking the TextField, 
 					 * we have to roll it back.
 					 */
-					m_labelDisplay.width = originalWidth;
+					_labelDisplay.width = originalWidth;
 				}
 			}
 		}
@@ -449,7 +449,7 @@ package reprise.controls
 			var nodeStyle : CSSDeclaration;
 			if (!node.parent())
 			{
-				nodeStyle = m_complexStyles.clone();
+				nodeStyle = _complexStyles.clone();
 				var transformStyle : CSSProperty = nodeStyle.getStyle('textTransform');
 				transformStyle && (config.transform = String(transformStyle.valueOf()));
 			}
@@ -479,12 +479,12 @@ package reprise.controls
 				delete node.@style;
 			}
 			
-			var styleName : String = nodeStyle.textStyleName(m_internalStyleIndex++ == 0);
+			var styleName : String = nodeStyle.textStyleName(_internalStyleIndex++ == 0);
 			node.@['class'] = styleName;
 			
 			// check if the label has mixed textAlign properties.
 			// If it does its TextField can't be shrinked horizontally
-			if (m_textAlignment != 'mixed')
+			if (_textAlignment != 'mixed')
 			{
 				var textAlignProperty : CSSProperty = nodeStyle.getStyle('textAlign');
 				var textAlign : String;
@@ -496,13 +496,13 @@ package reprise.controls
 				{
 					textAlign = 'left';
 				}
-				if (!m_textAlignment)
+				if (!_textAlignment)
 				{
-					m_textAlignment = textAlign;
+					_textAlignment = textAlign;
 				}
-				else if (m_textAlignment != textAlign)
+				else if (_textAlignment != textAlign)
 				{
-					m_textAlignment = 'mixed';
+					_textAlignment = 'mixed';
 				}
 			}
 			
@@ -521,8 +521,8 @@ package reprise.controls
 							href += '|' + target;
 							delete node.@target;
 						}
-						node.@href = AS_LINK_PREFIX + m_textLinkHrefs.length;
-						m_textLinkHrefs.push(href);
+						node.@href = AS_LINK_PREFIX + _textLinkHrefs.length;
+						_textLinkHrefs.push(href);
 					}
 					break;
 				}
@@ -544,7 +544,7 @@ package reprise.controls
 						var leadingStyle : CSSDeclaration = 
 							CSSParsingHelper.parseDeclarationString(stylesStr, null);
 						styleName = 
-							leadingStyle.textStyleName(m_internalStyleIndex++ == 0);
+							leadingStyle.textStyleName(_internalStyleIndex++ == 0);
 						node.parent().insertChildAfter(node, new XML(
 							'<p ignore="1" class="' + styleName + '">&nbsp;</p>'));
 					}
@@ -563,7 +563,7 @@ package reprise.controls
 					//doesn't include images in its calculation of textWidth and 
 					//textHeight. Therefore, we flag that now and don't try to 
 					//reduce the size
-					m_containsImages = true;
+					_containsImages = true;
 					var nodeDisplayType : String = nodeStyle.getStyle('display')
 						? nodeStyle.getStyle('display').specifiedValue() 
 						: 'block';
@@ -591,7 +591,7 @@ package reprise.controls
 				config.removeFirstWhitespace = true;
 				config.index++;
 			}
-			m_nodesMap.push({start : startIndex, end : config.index, path : selectorPath, 
+			_nodesMap.push({start : startIndex, end : config.index, path : selectorPath,
 				styleName : styleName, node : node});
 		}
 		/**
@@ -600,20 +600,20 @@ package reprise.controls
 		 */
 		protected function labelDisplay_click(event : MouseEvent) : Boolean
 		{
-			var clickedChar : int = m_labelDisplay.getCharIndexAtPoint(m_labelDisplay.mouseX, m_labelDisplay.mouseY);
-			if (!m_labelDisplay.length || clickedChar == -1)
+			var clickedChar : int = _labelDisplay.getCharIndexAtPoint(_labelDisplay.mouseX, _labelDisplay.mouseY);
+			if (!_labelDisplay.length || clickedChar == -1)
 			{
 				return false;
 			}
 			var clickedFormat : TextFormat = 
-				m_labelDisplay.getTextFormat(clickedChar, clickedChar + 1);
+				_labelDisplay.getTextFormat(clickedChar, clickedChar + 1);
 			
 			if (!clickedFormat.url)
 			{
 				return false;
 			}
 			var linkIndex:Number = parseInt(clickedFormat.url.substring(AS_LINK_PREFIX.length));
-			var hrefArr:Array = String(m_textLinkHrefs[linkIndex]).split("|");
+			var hrefArr:Array = String(_textLinkHrefs[linkIndex]).split("|");
 			var href:String = hrefArr[0];
 			var target:String = hrefArr[1];
 			
@@ -653,25 +653,25 @@ package reprise.controls
 			var index : int = -1;
 			if (!mouseOut)
 			{
-				index = m_labelDisplay.getCharIndexAtPoint(
-					m_labelDisplay.mouseX, m_labelDisplay.mouseY);
+				index = _labelDisplay.getCharIndexAtPoint(
+					_labelDisplay.mouseX, _labelDisplay.mouseY);
 			}
-			if (index == m_lastHoverIndex)
+			if (index == _lastHoverIndex)
 			{
 				return;
 			}
 			
-			for (var i : int = m_nodesMap.length; i--;)
+			for (var i : int = _nodesMap.length; i--;)
 			{
-				var def : Object = m_nodesMap[i];
+				var def : Object = _nodesMap[i];
 				var node : XML = def.node;
-				if (int(m_nodesMap[i].start) <= index && int(m_nodesMap[i].end) > index)
+				if (int(_nodesMap[i].start) <= index && int(_nodesMap[i].end) > index)
 				{
 					if (!def.hover)
 					{
 						def.hover = true;
 						def.defaultClass = node.@['class'].toString();
-						var hoverStyle : CSSDeclaration = m_rootElement.styleSheet.
+						var hoverStyle : CSSDeclaration = _rootElement.styleSheet.
 							getStyleForEscapedSelectorPath(def.path + '@:hover@');
 						node.@['class'] = hoverStyle.textStyleName(node.parent() == null);
 						labelChanged = true;
@@ -687,17 +687,17 @@ package reprise.controls
 			
 			if (labelChanged)
 			{
-				var oldWidth : Number = m_labelDisplay.width;
-				var oldHeight : Number = m_labelDisplay.height;
-				applyLabel(m_usedLabelXML);
-				m_labelDisplay.width = oldWidth;
-				m_labelDisplay.height = oldHeight;
-				if (m_overflowIsInvalid)
+				var oldWidth : Number = _labelDisplay.width;
+				var oldHeight : Number = _labelDisplay.height;
+				applyLabel(_usedLabelXML);
+				_labelDisplay.width = oldWidth;
+				_labelDisplay.height = oldHeight;
+				if (_overflowIsInvalid)
 				{
 					invalidate();
 				}
 			}
-			m_lastHoverIndex = index;
+			_lastHoverIndex = index;
 		}
 		
 		protected function transformText(text:String, transform:String) : String
@@ -729,139 +729,139 @@ package reprise.controls
 
 		override protected function validateAfterChildren() : void
 		{
-			m_stylesInvalidated ||= m_overflowIsInvalid;
+			_stylesInvalidated ||= _overflowIsInvalid;
 			super.validateAfterChildren();
 		}
 
 		protected override function applyOverflowProperty() : void
 		{
-			if (!m_overflowIsInvalid)
+			if (!_overflowIsInvalid)
 			{
 				return;
 			}
-			m_overflowIsInvalid = false;
-			var overflowX : * = m_currentStyles.overflowX;
-			var overflowY : * = m_currentStyles.overflowY;
+			_overflowIsInvalid = false;
+			var overflowX : * = _currentStyles.overflowX;
+			var overflowY : * = _currentStyles.overflowY;
 			
-			if ((m_currentStyles.overflowX == null || 
+			if ((_currentStyles.overflowX == null ||
 				overflowX == 'visible' || overflowX == 'hidden') && 
-				(m_currentStyles.overflowY == null || overflowY == 'visible' || 
+				(_currentStyles.overflowY == null || overflowY == 'visible' ||
 				overflowY == 'hidden'))
 			{
 				super.applyOverflowProperty();
 				return;
 			}
 			
-			var availableWidth:Number = m_currentStyles.width;
+			var availableWidth:Number = _currentStyles.width;
 			var availableHeight:Number = Math.max(calculateContentHeight(), 
-				m_currentStyles.height);
+				_currentStyles.height);
 			var scrollbarWidth : Number = 
-				m_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH;
+				_currentStyles.scrollbarWidth || DEFAULT_SCROLLBAR_WIDTH;
 			
 			if (overflowY == 'scroll')
 			{
-				if (!m_vScrollbar)
+				if (!_vScrollbar)
 				{
-					m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+					_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
 				}
 				availableWidth -= scrollbarWidth;
-				m_vScrollbar.setVisibility(true);
+				_vScrollbar.setVisibility(true);
 			}
 			if (overflowX == 'scroll')
 			{
-				if (!m_hScrollbar)
+				if (!_hScrollbar)
 				{
-					m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
+					_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
 				}
 				availableHeight -= scrollbarWidth;
-				m_hScrollbar.setVisibility(true);
+				_hScrollbar.setVisibility(true);
 			}
 			if (overflowY == 0) //'auto' gets resolved to '0'
 			{
-				m_labelDisplay.height = availableHeight + 4;
-				m_labelDisplay.width = availableWidth + 4;
+				_labelDisplay.height = availableHeight + 4;
+				_labelDisplay.width = availableWidth + 4;
 				//we have to query maxScrollH before maxScrollV because otherwise the 
 				//value returned for maxScrollV isn't always correct.
-				var maxScrollH : int = m_labelDisplay.maxScrollH;
-				var maxScrollV : int = m_labelDisplay.maxScrollV;
+				var maxScrollH : int = _labelDisplay.maxScrollH;
+				var maxScrollV : int = _labelDisplay.maxScrollV;
 				if (maxScrollV > 1)
 				{
-					if (!m_vScrollbar)
+					if (!_vScrollbar)
 					{
-						m_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
+						_vScrollbar = createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
 					}
 					availableWidth -= scrollbarWidth;
-					m_vScrollbar.setVisibility(true);
-					m_labelDisplay.width = availableWidth + 3;
+					_vScrollbar.setVisibility(true);
+					_labelDisplay.width = availableWidth + 3;
 				}
-				else if (m_vScrollbar)
+				else if (_vScrollbar)
 				{
-					m_vScrollbar.setVisibility(false);
+					_vScrollbar.setVisibility(false);
 				}
 			}
 			if (overflowX == 0)
 			{
-				if (!m_labelDisplay.wordWrap && maxScrollH > 0)
+				if (!_labelDisplay.wordWrap && maxScrollH > 0)
 				{
-					if (!m_hScrollbar)
+					if (!_hScrollbar)
 					{
-						m_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
+						_hScrollbar = createScrollbar(Scrollbar.ORIENTATION_HORIZONTAL);
 					}
 					availableHeight -= scrollbarWidth;
-					m_hScrollbar.setVisibility(true);
+					_hScrollbar.setVisibility(true);
 					
-					if ((!m_vScrollbar || !m_vScrollbar.visibility()) && 
-						m_labelDisplay.maxScrollV > 1)
+					if ((!_vScrollbar || !_vScrollbar.visibility()) &&
+						_labelDisplay.maxScrollV > 1)
 					{
-						if (!m_vScrollbar)
+						if (!_vScrollbar)
 						{
-							m_vScrollbar = 
+							_vScrollbar =
 								createScrollbar(Scrollbar.ORIENTATION_VERTICAL);
 						}
 						availableWidth -= scrollbarWidth;
-						m_vScrollbar.setVisibility(true);
+						_vScrollbar.setVisibility(true);
 					}
 				}
-				else if (m_hScrollbar)
+				else if (_hScrollbar)
 				{
-					m_hScrollbar.setVisibility(false);
+					_hScrollbar.setVisibility(false);
 				}
 			}
-			if (!(m_vScrollbar && m_vScrollbar.visibility()) && 
-				!(m_hScrollbar && m_hScrollbar.visibility()))
+			if (!(_vScrollbar && _vScrollbar.visibility()) &&
+				!(_hScrollbar && _hScrollbar.visibility()))
 			{
 				return;
 			}
 			
-			if (m_hScrollbar && overflowX == 'hidden')
+			if (_hScrollbar && overflowX == 'hidden')
 			{
-				m_hScrollbar.setVisibility(false);
+				_hScrollbar.setVisibility(false);
 			}
-			if (m_vScrollbar && overflowY == 'hidden')
+			if (_vScrollbar && overflowY == 'hidden')
 			{
-				m_vScrollbar.setVisibility(false);
-			}
-			
-			m_labelDisplay.width = availableWidth + 6;
-			m_labelDisplay.height = availableHeight + 6;
-			
-			availableHeight += m_currentStyles.paddingTop + m_currentStyles.paddingBottom;
-			availableWidth += m_currentStyles.paddingLeft + m_currentStyles.paddingRight;
-			
-			if (m_vScrollbar)
-			{
-				m_vScrollbar.height = availableHeight;
-				m_vScrollbar.top = m_currentStyles.borderTopWidth;
-				m_vScrollbar.left = availableWidth + m_currentStyles.borderLeftWidth;
-				m_vScrollbar.delayValidation();
+				_vScrollbar.setVisibility(false);
 			}
 			
-			if (m_hScrollbar)
+			_labelDisplay.width = availableWidth + 6;
+			_labelDisplay.height = availableHeight + 6;
+			
+			availableHeight += _currentStyles.paddingTop + _currentStyles.paddingBottom;
+			availableWidth += _currentStyles.paddingLeft + _currentStyles.paddingRight;
+			
+			if (_vScrollbar)
 			{
-				m_hScrollbar.height = availableWidth;
-				m_hScrollbar.top = availableHeight + scrollbarWidth;
-				m_hScrollbar.left = m_currentStyles.borderLeftWidth;
-				m_hScrollbar.delayValidation();
+				_vScrollbar.height = availableHeight;
+				_vScrollbar.top = _currentStyles.borderTopWidth;
+				_vScrollbar.left = availableWidth + _currentStyles.borderLeftWidth;
+				_vScrollbar.delayValidation();
+			}
+			
+			if (_hScrollbar)
+			{
+				_hScrollbar.height = availableWidth;
+				_hScrollbar.top = availableHeight + scrollbarWidth;
+				_hScrollbar.left = _currentStyles.borderLeftWidth;
+				_hScrollbar.delayValidation();
 			}
 		}
 	
@@ -869,18 +869,18 @@ package reprise.controls
 			skipListenerRegistration : Boolean = true) : Scrollbar
 		{
 			var scrollbar : Scrollbar = super.createScrollbar(orientation, true);
-			scrollbar.setScrollTarget(m_labelDisplay, orientation);
+			scrollbar.setScrollTarget(_labelDisplay, orientation);
 			scrollbar.addEventListener(Event.CHANGE, scrollbar_change);
 			return scrollbar;
 		}
 		
 		protected override function draw() : void
 		{
-			if (!m_cacheInvalid && !m_dimensionsChanged)
+			if (!_cacheInvalid && !_dimensionsChanged)
 			{
 				return;
 			}
-			m_cacheInvalid = false;
+			_cacheInvalid = false;
 			applyRasterize();
 		}
 
@@ -891,31 +891,31 @@ package reprise.controls
 		 */
 		protected function applyRasterize() : void
 		{
-			if (m_bitmapCache)
+			if (_bitmapCache)
 			{
-				m_contentDisplay.removeChild(m_bitmapCache);
-				m_bitmapCache = null;
+				_contentDisplay.removeChild(_bitmapCache);
+				_bitmapCache = null;
 			}
-			if (!m_currentStyles.embedFonts && 
-				(m_currentStyles.opacity < 1 || m_currentStyles.rasterizeDeviceFonts))
+			if (!_currentStyles.embedFonts &&
+				(_currentStyles.opacity < 1 || _currentStyles.rasterizeDeviceFonts))
 			{
-				m_labelDisplay.visible = false;
-				if (m_currentStyles.opacity == 0 || !m_labelDisplay.width || !m_labelDisplay.height)
+				_labelDisplay.visible = false;
+				if (_currentStyles.opacity == 0 || !_labelDisplay.width || !_labelDisplay.height)
 				{
-					m_cacheInvalid = true;
+					_cacheInvalid = true;
 					return;
 				}
 				var bitmap : BitmapData = new BitmapData(
-					m_labelDisplay.width, m_labelDisplay.height, true, 0);
-				bitmap.draw(m_labelDisplay, null, null, null, null, true);
-				m_bitmapCache = new Bitmap(bitmap, 'auto', true);
-				m_contentDisplay.addChild(m_bitmapCache);
-				m_bitmapCache.x = m_labelDisplay.x;
-				m_bitmapCache.y = m_labelDisplay.y;
+					_labelDisplay.width, _labelDisplay.height, true, 0);
+				bitmap.draw(_labelDisplay, null, null, null, null, true);
+				_bitmapCache = new Bitmap(bitmap, 'auto', true);
+				_contentDisplay.addChild(_bitmapCache);
+				_bitmapCache.x = _labelDisplay.x;
+				_bitmapCache.y = _labelDisplay.y;
 			}
 			else
 			{
-				m_labelDisplay.visible = true;
+				_labelDisplay.visible = true;
 			}
 		}
 

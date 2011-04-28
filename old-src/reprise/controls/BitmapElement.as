@@ -18,18 +18,18 @@ package reprise.controls
 	public class BitmapElement extends UIComponent
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_smoothing : Boolean = true;
-		protected var m_image : Bitmap;
-		protected var m_imageDisplayed : Boolean;
+		protected var _smoothing : Boolean = true;
+		protected var _image : Bitmap;
+		protected var _imageDisplayed : Boolean;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function setSmoothing(enabled : Boolean) : void
 		{
-			m_smoothing = enabled;
-			if (m_image)
+			_smoothing = enabled;
+			if (_image)
 			{
-				setBitmapData(m_image.bitmapData);
+				setBitmapData(_image.bitmapData);
 			}
 		}
 		
@@ -40,17 +40,17 @@ package reprise.controls
 		
 		public function bitmapData() : BitmapData
 		{
-			if (!m_image)
+			if (!_image)
 			{
 				return null;
 			}
-			return m_image.bitmapData;
+			return _image.bitmapData;
 		}
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function initDefaultStyles() : void
 		{
-			m_elementDefaultStyles.setStyle('display', 'inline');
+			_elementDefaultStyles.setStyle('display', 'inline');
 		}
 		
 		protected function createBitmapDisplay(bmpData : BitmapData) : void
@@ -58,16 +58,16 @@ package reprise.controls
 			var oldWidth : int;
 			var oldHeight : int;
 			
-			!m_lowerContentDisplay && createLowerContentDisplay();
-			if (m_image && m_image.parent)
+			!_lowerContentDisplay && createLowerContentDisplay();
+			if (_image && _image.parent)
 			{
-				oldWidth = m_image.width;
-				oldHeight = m_image.height;
-				m_image.parent.removeChild(m_image);
+				oldWidth = _image.width;
+				oldHeight = _image.height;
+				_image.parent.removeChild(_image);
 			}
-			m_image = new Bitmap(bmpData, 'auto', m_smoothing);
-			m_lowerContentDisplay.addChild(m_image);
-			if (!m_firstDraw)
+			_image = new Bitmap(bmpData, 'auto', _smoothing);
+			_lowerContentDisplay.addChild(_image);
+			if (!_firstDraw)
 			{
 				validateAfterChildren();
 			}
@@ -75,32 +75,32 @@ package reprise.controls
 
 		override protected function applyInFlowChildPositions() : void
 		{
-			if (!(m_image && m_image.bitmapData))
+			if (!(_image && _image.bitmapData))
 			{
 				return;
 			}
-			if (!m_imageDisplayed)
+			if (!_imageDisplayed)
 			{
-				m_imageDisplayed = true;
-				m_lowerContentDisplay.visible = true;
+				_imageDisplayed = true;
+				_lowerContentDisplay.visible = true;
 			}
-			m_image.x = m_currentStyles.paddingLeft;
-			m_image.y = m_currentStyles.paddingTop;
-			if (m_autoFlags.height)
+			_image.x = _currentStyles.paddingLeft;
+			_image.y = _currentStyles.paddingTop;
+			if (_autoFlags.height)
 			{
-				m_image.height = m_image.bitmapData.height;
-			}
-			else
-			{
-				m_image.height = m_currentStyles.height;
-			}
-			if (m_autoFlags.width)
-			{
-				m_image.width = m_image.bitmapData.width;
+				_image.height = _image.bitmapData.height;
 			}
 			else
 			{
-				m_image.width = m_currentStyles.width;
+				_image.height = _currentStyles.height;
+			}
+			if (_autoFlags.width)
+			{
+				_image.width = _image.bitmapData.width;
+			}
+			else
+			{
+				_image.width = _currentStyles.width;
 			}
 		}
 		override protected function applyOutOfFlowChildPositions() : void
@@ -109,23 +109,23 @@ package reprise.controls
 		
 		override reprise function innerWidth() : int
 		{
-			return m_contentBoxWidth;
+			return _contentBoxWidth;
 		}
 		override reprise function innerHeight() : int
 		{
-			return m_contentBoxHeight;
+			return _contentBoxHeight;
 		}
 
 		protected override function measure() : void
 		{
-			if (!m_imageDisplayed)
+			if (!_imageDisplayed)
 			{
-				m_intrinsicWidth = 0;
-				m_intrinsicHeight = 0;
+				_intrinsicWidth = 0;
+				_intrinsicHeight = 0;
 				return;
 			}
-			m_intrinsicWidth = m_image.bitmapData.width;
-			m_intrinsicHeight = m_image.bitmapData.height;
+			_intrinsicWidth = _image.bitmapData.width;
+			_intrinsicHeight = _image.bitmapData.height;
 		}
 	}
 }

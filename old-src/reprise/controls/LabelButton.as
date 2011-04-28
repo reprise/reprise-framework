@@ -17,14 +17,14 @@ package reprise.controls
 		//----------------------             Public Properties              ----------------------//
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_labelDisplay : Label;
-		protected var m_label : String = '';
+		protected var _labelDisplay : Label;
+		protected var _label : String = '';
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function LabelButton(label:String = null)
 		{
-			m_label = label || '';
+			_label = label || '';
 		}
 		
 		/**
@@ -32,18 +32,18 @@ package reprise.controls
 		 */
 		public function setLabel(label:String) : void
 		{
-			m_label = label;
-			if (!m_labelDisplay)
+			_label = label;
+			if (!_labelDisplay)
 			{
 				return;
 			}
-			m_labelDisplay.setLabel(label);
+			_labelDisplay.setLabel(label);
 			invalidate();
 		}
 		
 		public function getLabel() : String
 		{
-			var labelStr : String = m_labelDisplay.getLabel();
+			var labelStr : String = _labelDisplay.getLabel();
 			return labelStr.substring(
 				labelStr.indexOf(">") + 1, labelStr.lastIndexOf("<"));	
 		}
@@ -51,8 +51,8 @@ package reprise.controls
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function createChildren() : void
 		{
-			m_labelDisplay = Label(addComponent('label', null, Label));
-			m_labelDisplay.label = m_label;
+			_labelDisplay = Label(addComponent('label', null, Label));
+			_labelDisplay.label = _label;
 		}
 		
 		/**
@@ -60,9 +60,9 @@ package reprise.controls
 		 */
 		protected override function calculateContentWidth() : int
 		{
-			if (m_currentStyles.display == 'inline')
+			if (_currentStyles.display == 'inline')
 			{
-				return m_labelDisplay.width;
+				return _labelDisplay.width;
 			}
 			return super.calculateContentWidth();
 		}
@@ -71,13 +71,13 @@ package reprise.controls
 		{
 			super.applyStyles();
 			
-			if (m_changedStyleProperties['cursor'])
+			if (_changedStyleProperties['cursor'])
 			{
-				m_labelDisplay.setStyle('cursor', m_currentStyles.cursor);
+				_labelDisplay.setStyle('cursor', _currentStyles.cursor);
 			}
-			if (m_changedStyleProperties['textDecoration'])
+			if (_changedStyleProperties['textDecoration'])
 			{
-				m_labelDisplay.setStyle('textDecoration', m_currentStyles.textDecoration);
+				_labelDisplay.setStyle('textDecoration', _currentStyles.textDecoration);
 			}
 		}
 		

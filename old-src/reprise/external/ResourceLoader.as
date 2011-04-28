@@ -27,23 +27,23 @@ package reprise.external
 		/**
 		* The number of contained resources to load
 		*/
-		protected var m_numResourcesToLoad:int;
+		protected var _numResourcesToLoad:int;
 		/**
 		* The number of resources already loaded
 		*/
-		protected var m_numResourcesLoaded:int;
+		protected var _numResourcesLoaded:int;
 		/**
 		* The number of bytes already loaded
 		*/
-		protected var m_numBytesLoaded:int;
+		protected var _numBytesLoaded:int;
 		
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function ResourceLoader()
 		{
-			m_abortOnFailure = false;
-			m_maxParallelExecutionCount = DEFAULT_MAX_PARALLEL_EXECUTION_COUNT;
+			_abortOnFailure = false;
+			_maxParallelExecutionCount = DEFAULT_MAX_PARALLEL_EXECUTION_COUNT;
 		}
 		
 		/**
@@ -54,24 +54,24 @@ package reprise.external
 		*/
 		public function addResource(cmd:IResource) : void
 		{
-			if (m_isExecuting && cmd.url().indexOf("attach://") == 0)
+			if (_isExecuting && cmd.url().indexOf("attach://") == 0)
 			{
 				cmd.execute();
-				m_numCommandsExecuted++;
-				m_numResourcesLoaded++;
+				_numCommandsExecuted++;
+				_numResourcesLoaded++;
 				//Some attached resources finish loading immediately, while others take a frame
 				if (!IResource(cmd).didFinishLoading())
 				{
-					m_isExecutingAsynchronously = true;
-					cmd.id = m_nextResourceId++;
+					_isExecutingAsynchronously = true;
+					cmd.id = _nextResourceId++;
 					cmd.setQueueParent(this);
-					m_currentCommands.push(cmd);
+					_currentCommands.push(cmd);
 					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
 					return;
 				}
 				else
 				{
-					m_numBytesLoaded += cmd.bytesTotal();
+					_numBytesLoaded += cmd.bytesTotal();
 				}
 				return;
 			}
@@ -86,7 +86,7 @@ package reprise.external
 			super.addCommand(cmd);
 			if (cmd is IResource)
 			{
-				m_numResourcesToLoad++;
+				_numResourcesToLoad++;
 			}
 		}
 		
@@ -97,9 +97,9 @@ package reprise.external
 		{
 			// we only decrement the resourcesToLoad count, if the command wasn't executed
 			// yet. If if was, our statistics should not be distorted
-			if (cmd is IResource && m_pendingCommands.contains(cmd))
+			if (cmd is IResource && _pendingCommands.contains(cmd))
 			{
-				m_numResourcesToLoad--;
+				_numResourcesToLoad--;
 			}
 			super.removeCommand(cmd);
 		}
@@ -116,28 +116,28 @@ package reprise.external
 		*/
 		override public function execute(...args):void
 		{
-			if (m_isExecuting)
+			if (_isExecuting)
 			{
 				return;
 			}
-			var i : int = m_pendingCommands.length;
+			var i : int = _pendingCommands.length;
 			while (i--)
 			{
-				var cmd : ICommand = ICommand(m_pendingCommands[i]);
+				var cmd : ICommand = ICommand(_pendingCommands[i]);
 				if (cmd is IResource && IResource(cmd).url().indexOf("attach://") == 0)
 				{
 					cmd.execute();
-					m_numCommandsExecuted++;
-					m_numResourcesToLoad--;
-					m_pendingCommands.splice(i, 1);
+					_numCommandsExecuted++;
+					_numResourcesToLoad--;
+					_pendingCommands.splice(i, 1);
 					//Some attached resources finish loading immediately, while others take a frame
 					if (IResource(cmd).didFinishLoading())
 					{
-						m_numResourcesLoaded++;
+						_numResourcesLoaded++;
 						continue;
 					}
 					registerListenersForAsynchronousCommand(IAsynchronousCommand(cmd));
-					m_currentCommands.push(cmd);
+					_currentCommands.push(cmd);
 				}
 			}
 			super.execute();
@@ -150,13 +150,13 @@ package reprise.external
 		*/
 		public function progress():Number
 		{
-			var total:Number = m_numResourcesLoaded + m_numResourcesToLoad;
+			var total:Number = _numResourcesLoaded + _numResourcesToLoad;
 			var resourceCount : int = total;
-			for (var i : int = m_currentCommands.length; i--;)
+			for (var i : int = _currentCommands.length; i--;)
 			{
-				if (m_currentCommands[i] is IResource)
+				if (_currentCommands[i] is IResource)
 				{
-					total += IResource(m_currentCommands[i]).progress() / 100;
+					total += IResource(_currentCommands[i]).progress() / 100;
 					resourceCount++;
 				}
 			}
@@ -171,16 +171,16 @@ package reprise.external
 		public function bytesLoaded() : int
 		{
 			var bytesLoaded : int = 0;
-			var i : int = m_currentCommands.length;
+			var i : int = _currentCommands.length;
 			while(i--)
 			{
-				var cmd:ICommand = m_currentCommands[i];
+				var cmd:ICommand = _currentCommands[i];
 				if (cmd is IResource)
 				{
 					bytesLoaded += IResource(cmd).bytesLoaded();
 				}
 			}
-			return bytesLoaded + m_numBytesLoaded;
+			return bytesLoaded + _numBytesLoaded;
 		}
 		
 		/**
@@ -189,9 +189,9 @@ package reprise.external
 		override public function reset():void
 		{
 			super.reset();
-			m_numResourcesLoaded = 0;
-			m_numBytesLoaded = 0;
-			m_numResourcesToLoad = 0;
+			_numResourcesLoaded = 0;
+			_numBytesLoaded = 0;
+			_numResourcesToLoad = 0;
 		}
 		
 		
@@ -203,13 +203,13 @@ package reprise.external
 		protected function progressOfCurrentResources() : Number
 		{
 			var progress : Number = 0;
-			var i : int = m_currentCommands.length;
+			var i : int = _currentCommands.length;
 			while(i--)
 			{
-				var cmd:ICommand = m_currentCommands[i];
+				var cmd:ICommand = _currentCommands[i];
 				if (cmd is IResource)
 				{
-					progress += IResource(cmd).progress() / m_currentCommands.length;
+					progress += IResource(cmd).progress() / _currentCommands.length;
 				}
 			}
 			return progress;
@@ -226,7 +226,7 @@ package reprise.external
 		{
 			if (cmd is IResource)
 			{
-				m_numResourcesToLoad--;
+				_numResourcesToLoad--;
 			}
 			super.registerListenersForAsynchronousCommand(cmd);
 			cmd.addEventListener(ResourceEvent.PROGRESS, resource_progress);
@@ -260,8 +260,8 @@ package reprise.external
 		{
 			if (e.target is IResource)
 			{
-				m_numBytesLoaded += IResource(e.target).bytesLoaded();
-				m_numResourcesLoaded++;
+				_numBytesLoaded += IResource(e.target).bytesLoaded();
+				_numResourcesLoaded++;
 				dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
 			}
 			super.command_complete(e);

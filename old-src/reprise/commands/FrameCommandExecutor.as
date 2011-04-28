@@ -16,9 +16,9 @@ package reprise.commands
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : FrameCommandExecutor;
-		private	var m_commands : HashMap;
-		protected var m_nextKeyIndex : int;
-		private var m_enterFrameDispatcher : Shape;
+		private	var	_commands : HashMap;
+		protected var	_nextKeyIndex : int;
+		private var	_enterFrameDispatcher : Shape;
 		
 	
 	
@@ -44,33 +44,33 @@ package reprise.commands
 				return;
 			}
 			
-			if (!m_commands.size())
+			if (	_commands.size())
 			{
-				m_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
+				_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 			
 			var wrapper : Object =
 			{
 				command : cmd
 			};
-			m_commands.setObjectForKey(wrapper, key);
+			_commands.setObjectForKey(wrapper, key);
 		}
 		
 		public function removeCommand(cmd : ICommand) : void
 		{
-			m_commands.removeObject(wrapperForCommand(cmd));
-			if (!m_commands.size())
+			_commands.removeObject(wrapperForCommand(cmd));
+			if (	_commands.size())
 			{
-				m_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
+				_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 		}
 		
 		public function removeCommandWithName(key : String) : void
 		{
-			m_commands.removeObject(wrapperForName(key));
-			if (!m_commands.size())
+			_commands.removeObject(wrapperForName(key));
+			if (!_commands.size())
 			{
-				m_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
+				_enterFrameDispatcher.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 		}
 		
@@ -81,9 +81,9 @@ package reprise.commands
 				return;
 			}
 			
-			if (!m_commands.size())
+			if (!_commands.size())
 			{
-				m_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
+				_enterFrameDispatcher.addEventListener(Event.ENTER_FRAME, enterFrame);
 			}
 			
 			var wrapper : Object =
@@ -91,14 +91,14 @@ package reprise.commands
 				command : cmd,
 				oneOff : true
 			};
-			m_commands.setObjectForKey(wrapper, getNextKey());
+			_commands.setObjectForKey(wrapper, getNextKey());
 		}
 		
 		
 		// defined by IFrameEventListener
 		public function enterFrame(e:Event) : void
 		{
-			var commands : Object = m_commands.toObject();
+			var commands : Object = _commands.toObject();
 			var wrapper : Object;
 			for (var key : String in commands)
 			{
@@ -116,9 +116,9 @@ package reprise.commands
 		//----------------------         Private / Protected Methods        ----------------------//
 		public function FrameCommandExecutor()
 		{
-			m_commands = new HashMap();
-			m_nextKeyIndex = 0;
-			m_enterFrameDispatcher = new Shape();
+			_commands = new HashMap();
+			_nextKeyIndex = 0;
+			_enterFrameDispatcher = new Shape();
 		}
 		
 		protected function containsCommand(cmd : ICommand) : Boolean
@@ -128,7 +128,7 @@ package reprise.commands
 		
 		protected function wrapperForCommand(cmd : ICommand) : Object
 		{
-			var commands : Object = m_commands.toObject();
+			var commands : Object = _commands.toObject();
 			var wrapper : Object;
 			for (var key : String in commands)
 			{
@@ -143,12 +143,12 @@ package reprise.commands
 		
 		protected function wrapperForName(name : String) : Object
 		{
-			return m_commands.objectForKey(name);
+			return _commands.objectForKey(name);
 		}
 		
 		protected function getNextKey() : String
 		{
-			return 'key' + m_nextKeyIndex++;
+			return 'key' + _nextKeyIndex++;
 		}
 	}
 }

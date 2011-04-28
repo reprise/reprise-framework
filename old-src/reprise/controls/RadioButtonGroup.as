@@ -21,17 +21,17 @@ package reprise.controls
 		
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_radioGroups:Object;
-		protected var m_radioButtons:Array;
-		protected var m_name:String;
-		protected var m_selectedIndex:int = -1;
+		protected var _radioButtons:Array;
+		protected var _name:String;
+		protected var _selectedIndex:int = -1;
 		
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function RadioButtonGroup(name:String)
 		{
-			m_name = name;
-			m_radioButtons = [];
+			_name = name;
+			_radioButtons = [];
 		}
 		
 		
@@ -50,43 +50,43 @@ package reprise.controls
 		
 		public function addRadioButton(btn:RadioButton):void
 		{
-			m_radioButtons.push(btn);
+			_radioButtons.push(btn);
 		}
 		
 		public function removeRadioButton(btn:RadioButton):void
 		{
-			m_radioButtons.splice(m_radioButtons.indexOf(btn), 1);
+			_radioButtons.splice(_radioButtons.indexOf(btn), 1);
 		}
 		
 		public function reset():void
 		{
-			for (var i:int = 0; i < m_radioButtons.length; i++)
+			for (var i:int = 0; i < _radioButtons.length; i++)
 			{
-				var rbtn:RadioButton = m_radioButtons[i] as RadioButton;
+				var rbtn:RadioButton = _radioButtons[i] as RadioButton;
 				rbtn.setSelected(false);
 			}
-			m_selectedIndex = -1;
+			_selectedIndex = -1;
 		}
 		
 		public function setRadioButtonSelected(btn:RadioButton, bFlag:Boolean):void
 		{
-			var oldIndex : int = m_selectedIndex;
+			var oldIndex : int = _selectedIndex;
 			if (!bFlag)
 			{
 				btn.setSelected(false);
 				return;
 			}
 			var i:uint = 0;
-			for (; i < m_radioButtons.length; i++)
+			for (; i < _radioButtons.length; i++)
 			{
-				var rbtn:RadioButton = m_radioButtons[i] as RadioButton;
+				var rbtn:RadioButton = _radioButtons[i] as RadioButton;
 				rbtn.setSelected(rbtn == btn);
 				if (rbtn == btn)
 				{
-					m_selectedIndex = i;
+					_selectedIndex = i;
 				}
 			}
-			if (m_selectedIndex != oldIndex)
+			if (_selectedIndex != oldIndex)
 			{
 				dispatchEvent(new Event(Event.CHANGE));
 			}
@@ -94,10 +94,10 @@ package reprise.controls
 		
 		public function selectRadioButtonWithData(data:*):void
 		{
-			var i:int = m_radioButtons.length;
+			var i:int = _radioButtons.length;
 			while (i--)
 			{
-				var btn:RadioButton = m_radioButtons[i] as RadioButton;
+				var btn:RadioButton = _radioButtons[i] as RadioButton;
 				if (btn.data() == data)
 				{
 					setRadioButtonSelected(btn, true);
@@ -108,64 +108,64 @@ package reprise.controls
 		
 		public function selectedRadioButton():RadioButton
 		{
-			return m_radioButtons[m_selectedIndex];
+			return _radioButtons[_selectedIndex];
 		}
 		
 		public function selectedData():*
 		{
-			if (m_selectedIndex == -1)
+			if (_selectedIndex == -1)
 			{
 				return null;
 			}
-			return (m_radioButtons[m_selectedIndex] as RadioButton).data();
+			return (_radioButtons[_selectedIndex] as RadioButton).data();
 		}
 		
 		public function radioButtons() : Array
 		{
-			return m_radioButtons;
+			return _radioButtons;
 		}
 		
 		public function name() : String
 		{
-			return m_name;
+			return _name;
 		}
 
 		public function selectNextButton(currentButton : RadioButton) : void
 		{
-			var currentIndex : int = m_radioButtons.indexOf(currentButton);
-			if (currentIndex < m_radioButtons.length - 1)
+			var currentIndex : int = _radioButtons.indexOf(currentButton);
+			if (currentIndex < _radioButtons.length - 1)
 			{
-				var nextButton : RadioButton = m_radioButtons[currentIndex + 1];
+				var nextButton : RadioButton = _radioButtons[currentIndex + 1];
 				setRadioButtonSelected(nextButton, true);
 			}
 		}
 		
 		public function selectPreviousButton(currentButton : RadioButton) : void
 		{
-			var currentIndex : int = m_radioButtons.indexOf(currentButton);
+			var currentIndex : int = _radioButtons.indexOf(currentButton);
 			if (currentIndex > 0)
 			{
-				var nextButton : RadioButton = m_radioButtons[currentIndex - 1];
+				var nextButton : RadioButton = _radioButtons[currentIndex - 1];
 				setRadioButtonSelected(nextButton, true);
 			}
 		}
 		
 		public function activateNextButton(currentButton : RadioButton) : void
 		{
-			var currentIndex : int = m_radioButtons.indexOf(currentButton);
-			if (currentIndex < m_radioButtons.length - 1)
+			var currentIndex : int = _radioButtons.indexOf(currentButton);
+			if (currentIndex < _radioButtons.length - 1)
 			{
 				currentButton.document.setFocusedElement(
-					RadioButton(m_radioButtons[currentIndex + 1]), 
+					RadioButton(_radioButtons[currentIndex + 1]),
 					FocusManager.FOCUS_METHOD_KEYBOARD);
 			}
 		}
 		public function activatePreviousButton(currentButton : RadioButton) : void
 		{
-			var currentIndex : int = m_radioButtons.indexOf(currentButton);
+			var currentIndex : int = _radioButtons.indexOf(currentButton);
 			if (currentIndex > 0)
 			{
-				currentButton.document.setFocusedElement(RadioButton(m_radioButtons[0]), 
+				currentButton.document.setFocusedElement(RadioButton(_radioButtons[0]),
 					FocusManager.FOCUS_METHOD_KEYBOARD);
 			}
 		}

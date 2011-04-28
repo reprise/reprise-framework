@@ -26,10 +26,10 @@ package reprise.ui.renderers
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_mousedElement : DisplayObject;
-		protected var m_mousedComponent : UIComponent;
-		protected var m_tooltipDataProvider : Object;
-		protected var m_label : Label;
+		protected var _mousedElement : DisplayObject;
+		protected var _mousedComponent : UIComponent;
+		protected var _tooltipDataProvider : Object;
+		protected var _label : Label;
 			
 		
 		//----------------------               Public Methods               ----------------------//
@@ -40,13 +40,13 @@ package reprise.ui.renderers
 		
 		public function setData(data : Object) : void
 		{
-			m_tooltipData = data;
-			m_label.setLabel(String(data));
+			_tooltipData = data;
+			_label.setLabel(String(data));
 		}
 		
 		public function data() : Object
 		{
-			return m_tooltipData;
+			return _tooltipData;
 		}
 		
 		public function updatePosition() : void
@@ -56,11 +56,11 @@ package reprise.ui.renderers
 			{
 				case DisplayPosition.POSITION_ABSOLUTE:
 				{
-					if (!m_mousedComponent)
+					if (!_mousedComponent)
 					{
 						return;
 					}
-					pos = positionRelativeToElement(m_mousedComponent);
+					pos = positionRelativeToElement(_mousedComponent);
 					break;
 				}
 				case DisplayPosition.POSITION_FIXED:
@@ -74,7 +74,7 @@ package reprise.ui.renderers
 					// view hierarchy. most probably it takes a sec before their stage attribute is 
 					// set, so we take care of this here. one frame later everything will be fine 
 					// again.
-					if (!(m_mousedElement && m_mousedElement.stage))
+					if (!(_mousedElement && _mousedElement.stage))
 					{
 						return;
 					}
@@ -89,10 +89,10 @@ package reprise.ui.renderers
 		{
 			var newPos : Point = new Point(xValue, yValue);
 			newPos = stage.localToGlobal(newPos);
-			newPos.y = Math.max(-m_currentStyles.marginTop, newPos.y + m_currentStyles.marginTop);
-			newPos.y = Math.min(stage.stageHeight - outerHeight - m_currentStyles.marginTop, newPos.y);
-			newPos.x = Math.max(-m_currentStyles.marginLeft, newPos.x + m_currentStyles.marginLeft);
-			newPos.x = Math.min(stage.stageWidth - outerWidth - m_currentStyles.marginLeft, newPos.x);
+			newPos.y = Math.max(-_currentStyles.marginTop, newPos.y + _currentStyles.marginTop);
+			newPos.y = Math.min(stage.stageHeight - outerHeight - _currentStyles.marginTop, newPos.y);
+			newPos.x = Math.max(-_currentStyles.marginLeft, newPos.x + _currentStyles.marginLeft);
+			newPos.x = Math.min(stage.stageWidth - outerWidth - _currentStyles.marginLeft, newPos.x);
 			newPos = parent.globalToLocal(newPos);
 			x = newPos.x;
 			y = newPos.y;
@@ -100,20 +100,20 @@ package reprise.ui.renderers
 		
 		public function setMousedElement(mousedElement : DisplayObject) : void
 		{
-			m_mousedElement = mousedElement;
+			_mousedElement = mousedElement;
 		}
 		
 		public function mousedElement() : DisplayObject
 		{
-			return m_mousedElement;
+			return _mousedElement;
 		}
 		
 		public function setMousedComponent(mousedComponent:UIComponent):void
 		{
-			m_mousedComponent && m_mousedComponent.removeEventListener(
+			_mousedComponent && _mousedComponent.removeEventListener(
 				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
-			m_mousedComponent = mousedComponent;
-			m_mousedComponent && m_mousedComponent.addEventListener(
+			_mousedComponent = mousedComponent;
+			_mousedComponent && _mousedComponent.addEventListener(
 				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
 			validateElement(true, true);
 			updatePosition();
@@ -121,22 +121,22 @@ package reprise.ui.renderers
 
 		public function mousedComponent():UIComponent
 		{
-			return m_mousedComponent;
+			return _mousedComponent;
 		}
 		
 		public function setTooltipDataProvider(target:Object) : void
 		{
-			m_tooltipDataProvider = target;
+			_tooltipDataProvider = target;
 		}
 		
 		public function tooltipDataProvider() : Object
 		{
-			return m_tooltipDataProvider;
+			return _tooltipDataProvider;
 		}
 
 		override public function remove(...args : *) : void
 		{
-			m_mousedComponent && m_mousedComponent.removeEventListener(
+			_mousedComponent && _mousedComponent.removeEventListener(
 				DisplayEvent.VALIDATION_COMPLETE, mousedEvent_validationComplete);
 			super.remove(args);
 		}
@@ -145,50 +145,50 @@ package reprise.ui.renderers
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function createChildren() : void
 		{
-			m_label = Label(addChild(new Label()));
-			m_label.cssClasses = 'tooltipLabel';
+			_label = Label(addChild(new Label()));
+			_label.cssClasses = 'tooltipLabel';
 		}
 		
 		protected override function initDefaultStyles() : void
 		{
 			super.initDefaultStyles();
-			m_elementDefaultStyles.setStyle('position', 'static');
-			m_elementDefaultStyles.setStyle('top', '18');
-			m_elementDefaultStyles.setStyle('left', '0');
+			_elementDefaultStyles.setStyle('position', 'static');
+			_elementDefaultStyles.setStyle('top', '18');
+			_elementDefaultStyles.setStyle('left', '0');
 		}
 		
 		protected override function refreshSelectorPath() : void
 		{
-			var oldPath:String = m_selectorPath || '';
+			var oldPath:String = _selectorPath || '';
 			super.refreshSelectorPath();
-			if (m_mousedComponent is UIComponent)
+			if (_mousedComponent is UIComponent)
 			{
-				m_selectorPath = UIComponent(m_mousedComponent).selectorPath + 
-					' ' + m_selectorPath.split(' ').pop();
+				_selectorPath = UIComponent(_mousedComponent).selectorPath +
+					' ' + _selectorPath.split(' ').pop();
 			}
 			else
 			{
 				var basePathParts : Array = oldPath.split(' ');
 				basePathParts.pop();
-				basePathParts.push(m_selectorPath.split(' ').pop());
-				m_selectorPath = basePathParts.join(' ');
+				basePathParts.push(_selectorPath.split(' ').pop());
+				_selectorPath = basePathParts.join(' ');
 			}
-			if (m_selectorPath != oldPath)
+			if (_selectorPath != oldPath)
 			{
-				m_selectorPathChanged = true;
+				_selectorPathChanged = true;
 				return;
 			}
-			m_selectorPathChanged = false;
+			_selectorPathChanged = false;
 		}
 
 		protected override function resolveContainingBlock() : void
 		{
-			m_containingBlock = m_rootElement;
+			_containingBlock = _rootElement;
 		}
 		
 		protected override function resolvePositioningProperties() : void
 		{
-			m_positionInFlow = 0;
+			_positionInFlow = 0;
 		}
 		
 		protected function positionRelativeToElement(element:DisplayObject) : Point
@@ -217,8 +217,8 @@ package reprise.ui.renderers
 		protected function positionRelativeToMouse() : Point
 		{
 			var pos : Point = new Point();
-			pos.x = m_mousedElement.stage.mouseX + style.left;
-			pos.y = m_mousedElement.stage.mouseY + style.top;
+			pos.x = _mousedElement.stage.mouseX + style.left;
+			pos.y = _mousedElement.stage.mouseY + style.top;
 			return pos;
 		}
 		
@@ -230,13 +230,13 @@ package reprise.ui.renderers
 		
 		protected function mousedEvent_validationComplete(event : DisplayEvent) : void
 		{
-			m_mousedComponent.document.addEventListener(
+			_mousedComponent.document.addEventListener(
 				DisplayEvent.DOCUMENT_VALIDATION_COMPLETE, document_validationComplete);
 		}
 		
 		protected function document_validationComplete(event : DisplayEvent) : void
 		{
-			m_mousedComponent.document.removeEventListener(
+			_mousedComponent.document.removeEventListener(
 				DisplayEvent.DOCUMENT_VALIDATION_COMPLETE, document_validationComplete);
 			validateElement(true, true);
 			updatePosition();

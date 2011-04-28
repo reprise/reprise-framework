@@ -22,26 +22,26 @@ package reprise.controls
 		
 
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_thumb:SimpleButton;
-		protected var m_statusBar:UIComponent;
-		protected var m_track:UIComponent;
+		protected var _thumb:SimpleButton;
+		protected var _statusBar:UIComponent;
+		protected var _track:UIComponent;
 		
-		protected var m_minValue:Number = 0;
-		protected var m_maxValue:Number = 100;
-		protected var m_value:Number = 0;
-		protected var m_isContinuous:Boolean = true;
+		protected var _minValue:Number = 0;
+		protected var _maxValue:Number = 100;
+		protected var _value:Number = 0;
+		protected var _isContinuous:Boolean = true;
 		
-		protected var m_dragStartThumbPosition:Number;
-		protected var m_dragStartMousePosition:Number;
-		protected var m_isDragging:Boolean;
-		protected var m_frameListenerActive:Boolean = false;
+		protected var _dragStartThumbPosition:Number;
+		protected var _dragStartMousePosition:Number;
+		protected var _isDragging:Boolean;
+		protected var _frameListenerActive:Boolean = false;
 		
-		protected var m_allowsTickMarkValuesOnly:Boolean = false;
-		protected var m_numTickMarks:int = 2;
-		protected var m_animatesChange:Boolean = false;
-		protected var m_animationFriction:Number = .35;
+		protected var _allowsTickMarkValuesOnly:Boolean = false;
+		protected var _numTickMarks:int = 2;
+		protected var _animatesChange:Boolean = false;
+		protected var _animationFriction:Number = .35;
 		
-		protected var m_direction : String;
+		protected var _direction : String;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -50,10 +50,10 @@ package reprise.controls
 		
 		public function setValue(value:Number):void
 		{
-			value = Math.min(value, m_maxValue);
-			value = Math.max(value, m_minValue);
-			m_value = m_allowsTickMarkValuesOnly ? closestTickMarkValueToValue(value) : value;
-			if (!m_isDragging)
+			value = Math.min(value, _maxValue);
+			value = Math.max(value, _minValue);
+			_value = _allowsTickMarkValuesOnly ? closestTickMarkValueToValue(value) : value;
+			if (!_isDragging)
 			{
 				applyValue();
 			}
@@ -61,29 +61,29 @@ package reprise.controls
 		
 		public function value():Number
 		{
-			return m_value;
+			return _value;
 		}
 		
 		public function setMaxValue(maxValue:Number):void
 		{
-			m_maxValue = maxValue;
-			setValue(m_value);
+			_maxValue = maxValue;
+			setValue(_value);
 		}
 		
 		public function maxValue():Number
 		{
-			return m_maxValue;
+			return _maxValue;
 		}
 		
 		public function setMinValue(minValue:Number):void
 		{
-			m_minValue = minValue;
-			setValue(m_value);
+			_minValue = minValue;
+			setValue(_value);
 		}
 		
 		public function minValue():Number
 		{
-			return m_minValue;
+			return _minValue;
 		}
 		
 		/** 
@@ -92,42 +92,42 @@ package reprise.controls
 		*/
 		public function setContinuous(bFlag:Boolean):void
 		{
-			m_isContinuous = bFlag;
+			_isContinuous = bFlag;
 		}
 		
 		public function isContinuous():Boolean
 		{
-			return m_isContinuous;
+			return _isContinuous;
 		}
 		
 		public function setAllowsTickMarkValuesOnly(bFlag:Boolean):void
 		{
-			m_allowsTickMarkValuesOnly = bFlag;
+			_allowsTickMarkValuesOnly = bFlag;
 		}
 		
 		public function allowsTickMarkValuesOnly():Boolean
 		{
-			return m_allowsTickMarkValuesOnly;
+			return _allowsTickMarkValuesOnly;
 		}
 		
 		public function setNumberOfTickMarks(num:int):void
 		{
-			m_numTickMarks = num;
+			_numTickMarks = num;
 		}
 		
 		public function numberOfTickMarks():int
 		{
-			return m_numTickMarks;
+			return _numTickMarks;
 		}
 		
 		public function tickMarkValueAtIndex(index:int):Number
 		{
-			return (m_maxValue - m_minValue) / (m_numTickMarks - 1) * index;
+			return (_maxValue - _minValue) / (_numTickMarks - 1) * index;
 		}
 		
 		public function closestTickMarkValueToValue(val:Number):Number
 		{
-			var diff:Number = (m_maxValue - m_minValue) / m_numTickMarks;
+			var diff:Number = (_maxValue - _minValue) / _numTickMarks;
 			var index:int = Math.floor(val / diff);
 			if (val % diff > diff / 2) index++;
 			return index * diff;
@@ -135,12 +135,12 @@ package reprise.controls
 		
 		public function setAnimatesChange(bFlag:Boolean):void
 		{
-			m_animatesChange = bFlag;
+			_animatesChange = bFlag;
 		}
 		
 		public function setDirection(direction : String) : void
 		{
-			m_direction = direction;
+			_direction = direction;
 		}
 		
 		
@@ -150,7 +150,7 @@ package reprise.controls
 			super.initialize();
 			addEventListener(Event.ADDED_TO_STAGE, self_addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage);
-			m_direction = DIRECTION_HORIZONTAL;
+			_direction = DIRECTION_HORIZONTAL;
 		}
 
 		override protected function createChildren():void
@@ -168,41 +168,41 @@ package reprise.controls
 		
 		protected function createTrack():void
 		{
-			m_track = addComponent('track');
+			_track = addComponent('track');
 		}
 		
 		protected function createStatusBar():void
 		{
-			m_statusBar = addComponent('status_bar');
+			_statusBar = addComponent('status_bar');
 		}
 		
 		protected function createThumb():void
 		{
-			m_thumb = SimpleButton(addComponent('thumb', null, SimpleButton));
-			m_thumb.setStyle('position', 'absolute');
+			_thumb = SimpleButton(addComponent('thumb', null, SimpleButton));
+			_thumb.setStyle('position', 'absolute');
 		}
 		
 		protected function addListeners():void
 		{
-			m_thumb.addEventListener(MouseEvent.MOUSE_DOWN, thumb_click);
-			m_track.addEventListener(MouseEvent.MOUSE_DOWN, track_mouseDown);
+			_thumb.addEventListener(MouseEvent.MOUSE_DOWN, thumb_click);
+			_track.addEventListener(MouseEvent.MOUSE_DOWN, track_mouseDown);
 		}
 		
 		protected function applyValue():void
 		{
 			var thumbPosition : int;
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				thumbPosition = m_thumb.left;
+				thumbPosition = _thumb.left;
 			}
 			else
 			{
-				thumbPosition = m_thumb.top;
+				thumbPosition = _thumb.top;
 			}
-			var pos:Number = valueToPosition(m_value, m_minValue, m_maxValue);
-			if (m_animatesChange && (!m_isDragging || m_allowsTickMarkValuesOnly))
+			var pos:Number = valueToPosition(_value, _minValue, _maxValue);
+			if (_animatesChange && (!_isDragging || _allowsTickMarkValuesOnly))
 			{
-				var diff:Number = (pos - thumbPosition) * m_animationFriction;
+				var diff:Number = (pos - thumbPosition) * _animationFriction;
 					
 				if (Math.abs(diff) > 0.7)
 				{
@@ -214,30 +214,30 @@ package reprise.controls
 					removeFrameListener();
 				}
 			}
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				m_thumb.left = m_statusBar.width = pos;
+				_thumb.left = _statusBar.width = pos;
 			}
 			else
 			{
-				m_thumb.top = m_statusBar.height = pos;
+				_thumb.top = _statusBar.height = pos;
 			}
 		}
 		
 		protected function valueToPosition(value:Number, dataMin:Number, dataMax:Number):Number
 		{
 			var pos:Number;
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				pos = (width - m_thumb.width) * ((value - dataMin) / (dataMax - dataMin));
+				pos = (width - _thumb.width) * ((value - dataMin) / (dataMax - dataMin));
 				pos = Math.max(0, pos);
-				pos = Math.min(width - m_thumb.width, pos);
+				pos = Math.min(width - _thumb.width, pos);
 			}
 			else
 			{
-				pos = (height - m_thumb.height) * ((value - dataMin) / (dataMax - dataMin));
+				pos = (height - _thumb.height) * ((value - dataMin) / (dataMax - dataMin));
 				pos = Math.max(0, pos);
-				pos = Math.min(height - m_thumb.height, pos);
+				pos = Math.min(height - _thumb.height, pos);
 				
 			}
 			return Math.round(pos);
@@ -245,60 +245,60 @@ package reprise.controls
 		
 		protected function positionToValue(pos:Number):Number
 		{
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
 				pos = Math.max(0, pos);
-				pos = Math.min(width - m_thumb.width, pos);
-				return pos / (width - m_thumb.width) * (m_maxValue - m_minValue) + m_minValue;
+				pos = Math.min(width - _thumb.width, pos);
+				return pos / (width - _thumb.width) * (_maxValue - _minValue) + _minValue;
 			}
 			else
 			{
 				pos = Math.max(0, pos);
-				pos = Math.min(height - m_thumb.height, pos);
-				return pos / (height - m_thumb.height) * (m_maxValue - m_minValue) + m_minValue;
+				pos = Math.min(height - _thumb.height, pos);
+				return pos / (height - _thumb.height) * (_maxValue - _minValue) + _minValue;
 			}
 		}
 		
 		protected function applyCurrentDragValue():void
 		{
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				setValue(positionToValue(m_dragStartThumbPosition + 
-					(m_track.mouseX - m_dragStartMousePosition)));
+				setValue(positionToValue(_dragStartThumbPosition +
+					(_track.mouseX - _dragStartMousePosition)));
 			}
 			else
 			{
-				setValue(positionToValue(m_dragStartThumbPosition + 
-					(m_track.mouseY - m_dragStartMousePosition)));
+				setValue(positionToValue(_dragStartThumbPosition +
+					(_track.mouseY - _dragStartMousePosition)));
 			}
 			applyValue();
 		}
 		
 		protected function addFrameListener():void
 		{
-			if (m_frameListenerActive) return;
+			if (_frameListenerActive) return;
 
 			addEventListener(Event.ENTER_FRAME, self_enterFrame);
-			m_frameListenerActive = true;
+			_frameListenerActive = true;
 		}
 		
 		protected function removeFrameListener():void
 		{
-			if (!m_frameListenerActive) return;
+			if (!_frameListenerActive) return;
 			var animationActive:Boolean;
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				animationActive = m_thumb.left != valueToPosition(m_value, m_minValue, 
-				m_maxValue);
+				animationActive = _thumb.left != valueToPosition(_value, _minValue,
+				_maxValue);
 			}
 			else
 			{
-				animationActive = m_thumb.top != valueToPosition(m_value, m_minValue, 
-				m_maxValue);
+				animationActive = _thumb.top != valueToPosition(_value, _minValue,
+				_maxValue);
 			}
-			if (animationActive || m_isDragging) return;
+			if (animationActive || _isDragging) return;
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
-			m_frameListenerActive = false;
+			_frameListenerActive = false;
 		}
 		
 		
@@ -318,27 +318,27 @@ package reprise.controls
 		
 		protected function thumb_click(e:MouseEvent):void
 		{
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				m_dragStartThumbPosition = m_thumb.left;
-				m_dragStartMousePosition = m_track.mouseX;
+				_dragStartThumbPosition = _thumb.left;
+				_dragStartMousePosition = _track.mouseX;
 			}
 			else
 			{
-				m_dragStartThumbPosition = m_thumb.top;
-				m_dragStartMousePosition = m_track.mouseY;
+				_dragStartThumbPosition = _thumb.top;
+				_dragStartMousePosition = _track.mouseY;
 			}
-			m_isDragging = true;
+			_isDragging = true;
 			addFrameListener();
 		}
 		
 		protected function stage_mouseUp(e:MouseEvent):void
 		{
-			if (!m_isDragging)
+			if (!_isDragging)
 			{
 				return;
 			}
-			m_isDragging = false;
+			_isDragging = false;
 			removeFrameListener();
 			applyCurrentDragValue();
 			dispatchEvent(new Event(Event.CHANGE));
@@ -346,13 +346,13 @@ package reprise.controls
 		
 		protected function track_mouseDown(e:MouseEvent):void
 		{
-			if(m_direction == DIRECTION_HORIZONTAL)
+			if(_direction == DIRECTION_HORIZONTAL)
 			{
-				setValue(positionToValue(m_track.mouseX - m_thumb.width / 2));
+				setValue(positionToValue(_track.mouseX - _thumb.width / 2));
 			}
 			else
 			{
-				setValue(positionToValue(m_track.mouseY - m_thumb.height / 2));
+				setValue(positionToValue(_track.mouseY - _thumb.height / 2));
 			}
 			dispatchEvent(new Event(Event.CHANGE));
 		}
@@ -360,12 +360,12 @@ package reprise.controls
 		protected function self_enterFrame(e:Event):void
 		{
 			// if we're not being dragged, there's animation to be done
-			if (!m_isDragging)
+			if (!_isDragging)
 			{
 				applyValue();
 				return;
 			}
-			if (m_isContinuous)
+			if (_isContinuous)
 			{
 				dispatchEvent(new Event(Event.CHANGE));
 			}
@@ -374,7 +374,7 @@ package reprise.controls
 		
 		protected function animatesChange():Boolean
 		{
-			return m_animatesChange;
+			return _animatesChange;
 		}
 	}
 }

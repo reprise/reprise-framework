@@ -11,8 +11,8 @@ package reprise.core
 	{//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance : ApplicationRegistry;
 		
-		protected var m_applications : Object;
-		protected var m_defaultApplication : Application;
+		protected var _applications : Object;
+		protected var _defaultApplication : Application;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -27,10 +27,10 @@ package reprise.core
 		
 		public function registerApplication(app:Application) : void
 		{
-			m_applications[app.applicationURL()] = app;
-			if (!m_defaultApplication)
+			_applications[app.applicationURL()] = app;
+			if (!_defaultApplication)
 			{
-				m_defaultApplication = app;
+				_defaultApplication = app;
 			}
 		}
 		
@@ -43,16 +43,16 @@ package reprise.core
 		{
 			if (!appURL)
 			{
-				return m_defaultApplication;
+				return _defaultApplication;
 			}
-			return Application(m_applications[appURL]);
+			return Application(_applications[appURL]);
 		}
 		
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		public function ApplicationRegistry() 
 		{
-			m_applications = {};
+			_applications = {};
 		}	
 	}
 }

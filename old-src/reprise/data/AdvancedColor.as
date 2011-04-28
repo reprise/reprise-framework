@@ -37,8 +37,8 @@ package reprise.data
 		};	
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_value : int;
-		protected var m_opacity : Number;
+		protected var _value : int;
+		protected var _opacity : Number;
 		
 		
 		
@@ -46,56 +46,56 @@ package reprise.data
 		public function AdvancedColor(rgb : int = 0, opacity : Number = 1)
 		{
 			setRGB(rgb);
-			m_opacity = opacity;
+			_opacity = opacity;
 		}
 		
 		
 		public function setRGB(rgb : int) : void
 		{
-			m_value = rgb;
-			m_opacity = 1;
+			_value = rgb;
+			_opacity = 1;
 		}
 		
 		public function rgb() : int
 		{
-			return m_value;
+			return _value;
 		}
 		
 		public function setRGBA(rgba : uint) : void
 		{
-	 		m_opacity = (rgba & 0xFF) / 0xFF;
-			m_value = rgba >>> 8;
+	 		_opacity = (rgba & 0xFF) / 0xFF;
+			_value = rgba >>> 8;
 		}
 		
 		public function rgba() : uint
 		{
-			return uint(m_value << 8) | uint(m_opacity * 0xFF);
+			return uint(_value << 8) | uint(_opacity * 0xFF);
 		}
 		
 		public function setARGB(argb : uint) : void
 		{
-			m_opacity = (argb >> 24 & 0xFF) / 0xFF;
-			m_value = argb & 0xFFFFFF;
+			_opacity = (argb >> 24 & 0xFF) / 0xFF;
+			_value = argb & 0xFFFFFF;
 		}
 		
 		public function argb() : uint
 		{
-			return uint(m_opacity * 0xFF << 24 | m_value);
+			return uint(_opacity * 0xFF << 24 | _value);
 		}
 		
 		public function setRGBComponents(r : int, g : int, b : int) : void
 		{
-			m_value = (r << 16) | (g << 8) | b;
-			m_opacity = 1;
+			_value = (r << 16) | (g << 8) | b;
+			_opacity = 1;
 		}
 		
 		public function rgbComponents() : Object
 		{
 			var rgb : Object = 
 			{
-				r : m_value >> 16 & 0xFF,
-				g : m_value >> 8 & 0xFF,
-				b : m_value & 0xFF
+				r : _value >> 16 & 0xFF,
+				g : _value >> 8 & 0xFF,
+				b : _value & 0xFF
 			};
 			return rgb;
 		}
@@ -103,13 +103,13 @@ package reprise.data
 		public function setRGBAComponents(r : int, g : int, b : int, a : Number) : void
 		{
 			setRGBComponents(r, g, b);
-			m_opacity = a;
+			_opacity = a;
 		}
 		
 		public function rgbaComponents() : void
 		{
 			var rgba : Object = rgbComponents();
-			rgba.a = m_opacity;
+			rgba.a = _opacity;
 		}
 		
 		public function setColorString(colorString : String) : void
@@ -162,8 +162,8 @@ package reprise.data
 			colorString = colorString.toLowerCase();		
 			if (colorString == 'transparent')
 			{
-				m_value = 0;
-				m_opacity = 0;
+				_value = 0;
+				_opacity = 0;
 				return;
 			}
 			
@@ -185,11 +185,11 @@ package reprise.data
 			
 	
 		
-			m_opacity = 1;
-			m_value = g_htmlColors[colorString];
-			if (isNaN(m_value))
+			_opacity = 1;
+			_value = g_htmlColors[colorString];
+			if (isNaN(_value))
 			{
-				m_value = 0x0;
+				_value = 0x0;
 			}
 		}
 		
@@ -241,15 +241,15 @@ package reprise.data
 				b = Math.round(b);
 			}
 			
-			m_value = b | (g << 8) | (r << 16);
-			m_opacity = 1;
+			_value = b | (g << 8) | (r << 16);
+			_opacity = 1;
 		}
 		
 		public function hsb() : Object
 		{
-			var r : uint = m_value >> 16 & 0xFF;
-			var g : uint = m_value >> 8 & 0xFF;
-			var b : uint = m_value & 0xFF;
+			var r : uint = _value >> 16 & 0xFF;
+			var g : uint = _value >> 8 & 0xFF;
+			var b : uint = _value & 0xFF;
 			
 			var hsb : Object = {};
 			hsb.b = Math.max(Math.max(r, g), b);
@@ -283,31 +283,31 @@ package reprise.data
 		{
 			alpha = Math.max(0, alpha);
 			alpha = Math.min(100, alpha);
-			m_opacity = alpha / 100;
+			_opacity = alpha / 100;
 		}
 		
 		public function alpha() : Number
 		{
-			return m_opacity * 100;
+			return _opacity * 100;
 		}
 		
 		public function setOpacity(opacity : Number) : void
 		{
-			m_opacity = opacity;
+			_opacity = opacity;
 		}
 		
 		public function opacity() : Number
 		{
-			return m_opacity;
+			return _opacity;
 		}
 		
 		public function tintFilter():ColorMatrixFilter
 		{
 			var rgb:Object = rgbComponents();
 			var matrix:Array = [];
-			matrix = matrix.concat([1, 0, 0, 0, rgb.r * m_opacity]);
-			matrix = matrix.concat([0, 1, 0, 0, rgb.g * m_opacity]);
-			matrix = matrix.concat([0, 0, 1, 0, rgb.b * m_opacity]);
+			matrix = matrix.concat([1, 0, 0, 0, rgb.r * _opacity]);
+			matrix = matrix.concat([0, 1, 0, 0, rgb.g * _opacity]);
+			matrix = matrix.concat([0, 0, 1, 0, rgb.b * _opacity]);
 			matrix = matrix.concat([0, 0, 0, 1, 0]);
 			return new ColorMatrixFilter(matrix);
 		}
@@ -320,13 +320,13 @@ package reprise.data
 		
 		public function valueOf() : Object
 		{
-			return m_value;
+			return _value;
 		}
 		
 		public function clone(deep : Boolean = false) : Cloneable
 		{
-			var clone : AdvancedColor = new AdvancedColor(m_value);
-			clone.m_opacity = m_opacity;
+			var clone : AdvancedColor = new AdvancedColor(_value);
+			clone._opacity = _opacity;
 			return clone;
 		}
 		

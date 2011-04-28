@@ -27,16 +27,16 @@ package reprise.core
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_document : DocumentView;
-		protected var m_focus : UIObject;
-		protected var m_inFocusHandling : Boolean;
-		protected var m_lastTabPress : int;
+		protected var _document : DocumentView;
+		protected var _focus : UIObject;
+		protected var _inFocusHandling : Boolean;
+		protected var _lastTabPress : int;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function FocusManager(document : DocumentView)
 		{
-			m_document = document;
+			_document = document;
 			document.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, document_keyFocusChange);
 			document.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, document_mouseFocusChange);
 			document.addEventListener(FocusEvent.FOCUS_IN, document_focusIn);
@@ -54,7 +54,7 @@ package reprise.core
 		{
 			var element : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
 				DisplayObject(event.target), true);
-			if (element == m_focus)
+			if (element == _focus)
 			{
 				return;
 			}
@@ -63,70 +63,70 @@ package reprise.core
 
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
-			if (m_focus && m_focus == element)
+			if (_focus && _focus == element)
 			{
 				return false;
 			}
-			if (m_focus)
+			if (_focus)
 			{
-				m_focus.setFocus(false, method);
+				_focus.setFocus(false, method);
 			}
-			m_focus = element;
-			if (element && element.document == m_document)
+			_focus = element;
+			if (element && element.document == _document)
 			{
 				element.setFocus(true, method);
 				return true;
 			}
 			//else
-//			m_document.stage.focus = null;
-			m_focus = null;
+//			_document.stage.focus = null;
+			_focus = null;
 			return false;
 		}
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function document_keyFocusChange(e:FocusEvent):void
 		{
-			if (m_inFocusHandling)
+			if (_inFocusHandling)
 			{
 				return;
 			}
-			m_inFocusHandling = true;
+			_inFocusHandling = true;
 			if (e.keyCode == Keyboard.TAB && !e.isDefaultPrevented())
 			{
-				if (getTimer() - m_lastTabPress < 15)
+				if (getTimer() - _lastTabPress < 15)
 				{
 					e.preventDefault();
-					m_inFocusHandling = false;
+					_inFocusHandling = false;
 					return;
 				}
-				m_lastTabPress = getTimer();
+				_lastTabPress = getTimer();
 				var focusView:UIObject;
 				if (e.shiftKey)
 				{
-					focusView = m_focus != null 
-						? m_focus.previousValidKeyView() 
-						: m_document.previousValidKeyView();
+					focusView = _focus != null
+						? _focus.previousValidKeyView()
+						: _document.previousValidKeyView();
 				}
 				else
 				{
-					focusView = m_focus != null 
-						? m_focus.nextValidKeyView() 
-						: m_document.nextValidKeyView();
+					focusView = _focus != null
+						? _focus.nextValidKeyView()
+						: _document.nextValidKeyView();
 				}
 				if (setFocusedElement(focusView, FOCUS_METHOD_KEYBOARD))
 				{
 		            e.preventDefault();
 				}
 	        }
-			m_inFocusHandling = false;
+			_inFocusHandling = false;
 		}
 		protected function document_mouseFocusChange(event : FocusEvent) : void
 		{
-			if (m_inFocusHandling)
+			if (_inFocusHandling)
 			{
 				return;
 			}
-			m_inFocusHandling = true;
+			_inFocusHandling = true;
 			var element : DisplayObject = DisplayObject(event.relatedObject);
 			var focusedElement : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
 				element, true);
@@ -134,26 +134,26 @@ package reprise.core
 			{
 				event.preventDefault();
 			}
-			m_inFocusHandling = false;
+			_inFocusHandling = false;
 		}
 		
 		protected function document_focusIn(event : FocusEvent) : void
 		{
-			if (m_inFocusHandling)
+			if (_inFocusHandling)
 			{
 				return;
 			}
-			m_inFocusHandling = true;
+			_inFocusHandling = true;
 			var focusedElement : UIObject = DisplayListUtil.locateElementContainingDisplayObject(
 				DisplayObject(event.target), true);
-			if (m_focus != focusedElement)
+			if (_focus != focusedElement)
 			{
 				if (setFocusedElement(focusedElement, FOCUS_METHOD_MOUSE))
 				{
 					event.preventDefault();
 				}
 			}
-			m_inFocusHandling = false;
+			_inFocusHandling = false;
 		}
 	}
 }

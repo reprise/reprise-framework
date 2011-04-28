@@ -19,16 +19,16 @@ package reprise.css
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_selector : String;
-		protected var m_selectorPattern : Array;
-		protected var m_declaration : CSSDeclaration;
+		protected var _selector : String;
+		protected var _selectorPattern : Array;
+		protected var _declaration : CSSDeclaration;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclarationListItem(selector : String, 
 			declaration : CSSDeclaration, index : int, file : String = null) 
 		{
-			m_selector = selector;
+			_selector = selector;
 			var selectorStr : String = (("@" + selector.split(" ").join("@ @").
 				split("#").join("|#").split(":").join("|:").split(".").
 				join("|.")).split("||").join("|").split("|").join("@|@").
@@ -38,31 +38,31 @@ package reprise.css
 			{
 				selectorStr = selectorStr.substr(2);
 			}
-			m_selectorPattern = selectorStr.split(' ');
-			var i : int = m_selectorPattern.length;
+			_selectorPattern = selectorStr.split(' ');
+			var i : int = _selectorPattern.length;
 			while (i--)
 			{
-				m_selectorPattern[i] = m_selectorPattern[i].split('|');
+				_selectorPattern[i] = _selectorPattern[i].split('|');
 				//match element names case-insensitive
-				if ('.:#'.indexOf(m_selectorPattern[i][0].charAt(1)) == -1)
+				if ('.:#'.indexOf(_selectorPattern[i][0].charAt(1)) == -1)
 				{
-					m_selectorPattern[i][0] = m_selectorPattern[i][0].toLowerCase();
+					_selectorPattern[i][0] = _selectorPattern[i][0].toLowerCase();
 				}
 			}
 			
 			declarationSpecificity = specificityForSelector(selector);
 			declarationIndex = index;
-			m_declaration = CSSDeclaration(declaration);
+			_declaration = CSSDeclaration(declaration);
 		}
 		
 		public function toString() : String
 		{
-			return m_selector + declarationIndex;
+			return _selector + declarationIndex;
 		}
 
 		reprise function declaration() : CSSDeclaration
 		{
-			return m_declaration;
+			return _declaration;
 		}
 		
 		reprise function matchesSubjectPath(subjectPath:String) : Boolean
@@ -72,11 +72,11 @@ package reprise.css
 			var patternOffset : int = 1;
 			subjectPath += " ";
 			
-			var i : int = m_selectorPattern.length;
+			var i : int = _selectorPattern.length;
 			while(i--)
 			{
 				//get pattern for the current element from the itemPath
-				var currentPattern : Array = m_selectorPattern[i];
+				var currentPattern : Array = _selectorPattern[i];
 				var subjectPartBegin : int;
 				var patternPart : String = 
 					currentPattern[currentPattern.length - patternOffset];
@@ -122,7 +122,7 @@ package reprise.css
 				//check if the pattern mandates a direct parent child relationship
 				//between the current and the next part and allow matches 
 				//in the next part only if true.
-				var nextPattern : Array = m_selectorPattern[i - 1];
+				var nextPattern : Array = _selectorPattern[i - 1];
 				if (nextPattern && nextPattern[nextPattern.length - 1] == ">")
 				{
 					minSubjectIndex = 
@@ -141,10 +141,10 @@ package reprise.css
 //		public function matchesElement(element : ICSSStylable) : Boolean
 //		{
 //			var path : String = element.selectorPath;
-//			var matches : Boolean = m_selectorRegexp.test(path);
+//			var matches : Boolean = _selectorRegexp.test(path);
 //			if (matches)
 //			{
-//				log(['match ', m_selectorRegexp, path, ''].join('\n'));
+//				log(['match ', _selectorRegexp, path, ''].join('\n'));
 //				return true;
 //			}
 //			return false;

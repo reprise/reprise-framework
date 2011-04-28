@@ -17,12 +17,12 @@ package reprise.controls
 	public class ComboBox extends AbstractInput
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_currentItemDisplay : IListItem;
-		protected var m_toggleBtn : SimpleButton;
-		protected var m_backgroundCell : UIComponent;
-		protected var m_placeholder : String = null;
-		protected var m_list : List;
-		protected var m_itemRendererClass : Class = ListItem;		
+		protected var _currentItemDisplay : IListItem;
+		protected var _toggleBtn : SimpleButton;
+		protected var _backgroundCell : UIComponent;
+		protected var _placeholder : String = null;
+		protected var _list : List;
+		protected var _itemRendererClass : Class = ListItem;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -32,73 +32,73 @@ package reprise.controls
 
 		public function setItemRendererClass(rendererClass : Class) : void
 		{
-			m_itemRendererClass = rendererClass || ListItem;
-			m_list && m_list.setItemRendererClass(rendererClass);
-			if (m_initialized)
+			_itemRendererClass = rendererClass || ListItem;
+			_list && _list.setItemRendererClass(rendererClass);
+			if (_initialized)
 			{
-				if (m_currentItemDisplay)
+				if (_currentItemDisplay)
 				{
-					UIComponent(m_currentItemDisplay).remove();
+					UIComponent(_currentItemDisplay).remove();
 				}
-				m_currentItemDisplay = new m_itemRendererClass();
-				UIComponent(m_currentItemDisplay).addCSSClass('currentItem');
-				addChildAt(UIComponent(m_currentItemDisplay), 1);
+				_currentItemDisplay = new _itemRendererClass();
+				UIComponent(_currentItemDisplay).addCSSClass('currentItem');
+				addChildAt(UIComponent(_currentItemDisplay), 1);
 			}
 		}
 
 		public function itemRendererClass() : Class
 		{
-			return m_itemRendererClass;
+			return _itemRendererClass;
 		}
 
 		
 		public function addItemWithData(data : Object) : void
 		{
-			m_list.addItemWithData(data);
-			if (m_list.selectedIndex() == -1 && m_placeholder == null)
+			_list.addItemWithData(data);
+			if (_list.selectedIndex() == -1 && _placeholder == null)
 			{
-				m_list.setSelectedIndex(0);
-				m_currentItemDisplay.setData(m_list.selectedData());
+				_list.setSelectedIndex(0);
+				_currentItemDisplay.setData(_list.selectedData());
 			}
 		}
 
 		public function set options(options : Array) : void
 		{
-			m_list.options = options;
+			_list.options = options;
 		}
 
 		public function get options() : Array
 		{
-			return m_list.options;
+			return _list.options;
 		}
 
 		override public function reset() : void
 		{
 			super.reset();
-			m_placeholder = '';
-			m_list.removeAllItems();
-			m_list.setSelectedIndex(-1);
+			_placeholder = '';
+			_list.removeAllItems();
+			_list.setSelectedIndex(-1);
 			updateLabel();
 		}
 
 		public function setSelectedIndex(index : int) : void
 		{
-			m_list.setSelectedIndex(index);
+			_list.setSelectedIndex(index);
 			updateLabel();
 		}
 
 		public override function setValue(value : *) : void
 		{
-			if (m_list.options.length)
+			if (_list.options.length)
 			{
-				m_list.setValue(value);
+				_list.setValue(value);
 				updateLabel();
 			}
 		}
 
 		public override function value() : *
 		{
-			return m_list.value();
+			return _list.value();
 		}
 
 		/**
@@ -111,13 +111,13 @@ package reprise.controls
 
 		public function setPlaceholderAttribute(value : String) : void
 		{
-			m_placeholder = value;
+			_placeholder = value;
 			updateLabel();
 		}
 
 		public function placeHolder() : String
 		{
-			return m_placeholder;
+			return _placeholder;
 		}
 
 		
@@ -126,31 +126,31 @@ package reprise.controls
 		protected override function initialize() : void
 		{
 			super.initialize();
-			//			m_canBecomeKeyView = true;
+			//			_canBecomeKeyView = true;
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
 		}
 
 		protected override function createChildren() : void
 		{
-			m_backgroundCell = new UIComponent();
-			addChild(m_backgroundCell);
-			m_backgroundCell.addCSSClass('backgroundCell');
-			m_backgroundCell.setStyle('position', 'absolute');
+			_backgroundCell = new UIComponent();
+			addChild(_backgroundCell);
+			_backgroundCell.addCSSClass('backgroundCell');
+			_backgroundCell.setStyle('position', 'absolute');
 			
-			m_currentItemDisplay = new m_itemRendererClass();
-			UIComponent(m_currentItemDisplay).addCSSClass('currentItem');
-			addChild(UIComponent(m_currentItemDisplay));
+			_currentItemDisplay = new _itemRendererClass();
+			UIComponent(_currentItemDisplay).addCSSClass('currentItem');
+			addChild(UIComponent(_currentItemDisplay));
 			
-			m_list = new List();
-			addChild(m_list);
-			m_itemRendererClass && m_list.setItemRendererClass(m_itemRendererClass);
-			m_list.addCSSClass('hidden');
-			m_list.addEventListener(Event.CHANGE, list_change);
+			_list = new List();
+			addChild(_list);
+			_itemRendererClass && _list.setItemRendererClass(_itemRendererClass);
+			_list.addCSSClass('hidden');
+			_list.addEventListener(Event.CHANGE, list_change);
 		}
 
 		protected override function parseXMLContent(children : XMLList) : void
 		{
-			m_list.removeEventListener(Event.CHANGE, list_change);
+			_list.removeEventListener(Event.CHANGE, list_change);
 			for each (var childNode:XML in children)
 			{
 				preprocessTextNode(childNode);
@@ -164,19 +164,19 @@ package reprise.controls
 					addItemWithData({label : childNode.text(), value : childNode.@value.toString()});
 				}
 			}
-			m_list.addEventListener(Event.CHANGE, list_change);
+			_list.addEventListener(Event.CHANGE, list_change);
 		}
 
 		protected function updateLabel() : void
 		{
-			if (m_list.selectedIndex() == -1)
+			if (_list.selectedIndex() == -1)
 			{
-				m_currentItemDisplay.setData({label : m_placeholder});
+				_currentItemDisplay.setData({label : _placeholder});
 				addCSSClass('placeholder');
 			}
 			else
 			{
-				m_currentItemDisplay.setData(m_list.selectedData());
+				_currentItemDisplay.setData(_list.selectedData());
 				removeCSSClass('placeholder');
 			}
 		}
@@ -184,15 +184,15 @@ package reprise.controls
 		protected function showList() : void
 		{			
 			removeEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
-			m_rootElement.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
-			m_list.removeCSSClass('hidden');
+			_rootElement.addEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
+			_list.removeCSSClass('hidden');
 		}
 
 		protected function hideList() : void
 		{
-			m_rootElement.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
+			_rootElement.removeEventListener(MouseEvent.MOUSE_DOWN, document_mouseDown);
 			addEventListener(MouseEvent.MOUSE_DOWN, self_mouseDown);
-			m_list.addCSSClass('hidden');
+			_list.addCSSClass('hidden');
 		}
 
 		protected function self_mouseDown(e : MouseEvent) : void
@@ -203,7 +203,7 @@ package reprise.controls
 
 		protected function document_mouseDown(e : MouseEvent) : void
 		{
-			if (m_list.contains(DisplayObject(e.target)))
+			if (_list.contains(DisplayObject(e.target)))
 			{
 				return;
 			}

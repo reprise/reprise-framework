@@ -17,7 +17,7 @@ package reprise.core
 	{
 	
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_appContext:ApplicationContext;
+		protected var _appContext:ApplicationContext;
 		
 		
 		
@@ -25,7 +25,7 @@ package reprise.core
 		public function CoreResourceLoader(appContext:ApplicationContext)
 		{
 			super();
-			m_appContext = appContext;
+			_appContext = appContext;
 		}
 		
 		
@@ -41,7 +41,7 @@ package reprise.core
 		protected function rewriteURLOfResource(res:IResource):void
 		{
 			res.setURL(CSSParsingHelper.resolvePathAgainstPath(res.url(), 
-				m_appContext.applicationURL));
+				_appContext.applicationURL));
 		}
 	}
 }

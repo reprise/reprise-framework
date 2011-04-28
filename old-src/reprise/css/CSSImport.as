@@ -12,13 +12,13 @@ package reprise.css
 	internal class CSSImport extends URLLoaderResource
 	{
 		//----------------------             Public Properties              ----------------------//
-		protected var m_owner : CSS;
+		protected var _owner : CSS;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSImport(owner:CSS, url:String = null)
 		{
-			m_owner = owner;
+			_owner = owner;
 			setURL(url);
 		}
 		
@@ -28,7 +28,7 @@ package reprise.css
 		{
 			if (success)
 			{
-				m_owner.resolveImport(this);
+				_owner.resolveImport(this);
 			}
 			super.notifyComplete(success);
 		}	

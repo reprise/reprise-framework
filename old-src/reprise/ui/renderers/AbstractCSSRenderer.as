@@ -17,81 +17,81 @@ package reprise.ui.renderers
 	{
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_styles : ComputedStyles;
-		protected var m_complexStyles : CSSDeclaration;
-		protected var m_width : Number;
-		protected var m_height : Number;
-		protected var m_display : Sprite;
+		protected var _styles : ComputedStyles;
+		protected var _complexStyles : CSSDeclaration;
+		protected var _width : Number;
+		protected var _height : Number;
+		protected var _display : Sprite;
 	
-		protected var m_id : String;
+		protected var _id : String;
 			
 	
 		
 		//----------------------               Public Methods               ----------------------//
 		public function setId(id : String) : void
 		{
-			m_id = id;
+			_id = id;
 		}
 	
 		public function id() : String
 		{
-			return m_id;
+			return _id;
 		}
 		
 		public function styles() : ComputedStyles
 		{
-			return m_styles;
+			return _styles;
 		}
 	
 		public function setStyles(val : ComputedStyles) : void
 		{
-			m_styles = val;
+			_styles = val;
 		}
 		
 		public function complexStyles() : CSSDeclaration
 		{
-			return m_complexStyles;
+			return _complexStyles;
 		}
 	
 		public function setComplexStyles(val : CSSDeclaration) : void
 		{
-			m_complexStyles = val;
+			_complexStyles = val;
 		}
 		
 		public function display() : Sprite
 		{
-			return m_display;
+			return _display;
 		}
 	
 		public function setDisplay(val : Sprite) : void
 		{
-			m_display = val;
+			_display = val;
 		}
 		
 		public function width() : Number
 		{
-			return m_width;
+			return _width;
 		}
 	
 		public function setWidth(val : Number) : void
 		{
-			m_width = val;
+			_width = val;
 		}
 		
 		public function height() : Number
 		{
-			return m_height;
+			return _height;
 		}
 	
 		public function setHeight(val : Number) : void
 		{
-			m_height = val;
+			_height = val;
 		}
 		
 		public function setSize(w : Number, h : Number) : void
 		{
-			m_width = w;
-			m_height = h;
+			_width = w;
+			_height = h;
 		}
 		
 		public function draw() : void

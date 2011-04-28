@@ -20,12 +20,12 @@ package reprise.external
 	{
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_netConnection:NetConnection;
-		protected var m_service:String;
-		protected var m_method:String;
-		protected var m_arguments:Array;
-		protected var m_headers:Object;
-		protected var m_objectEncoding:uint = 3;
+		protected var _netConnection:NetConnection;
+		protected var _service:String;
+		protected var _method:String;
+		protected var _arguments:Array;
+		protected var _headers:Object;
+		protected var _objectEncoding:uint = 3;
 		
 		
 		
@@ -34,40 +34,40 @@ package reprise.external
 			args:Array = null)
 		{
 			super(url);
-			m_service = service;
-			m_method = method;
-			m_arguments = args || [];
-			m_headers = {};
+			_service = service;
+			_method = method;
+			_arguments = args || [];
+			_headers = {};
 		}
 		
 		public function setService(service:String):void
 		{
-			m_service = service;
+			_service = service;
 		}
 		
 		public function service():String
 		{
-			return m_service;
+			return _service;
 		}
 		
 		public function setMethod(method:String):void
 		{
-			m_method = method;
+			_method = method;
 		}
 		
 		public function method():String
 		{
-			return m_method;
+			return _method;
 		}
 		
 		public function setArguments(args:Array):void
 		{
-			m_arguments = args;
+			_arguments = args;
 		}
 		
 		public function arguments():Array
 		{
-			return m_arguments;
+			return _arguments;
 		}
 		
 		public function setCredentials(userName:String, password:String):void
@@ -77,17 +77,17 @@ package reprise.external
 		
 		public function addHeader(name:String, value:Object, mustUnderstand:Boolean = false):void
 		{
-			m_headers[name] = {value:value, mustUnderstand:mustUnderstand};
+			_headers[name] = {value:value, mustUnderstand:mustUnderstand};
 		}
 		
 		public function setObjectEncoding(encoding:uint):void
 		{
-			m_objectEncoding = encoding;
+			_objectEncoding = encoding;
 		}
 		
 		public function objectEncoding():uint
 		{
-			return m_objectEncoding;
+			return _objectEncoding;
 		}
 		
 		public override function bytesLoaded() : int
@@ -105,36 +105,36 @@ package reprise.external
 		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function doLoad():void
 		{
-			m_netConnection = new NetConnection();
-			m_netConnection.objectEncoding = m_objectEncoding;
-			for (var headerName:String in m_headers)
+			_netConnection = new NetConnection();
+			_netConnection.objectEncoding = _objectEncoding;
+			for (var headerName:String in _headers)
 			{
-				var header:Object = m_headers[headerName];
-				m_netConnection.addHeader(headerName, header.mustUnderstand, header.value);
+				var header:Object = _headers[headerName];
+				_netConnection.addHeader(headerName, header.mustUnderstand, header.value);
 			}
-			m_netConnection.connect(url());
-			var params:Array = [(m_service + '.' + m_method), 
+			_netConnection.connect(url());
+			var params:Array = [(_service + '.' + _method),
 				new Responder(netConnection_result, netConnection_status)];
-			params = params.concat(m_arguments);
-			m_netConnection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 
+			params = params.concat(_arguments);
+			_netConnection.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
 				netConnection_securityError);
-			m_netConnection.addEventListener(IOErrorEvent.IO_ERROR, 
+			_netConnection.addEventListener(IOErrorEvent.IO_ERROR,
 				netConnection_ioError);
-			m_netConnection.addEventListener(NetStatusEvent.NET_STATUS, 
+			_netConnection.addEventListener(NetStatusEvent.NET_STATUS,
 				netConnection_netStatus);
-			m_netConnection.call.apply(m_netConnection, params);
+			_netConnection.call.apply(_netConnection, params);
 		}
 		
 		override protected function doCancel():void
 		{
-			m_netConnection.close();
-			m_netConnection.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, 
+			_netConnection.close();
+			_netConnection.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,
 				netConnection_securityError);
-			m_netConnection.removeEventListener(IOErrorEvent.IO_ERROR, 
+			_netConnection.removeEventListener(IOErrorEvent.IO_ERROR,
 				netConnection_ioError);
-			m_netConnection.removeEventListener(NetStatusEvent.NET_STATUS, 
+			_netConnection.removeEventListener(NetStatusEvent.NET_STATUS,
 				netConnection_netStatus);
-			m_netConnection = null;
+			_netConnection = null;
 		}
 		
 		
@@ -144,15 +144,15 @@ package reprise.external
 		//*****************************************************************************************
 		protected function netConnection_result(data:Object):void
 		{
-			if (m_isCancelled) return;
-			m_content = data;
+			if (_isCancelled) return;
+			_content = data;
 			onData(true);
 		}
 		
 		protected function netConnection_status(data:Object):void
 		{
-			if (m_isCancelled) return;
-			m_content = data;
+			if (_isCancelled) return;
+			_content = data;
 			onData(true);
 		}
 		

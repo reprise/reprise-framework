@@ -23,11 +23,11 @@ package reprise.controls.html
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_imageLoader:BitmapResource;
-		protected var m_loaded : Boolean;
+		protected var _imageLoader:BitmapResource;
+		protected var _loaded : Boolean;
 		
-		protected var m_priority : int = 0;
-		private var m_cacheBitmap : Boolean = true;
+		protected var _priority : int = 0;
+		private var _cacheBitmap : Boolean = true;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -42,17 +42,17 @@ package reprise.controls.html
 				return;
 			}
 			src = document.resolveURL(src);
-			m_loaded = false;
-			if (m_imageLoader)
+			_loaded = false;
+			if (_imageLoader)
 			{
-				m_imageLoader.cancel();
+				_imageLoader.cancel();
 			}
-			m_imageLoader = new BitmapResource();
-			m_imageLoader.priority = m_priority;
-			m_imageLoader.setCacheBitmap(m_cacheBitmap);
-			m_imageLoader.setURL(src);
-			m_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);
-			m_imageLoader.execute();
+			_imageLoader = new BitmapResource();
+			_imageLoader.priority = _priority;
+			_imageLoader.setCacheBitmap(_cacheBitmap);
+			_imageLoader.setURL(src);
+			_imageLoader.addEventListener(Event.COMPLETE, imageLoaded);
+			_imageLoader.execute();
 		}
 		
 		/**
@@ -71,34 +71,34 @@ package reprise.controls.html
 		
 		public function setCacheBitmap(cacheBitmap : Boolean) : void
 		{
-			m_cacheBitmap = cacheBitmap;
+			_cacheBitmap = cacheBitmap;
 		}
 		public function cacheBitmap() : Boolean
 		{
-			return m_cacheBitmap;
+			return _cacheBitmap;
 		}
 		
 		public function setPriority(value : int) : void
 		{
-			m_priority = value;
-			if (m_imageLoader)
+			_priority = value;
+			if (_imageLoader)
 			{
-				m_imageLoader.priority = value;
+				_imageLoader.priority = value;
 			}
 		}
 		
 		public function loader() : IResource
 		{
-			return m_imageLoader;
+			return _imageLoader;
 		}
 
 		override public function remove(...args : *) : void
 		{
-			if (m_imageLoader)
+			if (_imageLoader)
 			{
-				m_imageLoader.cancel();
-				m_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
-				m_imageLoader = null;
+				_imageLoader.cancel();
+				_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
+				_imageLoader = null;
 			}
 			super.remove(args);
 		}
@@ -112,16 +112,16 @@ package reprise.controls.html
 				dispatchEvent(new DisplayEvent(DisplayEvent.LOAD_FAIL));
 				return;
 			}
-			m_loaded = true;
-			setBitmapData(BitmapData(m_imageLoader.content()));
-			m_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
-			m_imageLoader = null;
+			_loaded = true;
+			setBitmapData(BitmapData(_imageLoader.content()));
+			_imageLoader.removeEventListener(Event.COMPLETE, imageLoaded);
+			_imageLoader = null;
 			dispatchEvent(new DisplayEvent(DisplayEvent.LOAD_COMPLETE));
 		}
 
 		override protected function applyInFlowChildPositions() : void
 		{
-			if (m_loaded)
+			if (_loaded)
 			{
 				super.applyInFlowChildPositions();
 			}

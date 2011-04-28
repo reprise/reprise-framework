@@ -15,25 +15,25 @@ package reprise.css
 	
 	internal class CSSDeclarationList
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_items : Array;
-		protected var m_declarationIndex : int = 0;
-		protected var m_declarationCache : Array;
-		protected var m_selectorHeadParts : Object = {};
-		protected var m_starSelectors : Array = [];
+		protected var _items : Array;
+		protected var _declarationIndex : int = 0;
+		protected var _declarationCache : Array;
+		protected var _selectorHeadParts : Object = {};
+		protected var _starSelectors : Array = [];
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclarationList()
 		{
-			m_items = [];
-			m_declarationCache = [];
+			_items = [];
+			_declarationCache = [];
 		}
 		
 		reprise function addDeclaration(
 			declaration : CSSDeclaration, selector : String) : void
 		{
 			var item : CSSDeclarationListItem = 
-				new CSSDeclarationListItem(selector, declaration, m_declarationIndex++);
+				new CSSDeclarationListItem(selector, declaration, _declarationIndex++);
 			var selectorHead : String = selector.split(' ').pop().
 				split('#').join('@#').split('.').join('@.').split(':').join('@:');
 			var parts : Array = selectorHead.split('@');
@@ -45,26 +45,26 @@ package reprise.css
 				}
 				if (part == '*')
 				{
-					m_starSelectors.push(item);
+					_starSelectors.push(item);
 					continue;
 				}
 				if ('.:#'.indexOf(part.charAt(0)) == -1)
 				{
 					part = part.toLowerCase();
 				}
-				if (!m_selectorHeadParts[part])
+				if (!_selectorHeadParts[part])
 				{
-					m_selectorHeadParts[part] = [];
+					_selectorHeadParts[part] = [];
 				}
-				m_selectorHeadParts[part].push(item);
+				_selectorHeadParts[part].push(item);
 			}
-			m_items.push(item);
+			_items.push(item);
 		}
 		
 		reprise function getStyleForSelectorsPath(sp:String) : CSSDeclaration
 		{
 			// prefer cached results
-			var decl : CSSDeclaration = m_declarationCache[ sp ];
+			var decl : CSSDeclaration = _declarationCache[ sp ];
 			if (decl)
 			{
 				return decl;
@@ -78,7 +78,7 @@ package reprise.css
 			
 			for (var i : int = endParts.length; i--;)
 			{
-				var items : Array = m_selectorHeadParts[endParts[i]];
+				var items : Array = _selectorHeadParts[endParts[i]];
 				if (!items)
 				{
 					continue;
@@ -96,9 +96,9 @@ package reprise.css
 					}
 				}
 			}
-			for (j = m_starSelectors.length; j--;)
+			for (j = _starSelectors.length; j--;)
 			{
-				item = m_starSelectors[j];
+				item = _starSelectors[j];
 				if (item && !checks[item])
 				{
 					checks[item] = true;
@@ -114,10 +114,10 @@ package reprise.css
 			i = matches.length;
 			var matchesHash : String = matches.toString();
 			
-			if (m_declarationCache[matchesHash])
+			if (_declarationCache[matchesHash])
 			{
-				decl = m_declarationCache[matchesHash];
-				m_declarationCache[sp] = decl;
+				decl = _declarationCache[matchesHash];
+				_declarationCache[sp] = decl;
 				return CSSDeclaration(decl);
 			}
 			if (i == 1)
@@ -133,8 +133,8 @@ package reprise.css
 			}
 			
 			// cache result
-			m_declarationCache[sp] = decl;
-			m_declarationCache[matchesHash] = decl;
+			_declarationCache[sp] = decl;
+			_declarationCache[matchesHash] = decl;
 			
 			return decl;
 		}
@@ -144,7 +144,7 @@ package reprise.css
 //		{
 //			// prefer cached results
 //			var cachedResult : CSSDeclaration = 
-//				CSSDeclaration(m_declarationCache[element.selectorPath]);
+//				CSSDeclaration(_declarationCache[element.selectorPath]);
 //			if (cachedResult)
 //			{
 //				return cachedResult;
@@ -153,13 +153,13 @@ package reprise.css
 //			var declaration : CSSDeclaration = new CSSDeclaration();
 //			
 //			var path : String = element.selectorPath;
-//			var i : int = m_items.length;
+//			var i : int = _items.length;
 //			var item : CSSDeclarationListItem;
 //			var matches : Array = [];
 //			
 //			while (i--)
 //			{
-//				item = m_items[i];
+//				item = _items[i];
 //				if (item.matchesElement(element))
 //				{
 //					matches.push(item);
@@ -177,7 +177,7 @@ package reprise.css
 //			}
 //			
 //			// cache result
-//			m_declarationCache[element.selectorPath] = declaration;
+//			_declarationCache[element.selectorPath] = declaration;
 //			
 //			return declaration;
 //		}

@@ -21,7 +21,7 @@ package reprise.ui.layoutmanagers
 	
 	public class CSSBoxModelLayoutManager implements ILayoutManager
 	{//----------------------       Private / Protected Properties       ----------------------//
-		private var m_displayStack : Array;
+		private var _displayStack : Array;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -39,7 +39,7 @@ package reprise.ui.layoutmanagers
 			element.style.collapsedMarginTop = element.style.marginTop;
 			element.style.collapsedMarginBottom = element.style.marginBottom;
 			
-			m_displayStack = [];
+			_displayStack = [];
 			var elementStyle : ComputedStyles = element.style;
 			
 			var widestChildWidth:int = 0;
@@ -227,7 +227,7 @@ package reprise.ui.layoutmanagers
 					zIndex : childStyle.zIndex || 0
 				};
 				depthStackEntry.zIndex > 0 && depthStackEntry.zIndex++;
-				m_displayStack.push(depthStackEntry);
+				_displayStack.push(depthStackEntry);
 			}
 			if (collapsibleMargin && !elementStyle.borderBottomWidth && 
 				!elementStyle.paddingBottom && element.positionInFlow)
@@ -325,22 +325,22 @@ package reprise.ui.layoutmanagers
 		public function applyDepthSorting(
 			lowerContainer : DisplayObjectContainer, upperContainer : DisplayObjectContainer) : void
 		{
-			if (!m_displayStack || !m_displayStack.length)
+			if (!_displayStack || !_displayStack.length)
 			{
 				return;
 			}
 			
 			//sort children by zIndex and declaration index
-			m_displayStack.sortOn(['zIndex', 'index'], Array.NUMERIC);
+			_displayStack.sortOn(['zIndex', 'index'], Array.NUMERIC);
 			var lowerIndex : int = 0;
 			var upperIndex : int = 0;
-			for (var i : int = 0; i < m_displayStack.length; i++)
+			for (var i : int = 0; i < _displayStack.length; i++)
 			{
-				var element : DisplayObject = m_displayStack[i].element;
+				var element : DisplayObject = _displayStack[i].element;
 				element.parent && element.parent.setChildIndex(element, 
 					element.parent == lowerContainer ? lowerIndex++ : upperIndex++);
 			}
-			m_displayStack = null;
+			_displayStack = null;
 		}
 		
 		

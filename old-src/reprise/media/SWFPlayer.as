@@ -22,9 +22,9 @@ package reprise.media
 	public class SWFPlayer extends AbstractPlayer
 	{
 		
-		protected var m_loader:Loader;
-		protected var m_host:DisplayObjectContainer;
-		protected var m_soundTransform:SoundTransform;
+		protected var _loader:Loader;
+		protected var _host:DisplayObjectContainer;
+		protected var _soundTransform:SoundTransform;
 		
 		
 		
@@ -32,41 +32,41 @@ package reprise.media
 		public function SWFPlayer(resource:IResource, host:DisplayObjectContainer)
 		{
 			super();
-			m_host = host;
+			_host = host;
 			setResource(resource);
 		}
 		
 		public override function setResource(resource:IResource):void
 		{
 			super.setResource(resource);
-			m_loader = new Loader();
-			m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.contentLoaderInfo.addEventListener(
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
+			_loader.contentLoaderInfo.addEventListener(
 				HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
-			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			m_soundTransform = new SoundTransform(1.0, 0.0);
-			m_host.addChild(m_loader);
+			_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
+			_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
+			_soundTransform = new SoundTransform(1.0, 0.0);
+			_host.addChild(_loader);
 		}
 		
 		public override function bytesLoaded():Number
 		{
-			return m_loader.contentLoaderInfo.bytesLoaded;
+			return _loader.contentLoaderInfo.bytesLoaded;
 		}
 
 		public override function bytesTotal():Number
 		{
-			return m_loader.contentLoaderInfo.bytesTotal;
+			return _loader.contentLoaderInfo.bytesTotal;
 		}
 		
 		public override function position():Number
 		{
-			return m_loader.content ? frameToTime(MovieClip(m_loader.content).currentFrame) : 0;
+			return _loader.content ? frameToTime(MovieClip(_loader.content).currentFrame) : 0;
 		}
 		
 		public override function duration():Number
 		{
-			return m_loader.content ? frameToTime(MovieClip(m_loader.content).totalFrames) : 0;
+			return _loader.content ? frameToTime(MovieClip(_loader.content).totalFrames) : 0;
 		}
 		
 		
@@ -74,7 +74,7 @@ package reprise.media
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doStop():void 
 		{
-			MovieClip(m_loader.content).stop();
+			MovieClip(_loader.content).stop();
 		}
 		
 		protected override function doPause():void 
@@ -84,11 +84,11 @@ package reprise.media
 		
 		protected override function doPlay():void 
 		{
-			if (!m_loader.content)
+			if (!_loader.content)
 			{
 				return;
 			}
-			MovieClip(m_loader.content).gotoAndPlay(timeToFrame(position()));
+			MovieClip(_loader.content).gotoAndPlay(timeToFrame(position()));
 		}
 		
 		protected override function doSeek(offset:Number):void 
@@ -96,48 +96,48 @@ package reprise.media
 			offset = timeToFrame(offset);
 			if (!isPlaying())
 			{
-				MovieClip(m_loader.content).gotoAndStop(offset);
+				MovieClip(_loader.content).gotoAndStop(offset);
 			}
 			else
 			{
-				MovieClip(m_loader.content).gotoAndPlay(offset);
+				MovieClip(_loader.content).gotoAndPlay(offset);
 			}
 		}
 		
 		protected override function doSetVolume(vol:Number):void 
 		{
-			m_soundTransform.volume = vol;
-			if (m_loader.content)
+			_soundTransform.volume = vol;
+			if (_loader.content)
 			{
-				MovieClip(m_loader.content).soundTransform = m_soundTransform;
+				MovieClip(_loader.content).soundTransform = _soundTransform;
 			}
 		}
 		
 		protected override function doLoad():void 
 		{
-			m_loader.load(new URLRequest(m_source.url()));
+			_loader.load(new URLRequest(_source.url()));
 		}
 		
 		protected override function doUnload():void 
 		{
-			m_loader.unload();
+			_loader.unload();
 		}
 		
 		protected override function setState(state:uint):void
 		{
 			super.setState(state);
-			if (!m_loader.content)
+			if (!_loader.content)
 			{
 				return;
 			}
 			if (state != AbstractPlayer.STATE_PLAYING)
 			{
-				MovieClip(m_loader.content).removeEventListener(Event.ENTER_FRAME, 
+				MovieClip(_loader.content).removeEventListener(Event.ENTER_FRAME,
 					content_enterFrame);
 			}
 			else
 			{
-				MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, 
+				MovieClip(_loader.content).addEventListener(Event.ENTER_FRAME,
 					content_enterFrame);
 			}
 		}
@@ -154,7 +154,7 @@ package reprise.media
 		
 		protected function framerate():uint
 		{
-			return m_loader.content ? m_loader.contentLoaderInfo.frameRate : 25;
+			return _loader.content ? _loader.contentLoaderInfo.frameRate : 25;
 		}
 		
 		
@@ -174,23 +174,23 @@ package reprise.media
 		
 		protected function loader_init(e:Event):void
 		{
-			MovieClip(m_loader.content).stop();
-			MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, content_enterFrame);
+			MovieClip(_loader.content).stop();
+			MovieClip(_loader.content).addEventListener(Event.ENTER_FRAME, content_enterFrame);
 			if (state() == AbstractPlayer.STATE_PLAYING)
 			{
-				MovieClip(m_loader.content).addEventListener(Event.ENTER_FRAME, 
+				MovieClip(_loader.content).addEventListener(Event.ENTER_FRAME,
 					content_enterFrame);
 			}
 		}
 		
 		protected function loader_error(e:IOErrorEvent):void
 		{
-			log('w Something went wrong while loading file ' + m_source.url());
+			log('w Something went wrong while loading file ' + _source.url());
 		}
 		
 		protected function content_enterFrame(e:Event):void
 		{
-			if (MovieClip(m_loader.content).currentFrame == MovieClip(m_loader.content).totalFrames)
+			if (MovieClip(_loader.content).currentFrame == MovieClip(_loader.content).totalFrames)
 			{
 				mediaReachedEnd();
 			}

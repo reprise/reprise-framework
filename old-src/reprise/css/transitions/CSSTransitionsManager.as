@@ -28,44 +28,44 @@ package reprise.css.transitions
 		protected static const DEFAULT_EASING : Array = [Linear.easeNone];
 		protected static var g_transitionShortcuts : Object = {};
 		
-		protected var m_transitionProperties : Array;
-		protected var m_transitionDurations : Array;
-		protected var m_transitionDelays : Array;
-		protected var m_transitionEasings : Array;
-		protected var m_defaultValues : Array;
+		protected var _transitionProperties : Array;
+		protected var _transitionDurations : Array;
+		protected var _transitionDelays : Array;
+		protected var _transitionEasings : Array;
+		protected var _defaultValues : Array;
 		
-		protected var m_activeTransitions : Object;
-		protected var m_adjustedStartTimes : Object;
-		protected var m_target : EventDispatcher;
-		protected var m_frameDuration : int;
+		protected var _activeTransitions : Object;
+		protected var _adjustedStartTimes : Object;
+		protected var _target : EventDispatcher;
+		protected var _frameDuration : int;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSTransitionsManager(target : EventDispatcher)
 		{
-			m_target = target;
-			m_adjustedStartTimes = {};
+			_target = target;
+			_adjustedStartTimes = {};
 		}
 		
 		public function isActive() : Boolean
 		{
-			return m_activeTransitions != null;
+			return _activeTransitions != null;
 		}
 		
 		public function hasTransitionForStyle(style : String) : Boolean
 		{
-			return m_transitionProperties && m_transitionProperties.indexOf(style) != -1;
+			return _transitionProperties && _transitionProperties.indexOf(style) != -1;
 		}
 		
 		public function hasActiveTransitionForStyle(style : String) : Boolean
 		{
-			return m_activeTransitions && m_activeTransitions[style] != null;
+			return _activeTransitions && _activeTransitions[style] != null;
 		}
 		
 		public function registerAdjustedStartTimeForProperty(
 			startTime : int, property : String) : void
 		{
-			m_adjustedStartTimes[property] = startTime;
+			_adjustedStartTimes[property] = startTime;
 		}
 
 		public function processTransitions(oldStyles : CSSDeclaration, newStyles : CSSDeclaration, 
@@ -80,58 +80,58 @@ package reprise.css.transitions
 			if (newStyles.hasStyle('transitionFrameDropping') && 
 				newStyles.getStyle('transitionFrameDropping').specifiedValue() == 'prevent')
 			{
-				m_frameDuration = 1000 / frameRate;
+				_frameDuration = 1000 / frameRate;
 			}
 			else
 			{
-				m_frameDuration = 10000;
+				_frameDuration = 10000;
 			}
 			if (newStyles && newStyles.hasStyle('RepriseTransitionProperty'))
 			{
-				m_transitionProperties = 
+				_transitionProperties =
 					newStyles.getStyle('RepriseTransitionProperty').specifiedValue();
-				m_transitionDurations = newStyles.hasStyle('RepriseTransitionDuration') 
+				_transitionDurations = newStyles.hasStyle('RepriseTransitionDuration')
 					? newStyles.getStyle('RepriseTransitionDuration').specifiedValue() 
 					: DEFAULT_DURATION;
-				m_transitionDelays = newStyles.hasStyle('RepriseTransitionDelay') 
+				_transitionDelays = newStyles.hasStyle('RepriseTransitionDelay')
 					? newStyles.getStyle('RepriseTransitionDelay').specifiedValue() 
 					: DEFAULT_DELAY;
-				m_transitionEasings = 
+				_transitionEasings =
 					newStyles.hasStyle('RepriseTransitionTimingFunction') 
 					? newStyles.getStyle('RepriseTransitionTimingFunction').specifiedValue() 
 					: DEFAULT_EASING;
-				m_defaultValues = newStyles.hasStyle('RepriseTransitionDefaultValue') && 
+				_defaultValues = newStyles.hasStyle('RepriseTransitionDefaultValue') &&
 					newStyles.hasStyle('RepriseTransitionDefaultValue') 
 					? newStyles.getStyle('RepriseTransitionDefaultValue').specifiedValue() 
 					: [];
 				
 				//remove any transitions that aren't supposed to be active anymore
-				if (m_activeTransitions)
+				if (_activeTransitions)
 				{
-					for (transitionPropName in m_activeTransitions)
+					for (transitionPropName in _activeTransitions)
 					{
 						//TODO: check if the shortcut check can also use g_transitionShortcuts here
-						if (m_transitionProperties.indexOf(transitionPropName) == -1)
+						if (_transitionProperties.indexOf(transitionPropName) == -1)
 						{
-							transition = m_activeTransitions[transitionPropName];
+							transition = _activeTransitions[transitionPropName];
 							var shortcut : String = transition.shortcut;
-							if (!shortcut || m_transitionProperties.indexOf(shortcut) == -1)
+							if (!shortcut || _transitionProperties.indexOf(shortcut) == -1)
 							{
-								delete m_activeTransitions[transitionPropName];
+								delete _activeTransitions[transitionPropName];
 								var cancelEvent : TransitionEvent = new TransitionEvent(
 									TransitionEvent.TRANSITION_CANCEL);
 								cancelEvent.propertyName = transitionPropName;
 								cancelEvent.elapsedTime = frameTime - 
 									transition.startTime - 
 									transition.delay.specifiedValue();
-								m_target.dispatchEvent(cancelEvent);
+								_target.dispatchEvent(cancelEvent);
 							}
 						}
 					}
 				}
 				else
 				{
-					m_activeTransitions = {};
+					_activeTransitions = {};
 				}
 				
 				function processProperty(transitionPropName : String, 
@@ -164,7 +164,7 @@ package reprise.css.transitions
 					{
 						return;
 					}
-					transition = m_activeTransitions[transitionPropName];
+					transition = _activeTransitions[transitionPropName];
 					if (!transition)
 					{
 						transition = new CSSPropertyTransition(
@@ -173,40 +173,40 @@ package reprise.css.transitions
 						transition.delay = transitionDelay;
 						transition.easing = transitionEasing;
 						transition.startTime = 
-							m_adjustedStartTimes[transitionPropName] || frameTime;
+							_adjustedStartTimes[transitionPropName] || frameTime;
 						transition.startValue = oldValue;
 						transition.endValue = targetValue;
-						m_activeTransitions[transitionPropName] = transition;
+						_activeTransitions[transitionPropName] = transition;
 					}
 					else if (transition.currentValue.specifiedValue() == 
 						targetValue.specifiedValue())
 					{
-						delete m_activeTransitions[transitionPropName];
+						delete _activeTransitions[transitionPropName];
 					}
 					else if (transition.endValue != targetValue)
 					{
 						transition.easing = transitionEasing;
 						transition.updateValues(targetValue, transitionDuration, transitionDelay, 
-							m_adjustedStartTimes[transitionPropName] || frameTime, 
-							m_frameDuration, this);
+							_adjustedStartTimes[transitionPropName] || frameTime,
+							_frameDuration, this);
 					}
 				}
 				
 				//add all new properties and update already active ones
-				for (var i : int = 0; i < m_transitionProperties.length; i++)
+				for (var i : int = 0; i < _transitionProperties.length; i++)
 				{
-					transitionPropName = m_transitionProperties[i];
-					transitionDuration = m_transitionDurations[i] || 
+					transitionPropName = _transitionProperties[i];
+					transitionDuration = _transitionDurations[i] ||
 						transitionDuration || DEFAULT_DURATION[0];
-					transitionDelay = m_transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
-					transitionEasing = m_transitionEasings[i] || 
+					transitionDelay = _transitionDelays[i] || transitionDelay || DEFAULT_DELAY[0];
+					transitionEasing = _transitionEasings[i] ||
 						transitionEasing || DEFAULT_EASING[0];
 					var defaultValue : * = null;
-					if (m_defaultValues[i] && (m_defaultValues[i] != 'none' || 
+					if (_defaultValues[i] && (_defaultValues[i] != 'none' ||
 						transitionPropName == 'display'))
 					{
 						defaultValue = CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, m_defaultValues[i], null);
+							transitionPropName, _defaultValues[i], null);
 					}
 					if (g_transitionShortcuts[transitionPropName])
 					{
@@ -239,37 +239,37 @@ package reprise.css.transitions
 				}
 			}
 			
-			if (!m_activeTransitions)
+			if (!_activeTransitions)
 			{
 				return newStyles;
 			}
 			
 			var styles : CSSDeclaration = newStyles.clone();
 			var activeTransitionsCount : int = 0;
-			for (transitionPropName in m_activeTransitions)
+			for (transitionPropName in _activeTransitions)
 			{
 				changeList.addChange(transitionPropName);
-				transition = m_activeTransitions[transitionPropName];
+				transition = _activeTransitions[transitionPropName];
 				var previousRatio : Number = transition.currentRatio;
-				transition.setValueForTimeInContext(frameTime, m_frameDuration, this);
+				transition.setValueForTimeInContext(frameTime, _frameDuration, this);
 				if (previousRatio == 0 && transition.currentRatio != 0)
 				{
 					var startEvent : TransitionEvent = 
 						new TransitionEvent(TransitionEvent.TRANSITION_START);
 					startEvent.propertyName = transitionPropName;
-					m_target.dispatchEvent(startEvent);
+					_target.dispatchEvent(startEvent);
 				}
 				styles.setPropertyForKey(transition.currentValue, transitionPropName);
 				if (transition.hasCompleted)
 				{
-					delete m_activeTransitions[transitionPropName];
+					delete _activeTransitions[transitionPropName];
 					var completeEvent : TransitionEvent = 
 						new TransitionEvent(TransitionEvent.TRANSITION_COMPLETE);
 					completeEvent.propertyName = transitionPropName;
 					completeEvent.elapsedTime = frameTime - 
 						transition.startTime - 
 						(transition.delay ? transition.delay.specifiedValue() : 0);
-					m_target.dispatchEvent(completeEvent);
+					_target.dispatchEvent(completeEvent);
 				}
 				else
 				{
@@ -279,13 +279,13 @@ package reprise.css.transitions
 			
 			if (!activeTransitionsCount)
 			{
-				m_activeTransitions = null;
+				_activeTransitions = null;
 				var allCompleteEvent : TransitionEvent = 
 					new TransitionEvent(TransitionEvent.ALL_TRANSITIONS_COMPLETE);
-				m_target.dispatchEvent(allCompleteEvent);
+				_target.dispatchEvent(allCompleteEvent);
 			}
 			
-			m_adjustedStartTimes = {};
+			_adjustedStartTimes = {};
 			
 			return styles;
 		}

@@ -28,7 +28,7 @@ package reprise.events
 		 */
 		public function get propertyName() : String
 		{
-			return m_propertyName;
+			return _propertyName;
 		}
 		/**
 		 * Returns the elapsed amount of time, in seconds.
@@ -38,20 +38,20 @@ package reprise.events
 		 */
 		public function get elapsedTime() : int
 		{
-			return m_elapsedTime;
+			return _elapsedTime;
 		}
 		public function set propertyName(name : String) : void
 		{
-			m_propertyName = name;
+			_propertyName = name;
 		}
 		public function set elapsedTime(time : int) : void
 		{
-			m_elapsedTime = time;
+			_elapsedTime = time;
 		}
 
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_propertyName : String;
-		protected var m_elapsedTime : int;
+		protected var _propertyName : String;
+		protected var _elapsedTime : int;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -66,11 +66,11 @@ package reprise.events
 			if (type == TRANSITION_START || 
 				type == TRANSITION_COMPLETE || type == TRANSITION_CANCEL)
 			{
-				str += ', propertyName = ' + m_propertyName;
+				str += ', propertyName = ' + _propertyName;
 			}
 			if (type != TRANSITION_START)
 			{
-				str += ', elapsedTime = ' + m_elapsedTime;
+				str += ', elapsedTime = ' + _elapsedTime;
 			}
 			return str;
 		}

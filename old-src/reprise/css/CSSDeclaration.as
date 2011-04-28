@@ -60,18 +60,18 @@ package reprise.css
 		protected static const g_defaultPropertiesRegistered : Boolean = 
 			registerDefaultProperties();
 		
-		protected var m_properties : Object;
-		protected var m_hasDefaultValues : Boolean;
+		protected var _properties : Object;
+		protected var _hasDefaultValues : Boolean;
 		
 		// this property only exist to reduce the display of errors, 
 		// if there are missing parsers
-		protected static var m_thrownErrors : Object	= {};
+		protected static var _thrownErrors : Object	= {};
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSDeclaration()
 		{
-			m_properties = {};
+			_properties = {};
 		}
 		
 		public static function CSSDeclarationFromObject(obj:Object) : CSSDeclaration
@@ -124,11 +124,11 @@ package reprise.css
 			if (parser == null)
 			{
 				parser = DefaultParser.parseAnything;
-				if (!m_thrownErrors[key])
+				if (!_thrownErrors[key])
 				{
 					log('n No parser registered for css property "' + key + 
 						'". Parsing property via DefaultParser (probably as string).');
-					m_thrownErrors[key] = true;
+					_thrownErrors[key] = true;
 				}
 			}		
 			return parser;
@@ -139,7 +139,7 @@ package reprise.css
 		{
 			if (!value)
 			{
-				m_properties[key] && delete m_properties[key];
+				_properties[key] && delete _properties[key];
 				return;
 			}
 			setValueForKeyDefinedInFile(value, key, '', weak);
@@ -147,39 +147,39 @@ package reprise.css
 		// Alias for getPropertyForKey
 		public function getStyle(key : String) : CSSProperty
 		{
-			return m_properties[key];
+			return _properties[key];
 		}
 		public function hasStyle(key : String) : Boolean
 		{
-			return m_properties[key] != null;
+			return _properties[key] != null;
 		}
 		
 		public function setPropertyForKey(prop : CSSProperty, key : String) : void
 		{
-			m_properties[key] = prop;
+			_properties[key] = prop;
 		}
 		
 		public function properties() : Object
 		{
-			return m_properties;
+			return _properties;
 		}
 		
 		public function getValueForKey(key : String) : CSSProperty
 		{
-			return m_properties[key];
+			return _properties[key];
 		}
 	
 		// the cssdeclaration defined by argument will by default overwrite our properties
 		public function mergeCSSDeclaration(otherDeclaration: CSSDeclaration, 
 			inheritableStylesOnly:Boolean = false, weakly : Boolean = false) : void
 		{
-			var props : Object = otherDeclaration.m_properties;
+			var props : Object = otherDeclaration._properties;
 			var otherProp : CSSProperty;
 			var ourProp : CSSProperty;
 			
 			for (var key : String in props)
 			{
-				ourProp = m_properties[key];
+				ourProp = _properties[key];
 				
 				// well, inheritable styles only is the deal
 				if (inheritableStylesOnly && !INHERITABLE_PROPERTIES[key] && 
@@ -203,7 +203,7 @@ package reprise.css
 					continue;
 				}
 				
-				m_properties[key] = otherProp;
+				_properties[key] = otherProp;
 			}
 		}
 		
@@ -214,7 +214,7 @@ package reprise.css
 		
 		public function compare(otherDeclaration:CSSDeclaration) : CSSPropertiesChangeList
 		{
-			var ownProperties:Object = m_properties;
+			var ownProperties:Object = _properties;
 			var changes : CSSPropertiesChangeList = new CSSPropertiesChangeList();
 			var key : String;
 			if (!otherDeclaration)
@@ -225,7 +225,7 @@ package reprise.css
 				}
 				return changes;
 			}
-			var otherProperties:Object = otherDeclaration.m_properties;
+			var otherProperties:Object = otherDeclaration._properties;
 			var comparedProperties : Object = {};
 			for (key in ownProperties)
 			{
@@ -255,9 +255,9 @@ package reprise.css
 		{
 			var decl : CSSDeclaration = new CSSDeclaration();
 			
-			for (var key:String in m_properties)
+			for (var key:String in _properties)
 			{
-				decl.m_properties[key] = m_properties[key];
+				decl._properties[key] = _properties[key];
 			}
 				
 			return decl;
@@ -266,9 +266,9 @@ package reprise.css
 		public function toComputedStyles() : ComputedStyles
 		{
 			var obj : ComputedStyles = new ComputedStyles();
-			for (var key:String in m_properties)
+			for (var key:String in _properties)
 			{
-				obj[key] = CSSProperty(m_properties[key]).valueOf();
+				obj[key] = CSSProperty(_properties[key]).valueOf();
 			}
 			
 			return obj;
@@ -277,11 +277,11 @@ package reprise.css
 		public function toTextFormatObject() : Object
 		{
 			var tfObject : Object = {};
-			for (var key:String in m_properties)
+			for (var key:String in _properties)
 			{
 				if (TEXT_PROPERTIES[key])
 				{
-					tfObject[key] = CSSProperty(m_properties[key]).valueOf();
+					tfObject[key] = CSSProperty(_properties[key]).valueOf();
 				}
 			}
 			tfObject.color &&= AdvancedColor(tfObject.color).toString().substr(0, 7);
@@ -292,11 +292,11 @@ package reprise.css
 		{
 			//build hash key
 			var hash : String = '';
-			for (var key:String in m_properties)
+			for (var key:String in _properties)
 			{
 				if (TEXT_PROPERTIES[key])
 				{
-					hash += key + "_" + CSSProperty(m_properties[key]).valueOf() + ",";
+					hash += key + "_" + CSSProperty(_properties[key]).valueOf() + ",";
 				}
 			}
 			hash += applyToRootNode;
@@ -323,9 +323,9 @@ package reprise.css
 		{
 			var str:String = "CSSDeclaration\n{\n";
 			var props : Array = [];
-			for (var key:String in m_properties)
+			for (var key:String in _properties)
 			{
-				var property : CSSProperty = CSSProperty(m_properties[key]);
+				var property : CSSProperty = CSSProperty(_properties[key]);
 				props.push("\t" + key + " : " + property.specifiedValue() + 
 					(property.unit() || '') + "; //" + (property.cssFile() || '[no file]'));
 			}
@@ -345,7 +345,7 @@ package reprise.css
 			
 			if (result is CSSProperty)
 			{
-				m_properties[key] = result;
+				_properties[key] = result;
 				return;
 			}
 			if (result is CSSParsingResult)
@@ -353,7 +353,7 @@ package reprise.css
 				var props : Object = result.properties();
 				for (key in props)
 				{
-					m_properties[key] = props[key];
+					_properties[key] = props[key];
 				}
 				return;
 			}
@@ -365,7 +365,7 @@ package reprise.css
 			msg += 'Parsing property via DefaultParser (probably as String).';
 			
 			result = DefaultParser.parseAnything(val, file);
-			m_properties[key] = result;
+			_properties[key] = result;
 			
 			log(msg);
 		}

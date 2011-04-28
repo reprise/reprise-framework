@@ -14,24 +14,24 @@ package reprise.css.math
 		extends AbstractCSSCalculation 
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var m_value : Number;
+		private var _value : Number;
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSSCalculationPercentage(valueString : String)
 		{
 			//TODO: check if we have to use parseFloat or parseInt
-			m_value = parseFloat(valueString) / 100;
+			_value = parseFloat(valueString) / 100;
 		}
 		
 		public override function resolve(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
-			return reference * m_value;
+			return reference * _value;
 		}
 		
 		public function toString() : String
 		{
-			return "relative value: " + (m_value * 100) + "%";
+			return "relative value: " + (_value * 100) + "%";
 		}
 	}
 }

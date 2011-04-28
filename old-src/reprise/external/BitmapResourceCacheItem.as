@@ -15,165 +15,165 @@ package reprise.external {
 	public class BitmapResourceCacheItem extends EventDispatcher
 	{
 	//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_isLoading : Boolean;
-		protected var m_loader : ImageResource;
-		protected var m_url : String;
-		protected var m_cacheBitmap : Boolean = false;
+		protected var _isLoading : Boolean;
+		protected var _loader : ImageResource;
+		protected var _url : String;
+		protected var _cacheBitmap : Boolean = false;
 		
-		protected var m_isTemporary : Boolean = false;
-		protected var m_bitmapDataReference : BitmapData;
-		protected var m_httpStatus : HTTPStatus;
-		protected var m_bytesLoaded : int;
-		protected var m_bytesTotal : int;
-		protected var m_success : Boolean;
-		protected var m_targets : Array;
-		protected var m_loadFinished : Boolean = false;
+		protected var _isTemporary : Boolean = false;
+		protected var _bitmapDataReference : BitmapData;
+		protected var _httpStatus : HTTPStatus;
+		protected var _bytesLoaded : int;
+		protected var _bytesTotal : int;
+		protected var _success : Boolean;
+		protected var _targets : Array;
+		protected var _loadFinished : Boolean = false;
 			
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function BitmapResourceCacheItem(loader : ImageResource)
 		{
-			m_loader = loader;
-			m_loader.addEventListener(Event.COMPLETE, loader_complete, false, 0, true);
-			m_loader.addEventListener(ResourceEvent.PROGRESS, loader_progress, false, 0, true);
-			m_loader.addEventListener(Event.CANCEL, loader_cancel, false, 0, true);
+			_loader = loader;
+			_loader.addEventListener(Event.COMPLETE, loader_complete, false, 0, true);
+			_loader.addEventListener(ResourceEvent.PROGRESS, loader_progress, false, 0, true);
+			_loader.addEventListener(Event.CANCEL, loader_cancel, false, 0, true);
 		}
 		
 		public function loader() : ImageResource
 		{
-			return m_loader;
+			return _loader;
 		}
 		
 		public function url() : String
 		{
-			return m_loader.url();
+			return _loader.url();
 		}
 		
 		public function destroy() : void
 		{
-			m_bitmapDataReference.dispose();
-			m_loader = null;
-			m_targets = null;
+			_bitmapDataReference.dispose();
+			_loader = null;
+			_targets = null;
 		}
 		
 		public function addTarget(target : BitmapResource) : void
 		{
-			if (m_loadFinished)
+			if (_loadFinished)
 			{
 				applyDataToTarget(target);
 				return;
 			}
 			
-			if (m_targets == null)
+			if (_targets == null)
 			{
-				m_targets = [];
+				_targets = [];
 			}
-			m_targets.push(target);
-			m_loader.setRetryTimes(Math.max(m_loader.retryTimes(), target.retryTimes()));
-			m_loader.setTimeout(Math.max(m_loader.timeout(), target.timeout()));
-			m_loader.setForceReload(m_loader.forceReload() || target.forceReload());
+			_targets.push(target);
+			_loader.setRetryTimes(Math.max(_loader.retryTimes(), target.retryTimes()));
+			_loader.setTimeout(Math.max(_loader.timeout(), target.timeout()));
+			_loader.setForceReload(_loader.forceReload() || target.forceReload());
 			target.addEventListener(Event.CANCEL, target_cancel, false, 0, true);
 			
 			if (target.cacheBitmap() && !target.forceReload())
 			{
-				m_cacheBitmap = true;
+				_cacheBitmap = true;
 			}
 		}
 		
 		public function isTemporary() : Boolean
 		{
-			return m_isTemporary;
+			return _isTemporary;
 		}
 	
 		public function setIsTemporary(val:Boolean) : void
 		{
-			m_isTemporary = val;
+			_isTemporary = val;
 		}
 		
 		public function didFinishLoading() : Boolean
 		{
-			return m_loadFinished;
+			return _loadFinished;
 		}
 		
 		public function cacheBitmap() : Boolean
 		{
-			return m_cacheBitmap;
+			return _cacheBitmap;
 		}
 		
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function removeTarget(target:BitmapResource) : void
 		{
-			var index : int = m_targets.indexOf(target);
+			var index : int = _targets.indexOf(target);
 			if (index != -1)
 			{
-				m_targets.splice(index, 1);
+				_targets.splice(index, 1);
 			}
 	
-			if (m_targets.length == 0)
+			if (_targets.length == 0)
 			{
-				m_loader.cancel();
+				_loader.cancel();
 			}
 		}
 		
 		protected function applyDataToTarget(target : BitmapResource) : void
 		{
-			target.setBytesLoaded(m_bytesLoaded);
-			target.setBytesTotal(m_bytesTotal);
+			target.setBytesLoaded(_bytesLoaded);
+			target.setBytesTotal(_bytesTotal);
 			target.updateProgress();
 			
-			if (!m_success)
+			if (!_success)
 			{
-				target.setContent(null, m_httpStatus);
+				target.setContent(null, _httpStatus);
 				return;
 			}
 			
 			if (target.cloneBitmap())
 			{
-				target.setContent(m_bitmapDataReference.clone());
+				target.setContent(_bitmapDataReference.clone());
 			}
 			else		
 			{
-				target.setContent(m_bitmapDataReference, m_httpStatus);
+				target.setContent(_bitmapDataReference, _httpStatus);
 			}
 		}
 		
 		protected function loader_complete(e:ResourceEvent) : void
 		{
-			m_loadFinished = true;
+			_loadFinished = true;
 	
-			m_httpStatus = m_loader.httpStatus();
-			m_bytesLoaded = m_loader.bytesLoaded();
-			m_bytesTotal = m_loader.bytesTotal();
-			m_success = e.success && !m_loader.isCancelled();
+			_httpStatus = _loader.httpStatus();
+			_bytesLoaded = _loader.bytesLoaded();
+			_bytesTotal = _loader.bytesTotal();
+			_success = e.success && !_loader.isCancelled();
 			
-			if (m_success && m_loader.content().width && m_loader.content().height)
+			if (_success && _loader.content().width && _loader.content().height)
 			{
-				m_bitmapDataReference = new BitmapData(
-					m_loader.content().width, m_loader.content().height, true, 0);
-				m_bitmapDataReference.draw(m_loader.content());
+				_bitmapDataReference = new BitmapData(
+					_loader.content().width, _loader.content().height, true, 0);
+				_bitmapDataReference.draw(_loader.content());
 			}
 			
-			for each (var target : BitmapResource in m_targets)
+			for each (var target : BitmapResource in _targets)
 			{
 				applyDataToTarget(target);
 			}
-			m_targets = null;
+			_targets = null;
 			
 			dispatchEvent(e);
 		}
 		
 		protected function loader_progress(e:ResourceEvent) : void
 		{
-			if (!m_targets || !m_loader)
+			if (!_targets || !_loader)
 			{
 				return;
 			}
-			for each (var target : BitmapResource in m_targets)
+			for each (var target : BitmapResource in _targets)
 			{
-				target.setBytesLoaded(m_loader.bytesLoaded());
-				target.setBytesTotal(m_loader.bytesTotal());
+				target.setBytesLoaded(_loader.bytesLoaded());
+				target.setBytesTotal(_loader.bytesTotal());
 				target.updateProgress();
 			}
 		}

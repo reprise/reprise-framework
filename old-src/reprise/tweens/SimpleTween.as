@@ -23,40 +23,40 @@ package reprise.tweens
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const g_frameEventDispatcher : Shape = new Shape();
 		
-		protected var m_direction : int;
-		protected var m_startTime : int;
-		protected var m_currentTime:int;
-		protected var m_duration : int;
-		protected var m_delay : int;
-		protected var m_isPaused : Boolean = false;
+		protected var _direction : int;
+		protected var _startTime : int;
+		protected var _currentTime:int;
+		protected var _duration : int;
+		protected var _delay : int;
+		protected var _isPaused : Boolean = false;
 	
-		protected var m_tweenedProperties : Array;
-		protected var m_preventFrameDropping : Boolean;
-		protected var m_frameDuration : int;
-		protected var m_lastFrameTime : int;
-		protected var m_timeAdjust : int;
+		protected var _tweenedProperties : Array;
+		protected var _preventFrameDropping : Boolean;
+		protected var _frameDuration : int;
+		protected var _lastFrameTime : int;
+		protected var _timeAdjust : int;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function SimpleTween(
 			duration:int = 1, delay : uint = 0, normalizeToFrameRate : uint = 0)
 		{
-			m_duration = duration;
-			if (m_duration <= 0 || isNaN(m_duration))
+			_duration = duration;
+			if (_duration <= 0 || isNaN(_duration))
 			{
-				m_duration = 1;
+				_duration = 1;
 			}
 			
-			m_delay = delay;
+			_delay = delay;
 			if (normalizeToFrameRate != 0)
 			{
-				m_preventFrameDropping = true;
-				m_frameDuration = 1000 / normalizeToFrameRate;
+				_preventFrameDropping = true;
+				_frameDuration = 1000 / normalizeToFrameRate;
 			}
 			
-			m_currentTime = 0;
-			m_direction = DIRECTION_FORWARD;
-			m_tweenedProperties = [];
+			_currentTime = 0;
+			_direction = DIRECTION_FORWARD;
+			_tweenedProperties = [];
 		}
 		
 		/**
@@ -70,13 +70,13 @@ package reprise.tweens
 		{
 			if (scope is TweenedPropertyVO)
 			{
-				m_tweenedProperties.push(scope);
+				_tweenedProperties.push(scope);
 			}
 			else {
 				var propertyVO:TweenedPropertyVO = 
 					new TweenedPropertyVO(scope, property, startValue, endValue, 
 					tweenFunction, roundResults, propertyIsMethod, extraParams);
-				m_tweenedProperties.push(propertyVO);
+				_tweenedProperties.push(propertyVO);
 			}
 		}
 		/**
@@ -96,13 +96,13 @@ package reprise.tweens
 				var propertyVO:TweenedPropertyVO = 
 					new TweenedPropertyVO (scope, property, startValue, 
 					endValue, tweenFunction, roundResults, isMethod, extraParams);
-				m_tweenedProperties.push(propertyVO);
+				_tweenedProperties.push(propertyVO);
 			}
 		}
 		
 		public function addTweenPropertyVO(vo : TweenedPropertyVO) : void
 		{
-			m_tweenedProperties.push(vo);
+			_tweenedProperties.push(vo);
 		}
 		
 		
@@ -112,11 +112,11 @@ package reprise.tweens
 		public function removeTweenProperty (
 			tweenPropertyVO:TweenedPropertyVO) : void
 		{
-			for (var i : int = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < _tweenedProperties.length; i++)
 			{
-				if (TweenedPropertyVO (m_tweenedProperties[i]) == tweenPropertyVO)
+				if (TweenedPropertyVO (_tweenedProperties[i]) == tweenPropertyVO)
 				{
-					m_tweenedProperties.splice(i, 1);
+					_tweenedProperties.splice(i, 1);
 					return;
 				}
 			}
@@ -129,8 +129,8 @@ package reprise.tweens
 		 */
 		public function setDuration (duration:int) : void
 		{
-			m_currentTime = m_currentTime / m_duration * duration;
-			m_duration = duration;
+			_currentTime = _currentTime / _duration * duration;
+			_duration = duration;
 		}
 		
 		/**
@@ -138,7 +138,7 @@ package reprise.tweens
 		 */
 		public function getDuration () : int
 		{
-			return m_duration;
+			return _duration;
 		}
 		
 		/**
@@ -146,7 +146,7 @@ package reprise.tweens
 		 */
 		public function setTime (newTime:int) : void
 		{
-			m_currentTime = newTime;
+			_currentTime = newTime;
 		}
 		
 		/**
@@ -154,7 +154,7 @@ package reprise.tweens
 		 */
 		public function getTime() : int
 		{
-			return m_currentTime;
+			return _currentTime;
 		}
 		
 		/**
@@ -165,13 +165,13 @@ package reprise.tweens
 		 */
 		public function reverse() : void
 		{
-			m_currentTime = m_duration - m_currentTime;
-			m_direction = (m_direction == DIRECTION_FORWARD ? 
+			_currentTime = _duration - _currentTime;
+			_direction = (_direction == DIRECTION_FORWARD ?
 				DIRECTION_BACKWARD : DIRECTION_FORWARD);
 			
-			for (var i : int = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < _tweenedProperties.length; i++)
 			{
-				TweenedPropertyVO(m_tweenedProperties[i]).reverse();
+				TweenedPropertyVO(_tweenedProperties[i]).reverse();
 			}
 		}
 		
@@ -180,7 +180,7 @@ package reprise.tweens
 		 */
 		public function getDirection () : int
 		{
-			return m_direction;
+			return _direction;
 		}
 		
 		/**
@@ -188,7 +188,7 @@ package reprise.tweens
 		 */
 		public function setDirection(direction : int) : void
 		{
-			m_direction = direction;
+			_direction = direction;
 		}
 		
 		/**
@@ -196,12 +196,12 @@ package reprise.tweens
 		 */
 		public function isRunning() : Boolean
 		{
-			return m_isExecuting;
+			return _isExecuting;
 		}
 		
 		public function setIsPaused(bFlag:Boolean):void
 		{
-			if (!m_isExecuting && bFlag)
+			if (!_isExecuting && bFlag)
 			{
 				return;
 			}
@@ -209,21 +209,21 @@ package reprise.tweens
 			{
 				g_frameEventDispatcher.removeEventListener(
 					Event.ENTER_FRAME, executeTick);
-				m_isExecuting = false;
+				_isExecuting = false;
 			}
 			else
 			{
-				m_startTime = getTimer() - m_currentTime - m_delay - m_timeAdjust;
+				_startTime = getTimer() - _currentTime - _delay - _timeAdjust;
 				g_frameEventDispatcher.addEventListener(
 					Event.ENTER_FRAME, executeTick);
-				m_isExecuting = true;
+				_isExecuting = true;
 			}
-			m_isPaused = bFlag;
+			_isPaused = bFlag;
 		}
 		
 		public function isPaused():Boolean
 		{
-			return m_isPaused;
+			return _isPaused;
 		}
 
 		/**
@@ -231,15 +231,15 @@ package reprise.tweens
 		 */
 		public function startTween(executeFirstTickImmediately:Boolean = false) : void
 		{
-			m_isPaused = false;
-			m_isCancelled = false;
-			if (!m_isExecuting && m_currentTime < m_duration)
+			_isPaused = false;
+			_isCancelled = false;
+			if (!_isExecuting && _currentTime < _duration)
 			{
 				g_frameEventDispatcher.addEventListener(
 					Event.ENTER_FRAME, executeTick);
-				m_isExecuting = true;
-				m_startTime = m_lastFrameTime = getTimer() + m_currentTime;
-				m_timeAdjust = 0;
+				_isExecuting = true;
+				_startTime = _lastFrameTime = getTimer() + _currentTime;
+				_timeAdjust = 0;
 				dispatchEvent(new TweenEvent(TweenEvent.START, true));
 				if (executeFirstTickImmediately)
 				{
@@ -250,11 +250,11 @@ package reprise.tweens
 		
 		public override function execute(...rest) : void
 		{
-			if (m_isExecuting)
+			if (_isExecuting)
 			{
 				return;
 			}
-			m_isCancelled = false;
+			_isCancelled = false;
 			startTween(true);
 		}
 		
@@ -270,7 +270,7 @@ package reprise.tweens
 		public function resetTween() : void
 		{
 			stopTween();
-			m_currentTime = 0;
+			_currentTime = 0;
 		}
 		
 		/**
@@ -278,20 +278,20 @@ package reprise.tweens
 		 */
 		public function stopTween() : void
 		{
-			m_isPaused = false;
+			_isPaused = false;
 			g_frameEventDispatcher.removeEventListener(
 				Event.ENTER_FRAME, executeTick);
-			m_isExecuting = false;
+			_isExecuting = false;
 		}
 		
 		public function finish() : void
 		{
-			if (!m_isExecuting)
+			if (!_isExecuting)
 			{
 				return;
 			}
 			stopTween();
-			m_currentTime = m_duration;
+			_currentTime = _duration;
 			tweenProperties();
 			dispatchEvent(new TweenEvent(Event.COMPLETE, true));		
 		}
@@ -320,26 +320,26 @@ package reprise.tweens
 		protected function executeTick(event : Event = null) : void
 		{
 			var time : int = getTimer();
-			if (m_preventFrameDropping)
+			if (_preventFrameDropping)
 			{
-				if (time - m_lastFrameTime > m_frameDuration)
+				if (time - _lastFrameTime > _frameDuration)
 				{
-					m_timeAdjust += time - m_lastFrameTime - m_frameDuration;
+					_timeAdjust += time - _lastFrameTime - _frameDuration;
 				}
-				m_lastFrameTime = time;
+				_lastFrameTime = time;
 			}
-			m_currentTime = time - m_startTime - m_timeAdjust - m_delay;
-			if (m_currentTime < 0)
+			_currentTime = time - _startTime - _timeAdjust - _delay;
+			if (_currentTime < 0)
 			{
 				return;
 			}
-			if (m_currentTime > m_duration)
+			if (_currentTime > _duration)
 			{
-				m_currentTime = m_duration;
+				_currentTime = _duration;
 			}
 			tweenProperties();
 			dispatchEvent(new TweenEvent(TweenEvent.TICK, true));
-			if (m_currentTime == m_duration)
+			if (_currentTime == _duration)
 			{
 				stopTween ();
 				dispatchEvent(new TweenEvent(Event.COMPLETE, true));
@@ -352,10 +352,10 @@ package reprise.tweens
 		protected function tweenProperties () : void
 		{
 			var propertyVO:TweenedPropertyVO;
-			for (var i : int = 0; i < m_tweenedProperties.length; i++)
+			for (var i : int = 0; i < _tweenedProperties.length; i++)
 			{
-				propertyVO = TweenedPropertyVO(m_tweenedProperties[i]);
-				propertyVO.tweenProperty(m_duration, m_currentTime);
+				propertyVO = TweenedPropertyVO(_tweenedProperties[i]);
+				propertyVO.tweenProperty(_duration, _currentTime);
 			}
 		}
 	}

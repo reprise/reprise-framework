@@ -31,32 +31,32 @@ package reprise.controls
 		protected static const SCROLL_DIR_DOWN : int = 1;
 		
 		
-		protected var m_scrollUpBtn : SimpleButton;
-		protected var m_scrollDownBtn : SimpleButton;
-		protected var m_scrollThumb : SimpleButton;
-		protected var m_scrollTrack : SimpleButton;
+		protected var _scrollUpBtn : SimpleButton;
+		protected var _scrollDownBtn : SimpleButton;
+		protected var _scrollThumb : SimpleButton;
+		protected var _scrollTrack : SimpleButton;
 		
-		protected var m_scrollDirection : int;
-		protected var m_scrollIntervalID : int;
+		protected var _scrollDirection : int;
+		protected var _scrollIntervalID : int;
 		
-		protected var m_target : TextField;
-		protected var m_textScrollOrientation : String;
+		protected var _target : TextField;
+		protected var _textScrollOrientation : String;
 		
-		protected var m_minPos : Number;
-		protected var m_maxPos : Number;
+		protected var _minPos : Number;
+		protected var _maxPos : Number;
 		
-		protected var m_thumbMinPos : Number;
-		protected var m_thumbMaxPos : Number;
+		protected var _thumbMinPos : Number;
+		protected var _thumbMaxPos : Number;
 		
-		protected var m_scrollPosition : Number;
+		protected var _scrollPosition : Number;
 	
-		protected var m_mouseWheelListener : Object;
+		protected var _mouseWheelListener : Object;
 		
-		protected var m_mouseWheelHitAreaX : Number;
-		protected var m_mouseWheelHitAreaY : Number;
-		protected var m_mouseWheelHitAreaWidth : Number;
-		protected var m_mouseWheelHitAreaHeight : Number;
-		protected var m_overflowScrollMode : Boolean = true;
+		protected var _mouseWheelHitAreaX : Number;
+		protected var _mouseWheelHitAreaY : Number;
+		protected var _mouseWheelHitAreaWidth : Number;
+		protected var _mouseWheelHitAreaHeight : Number;
+		protected var _overflowScrollMode : Boolean = true;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -66,12 +66,12 @@ package reprise.controls
 		
 		public function setOverflowScrollMode(standaloneMode : Boolean) : void
 		{
-			m_overflowScrollMode = standaloneMode;
+			_overflowScrollMode = standaloneMode;
 		}
 		
 		public function overflowScrollMode() : Boolean
 		{
-			return m_overflowScrollMode;
+			return _overflowScrollMode;
 		}
 
 		
@@ -81,21 +81,21 @@ package reprise.controls
 		}
 		
 		/**
-		 * sets a TextField instance as the Scrollbar's m_target
+		 * sets a TextField instance as the Scrollbar's _target
 		 */
 		public function setScrollTarget(target:TextField, orientation:String) : void
 		{
-			m_target = target;
-			m_textScrollOrientation = orientation;
-			if (m_target)
+			_target = target;
+			_textScrollOrientation = orientation;
+			if (_target)
 			{
 				if (orientation == ORIENTATION_VERTICAL)
 				{
-					pageScrollSize = m_target.bottomScrollV - m_target.scrollV;
+					pageScrollSize = _target.bottomScrollV - _target.scrollV;
 				}
 				else
 				{
-					pageScrollSize = m_target.width - 4;
+					pageScrollSize = _target.width - 4;
 				}
 				addEventListener(Event.ENTER_FRAME, checkTargetScrollPos);
 				checkTargetScrollPos();
@@ -117,8 +117,8 @@ package reprise.controls
 			{
 				maxPos = minPos;
 			}
-			m_minPos = minPos;
-			m_maxPos = maxPos;
+			_minPos = minPos;
+			_maxPos = maxPos;
 			invalidate();
 		}
 		
@@ -127,9 +127,9 @@ package reprise.controls
 		 */
 		public function set scrollPosition(position:Number) : void
 		{
-			if (m_target)
+			if (_target)
 			{
-				m_target.scrollV = position;
+				_target.scrollV = position;
 			}
 			updateScrollPosition(position);
 		}
@@ -138,16 +138,16 @@ package reprise.controls
 		 */
 		public function get scrollPosition() : Number
 		{
-			return m_scrollPosition;
+			return _scrollPosition;
 		}
 		
 		public function get minScrollPosition() : Number
 		{
-			return m_minPos;
+			return _minPos;
 		}
 		public function get maxScrollPosition() : Number
 		{
-			return m_maxPos;
+			return _maxPos;
 		}
 
 		/**
@@ -156,34 +156,34 @@ package reprise.controls
 		 */
 		public function set autoHide(hide:Boolean) : void
 		{
-			m_currentStyles.autoHide = hide;
-			m_instanceStyles.setStyle('autoHide', hide.toString());
+			_currentStyles.autoHide = hide;
+			_instanceStyles.setStyle('autoHide', hide.toString());
 		}
 		/**
 		 * returns the current state of the autoHide property
 		 */
 		public function get autoHide() : Boolean
 		{
-			return m_currentStyles.autoHide;
+			return _currentStyles.autoHide;
 		}
 		
 		public function set pageScrollSize(value:Number) : void
 		{
-			m_currentStyles.pageScrollSize = value;
-			m_instanceStyles.setStyle('pageScrollSize', value.toString());
+			_currentStyles.pageScrollSize = value;
+			_instanceStyles.setStyle('pageScrollSize', value.toString());
 		}
 		public function get pageScrollSize() : Number
 		{
-			return m_currentStyles.pageScrollSize;
+			return _currentStyles.pageScrollSize;
 		}
 		public function set lineScrollSize(value:Number) : void
 		{
-			m_currentStyles.lineScrollSize = value;
-			m_instanceStyles.setStyle('lineScrollSize', value.toString());
+			_currentStyles.lineScrollSize = value;
+			_instanceStyles.setStyle('lineScrollSize', value.toString());
 		}
 		public function get lineScrollSize() : Number
 		{
-			return m_currentStyles.lineScrollSize;
+			return _currentStyles.lineScrollSize;
 		}
 		
 		/**
@@ -191,30 +191,30 @@ package reprise.controls
 		 */
 		public function get scaleScrollThumb() : Boolean
 		{
-			return Boolean(m_currentStyles.scaleScrollThumb);
+			return Boolean(_currentStyles.scaleScrollThumb);
 		}
 		/**
 		 * getter for the scaleScrollThumb property
 		 */
 		public function set scaleScrollThumb(scaleScrollThumb:Boolean) : void
 		{
-			m_instanceStyles.setStyle('scaleScrollThumb', scaleScrollThumb.toString());
+			_instanceStyles.setStyle('scaleScrollThumb', scaleScrollThumb.toString());
 		}
 
 		/**
-		 * getter for the m_scrollUpBtn 
+		 * getter for the _scrollUpBtn
 		 */		
 		public function get scrollUpBtn() : SimpleButton
 		{
-			return m_scrollUpBtn;
+			return _scrollUpBtn;
 		}
 		
 		/**
-		 * getter for the m_scrollDownBtn 
+		 * getter for the _scrollDownBtn
 		 */
 		public function get scrollDownBtn() : SimpleButton
 		{
-			return m_scrollDownBtn;
+			return _scrollDownBtn;
 		}
 		
 		/**
@@ -225,10 +225,10 @@ package reprise.controls
 		public function setMouseWheelArea(
 			x:Number, y:Number, width:Number, height:Number) : void
 		{
-			m_mouseWheelHitAreaX = x;
-			m_mouseWheelHitAreaY = y;
-			m_mouseWheelHitAreaWidth = width;
-			m_mouseWheelHitAreaHeight = height;
+			_mouseWheelHitAreaX = x;
+			_mouseWheelHitAreaY = y;
+			_mouseWheelHitAreaWidth = width;
+			_mouseWheelHitAreaHeight = height;
 		}
 		
 		/**
@@ -236,7 +236,7 @@ package reprise.controls
 		 */
 		public override function remove(...args) : void
 		{
-			clearInterval(m_scrollIntervalID);
+			clearInterval(_scrollIntervalID);
 			super.remove();
 		}
 		
@@ -246,9 +246,9 @@ package reprise.controls
 		{
 			super.initialize();
 			
-			m_scrollPosition = 0;
-			m_minPos = 0;
-			m_maxPos = 0;
+			_scrollPosition = 0;
+			_minPos = 0;
+			_maxPos = 0;
 			
 			
 			//init mouseWheel support
@@ -256,49 +256,49 @@ package reprise.controls
 		}
 		protected override function initDefaultStyles() : void
 		{
-			m_elementDefaultStyles.setStyle('lineScrollSize', '1');
-			m_elementDefaultStyles.setStyle('pageScrollSize', '5');
-			m_elementDefaultStyles.setStyle('width', '16px');
-			m_elementDefaultStyles.setStyle('height', '50px');
-			m_elementDefaultStyles.setStyle('boxSizing', 'border-box');
+			_elementDefaultStyles.setStyle('lineScrollSize', '1');
+			_elementDefaultStyles.setStyle('pageScrollSize', '5');
+			_elementDefaultStyles.setStyle('width', '16px');
+			_elementDefaultStyles.setStyle('height', '50px');
+			_elementDefaultStyles.setStyle('boxSizing', 'border-box');
 		}
 		
 		protected override function createChildren() : void
 		{
-			m_scrollUpBtn = SimpleButton(addChild(new SimpleButton()));
-			m_scrollUpBtn.cssClasses = "scrollUpBtn";
-			m_scrollTrack = SimpleButton(addChild(new SimpleButton()));
-			m_scrollTrack.cssClasses = "scrollTrack";
-			m_scrollDownBtn = SimpleButton(addChild(new SimpleButton()));
-			m_scrollDownBtn.cssClasses = "scrollDownBtn";
-			m_scrollThumb = SimpleButton(addChild(new SimpleButton()));
-			m_scrollThumb.cssClasses = "scrollThumb";
+			_scrollUpBtn = SimpleButton(addChild(new SimpleButton()));
+			_scrollUpBtn.cssClasses = "scrollUpBtn";
+			_scrollTrack = SimpleButton(addChild(new SimpleButton()));
+			_scrollTrack.cssClasses = "scrollTrack";
+			_scrollDownBtn = SimpleButton(addChild(new SimpleButton()));
+			_scrollDownBtn.cssClasses = "scrollDownBtn";
+			_scrollThumb = SimpleButton(addChild(new SimpleButton()));
+			_scrollThumb.cssClasses = "scrollThumb";
 			
 			//init button delegates
-			m_scrollUpBtn.addEventListener(MouseEvent.MOUSE_DOWN,  scrollUp_press);
-			m_scrollUpBtn.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
-			m_scrollUpBtn.addEventListener(
+			_scrollUpBtn.addEventListener(MouseEvent.MOUSE_DOWN,  scrollUp_press);
+			_scrollUpBtn.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
+			_scrollUpBtn.addEventListener(
 				MouseEventConstants.MOUSE_UP_OUTSIDE, scrollBtn_up);
 			
-			m_scrollDownBtn.addEventListener(MouseEvent.MOUSE_DOWN, scrollDown_press);
-			m_scrollDownBtn.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
-			m_scrollDownBtn.addEventListener(
+			_scrollDownBtn.addEventListener(MouseEvent.MOUSE_DOWN, scrollDown_press);
+			_scrollDownBtn.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
+			_scrollDownBtn.addEventListener(
 				MouseEventConstants.MOUSE_UP_OUTSIDE, scrollBtn_up);
 			
-			m_scrollThumb.addEventListener(MouseEvent.MOUSE_DOWN, scrollThumb_press);
-			m_scrollThumb.addEventListener(MouseEvent.MOUSE_UP, scrollThumb_up);
-			m_scrollThumb.addEventListener(
+			_scrollThumb.addEventListener(MouseEvent.MOUSE_DOWN, scrollThumb_press);
+			_scrollThumb.addEventListener(MouseEvent.MOUSE_UP, scrollThumb_up);
+			_scrollThumb.addEventListener(
 				MouseEventConstants.MOUSE_UP_OUTSIDE, scrollThumb_up);
 			
-			m_scrollTrack.addEventListener(MouseEvent.MOUSE_DOWN, scrollTrack_press);
-			m_scrollTrack.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
-			m_scrollTrack.addEventListener(
+			_scrollTrack.addEventListener(MouseEvent.MOUSE_DOWN, scrollTrack_press);
+			_scrollTrack.addEventListener(MouseEvent.MOUSE_UP, scrollBtn_up);
+			_scrollTrack.addEventListener(
 				MouseEventConstants.MOUSE_UP_OUTSIDE, scrollBtn_up);
 		}
 
 		override protected function hookIntoDisplayList() : void
 		{
-			if (!m_overflowScrollMode)
+			if (!_overflowScrollMode)
 			{
 				super.hookIntoDisplayList();
 			}
@@ -308,28 +308,28 @@ package reprise.controls
 		{
 			super.applyStyles();
 			
-			switch (m_currentStyles.buttonPositioning)
+			switch (_currentStyles.buttonPositioning)
 			{
 				case 'top':
 				{
-					m_children[0] = m_scrollUpBtn;
-					m_children[1] = m_scrollDownBtn;
-					m_children[2] = m_scrollTrack;
+					_children[0] = _scrollUpBtn;
+					_children[1] = _scrollDownBtn;
+					_children[2] = _scrollTrack;
 					break;
 				}
 				case 'bottom':
 				{
-					m_children[0] = m_scrollTrack;
-					m_children[1] = m_scrollUpBtn;
-					m_children[2] = m_scrollDownBtn;
+					_children[0] = _scrollTrack;
+					_children[1] = _scrollUpBtn;
+					_children[2] = _scrollDownBtn;
 					break;
 				}
 				case 'separated':
 				default:
 				{
-					m_children[0] = m_scrollUpBtn;
-					m_children[1] = m_scrollTrack;
-					m_children[2] = m_scrollDownBtn;
+					_children[0] = _scrollUpBtn;
+					_children[1] = _scrollTrack;
+					_children[2] = _scrollDownBtn;
 					
 				}
 			}
@@ -339,7 +339,7 @@ package reprise.controls
 		{
 			top = top;
 			left = left;
-			if (m_currentStyles.autoHide && m_maxPos == m_minPos)
+			if (_currentStyles.autoHide && _maxPos == _minPos)
 			{
 				setVisibility(false);
 				//TODO: check if we can disable positioning entirely here
@@ -348,47 +348,47 @@ package reprise.controls
 			}
 			
 			var specHeight:Number = 
-				m_currentStyles.height - m_currentStyles.marginTop - m_currentStyles.marginBottom;
+				_currentStyles.height - _currentStyles.marginTop - _currentStyles.marginBottom;
 			var trackHeight:Number = 
-				specHeight - m_scrollUpBtn.outerHeight - m_scrollDownBtn.outerHeight;
-			m_scrollTrack.setStyle('height', trackHeight + 'px');
-			m_scrollTrack.forceRedraw();
+				specHeight - _scrollUpBtn.outerHeight - _scrollDownBtn.outerHeight;
+			_scrollTrack.setStyle('height', trackHeight + 'px');
+			_scrollTrack.forceRedraw();
 				
 			super.validateAfterChildren();
 			
-			if (m_maxPos == m_minPos)
+			if (_maxPos == _minPos)
 			{
-				if (m_scrollThumb.enabled)
+				if (_scrollThumb.enabled)
 				{
-					m_scrollThumb.enabled = false;
-					m_scrollUpBtn.enabled = false;
-					m_scrollDownBtn.enabled = false;
-					m_scrollTrack.enabled = false;
+					_scrollThumb.enabled = false;
+					_scrollUpBtn.enabled = false;
+					_scrollDownBtn.enabled = false;
+					_scrollTrack.enabled = false;
 				}
 			}
 			else
 			{
-				if (!m_scrollThumb.enabled)
+				if (!_scrollThumb.enabled)
 				{
-					m_scrollThumb.enabled = true;
-					m_scrollUpBtn.enabled = true;
-					m_scrollDownBtn.enabled = true;
-					m_scrollTrack.enabled = true;
+					_scrollThumb.enabled = true;
+					_scrollUpBtn.enabled = true;
+					_scrollDownBtn.enabled = true;
+					_scrollTrack.enabled = true;
 				}
 			
-				var scrollTrackBox:Rectangle = m_scrollTrack.clientRect();
-				m_thumbMinPos = scrollTrackBox.top;
-				if (m_currentStyles.scaleScrollThumb)
+				var scrollTrackBox:Rectangle = _scrollTrack.clientRect();
+				_thumbMinPos = scrollTrackBox.top;
+				if (_currentStyles.scaleScrollThumb)
 				{
-					m_scrollThumb.setStyle('boxSizing', 'border-box');
-					m_scrollThumb.height = Math.ceil(
-						m_scrollTrack.outerHeight * pageScrollSize / 
-						(pageScrollSize + m_maxPos - m_minPos));
-					m_scrollThumb.forceRedraw();
+					_scrollThumb.setStyle('boxSizing', 'border-box');
+					_scrollThumb.height = Math.ceil(
+						_scrollTrack.outerHeight * pageScrollSize /
+						(pageScrollSize + _maxPos - _minPos));
+					_scrollThumb.forceRedraw();
 				}
-				m_thumbMaxPos = scrollTrackBox.bottom - m_scrollThumb.outerHeight;
+				_thumbMaxPos = scrollTrackBox.bottom - _scrollThumb.outerHeight;
 			}
-			updateScrollPosition(m_scrollPosition);
+			updateScrollPosition(_scrollPosition);
 		}
 		
 		
@@ -405,16 +405,16 @@ package reprise.controls
 		
 		protected function scrollThumb_press(event : MouseEvent) : void
 		{
-			m_scrollIntervalID = setInterval(thumbScrub, 50, event.localY);
+			_scrollIntervalID = setInterval(thumbScrub, 50, event.localY);
 		}
 		protected function scrollThumb_up(event : MouseEvent) : void
 		{
-			clearInterval(m_scrollIntervalID);
+			clearInterval(_scrollIntervalID);
 		}
 		
 		protected function scrollTrack_press(event : MouseEvent) : void
 		{
-			if (mouseY >= m_scrollThumb.top)
+			if (mouseY >= _scrollThumb.top)
 			{
 				startScrollDown(pageScrollSize);
 			}
@@ -430,29 +430,29 @@ package reprise.controls
 		}
 		
 		/**
-		 * periodically checks if the m_target's scrollV property has 
+		 * periodically checks if the _target's scrollV property has
 		 * changed and updates the scrollbar's visuals accordingly
 		 */
 		protected function checkTargetScrollPos(...rest) : void
 		{
-			if (m_textScrollOrientation == ORIENTATION_VERTICAL)
+			if (_textScrollOrientation == ORIENTATION_VERTICAL)
 			{
-				if (m_target.maxScrollV != m_maxPos || 
-					m_target.scrollV != m_scrollPosition)
+				if (_target.maxScrollV != _maxPos ||
+					_target.scrollV != _scrollPosition)
 				{
-					setScrollProperties(m_target.bottomScrollV - m_target.scrollV, 
-						1, m_target.maxScrollV);
-					m_scrollPosition = m_target.scrollV;
+					setScrollProperties(_target.bottomScrollV - _target.scrollV,
+						1, _target.maxScrollV);
+					_scrollPosition = _target.scrollV;
 				}
 			}
 			else
 			{
-				if (m_target.maxScrollH != m_maxPos || 
-					m_target.scrollH != m_scrollPosition)
+				if (_target.maxScrollH != _maxPos ||
+					_target.scrollH != _scrollPosition)
 				{
-					m_scrollPosition = m_target.scrollH;
-					setScrollProperties(m_target.width - 4, 0, 
-						m_target.maxScrollH);
+					_scrollPosition = _target.scrollH;
+					setScrollProperties(_target.width - 4, 0,
+						_target.maxScrollH);
 				}
 			}
 		}
@@ -469,34 +469,34 @@ package reprise.controls
 		
 		protected function startScroll(scrollSize:Number, direction:int) : void
 		{
-			m_scrollDirection = direction;
+			_scrollDirection = direction;
 			scrollV(scrollSize);
-			clearInterval(m_scrollIntervalID);
-			m_scrollIntervalID = setInterval(
+			clearInterval(_scrollIntervalID);
+			_scrollIntervalID = setInterval(
 				ProxyFunction.create(this, callScroll), 200, scrollSize);
 		}
 		protected function stopScroll() : void
 		{
-			clearInterval(m_scrollIntervalID);
+			clearInterval(_scrollIntervalID);
 		}
 		protected function scrollV(scrollSize:Number) : void
 		{
 			if (scrollSize == pageScrollSize)
 			{
-				if (m_scrollDirection == SCROLL_DIR_DOWN && 
-					mouseY < m_scrollThumb.bottom)
+				if (_scrollDirection == SCROLL_DIR_DOWN &&
+					mouseY < _scrollThumb.bottom)
 				{
 					return;
 				}
-				else if (m_scrollDirection == SCROLL_DIR_UP && 
-					mouseY >= m_scrollThumb.top)
+				else if (_scrollDirection == SCROLL_DIR_UP &&
+					mouseY >= _scrollThumb.top)
 				{
 					return;
 				}
 			}
 			
 			updateScrollPosition(
-				m_scrollPosition + m_scrollDirection * scrollSize, true);
+				_scrollPosition + _scrollDirection * scrollSize, true);
 			dispatchEvent(new DisplayEvent(Event.CHANGE));
 		}
 		
@@ -506,19 +506,19 @@ package reprise.controls
 		protected function thumbScrub(offset:Number) : void
 		{
 			var pos:Number = mouseY - offset;
-			if (pos < m_thumbMinPos)
+			if (pos < _thumbMinPos)
 			{
-				pos = m_thumbMinPos;
+				pos = _thumbMinPos;
 			}
-			else if (pos > m_thumbMaxPos)
+			else if (pos > _thumbMaxPos)
 			{
-				pos = m_thumbMaxPos;
+				pos = _thumbMaxPos;
 			}
 			
-			var oldPosition : Number = m_scrollPosition;
-			updateScrollPosition(Math.round((pos - m_thumbMinPos) * 
-				m_maxPos /(m_thumbMaxPos - m_thumbMinPos)), true);
-			if (m_scrollPosition != oldPosition)
+			var oldPosition : Number = _scrollPosition;
+			updateScrollPosition(Math.round((pos - _thumbMinPos) *
+				_maxPos /(_thumbMaxPos - _thumbMinPos)), true);
+			if (_scrollPosition != oldPosition)
 			{
 				dispatchEvent(new DisplayEvent(Event.CHANGE));
 			}
@@ -527,8 +527,8 @@ package reprise.controls
 		protected function callScroll(scrollSize:Number) : void
 		{
 			scrollV(scrollSize);
-			clearInterval(m_scrollIntervalID);
-			m_scrollIntervalID = 
+			clearInterval(_scrollIntervalID);
+			_scrollIntervalID =
 				setInterval(ProxyFunction.create(this, scrollV), 50, scrollSize);
 		}
 		
@@ -538,34 +538,34 @@ package reprise.controls
 		protected function updateScrollPosition(
 			position:Number, updateTextFieldTarget:Boolean = false) : void
 		{
-			if (position < m_minPos)
+			if (position < _minPos)
 			{
-				position = m_minPos;
+				position = _minPos;
 			}
-			else if (position > m_maxPos)
+			else if (position > _maxPos)
 			{
-				position = m_maxPos;
+				position = _maxPos;
 			}
-			m_scrollPosition = position;
-			if (m_maxPos <= m_minPos)
+			_scrollPosition = position;
+			if (_maxPos <= _minPos)
 			{
-				m_scrollThumb.top = m_thumbMinPos;
+				_scrollThumb.top = _thumbMinPos;
 			}
 			else
 			{
-				m_scrollThumb.top = m_thumbMinPos + 
-					Math.round((m_thumbMaxPos - m_thumbMinPos) * 
-					(position - m_minPos) /(m_maxPos - m_minPos));
+				_scrollThumb.top = _thumbMinPos +
+					Math.round((_thumbMaxPos - _thumbMinPos) *
+					(position - _minPos) /(_maxPos - _minPos));
 			}
-			if (updateTextFieldTarget && m_target)
+			if (updateTextFieldTarget && _target)
 			{
-				if (m_textScrollOrientation == ORIENTATION_VERTICAL)
+				if (_textScrollOrientation == ORIENTATION_VERTICAL)
 				{
-					m_target.scrollV = m_scrollPosition;
+					_target.scrollV = _scrollPosition;
 				}
 				else
 				{
-					m_target.scrollH = m_scrollPosition;
+					_target.scrollH = _scrollPosition;
 				}
 			}
 		}
@@ -580,12 +580,12 @@ package reprise.controls
 			var xMouse:Number = parent.mouseX;
 			var yMouse:Number = parent.mouseY;
 			
-			if ((m_target &&(xMouse >= x && xMouse <= x + outerWidth) && 
+			if ((_target &&(xMouse >= x && xMouse <= x + outerWidth) &&
 				(yMouse >= y && yMouse <= y + outerHeight)) ||
-				((xMouse >= m_mouseWheelHitAreaX && 
-				xMouse <= m_mouseWheelHitAreaX + m_mouseWheelHitAreaWidth) && 
-				(yMouse >= m_mouseWheelHitAreaY && 
-				yMouse <= m_mouseWheelHitAreaY + m_mouseWheelHitAreaHeight)))
+				((xMouse >= _mouseWheelHitAreaX &&
+				xMouse <= _mouseWheelHitAreaX + _mouseWheelHitAreaWidth) &&
+				(yMouse >= _mouseWheelHitAreaY &&
+				yMouse <= _mouseWheelHitAreaY + _mouseWheelHitAreaHeight)))
 			{
 				var position:Number = 
 					scrollPosition - lineScrollSize * event.delta;

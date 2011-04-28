@@ -36,33 +36,33 @@ package reprise.ui
 		protected static var g_defaultStyleSheet : CSS = new CSS();
 		protected static var g_totalValidationTime : int = 0;
 		
-		protected var m_styleSheet : CSS;
-		protected var m_rendererFactory : UIRendererFactory;
+		protected var _styleSheet : CSS;
+		protected var _rendererFactory : UIRendererFactory;
 	
-		protected var m_elementsById : Object;
+		protected var _elementsById : Object;
 		
-		protected var m_appContext : ApplicationContext;
-		protected var m_focusManager : FocusManager;
-		protected var m_tooltipContainer : Sprite;
-		protected var m_tooltipManager : TooltipManager;
+		protected var _appContext : ApplicationContext;
+		protected var _focusManager : FocusManager;
+		protected var _tooltipContainer : Sprite;
+		protected var _tooltipManager : TooltipManager;
 		
-		protected var m_parentDocument : DocumentView;
-		protected var m_baseURL : String = '';
+		protected var _parentDocument : DocumentView;
+		protected var _baseURL : String = '';
 		
-		protected var m_validatedElementsCount : int;
-		protected var m_currentFrameTime : int;
-		protected var m_documentIsInvalidated : Boolean;
-		protected var m_documentIsValidating : Boolean;
+		protected var _validatedElementsCount : int;
+		protected var _currentFrameTime : int;
+		protected var _documentIsInvalidated : Boolean;
+		protected var _documentIsValidating : Boolean;
 
-		protected var m_widthIsRelative : Boolean;
-		protected var m_heightIsRelative : Boolean;
+		protected var _widthIsRelative : Boolean;
+		protected var _heightIsRelative : Boolean;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function DocumentView()
 		{
-			m_rendererFactory = new UIRendererFactory();
-			m_elementsById = {};
+			_rendererFactory = new UIRendererFactory();
+			_elementsById = {};
 		}
 		
 		/**
@@ -76,7 +76,7 @@ package reprise.ui
 		 */
 		public function setApplicationContext(appContext : ApplicationContext) : void
 		{
-			m_appContext = appContext;
+			_appContext = appContext;
 		}
 		
 		/**
@@ -87,12 +87,12 @@ package reprise.ui
 		 */
 		public function applicationContext() : ApplicationContext
 		{
-			return m_appContext;
+			return _appContext;
 		}
 		
 		public function get parentDocument() : DocumentView
 		{
-			return m_parentDocument;
+			return _parentDocument;
 		}
 
 		/**
@@ -105,7 +105,7 @@ package reprise.ui
 		 */
 		public function frameTime() : int
 		{
-			return m_currentFrameTime;
+			return _currentFrameTime;
 		}
 
 		override public function get stage() : Stage
@@ -114,7 +114,7 @@ package reprise.ui
 			{
 				return realStage();
 			}
-			return m_parentDocument ? m_parentDocument.stage : null;
+			return _parentDocument ? _parentDocument.stage : null;
 		}
 
 		/**
@@ -127,7 +127,7 @@ package reprise.ui
 		 */
 		public function documentIsValidating() : Boolean
 		{
-			return m_documentIsValidating;
+			return _documentIsValidating;
 		}
 
 		/**
@@ -136,11 +136,11 @@ package reprise.ui
 		 */
 		public override function setParent(parent:UIObject) : UIObject
 		{
-			m_rootElement = this;
+			_rootElement = this;
 			
 			if (parent == this)
 			{
-				m_parentDocument = null;
+				_parentDocument = null;
 			}
 			else
 			{
@@ -148,12 +148,12 @@ package reprise.ui
 					DisplayListUtil.locateElementContainingDisplayObject(parent);
 				if (container)
 				{
-					m_parentDocument = container.document;
+					_parentDocument = container.document;
 				}
 			}
 			super.setParent(parent);
 			//TODO: remove this after making sure that that's ok (it really should be)
-			m_containingBlock = this;
+			_containingBlock = this;
 			return this;
 		}
 		
@@ -163,7 +163,7 @@ package reprise.ui
 		public function setUIRendererFactory(
 			rendererFactory:UIRendererFactory) : UIComponent
 		{
-			m_rendererFactory = rendererFactory;
+			_rendererFactory = rendererFactory;
 			return this;
 		}
 		/**
@@ -171,7 +171,7 @@ package reprise.ui
 		 */
 		public function uiRendererFactory() : UIRendererFactory
 		{
-			return m_rendererFactory;
+			return _rendererFactory;
 		}
 		
 		/**
@@ -193,9 +193,9 @@ package reprise.ui
 		 */
 		public function set styleSheet(stylesheet : CSS) : void
 		{
-			m_styleSheet = stylesheet;
+			_styleSheet = stylesheet;
 			invalidateStyles();
-			if (m_styleSheet)
+			if (_styleSheet)
 			{
 				DebugInterface.reprise::startWatchingStylesheets(this);
 			}
@@ -205,26 +205,26 @@ package reprise.ui
 		 */
 		public function get styleSheet() : CSS
 		{
-			if (m_styleSheet)
+			if (_styleSheet)
 			{
-				return m_styleSheet;
+				return _styleSheet;
 			}
 			return g_defaultStyleSheet;
 		}
 		
 		public function get baseURL() : String
 		{
-			return m_baseURL || '';
+			return _baseURL || '';
 		}
 		
 		public function set baseURL(url : String) : void
 		{
-			m_baseURL = url || '';
+			_baseURL = url || '';
 		}
 		
 		public function resolveURL(url : String) : String
 		{
-			return CSSParsingHelper.resolvePathAgainstPath(url, m_baseURL);
+			return CSSParsingHelper.resolvePathAgainstPath(url, _baseURL);
 		}
 		
 		/**
@@ -235,7 +235,7 @@ package reprise.ui
 		 */
 		public function getElementById(id:String) : UIComponent
 		{
-			return UIComponent(m_elementsById[id]);
+			return UIComponent(_elementsById[id]);
 		}
 		
 		/**
@@ -252,9 +252,9 @@ package reprise.ui
 			{
 				parentDocument.removeChild(this);
 			}
-			else if (m_parentElement && m_parentElement != this)
+			else if (_parentElement && _parentElement != this)
 			{
-				m_parentElement.removeChild(this);
+				_parentElement.removeChild(this);
 			}
 			if (parent)
 			{
@@ -278,25 +278,25 @@ package reprise.ui
 		***************************************************************************/
 		reprise function registerElementID(id:String, element:UIComponent) : void
 		{
-			m_elementsById[id] = element;
+			_elementsById[id] = element;
 		}
 		reprise function removeElementID(id:String) : void
 		{
-			m_elementsById[id] && delete m_elementsById[id];
+			_elementsById[id] && delete _elementsById[id];
 		}
 		
 		reprise function markChildAsInvalid(child : UIObject) : void
 		{
-			if (!m_documentIsInvalidated && stage != null)
+			if (!_documentIsInvalidated && stage != null)
 			{
-				m_documentIsInvalidated = true;
+				_documentIsInvalidated = true;
 				addEventListener(Event.ENTER_FRAME, self_enterFrame, false, 0, true);
 			}
 		}
 		
 		reprise function setFocusedElement(element : UIObject, method : String) : Boolean
 		{
-			return m_focusManager.reprise::setFocusedElement(element, method);
+			return _focusManager.reprise::setFocusedElement(element, method);
 		}
 		
 		
@@ -305,7 +305,7 @@ package reprise.ui
 		***************************************************************************/
 		internal function increaseValidatedElementsCount() : void
 		{
-			m_validatedElementsCount++;
+			_validatedElementsCount++;
 		}
 		
 		
@@ -313,20 +313,20 @@ package reprise.ui
 		protected override function initialize() : void
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			m_rootElement = this;
-			m_containingBlock = this;
-			if (!m_baseURL)
+			_rootElement = this;
+			_containingBlock = this;
+			if (!_baseURL)
 			{
-				m_baseURL = loaderInfo.url.substr(0, loaderInfo.url.lastIndexOf('/') + 1);
+				_baseURL = loaderInfo.url.substr(0, loaderInfo.url.lastIndexOf('/') + 1);
 			}
 			stage.addEventListener(Event.RESIZE, stage_resize, false, 0, true);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage, false, 0, true);
 			super.initialize();
 			stage.stageFocusRect = false;
-			m_focusManager = new FocusManager(this);
+			_focusManager = new FocusManager(this);
 			if (!parentDocument)
 			{
-				m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
+				_tooltipManager = new TooltipManager(_rootElement, _tooltipContainer);
 			}
 			
 			DebugInterface.addDocument(this);
@@ -339,8 +339,8 @@ package reprise.ui
 			{
 				return;
 			}
-			m_tooltipContainer = new Sprite();
-			addChild(m_tooltipContainer);
+			_tooltipContainer = new Sprite();
+			addChild(_tooltipContainer);
 		}
 
 		override protected function addComponentToDisplayList(
@@ -355,15 +355,15 @@ package reprise.ui
 
 		protected override function initDefaultStyles() : void
 		{
-			m_elementDefaultStyles.setStyle('width', '100%');
-			m_elementDefaultStyles.setStyle('height', '100%');
-			m_elementDefaultStyles.setStyle('padding', '0');
-			m_elementDefaultStyles.setStyle('margin', '0');
-			m_elementDefaultStyles.setStyle('boxSizing', 'border-box');
-			m_elementDefaultStyles.setStyle('position', 'absolute');
-			m_elementDefaultStyles.setStyle('fontFamily', '_sans');
-			m_elementDefaultStyles.setStyle('fontSize', '12px');
-			m_elementDefaultStyles.setStyle('frameRate', stage.frameRate.toString());
+			_elementDefaultStyles.setStyle('width', '100%');
+			_elementDefaultStyles.setStyle('height', '100%');
+			_elementDefaultStyles.setStyle('padding', '0');
+			_elementDefaultStyles.setStyle('margin', '0');
+			_elementDefaultStyles.setStyle('boxSizing', 'border-box');
+			_elementDefaultStyles.setStyle('position', 'absolute');
+			_elementDefaultStyles.setStyle('fontFamily', '_sans');
+			_elementDefaultStyles.setStyle('fontSize', '12px');
+			_elementDefaultStyles.setStyle('frameRate', stage.frameRate.toString());
 		}
 		protected override function validateElement(
 			forceValidation:Boolean = false, validateStyles:Boolean = false) : void
@@ -375,12 +375,12 @@ package reprise.ui
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
-			if (m_currentStyles.frameRate)
+			if (_currentStyles.frameRate)
 			{
-				stage.frameRate = m_currentStyles.frameRate;
+				stage.frameRate = _currentStyles.frameRate;
 			}
-			m_heightIsRelative = m_complexStyles.getStyle('height').isRelativeValue();
-			m_widthIsRelative = m_complexStyles.getStyle('width').isRelativeValue();
+			_heightIsRelative = _complexStyles.getStyle('height').isRelativeValue();
+			_widthIsRelative = _complexStyles.getStyle('width').isRelativeValue();
 		}
 		protected override function resolveRelativeStyles(styles:CSSDeclaration, 
 			parentW : int = -1, parentH : int = -1) : void
@@ -391,18 +391,18 @@ package reprise.ui
 		protected override function applyOutOfFlowChildPositions() : void
 		{
 			super.applyOutOfFlowChildPositions();
-			y = m_currentStyles.marginTop;
-			x = m_currentStyles.marginLeft;
+			y = _currentStyles.marginTop;
+			x = _currentStyles.marginLeft;
 		}
 		
 		protected override function refreshSelectorPath() : void
 		{
-			var oldPath : String = m_selectorPath;
-			m_selectorPath = '';
+			var oldPath : String = _selectorPath;
+			_selectorPath = '';
 			super.refreshSelectorPath();
-			if (m_selectorPath == oldPath)
+			if (_selectorPath == oldPath)
 			{
-				m_selectorPathChanged = false;
+				_selectorPathChanged = false;
 			}
 		}
 		
@@ -410,16 +410,16 @@ package reprise.ui
 		{
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 
-			if (!m_documentIsInvalidated)
+			if (!_documentIsInvalidated)
 			{
 				return;
 			}
-			m_documentIsInvalidated = false;
-			m_documentIsValidating = true;
-			m_currentFrameTime = getTimer();
-			m_validatedElementsCount = 0;
+			_documentIsInvalidated = false;
+			_documentIsValidating = true;
+			_currentFrameTime = getTimer();
+			_validatedElementsCount = 0;
 
-			if (m_isInvalidated)
+			if (_isInvalidated)
 			{
 				validateElement();
 			}
@@ -428,15 +428,15 @@ package reprise.ui
 				validateChildren();
 			}
 
-			g_totalValidationTime += getTimer() - m_currentFrameTime;
-			log('d validated ' + m_validatedElementsCount + 
-				' elements in ' + (getTimer() - m_currentFrameTime) + 'ms. ' + 
+			g_totalValidationTime += getTimer() - _currentFrameTime;
+			log('d validated ' + _validatedElementsCount +
+				' elements in ' + (getTimer() - _currentFrameTime) + 'ms. ' +
 				'Total validation time: ' + g_totalValidationTime);
 			hasEventListener(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE) &&
 					dispatchEvent(new DisplayEvent(DisplayEvent.DOCUMENT_VALIDATION_COMPLETE));
-			m_documentIsValidating = false;
+			_documentIsValidating = false;
 			//validate elements that have been marked as invalid during validation
-			if (m_documentIsInvalidated)
+			if (_documentIsInvalidated)
 			{
 				addEventListener(Event.ENTER_FRAME, self_enterFrame);
 			}
@@ -444,8 +444,8 @@ package reprise.ui
 		
 		protected function stage_resize(event : Event) : void
 		{
-			if (stage && ((m_widthIsRelative && m_contentBoxWidth != stage.stageWidth) || 
-				(m_heightIsRelative && m_contentBoxHeight != stage.stageHeight)))
+			if (stage && ((_widthIsRelative && _contentBoxWidth != stage.stageWidth) ||
+				(_heightIsRelative && _contentBoxHeight != stage.stageHeight)))
 			{
 				stageDimensionsChanged = true;
 				invalidateStyles();
@@ -459,7 +459,7 @@ package reprise.ui
 		
 		protected function self_removedFromStage(event : Event) : void
 		{
-			m_parentDocument = null;
+			_parentDocument = null;
 			removeEventListener(Event.ENTER_FRAME, self_enterFrame);
 			stage.removeEventListener(Event.RESIZE, stage_resize);
 		}

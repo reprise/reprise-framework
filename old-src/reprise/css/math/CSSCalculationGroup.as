@@ -25,10 +25,10 @@ package reprise.css.math
 		protected static var g_tokenizer : RegExp = 
 			/(?<!\w)binding(?=\(\()|(?<=(?<!\w)binding)\(\(\s*[\w_\-.:#\[\] ]+\s*,\s*[\w_]+\s*\)\)|(?<=\d)pt|(?<=\d)px|[()]|mod|[+\-*\/]|(?<!\w)[0-9.][0-9.exEX]*|%/g;
 		
-		protected var m_operand1 : Object;
-		protected var m_operand2 : Object;
-		protected var m_operator : String;
-		protected var m_operation : Function;
+		protected var _operand1 : Object;
+		protected var _operand2 : Object;
+		protected var _operator : String;
+		protected var _operation : Function;
 		
 		//----------------------               Public Methods               ----------------------//
 		public static function PrepareCalculation(
@@ -41,40 +41,40 @@ package reprise.css.math
 			operator : String, operand1 : Object, operand2 : Object)
 		{
 			setOperator(operator);
-			m_operand1 = operand1;
-			m_operand2 = operand2;
+			_operand1 = operand1;
+			_operand2 = operand2;
 		}
 	
 		public function setOperand1(operand : Object) : void
 		{
-			m_operand1 = operand;
+			_operand1 = operand;
 		}
 		public function setOperand2(operand : Object) : void
 		{
-			m_operand2 = operand;
+			_operand2 = operand;
 		}
 		public function setOperator(operator : String) : void
 		{
-			m_operator = operator;
-			m_operation = g_operations[operator];
+			_operator = operator;
+			_operation = g_operations[operator];
 		}
 	
 		public override function resolve(
 			reference : Number, context : ICSSCalculationContext = null) : Number
 		{
 			//TODO: we should probably profile this to see if it is efficent enough
-			var operand1 : Number = (m_operand1 is Number ? m_operand1 as Number : 
-				AbstractCSSCalculation(m_operand1).resolve(reference, context));
-			var operand2 : Number = (m_operand2 is Number ? m_operand2 as Number : 
-				AbstractCSSCalculation(m_operand2).resolve(reference, context));
-			var result: Number = m_operation(operand1, operand2);
+			var operand1 : Number = (_operand1 is Number ? _operand1 as Number :
+				AbstractCSSCalculation(_operand1).resolve(reference, context));
+			var operand2 : Number = (_operand2 is Number ? _operand2 as Number :
+				AbstractCSSCalculation(_operand2).resolve(reference, context));
+			var result: Number = _operation(operand1, operand2);
 			return result;
 		}
 		public function toString() : String
 		{
-			return 'CSSCalculationGroup: operator ' + m_operator + 
-				', operand1 (' + m_operand1.toString() + 
-				'), operand2 (' + m_operand2.toString() + ')';
+			return 'CSSCalculationGroup: operator ' + _operator +
+				', operand1 (' + _operand1.toString() +
+				'), operand2 (' + _operand2.toString() + ')';
 		}
 		
 		

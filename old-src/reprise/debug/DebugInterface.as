@@ -36,12 +36,12 @@ package reprise.debug
 		protected static const _instance : DebugInterface = new DebugInterface();
 
 
-		protected var m_debuggingMode : Boolean;
-		protected var m_currentDebugElement : UIComponent;
-		protected var m_debugInterface : Sprite;
-		protected var m_debugConnection : LocalConnection;
-		protected var m_clientConnection : LocalConnection;
-		protected var m_clientConnectionName : String;
+		protected var _debuggingMode : Boolean;
+		protected var _currentDebugElement : UIComponent;
+		protected var _debugInterface : Sprite;
+		protected var _debugConnection : LocalConnection;
+		protected var _clientConnection : LocalConnection;
+		protected var _clientConnectionName : String;
 
 		protected const _documentsByReference : Dictionary = new Dictionary();
 		protected const _documentsByName : Dictionary = new Dictionary();
@@ -112,7 +112,7 @@ package reprise.debug
 			{
 				msg = debugMarkElement(UIComponent(element));
 				msg += '\n\nComplex styles:\n' + 
-					UIComponent(element).valueForKey('m_complexStyles');
+					UIComponent(element).valueForKey('_complexStyles');
 			}
 			else
 			{
@@ -123,7 +123,7 @@ package reprise.debug
 				msg += 'visible:\t\t' + element.visible + '\n';
 				msg += 'hidden anc:\t' + element.hasHiddenAncestors() + '\n';
 			}
-			m_debugConnection.send('_repriseDebugger', 'showDetailsForElement', path, msg);
+			_debugConnection.send('_repriseDebugger', 'showDetailsForElement', path, msg);
 		}
 		
 		
@@ -141,7 +141,7 @@ package reprise.debug
 		}
 		protected function toggleDebuggingMode() : void
 		{
-			if (m_debuggingMode)
+			if (_debuggingMode)
 			{
 				deactivateDebuggingMode();
 			}
@@ -152,40 +152,40 @@ package reprise.debug
 		}
 		protected function activateDebuggingMode() : void
 		{
-			if (m_debuggingMode)
+			if (_debuggingMode)
 			{
 				return;
 			}
-			m_debuggingMode = true;
+			_debuggingMode = true;
 			
-			m_debugInterface = new Sprite();
-			m_debugInterface.mouseEnabled = false;
-			m_debugInterface.mouseChildren = false;
-			_stage.addChild(m_debugInterface);
+			_debugInterface = new Sprite();
+			_debugInterface.mouseEnabled = false;
+			_debugInterface.mouseChildren = false;
+			_stage.addChild(_debugInterface);
 			
 			_stage.addEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true, 100);
 			
-//			if (!m_debugConnection)
+//			if (!_debugConnection)
 //			{
-//				m_debugConnection = new LocalConnection();
-//				m_debugConnection.client = this;
+//				_debugConnection = new LocalConnection();
+//				_debugConnection.client = this;
 //
-//	            m_debugConnection.addEventListener(StatusEvent.STATUS, onStatus);
+//	            _debugConnection.addEventListener(StatusEvent.STATUS, onStatus);
 //			}
 //
-//			m_clientConnectionName = '_repriseDebugClient_' + new Date().time;
-//			var test : Array = [{name:'document', elements:childTree(m_document)}];
+//			_clientConnectionName = '_repriseDebugClient_' + new Date().time;
+//			var test : Array = [{name:'document', elements:childTree(_document)}];
 //			var bytes : ByteArray = new ByteArray();
 //			bytes.writeObject(test);
 //			bytes.position = 0;
 //			try
 //			{
-//				m_debugConnection.send(
-//					'_repriseDebugger', 'setRepriseDisplayList', bytes, m_clientConnectionName);
-//				m_clientConnection = new LocalConnection();
-//				m_clientConnection.allowDomain('*');
-//				m_clientConnection.connect(m_clientConnectionName);
-//				m_clientConnection.client = this;
+//				_debugConnection.send(
+//					'_repriseDebugger', 'setRepriseDisplayList', bytes, _clientConnectionName);
+//				_clientConnection = new LocalConnection();
+//				_clientConnection.allowDomain('*');
+//				_clientConnection.connect(_clientConnectionName);
+//				_clientConnection.client = this;
 //			}
 //			catch(error : Error)
 //			{
@@ -194,15 +194,15 @@ package reprise.debug
 		}
 		protected function deactivateDebuggingMode() : void
 		{
-			if (!m_debuggingMode)
+			if (!_debuggingMode)
 			{
 				return;
 			}
-			m_debuggingMode = false;
+			_debuggingMode = false;
 			
-			_stage.removeChild(m_debugInterface);
-			m_debugInterface = null;
-			m_currentDebugElement = null;
+			_stage.removeChild(_debugInterface);
+			_debugInterface = null;
+			_currentDebugElement = null;
 			
 			_stage.removeEventListener(MouseEvent.MOUSE_OVER, debugging_mouseOver, true);
 		}
@@ -243,8 +243,8 @@ package reprise.debug
 
 		protected function debugMarkElement(element : UIComponent) : String
 		{
-			m_currentDebugElement = element;
-			m_debugInterface.graphics.clear();
+			_currentDebugElement = element;
+			_debugInterface.graphics.clear();
 			if (!element)
 			{
 				return '';
@@ -262,15 +262,15 @@ package reprise.debug
 				style.marginBottom + 'px ' + style.marginLeft + 'px\n';
 			
 			var position : Point = element.getPositionRelativeToDisplayObject(_stage);
-			m_debugInterface.x = position.x;
-			m_debugInterface.y = position.y;
+			_debugInterface.x = position.x;
+			_debugInterface.y = position.y;
 
-			m_debugInterface.graphics.lineStyle(1, 0xffff);
+			_debugInterface.graphics.lineStyle(1, 0xffff);
 			
 			var boxWidth : Number = element.borderBoxWidth;
 			var boxHeight : Number = element.borderBoxHeight;
 			output += 'Border Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.drawRect(-style.borderLeftWidth, 
+			_debugInterface.graphics.drawRect(-style.borderLeftWidth,
 				-style.borderTopWidth, boxWidth, boxHeight);
 			
 			boxWidth -= style.borderLeftWidth;
@@ -278,16 +278,16 @@ package reprise.debug
 			boxHeight -= style.borderTopWidth;
 			boxHeight -= style.borderBottomWidth;
 			output += 'Padding Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
+			_debugInterface.graphics.endFill();
+			_debugInterface.graphics.drawRect(0, 0, boxWidth, boxHeight);
 			
 			boxWidth -= style.paddingLeft;
 			boxWidth -= style.paddingRight;
 			boxHeight -= style.paddingTop;
 			boxHeight -= style.paddingBottom;
 			output += 'Content Box: width ' + boxWidth + ', height ' + boxHeight + '\n';
-			m_debugInterface.graphics.endFill();
-			m_debugInterface.graphics.drawRect(style.paddingLeft, 
+			_debugInterface.graphics.endFill();
+			_debugInterface.graphics.drawRect(style.paddingLeft,
 				style.paddingTop, boxWidth, boxHeight);
 
 			log(output);
@@ -322,9 +322,9 @@ package reprise.debug
 					toggleDebuggingMode();
 					return;
 				}
-				if (key == 's' && m_currentDebugElement)
+				if (key == 's' && _currentDebugElement)
 				{
-					log('Complex styles:\n' + m_currentDebugElement.valueForKey('m_complexStyles'));
+					log('Complex styles:\n' + _currentDebugElement.valueForKey('_complexStyles'));
 					return;
 				}
 				if (key == 'r')
@@ -387,9 +387,9 @@ package reprise.debug
 				parent = parent.parent;
 			}
 			debugMarkElement(element);
-//			m_debugConnection.send('_repriseDebugger', 'showDetailsForElement',
+//			_debugConnection.send('_repriseDebugger', 'showDetailsForElement',
 //				element.toString(), debugStr + '\n\nComplex styles:\n' +
-//					UIComponent(element).valueForKey('m_complexStyles'));
+//					UIComponent(element).valueForKey('_complexStyles'));
 		}
 		
 		protected function onStatus(event : StatusEvent) : void

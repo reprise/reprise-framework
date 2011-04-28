@@ -25,9 +25,9 @@ package reprise.external
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static const MAX_POLICYFILE_LOAD_TIME : int = 5000;
 
-		protected var m_loader : Loader;
-		protected var m_resource : DisplayObject;
-		private var m_policyFileLoadTimer:Timer;
+		protected var _loader : Loader;
+		protected var _resource : DisplayObject;
+		private var _policyFileLoadTimer:Timer;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -38,12 +38,12 @@ package reprise.external
 		
 		public override function content() : *
 		{
-			return m_resource;
+			return _resource;
 		}
 		
 		public function loader() : Loader
 		{
-			return m_loader;
+			return _loader;
 		}
 		
 		public function bitmap(backgroundColor:Number = NaN, smoothing : Boolean = false) : BitmapData
@@ -54,36 +54,36 @@ package reprise.external
 				transparent = true;
 				backgroundColor = 0;
 			}
-			var bmp : BitmapData = new BitmapData(m_loader.width, m_loader.height, 
+			var bmp : BitmapData = new BitmapData(_loader.width, _loader.height,
 				transparent, backgroundColor);
-			bmp.draw(m_loader, null, null, null, null, smoothing);
+			bmp.draw(_loader, null, null, null, null, smoothing);
 			return bmp;
 		}
 		
 		public override function bytesLoaded() : int
 		{
-			if (m_attachMode)
+			if (_attachMode)
 			{
 				return 1;
 			}
-			if (!m_loader)
+			if (!_loader)
 			{
 				return 0;
 			}
-			return m_loader.contentLoaderInfo.bytesLoaded;
+			return _loader.contentLoaderInfo.bytesLoaded;
 		}
 		
 		public override function bytesTotal() : int
 		{
-			if (m_attachMode)
+			if (_attachMode)
 			{
 				return 1;
 			}
-			if (!m_loader)
+			if (!_loader)
 			{
 				return 0;
 			}
-			return m_loader.contentLoaderInfo.bytesTotal;
+			return _loader.contentLoaderInfo.bytesTotal;
 		}
 		
 		
@@ -94,7 +94,7 @@ package reprise.external
 			var useByteloader : Boolean;
 			var assetBytes : ByteArray;
 			// asset from library
-			if (m_url.indexOf('attach://') == 0)
+			if (_url.indexOf('attach://') == 0)
 			{
 				var symbol : Class = resolveAttachSymbol();
 				if (!symbol)
@@ -117,8 +117,8 @@ package reprise.external
 				}
 				else if (resource is DisplayObject)
 				{
-					m_resource = DisplayObject(resource);
-					m_httpStatus = new HTTPStatus(200, m_url);
+					_resource = DisplayObject(resource);
+					_httpStatus = new HTTPStatus(200, _url);
 					onData(true);
 					return;
 				}
@@ -130,61 +130,61 @@ package reprise.external
 				}
 			}
 
-			var context : LoaderContext = new LoaderContext(m_checkPolicyFile, ApplicationDomain.currentDomain);
-			m_loader = new Loader();
-			m_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
+			var context : LoaderContext = new LoaderContext(_checkPolicyFile, ApplicationDomain.currentDomain);
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(Event.INIT, loader_init);
 			if (useByteloader)
 			{
-				m_loader.loadBytes(assetBytes, context);
+				_loader.loadBytes(assetBytes, context);
 				return;
 			}
-			m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
-			m_loader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-			m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
-			m_loader.load(createRequest(), context);
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_complete);
+			_loader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loader_error);
+			_loader.load(createRequest(), context);
 		}
 
 		protected override function doCancel() : void
 		{
-			if (m_loader)
+			if (_loader)
 			{
-				if (!m_didFinishLoading)
+				if (!_didFinishLoading)
 				{
 					try
 					{
-						m_loader.close();
+						_loader.close();
 					}
 					catch (error : Error)
 					{
 						//no need to handle this error, just throw it away
 					}
 				}
-				m_loader.unload();
+				_loader.unload();
 			}
 		}
 		
 		//Loader events
 		protected function loader_complete(event : Event) : void
 		{
-			m_httpStatus = new HTTPStatus(200, m_url);
+			_httpStatus = new HTTPStatus(200, _url);
 		}
 		
 		protected function loader_init(event : Event) : void
 		{
 			//check to see if we can't access even though we requested a policyFile
-			if (m_checkPolicyFile && !m_loader.contentLoaderInfo.childAllowsParent)
+			if (_checkPolicyFile && !_loader.contentLoaderInfo.childAllowsParent)
 			{
 				//yep, can't access. We probably have been redirected by a CDN and need
 				//to load a policyFile from the new server
-				var url : String = m_loader.contentLoaderInfo.url;
+				var url : String = _loader.contentLoaderInfo.url;
 				var server : String = url.substr(0, url.lastIndexOf('/') + 1);
 				Security.loadPolicyFile(server + 'crossdomain.xml');
-				m_policyFileLoadTimer = new Timer(50);
-				m_policyFileLoadTimer.addEventListener(TimerEvent.TIMER, policyFileLoading_timer);
-				m_policyFileLoadTimer.start();
+				_policyFileLoadTimer = new Timer(50);
+				_policyFileLoadTimer.addEventListener(TimerEvent.TIMER, policyFileLoading_timer);
+				_policyFileLoadTimer.start();
 				return;
 			}
-			m_resource = m_loader.content;
+			_resource = _loader.content;
 			onData(true);
 		}
 		
@@ -202,13 +202,13 @@ package reprise.external
 
 		private function policyFileLoading_timer(event:TimerEvent):void
 		{
-			if (m_loader.contentLoaderInfo.childAllowsParent)
+			if (_loader.contentLoaderInfo.childAllowsParent)
 			{
 				//policyfile has been loaded: Great success!
-				m_resource = m_loader.content;
+				_resource = _loader.content;
 				onData(true);
 			}
-			else if (m_policyFileLoadTimer.currentCount > MAX_POLICYFILE_LOAD_TIME / 50)
+			else if (_policyFileLoadTimer.currentCount > MAX_POLICYFILE_LOAD_TIME / 50)
 			{
 				//max duration for timeout exceeded: Epic fail1
 				onData(false);
@@ -218,8 +218,8 @@ package reprise.external
 				return;
 			}
 			//in case of success or fail: stop timer
-			m_policyFileLoadTimer.stop();
-			m_policyFileLoadTimer = null;
+			_policyFileLoadTimer.stop();
+			_policyFileLoadTimer = null;
 		}
 	}
 }

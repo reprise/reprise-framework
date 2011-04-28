@@ -15,23 +15,23 @@ package reprise.utils
 	public class AsynchronousDelegate extends AbstractAsynchronousCommand
 	{
 		//----------------------         Private / Protected Methods        ----------------------//
-		protected var m_executionDelegate : Delegate;
-		protected var m_waitsForEvent : Boolean = false;
-		protected var m_commandCompleteEventName : String;
-		protected var m_successEvaluationFunction : Function;
+		protected var _executionDelegate : Delegate;
+		protected var _waitsForEvent : Boolean = false;
+		protected var _commandCompleteEventName : String;
+		protected var _successEvaluationFunction : Function;
 	
 	
 		//----------------------               Public Methods               ----------------------//
 		public function AsynchronousDelegate(scope:Object, method:Function, 
 			args:Array, commandCompleteEventName:String = null)
 		{
-			m_executionDelegate = new Delegate(scope, method, args);
+			_executionDelegate = new Delegate(scope, method, args);
 			if (commandCompleteEventName != null)
 			{
-				m_waitsForEvent = true;
-				m_commandCompleteEventName = commandCompleteEventName;
+				_waitsForEvent = true;
+				_commandCompleteEventName = commandCompleteEventName;
 			}
-			m_successEvaluationFunction = function(e:Event):Boolean{return true;};
+			_successEvaluationFunction = function(e:Event):Boolean{return true;};
 		}
 		
 		public static function create(
@@ -43,13 +43,13 @@ package reprise.utils
 		override public function execute(...args) : void
 		{
 			super.execute();
-			if (m_waitsForEvent)
+			if (_waitsForEvent)
 			{
-				EventDispatcher(m_executionDelegate.scope()).addEventListener(
-					m_commandCompleteEventName, execution_complete);
+				EventDispatcher(_executionDelegate.scope()).addEventListener(
+					_commandCompleteEventName, execution_complete);
 			}
-			m_executionDelegate.execute();
-			if (!m_waitsForEvent)
+			_executionDelegate.execute();
+			if (!_waitsForEvent)
 			{
 				notifyComplete(true);
 			}
@@ -57,38 +57,38 @@ package reprise.utils
 		
 		public function waitsForEvent() : Boolean
 		{
-			return m_waitsForEvent;
+			return _waitsForEvent;
 		}
 		public function setWaitsForEvent(val:Boolean) : void
 		{
-			m_waitsForEvent = val;
+			_waitsForEvent = val;
 		}
 		
 		public function commandCompleteEventName() : String
 		{
-			return m_commandCompleteEventName;
+			return _commandCompleteEventName;
 		}
 		public function setCommandCompleteEventName(val:String) : void
 		{
-			m_commandCompleteEventName = val;
+			_commandCompleteEventName = val;
 		}
 		
 		public function successEvaluationFunction():Function
 		{
-			return m_successEvaluationFunction;
+			return _successEvaluationFunction;
 		}
 		public function setSuccessEvaluationFunction(f:Function):void
 		{
-			m_successEvaluationFunction = f;
+			_successEvaluationFunction = f;
 		}
 		
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function execution_complete(event : Event) : void
 		{
-			EventDispatcher(m_executionDelegate.scope()).removeEventListener(
-				m_commandCompleteEventName, execution_complete);
-			notifyComplete(m_successEvaluationFunction(event));
+			EventDispatcher(_executionDelegate.scope()).removeEventListener(
+				_commandCompleteEventName, execution_complete);
+			notifyComplete(_successEvaluationFunction(event));
 		}
 	}
 }

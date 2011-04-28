@@ -11,8 +11,8 @@ package reprise.data.collection
 	{
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_map : Array;
-		protected var m_size : int;
+		protected var _map : Array;
+		protected var _size : int;
 		
 		
 			
@@ -24,20 +24,20 @@ package reprise.data.collection
 			
 		public function clear() : void
 		{
-			m_map = [];
-			m_size = 0;
+			_map = [];
+			_size = 0;
 		}
 		
 		public function containsKey(key : String) : Boolean
 		{
-			return m_map[key] != undefined;
+			return _map[key] != undefined;
 		}
 		
 		public function containsObject(value : Object) : Boolean
 		{
-			for (var key : String in m_map)
+			for (var key : String in _map)
 			{
-				if (m_map[key] == value)
+				if (_map[key] == value)
 				{
 					return true;
 				}
@@ -47,7 +47,7 @@ package reprise.data.collection
 		
 		public function objectForKey(key : String) : Object
 		{
-			var obj : Object = m_map[key];
+			var obj : Object = _map[key];
 			return obj;
 		}
 		
@@ -55,9 +55,9 @@ package reprise.data.collection
 		{
 			if (!containsKey(key))
 			{
-				m_size++;
+				_size++;
 			}
-			m_map[key] = value;
+			_map[key] = value;
 		}
 		
 		public function removeObjectForKey(key : String) : void
@@ -66,31 +66,31 @@ package reprise.data.collection
 			{
 				return;
 			}
-			delete m_map[key];
-			m_size--;
+			delete _map[key];
+			_size--;
 		}
 		
 		public function removeObject(value : Object) : void
 		{
-			for (var key : String in m_map)
+			for (var key : String in _map)
 			{
-				if (m_map[key] == value)
+				if (_map[key] == value)
 				{
-					delete m_map[key];
-					m_size--;
+					delete _map[key];
+					_size--;
 				}
 			}
 		}
 		
 		public function size() : int
 		{
-			return m_size;
+			return _size;
 		}
 		
 		public function keys() : Array
 		{
 			var keysArray : Array = [];
-			for (var key : String in m_map)
+			for (var key : String in _map)
 			{
 				keysArray.push(key);
 			}
@@ -100,16 +100,16 @@ package reprise.data.collection
 		public function values() : Array
 		{
 			var valuesArray : Array = [];
-			for (var key : String in m_map)
+			for (var key : String in _map)
 			{
-				valuesArray.push(m_map[key]);
+				valuesArray.push(_map[key]);
 			}
 			return valuesArray;
 		}
 		
 		public function toObject() : Object
 		{
-			return m_map;
+			return _map;
 		}
 	}
 }

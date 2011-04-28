@@ -26,7 +26,7 @@ package reprise.external
 
 		public override function content() : *
 		{
-			return new XML(m_data.split("\r\n").join("\n"));
+			return new XML(_data.split("\r\n").join("\n"));
 		}
 	}
 }

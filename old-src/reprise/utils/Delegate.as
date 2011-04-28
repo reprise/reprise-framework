@@ -11,17 +11,17 @@ package reprise.utils
 
 	public class Delegate extends AbstractCommand
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_scope : Object;
-		protected var m_method : Function;
-		protected var m_args : Array;
+		protected var _scope : Object;
+		protected var _method : Function;
+		protected var _args : Array;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function Delegate(scope:Object, method:Function, args:Array = null)
 		{
-			m_scope = scope;
-			m_method = method;
-			m_args = args;
+			_scope = scope;
+			_method = method;
+			_args = args;
 		}
 	
 		public static function create(scope:Object, method:Function, ...rest) : Delegate
@@ -34,28 +34,28 @@ package reprise.utils
 		 */
 		public override function execute(...rest) : void
 		{
-			var args:Array = rest.concat(m_args).concat(this);
-			m_method.apply(m_scope, args);
-			m_didSucceed = true;
+			var args:Array = rest.concat(_args).concat(this);
+			_method.apply(_scope, args);
+			_didSucceed = true;
 		}
 
 		public function scope() : Object
 		{
-			return m_scope;
+			return _scope;
 		}
 		public function setScope(scope : Object) : void
 		{
-			m_scope = scope;
+			_scope = scope;
 		}
 		
 		public function arguments():Array
 		{
-			return m_args;
+			return _args;
 		}
 		
 		public function setArguments(args:Array):void
 		{
-			m_args = args;
+			_args = args;
 		}
 	}
 }

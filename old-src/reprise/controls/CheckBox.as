@@ -26,7 +26,7 @@ package reprise.controls
 		
 		public function getLabelDisplay() : Label
 		{
-			return m_labelDisplay;
+			return _labelDisplay;
 		}
 		
 		/**
@@ -43,7 +43,7 @@ package reprise.controls
 		protected override function initialize() : void
 		{
 			super.initialize();
-			m_isToggleButton = true;
+			_isToggleButton = true;
 		}
 		protected override function createChildren() : void
 		{

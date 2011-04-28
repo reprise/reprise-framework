@@ -32,30 +32,30 @@ package reprise.ui.renderers
 		
 		public override function draw() : void
 		{
-			m_display.graphics.clear();
+			_display.graphics.clear();
 	
 			var borderWidth : Object = 
 			{
-				top : m_styles.borderTopWidth,
-				right : m_styles.borderRightWidth,
-				bottom : m_styles.borderBottomWidth,
-				left : m_styles.borderLeftWidth
+				top : _styles.borderTopWidth,
+				right : _styles.borderRightWidth,
+				bottom : _styles.borderBottomWidth,
+				left : _styles.borderLeftWidth
 			};
 			
 			var borderStyle : Object =
 			{
-				top : m_styles.borderTopStyle,
-				right : m_styles.borderRightStyle,
-				bottom : m_styles.borderBottomStyle,
-				left : m_styles.borderLeftStyle
+				top : _styles.borderTopStyle,
+				right : _styles.borderRightStyle,
+				bottom : _styles.borderBottomStyle,
+				left : _styles.borderLeftStyle
 			};
 			
 			var borderColor : Object =
 			{
-				top : m_styles.borderTopColor,
-				right : m_styles.borderRightColor,
-				bottom : m_styles.borderBottomColor,
-				left : m_styles.borderLeftColor
+				top : _styles.borderTopColor,
+				right : _styles.borderRightColor,
+				bottom : _styles.borderBottomColor,
+				left : _styles.borderLeftColor
 			};
 			
 			var radii : Array = [];
@@ -67,10 +67,10 @@ package reprise.ui.renderers
 			var radiusItem : Number;
 			for (i = 0; i < order.length; i++)
 			{
-				radiusItem = m_styles[order[i]];
-				if (m_styles[order[i]] is Number)
+				radiusItem = _styles[order[i]];
+				if (_styles[order[i]] is Number)
 				{
-					radiusItem = m_styles[order[i]];
+					radiusItem = _styles[order[i]];
 				}
 				else
 				{
@@ -87,10 +87,10 @@ package reprise.ui.renderers
 			{
 				var color : AdvancedColor = borderColor.top || new AdvancedColor(0);
 				var width : Number = borderWidth.top;
-				m_display.graphics.lineStyle(width, color.rgb(), color.opacity(), 
+				_display.graphics.lineStyle(width, color.rgb(), color.opacity(),
 					true, 'normal', 'square', 'miter', 2);
-				GfxUtil.drawRoundRect(m_display, width / 2, width / 2, 
-					m_width - width, m_height - width, radii);
+				GfxUtil.drawRoundRect(_display, width / 2, width / 2,
+					_width - width, _height - width, radii);
 				return;
 			}
 			
@@ -102,9 +102,9 @@ package reprise.ui.renderers
 			{
 				topLeft.x = 0;
 				topLeft.y = 0;
-				topRight.x = m_width;
+				topRight.x = _width;
 				topRight.y = 0;
-				bottomRight.x = m_width - borderWidth.right;
+				bottomRight.x = _width - borderWidth.right;
 				bottomRight.y = borderWidth.top;
 				bottomLeft.x = borderWidth.left;
 				bottomLeft.y = borderWidth.top;
@@ -114,13 +114,13 @@ package reprise.ui.renderers
 			
 			if (borderWidth.right > 0 && borderStyle.right != 'none' && borderColor.right)
 			{
-				topLeft.x = m_width;
+				topLeft.x = _width;
 				topLeft.y = 0;
-				topRight.x = m_width;
-				topRight.y = m_height;
-				bottomRight.x = m_width - borderWidth.right;
-				bottomRight.y = m_height - borderWidth.bottom;
-				bottomLeft.x = m_width - borderWidth.right;
+				topRight.x = _width;
+				topRight.y = _height;
+				bottomRight.x = _width - borderWidth.right;
+				bottomRight.y = _height - borderWidth.bottom;
+				bottomLeft.x = _width - borderWidth.right;
 				bottomLeft.y = borderWidth.top;
 				drawBorderInRect(borderColor.right, borderStyle.right, borderWidth.right, 
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_RIGHT);
@@ -129,13 +129,13 @@ package reprise.ui.renderers
 			if (borderWidth.bottom > 0 && borderStyle.bottom != 'none' && borderColor.bottom)
 			{
 				topLeft.x = 0;
-				topLeft.y = m_height;
-				topRight.x = m_width;
-				topRight.y = m_height;
-				bottomRight.x = m_width - borderWidth.right;
-				bottomRight.y =  m_height - borderWidth.bottom;
+				topLeft.y = _height;
+				topRight.x = _width;
+				topRight.y = _height;
+				bottomRight.x = _width - borderWidth.right;
+				bottomRight.y =  _height - borderWidth.bottom;
 				bottomLeft.x = borderWidth.left;
-				bottomLeft.y = m_height - borderWidth.bottom;
+				bottomLeft.y = _height - borderWidth.bottom;
 				drawBorderInRect(borderColor.bottom, borderStyle.bottom, borderWidth.bottom, 
 					topLeft, topRight, bottomRight, bottomLeft, SIDE_BOTTOM);
 			}
@@ -145,9 +145,9 @@ package reprise.ui.renderers
 				topLeft.x = 0;
 				topLeft.y = 0;
 				topRight.x = 0;
-				topRight.y = m_height;
+				topRight.y = _height;
 				bottomRight.x = borderWidth.left;
-				bottomRight.y = m_height - borderWidth.bottom;
+				bottomRight.y = _height - borderWidth.bottom;
 				bottomLeft.x = borderWidth.left;
 				bottomLeft.y = borderWidth.top;
 				drawBorderInRect(borderColor.left, borderStyle.left, borderWidth.left, 
@@ -179,7 +179,7 @@ package reprise.ui.renderers
 					{
 						dashLength *= 3;
 					}
-					m_display.graphics.lineStyle(width, colorValue, opacityValue, 
+					_display.graphics.lineStyle(width, colorValue, opacityValue,
 						false, "normal", "none");
 					
 					switch (side)
@@ -210,20 +210,20 @@ package reprise.ui.renderers
 						}
 					}
 					
-					GfxUtil.drawDashedLine(m_display, 
+					GfxUtil.drawDashedLine(_display,
 						pt1.x, pt1.y, pt2.x, pt2.y, dashLength, dashLength);
 					break;
 				}
 				case Border.BORDER_STYLE_SOLID :
 				{
-					m_display.graphics.lineStyle();
-					m_display.graphics.beginFill(colorValue, opacityValue);
-					m_display.graphics.moveTo(pt1.x, pt1.y);
-					m_display.graphics.lineTo(pt2.x, pt2.y);
-					m_display.graphics.lineTo(pt3.x, pt3.y);
-					m_display.graphics.lineTo(pt4.x, pt4.y);
-					m_display.graphics.moveTo(pt1.x, pt1.y);
-					m_display.graphics.endFill();
+					_display.graphics.lineStyle();
+					_display.graphics.beginFill(colorValue, opacityValue);
+					_display.graphics.moveTo(pt1.x, pt1.y);
+					_display.graphics.lineTo(pt2.x, pt2.y);
+					_display.graphics.lineTo(pt3.x, pt3.y);
+					_display.graphics.lineTo(pt4.x, pt4.y);
+					_display.graphics.moveTo(pt1.x, pt1.y);
+					_display.graphics.endFill();
 					break;
 				}
 				default:

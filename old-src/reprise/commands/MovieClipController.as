@@ -22,12 +22,12 @@ package reprise.commands
 
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_target : MovieClip;
-		protected var m_direction : int = 1;
-		protected var m_frameDelay : int = 1;
-		protected var m_frameDelayCount : int = 0;
-		protected var m_frameRange : Range;
-		protected var m_resetOnExecute : Boolean = false;
+		protected var _target : MovieClip;
+		protected var _direction : int = 1;
+		protected var _frameDelay : int = 1;
+		protected var _frameDelayCount : int = 0;
+		protected var _frameRange : Range;
+		protected var _resetOnExecute : Boolean = false;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -40,78 +40,78 @@ package reprise.commands
 		public override function execute(...args) : void
 		{
 			super.execute();
-			if (m_resetOnExecute)
+			if (_resetOnExecute)
 			{
-				if (m_direction == DIRECTION_FORWARDS)
+				if (_direction == DIRECTION_FORWARDS)
 				{
-					gotoAndStop(m_frameRange.location);
+					gotoAndStop(_frameRange.location);
 				}
 				else
 				{
-					gotoAndStop(m_frameRange.location + m_frameRange.length - 1);
+					gotoAndStop(_frameRange.location + _frameRange.length - 1);
 				}
 			}
 			else
 			{
 				applyFrameRange();
 			}
-			m_target.addEventListener(Event.ENTER_FRAME, enterFrame);
+			_target.addEventListener(Event.ENTER_FRAME, enterFrame);
 		}
 		
 		public function setTarget(mc:MovieClip) : void
 		{
-			m_target = mc;
-			if (m_frameRange == null)
+			_target = mc;
+			if (_frameRange == null)
 			{
-				m_frameRange = new Range(1, mc.totalFrames);
+				_frameRange = new Range(1, mc.totalFrames);
 			}
 		}
 		
 		public function setDirection(dir:int) : void
 		{
-			m_direction = dir;
+			_direction = dir;
 		}
 	
 		public function currentFrame() : int
 		{
-			return m_target.currentFrame;
+			return _target.currentFrame;
 		}
 		
 		public function totalFrames() : int
 		{
-			return m_target.totalFrames;
+			return _target.totalFrames;
 		}
 		
 		public function gotoAndStop(frame:int) : void
 		{
 			frame = normalizedFrame(frame);
-			m_target.gotoAndStop(frame);
+			_target.gotoAndStop(frame);
 		}
 		
 		public function gotoAndPlay(frame:int) : void
 		{
 			frame = normalizedFrame(frame);
-			m_target.gotoAndStop(frame);
+			_target.gotoAndStop(frame);
 			execute();
 		}
 		
 		public override function cancel() : void
 		{
-			m_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
+			_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			super.cancel();
 		}
 		
 		public function setFrameDelay(delay:int) : void
 		{
-			m_frameDelay = Math.max(0, delay);
+			_frameDelay = Math.max(0, delay);
 		}
 		
 		public function setFrameRange(range:Range) : void
 		{
-			m_frameRange = range.clone();
-			m_frameRange.location = Math.max(1, m_frameRange.location);
-			m_frameRange.length = Math.min(totalFrames(), 
-				m_frameRange.location + m_frameRange.length - 1) - m_frameRange.location + 1;
+			_frameRange = range.clone();
+			_frameRange.location = Math.max(1, _frameRange.location);
+			_frameRange.length = Math.min(totalFrames(),
+				_frameRange.location + _frameRange.length - 1) - _frameRange.location + 1;
 			if (isExecuting())
 			{
 				applyFrameRange();
@@ -120,43 +120,43 @@ package reprise.commands
 		
 		public function frameRange() : Range
 		{
-			return m_frameRange.clone();
+			return _frameRange.clone();
 		}
 		
 		public function setResetsOnExecute(bFlag:Boolean):void
 		{
-			m_resetOnExecute = bFlag;
+			_resetOnExecute = bFlag;
 		}
 		
 		public function resetsOnExecute():Boolean
 		{
-			return m_resetOnExecute;
+			return _resetOnExecute;
 		}
 		
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function notifyComplete(success:Boolean) : void
 		{
-			m_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
+			_target.removeEventListener(Event.ENTER_FRAME, enterFrame);
 			super.notifyComplete(success);
 		}
 		
 		protected function normalizedFrame(frame:int) : int
 		{
-			frame = Math.max(frame, m_frameRange.location);
-			frame = Math.min(frame, m_frameRange.location + m_frameRange.length - 1);
+			frame = Math.max(frame, _frameRange.location);
+			frame = Math.min(frame, _frameRange.location + _frameRange.length - 1);
 			return frame;
 		}
 		
 		protected function applyFrameRange():void
 		{
-			if (currentFrame() < m_frameRange.location)
+			if (currentFrame() < _frameRange.location)
 			{
-				this.gotoAndStop(m_frameRange.location);
+				this.gotoAndStop(_frameRange.location);
 			}
-			else if (currentFrame() > m_frameRange.location + m_frameRange.length - 1)
+			else if (currentFrame() > _frameRange.location + _frameRange.length - 1)
 			{
-				this.gotoAndStop(m_frameRange.location + m_frameRange.length - 1);
+				this.gotoAndStop(_frameRange.location + _frameRange.length - 1);
 			}
 		}
 		
@@ -166,25 +166,25 @@ package reprise.commands
 		***************************************************************************/
 		public function enterFrame(e:Event) : void
 		{
-			if (++m_frameDelayCount < m_frameDelay)
+			if (++_frameDelayCount < _frameDelay)
 			{
 				return;
 			}
-			m_frameDelayCount = 0;
-			if (m_direction == DIRECTION_FORWARDS)
+			_frameDelayCount = 0;
+			if (_direction == DIRECTION_FORWARDS)
 			{
-				if (currentFrame() < m_frameRange.location + m_frameRange.length - 1)
+				if (currentFrame() < _frameRange.location + _frameRange.length - 1)
 				{
-					m_target.nextFrame();
+					_target.nextFrame();
 					return;
 				}
 				notifyComplete(true);			
 			}
 			else
 			{
-				if (currentFrame() > m_frameRange.location)
+				if (currentFrame() > _frameRange.location)
 				{
-					m_target.prevFrame();
+					_target.prevFrame();
 					return;				
 				}
 				notifyComplete(true);

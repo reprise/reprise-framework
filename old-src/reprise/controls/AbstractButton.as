@@ -22,10 +22,10 @@ package reprise.controls
 	public class AbstractButton extends AbstractInput
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_isToggleButton : Boolean = false;
+		protected var _isToggleButton : Boolean = false;
 	
-		protected var m_selected : Boolean = false;
-		protected var m_enabled : Boolean = true;
+		protected var _selected : Boolean = false;
+		protected var _enabled : Boolean = true;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -34,7 +34,7 @@ package reprise.controls
 		 */
 		public function set isToggleButton(value:Boolean) : void
 		{
-			m_isToggleButton = value;
+			_isToggleButton = value;
 		}
 		
 		/**
@@ -42,7 +42,7 @@ package reprise.controls
 		 */
 		public function get isToggleButton() : Boolean
 		{
-			return m_isToggleButton;
+			return _isToggleButton;
 		}
 		
 		/**
@@ -52,7 +52,7 @@ package reprise.controls
 		 */
 		public function set selected(value:Boolean) : void
 		{
-			if (value == m_selected)
+			if (value == _selected)
 			{
 				return;
 			}
@@ -72,7 +72,7 @@ package reprise.controls
 		 */
 		public function get selected() : Boolean
 		{
-			return m_selected;
+			return _selected;
 		}
 		
 		
@@ -82,11 +82,11 @@ package reprise.controls
 		public function set enabled(value:Boolean) : void
 		{
 			//TODO: add proper handling of enabled property
-			if (value == m_enabled)
+			if (value == _enabled)
 			{
 				return;
 			}
-			m_enabled = value;
+			_enabled = value;
 			if (!value)
 			{
 				addCSSPseudoClass("disabled");
@@ -102,7 +102,7 @@ package reprise.controls
 		
 		public function get enabled() : Boolean
 		{
-			return m_enabled;
+			return _enabled;
 		}
 		
 		public override function value():*
@@ -134,7 +134,7 @@ package reprise.controls
 		{
 			super.initialize();
 			
-			m_canBecomeKeyView = true;
+			_canBecomeKeyView = true;
 			
 			initializeButtonHandlers();
 		}
@@ -149,13 +149,13 @@ package reprise.controls
 		protected function activate() : void
 		{
 			addCSSPseudoClass("checked");
-			m_selected = true;
+			_selected = true;
 		}
 		
 		protected function deactivate() : void
 		{
 			removeCSSPseudoClass("checked");
-			m_selected = false;
+			_selected = false;
 		}
 		
 		protected override function handleKeyEvent(event : KeyboardEvent) : Boolean
@@ -176,7 +176,7 @@ package reprise.controls
 		
 		protected function buttonDisplay_over(event : MouseEvent) : void
 		{
-			if (m_enabled)
+			if (_enabled)
 			{
 				addCSSPseudoClass("hover");
 			}
@@ -188,7 +188,7 @@ package reprise.controls
 		protected function buttonDisplay_down(event : MouseEvent) : void
 		{
 			stage.addEventListener(MouseEvent.MOUSE_UP, buttonDisplay_up);
-			if (m_enabled)
+			if (_enabled)
 			{
 				addCSSPseudoClass("active");
 			}
@@ -203,14 +203,14 @@ package reprise.controls
 		}
 		protected function buttonDisplay_click(event : MouseEvent) : void
 		{
-			if (!m_enabled)
+			if (!_enabled)
 			{
 				event.stopImmediatePropagation();
 				return;
 			}
-			if (m_canBecomeKeyView)
+			if (_canBecomeKeyView)
 			{
-				m_rootElement.setFocusedElement(this, FocusManager.FOCUS_METHOD_MOUSE);
+				_rootElement.setFocusedElement(this, FocusManager.FOCUS_METHOD_MOUSE);
 			}
 			
 			if(isToggleButton)

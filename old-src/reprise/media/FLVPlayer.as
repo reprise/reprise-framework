@@ -20,14 +20,14 @@ package reprise.media
 	public class FLVPlayer extends AbstractPlayer
 	{
 
-		protected var m_stream:NetStream;
-		protected var m_video:Video;
-		protected var m_width:uint;
-		protected var m_framerate:uint;
-		protected var m_height:uint;
-		protected var m_soundTransform:SoundTransform;
-		protected var m_metadata:Object;
-		protected var m_buffered:Boolean = false;
+		protected var _stream:NetStream;
+		protected var _video:Video;
+		protected var _width:uint;
+		protected var _framerate:uint;
+		protected var _height:uint;
+		protected var _soundTransform:SoundTransform;
+		protected var _metadata:Object;
+		protected var _buffered:Boolean = false;
 		
 		
 		
@@ -41,48 +41,48 @@ package reprise.media
 		
 		public override function setResource(resource:IResource):void
 		{
-			if (m_stream)
+			if (_stream)
 			{
 				cleanupStream();
 			}
 			super.setResource(resource);
-			m_stream = NetStream(FLVResource(resource).content());
-			m_stream.client = this;
-			m_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
-			m_soundTransform = m_stream.soundTransform = new SoundTransform(1.0, 0.0);
+			_stream = NetStream(FLVResource(resource).content());
+			_stream.client = this;
+			_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
+			_soundTransform = _stream.soundTransform = new SoundTransform(1.0, 0.0);
 		}
 		
 		public function setHost(video:Video):void
 		{
-			m_video = video;
+			_video = video;
 		}
 		
 		public override function position():Number
 		{
 			if (state() == AbstractPlayer.STATE_PLAYING)
-				return m_stream.time;
+				return _stream.time;
 			else
-				return m_recentPosition;
+				return _recentPosition;
 		}
 
 		public override function bytesLoaded():Number
 		{
-			return m_stream.bytesLoaded;
+			return _stream.bytesLoaded;
 		}
 
 		public override function bytesTotal():Number
 		{
-			return m_stream.bytesTotal;
+			return _stream.bytesTotal;
 		}
 
 		public function width():Number
 		{
-			return m_width;
+			return _width;
 		}
 
 		public function height():Number
 		{
-			return m_height;
+			return _height;
 		}
 		
 		/*
@@ -90,25 +90,25 @@ package reprise.media
 		*/
 		public override function isBuffered():Boolean
 		{
-			return m_buffered;
+			return _buffered;
 		}
 
 		public override function bufferStatus():Number
 		{
-			return m_stream.bufferLength / (m_stream.bufferTime / 100);
+			return _stream.bufferLength / (_stream.bufferTime / 100);
 		}
 
 		protected override function updateBuffer():void
 		{
 			super.updateBuffer();
-			if (isLoaded() || isNaN(m_buffer.requiredBufferLength()))
+			if (isLoaded() || isNaN(_buffer.requiredBufferLength()))
 			{
 				return;
 			}
-			m_stream.bufferTime = m_buffer.requiredBufferLength();
-			if (m_stream.bufferLength >= m_stream.bufferTime)
+			_stream.bufferTime = _buffer.requiredBufferLength();
+			if (_stream.bufferLength >= _stream.bufferTime)
 			{
-				m_buffered = true;
+				_buffered = true;
 			}
 		}
 
@@ -117,18 +117,18 @@ package reprise.media
 		*/
 		public function onMetaData(info:Object):void 
 		{
-			m_width = info.width;
-			m_height = info.height;
-			m_framerate = info.framerate;
-			m_duration = info.duration;
+			_width = info.width;
+			_height = info.height;
+			_framerate = info.framerate;
+			_duration = info.duration;
 			if (info.videodatarate && info.audiodatarate)
 			{
 				// videodatarate and audiodatarate are in Kbps
-				m_buffer.setMediaBitrate((info.videodatarate + info.audiodatarate) / 8 * 1024);
+				_buffer.setMediaBitrate((info.videodatarate + info.audiodatarate) / 8 * 1024);
 			}
-			m_buffer.setMediaLength(m_duration);
+			_buffer.setMediaLength(_duration);
 
-			if (isNaN(m_duration) || m_duration == 0)
+			if (isNaN(_duration) || _duration == 0)
 			{
 				broadcastError('Duration of video not embedded. Please reencode video with ' + 
 					'appropriate encoder which does handle this.', true);
@@ -152,58 +152,58 @@ package reprise.media
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function doLoad():void
 		{
-			m_video.attachNetStream(m_stream);
-			m_source.execute();
-			m_stream.pause();
-			m_video.clear();
+			_video.attachNetStream(_stream);
+			_source.execute();
+			_stream.pause();
+			_video.clear();
 		}
 
 		protected override function doUnload():void
 		{
-			m_stream && cleanupStream();
-			m_video && m_video.clear();
+			_stream && cleanupStream();
+			_video && _video.clear();
 		}
 
 		protected override function doPlay():void
 		{
-			if (!m_source.isExecuting())
+			if (!_source.isExecuting())
 			{
-				m_source.execute();
+				_source.execute();
 			}
 			else
 			{
-				m_stream.resume();
+				_stream.resume();
 			}
 		}
 
 		protected override function doPause():void
 		{
-			m_stream.pause();
+			_stream.pause();
 		}
 
 		protected override function doStop():void
 		{
-			m_stream.pause();
-			m_video.clear();
+			_stream.pause();
+			_video.clear();
 		}
 
 		protected override function doSeek(offset:Number):void
 		{
-			m_stream.seek(offset);
+			_stream.seek(offset);
 		}
 		
 		protected override function doSetVolume(vol:Number):void
 		{
-			m_soundTransform.volume = vol;
-			m_stream.soundTransform = m_soundTransform;
+			_soundTransform.volume = vol;
+			_stream.soundTransform = _soundTransform;
 		}
 
 		protected function cleanupStream() : void
 		{
-			m_source.reset();
-			m_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
-			m_stream.soundTransform = null;
-			m_stream = null;
+			_source.reset();
+			_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_netStatus);
+			_stream.soundTransform = null;
+			_stream = null;
 		}
 		
 		protected function stream_netStatus(e:NetStatusEvent):void
@@ -220,19 +220,19 @@ package reprise.media
 					break;
 
 				case "NetStream.Play.StreamNotFound" :
-					broadcastError("File " + m_source + " not found", true);
+					broadcastError("File " + _source + " not found", true);
 					break;
 
 				case "NetStream.Buffer.Full" :
-					m_buffered = true;
+					_buffered = true;
 					break;
 
 				case "NetStream.Buffer.Flush" :
-					m_buffered = isLoaded();
+					_buffered = isLoaded();
 					break;
 
 				case "NetStream.Buffer.Empty" :
-					m_buffered = false;
+					_buffered = false;
 					break;
 			}		
 		}

@@ -9,9 +9,9 @@ package reprise.css.transitions
 {
 	public class PropertyTransitionVO
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_startValue : *;
-		protected var m_endValue : *;
-		protected var m_currentValue : *;
+		protected var _startValue : *;
+		protected var _endValue : *;
+		protected var _currentValue : *;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -21,35 +21,35 @@ package reprise.css.transitions
 		
 		public function get startValue() : *
 		{
-			return m_startValue;
+			return _startValue;
 		}
 		public function set startValue(value : *) : void
 		{
-			m_startValue = value;
+			_startValue = value;
 		}
 		
 		public function get endValue() : *
 		{
-			return m_endValue;
+			return _endValue;
 		}
 		public function set endValue(value : *) : void
 		{
-			m_endValue = value;
+			_endValue = value;
 		}
 		
 		public function get currentValue() : *
 		{
-			return m_currentValue;
+			return _currentValue;
 		}
 		public function set currentValue(value : *) : void
 		{
-			m_currentValue = value;
+			_currentValue = value;
 		}
 		
 		public function setCurrentValueToRatio(ratio : Number) : *
 		{
 			//has to be implemented in child classes
-			return m_currentValue;
+			return _currentValue;
 		}
 	}
 }

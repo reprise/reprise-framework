@@ -16,8 +16,8 @@ package reprise.external
 	public class FLVResource extends AbstractResource
 	{
 		
-		protected var m_connection:NetConnection;
-		protected var m_stream:NetStream;
+		protected var _connection:NetConnection;
+		protected var _stream:NetStream;
 		
 		
 		
@@ -30,38 +30,38 @@ package reprise.external
 		override public function setURL(theURL : String) : void
 		{
 			super.setURL(theURL);
-			m_stream && cleanupStream();
+			_stream && cleanupStream();
 			theURL && initStream();
 		}
 
 		public override function bytesTotal() : int
 		{
-			return m_stream.bytesTotal;
+			return _stream.bytesTotal;
 		}
 		
 		public override function bytesLoaded() : int
 		{
-			return m_stream.bytesLoaded;
+			return _stream.bytesLoaded;
 		}
 		
 		public override function content():*
 		{
-			return m_stream;
+			return _stream;
 		}
 		
 		protected override function doLoad():void
 		{
-			m_stream.play(url());
+			_stream.play(url());
 		}
 
 		override protected function doCancel() : void
 		{
-			m_stream && cleanupStream();
+			_stream && cleanupStream();
 		}
 
 		override public function reset() : void
 		{
-			if (!m_isExecuting && m_stream)
+			if (!_isExecuting && _stream)
 			{
 				cleanupStream();
 			}
@@ -70,7 +70,7 @@ package reprise.external
 
 		protected override function checkProgress(...rest : Array) : void
 		{
-			if (m_stream.bytesLoaded >= m_stream.bytesTotal)
+			if (_stream.bytesLoaded >= _stream.bytesTotal)
 			{
 				onData(true);
 			}
@@ -79,22 +79,22 @@ package reprise.external
 
 		protected function initStream():void
 		{
-			m_connection = new NetConnection();
-			m_connection.connect(null);
-			m_stream = new NetStream(m_connection);
-			m_stream.bufferTime = 0;
-			m_stream.client = this;
-			m_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_status);
+			_connection = new NetConnection();
+			_connection.connect(null);
+			_stream = new NetStream(_connection);
+			_stream.bufferTime = 0;
+			_stream.client = this;
+			_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_status);
 		}
 
 		protected function cleanupStream() : void
 		{
-			m_stream.close();
-			m_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_status);
-			m_stream.soundTransform = null;
-			m_stream = null;
-			m_connection.close();
-			m_connection = null;
+			_stream.close();
+			_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_status);
+			_stream.soundTransform = null;
+			_stream = null;
+			_connection.close();
+			_connection = null;
 		}
 		
 		protected function stream_status(e:NetStatusEvent):void

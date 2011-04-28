@@ -22,29 +22,29 @@ package reprise.core
 		public static var TEXTNODE_TAGS : String = "span,br,strong,i,null,";
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_idHandlers : Object;
-		protected var m_classHandlers : Object;
-		protected var m_tagHandlers : Object;
-		protected var m_inputTypeHandlers : Object;
+		protected var _idHandlers : Object;
+		protected var _classHandlers : Object;
+		protected var _tagHandlers : Object;
+		protected var _inputTypeHandlers : Object;
 		
-		protected var m_borderRenderers : Object;
-		protected var m_backgroundRenderers : Object;
-		protected var m_tooltipRenderers : Object;
-		protected var m_defaultBorderRenderer : Class;
-		protected var m_defaultBackgroundRenderer : Class;
-		protected var m_defaultTooltipRenderer : Class;
+		protected var _borderRenderers : Object;
+		protected var _backgroundRenderers : Object;
+		protected var _tooltipRenderers : Object;
+		protected var _defaultBorderRenderer : Class;
+		protected var _defaultBackgroundRenderer : Class;
+		protected var _defaultTooltipRenderer : Class;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function UIRendererFactory()
 		{
-			m_idHandlers = {};
-			m_classHandlers = {};
-			m_tagHandlers = {};
-			m_inputTypeHandlers = {};
-			m_borderRenderers = {};
-			m_backgroundRenderers = {};
-			m_tooltipRenderers = {};
+			_idHandlers = {};
+			_classHandlers = {};
+			_tagHandlers = {};
+			_inputTypeHandlers = {};
+			_borderRenderers = {};
+			_backgroundRenderers = {};
+			_tooltipRenderers = {};
 			registerDefaultRenderers();
 		}
 		/**
@@ -53,7 +53,7 @@ package reprise.core
 		public function registerIdRenderer(
 			id : String, handler : Class) : void
 		{
-			m_idHandlers[id.toLowerCase()] = handler;
+			_idHandlers[id.toLowerCase()] = handler;
 		}
 		/**
 		 * registers a class handler
@@ -62,7 +62,7 @@ package reprise.core
 			className : String, handler : Class) : void
 		{
 			className = className.toLowerCase();
-			m_classHandlers[className.toLowerCase()] = handler;
+			_classHandlers[className.toLowerCase()] = handler;
 		}
 		/**
 		 * registers a tag handler
@@ -70,7 +70,7 @@ package reprise.core
 		public function registerTagRenderer(
 			tagName : String, handler : Class) : void
 		{
-			m_tagHandlers[tagName.toLowerCase()] = handler;
+			_tagHandlers[tagName.toLowerCase()] = handler;
 		}
 		/**
 		 * registers an input type handler.
@@ -82,7 +82,7 @@ package reprise.core
 		public function registerInputTypeRenderer(
 			type : String, handler : Class) : void
 		{
-			m_inputTypeHandlers[type.toLowerCase()] = handler;
+			_inputTypeHandlers[type.toLowerCase()] = handler;
 		}
 		
 		/**
@@ -90,7 +90,7 @@ package reprise.core
 		**/
 		public function registerBorderRenderer(id : String, renderer : Class) : void
 		{
-			m_borderRenderers[id.toLowerCase()] = renderer;
+			_borderRenderers[id.toLowerCase()] = renderer;
 		}
 		
 		/**
@@ -98,27 +98,27 @@ package reprise.core
 		**/
 		public function registerBackgroundRenderer(id : String, renderer : Class) : void
 		{
-			m_backgroundRenderers[id.toLowerCase()] = renderer;
+			_backgroundRenderers[id.toLowerCase()] = renderer;
 		}
 		
 		public function registerTooltipRenderer(id : String, renderer : Class) : void
 		{
-			m_tooltipRenderers[id.toLowerCase()] = renderer;
+			_tooltipRenderers[id.toLowerCase()] = renderer;
 		}
 		
 		public function registerDefaultBorderRenderer(renderer : Class) : void
 		{
-			m_defaultBorderRenderer = renderer;
+			_defaultBorderRenderer = renderer;
 		}
 		
 		public function registerDefaultBackgroundRenderer(renderer : Class) : void
 		{
-			m_defaultBackgroundRenderer = renderer;
+			_defaultBackgroundRenderer = renderer;
 		}
 		
 		public function registerDefaultTooltipRenderer(renderer : Class) : void
 		{
-			m_defaultTooltipRenderer = renderer;
+			_defaultTooltipRenderer = renderer;
 		}
 		
 		/**
@@ -192,7 +192,7 @@ package reprise.core
 		 */
 		public function rendererById(id : String) : UIComponent
 		{
-			var idHandler : Class = m_idHandlers[id.toLowerCase()];
+			var idHandler : Class = _idHandlers[id.toLowerCase()];
 			if (!idHandler)
 			{
 				return null;
@@ -205,7 +205,7 @@ package reprise.core
 		 */
 		public function rendererByClass(className : String) : UIComponent
 		{
-			var classHandler : Class = m_classHandlers[className.toLowerCase()];
+			var classHandler : Class = _classHandlers[className.toLowerCase()];
 			if (!classHandler)
 			{
 				return null;
@@ -218,7 +218,7 @@ package reprise.core
 		 */
 		public function rendererByTag(tagName : String) : UIComponent
 		{
-			var tagHandler : Class = m_tagHandlers[tagName.toLowerCase()];
+			var tagHandler : Class = _tagHandlers[tagName.toLowerCase()];
 			if (!tagHandler)
 			{
 				return null;
@@ -231,7 +231,7 @@ package reprise.core
 		 */
 		public function rendererByInputType(type : String) : UIComponent
 		{
-			var inputTypeHandler : Class = m_inputTypeHandlers[type.toLowerCase()];
+			var inputTypeHandler : Class = _inputTypeHandlers[type.toLowerCase()];
 			if (!inputTypeHandler)
 			{
 				return null;
@@ -244,10 +244,10 @@ package reprise.core
 		**/
 		public function borderRendererById(id : String) : ICSSRenderer
 		{
-			var rendererClass : Class = m_borderRenderers[(id || '').toLowerCase()];
+			var rendererClass : Class = _borderRenderers[(id || '').toLowerCase()];
 			if (rendererClass == null)
 			{
-				rendererClass = m_defaultBorderRenderer;
+				rendererClass = _defaultBorderRenderer;
 			}
 			var renderer:ICSSRenderer = new rendererClass();
 			renderer.setId(id);
@@ -259,10 +259,10 @@ package reprise.core
 		**/
 		public function backgroundRendererById(id : String) : ICSSRenderer
 		{
-			var rendererClass:Class = m_backgroundRenderers[(id || '').toLowerCase()];
+			var rendererClass:Class = _backgroundRenderers[(id || '').toLowerCase()];
 			if (rendererClass == null)
 			{
-				rendererClass = m_defaultBackgroundRenderer;
+				rendererClass = _defaultBackgroundRenderer;
 			}
 			var renderer:ICSSRenderer = new rendererClass();
 			renderer.setId(id);
@@ -273,12 +273,12 @@ package reprise.core
 		{
 			if (id == null)
 			{
-				return new m_defaultTooltipRenderer();
+				return new _defaultTooltipRenderer();
 			}
-			var renderer:Class = m_tooltipRenderers[id.toLowerCase()];
+			var renderer:Class = _tooltipRenderers[id.toLowerCase()];
 			if (renderer == null)
 			{
-				renderer = m_defaultTooltipRenderer;
+				renderer = _defaultTooltipRenderer;
 			}
 			return new renderer();
 		}
@@ -286,9 +286,9 @@ package reprise.core
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function registerDefaultRenderers() : Boolean
 		{
-			m_defaultBorderRenderer = DefaultBorderRenderer;
-			m_defaultBackgroundRenderer = DefaultBackgroundRenderer;
-			m_defaultTooltipRenderer = DefaultTooltipRenderer;
+			_defaultBorderRenderer = DefaultBorderRenderer;
+			_defaultBackgroundRenderer = DefaultBackgroundRenderer;
+			_defaultTooltipRenderer = DefaultTooltipRenderer;
 			
 			registerTagRenderer('p', Label);
 			registerTagRenderer('h1', Label);

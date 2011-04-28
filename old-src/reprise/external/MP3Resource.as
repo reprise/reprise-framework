@@ -15,7 +15,7 @@ package reprise.external
 	public class MP3Resource extends URLRequestResource
 	{
 		
-		protected var m_sound:Sound;
+		protected var _sound:Sound;
 		
 		
 		public function MP3Resource(url:String = null)
@@ -25,25 +25,25 @@ package reprise.external
 		
 		public override function bytesTotal():int
 		{
-			return m_sound.bytesLoaded;
+			return _sound.bytesLoaded;
 		}
 		
 		public override function bytesLoaded():int
 		{
-			return m_sound.bytesTotal;
+			return _sound.bytesTotal;
 		}
 		
 		public override function content():*
 		{
-			return m_sound;
+			return _sound;
 		}
 		
 		protected override function doLoad():void
 		{
 			// asset from library
-			if (m_url.indexOf('attach://') == 0)
+			if (_url.indexOf('attach://') == 0)
 			{
-				var symbolId:String = m_url.split('//')[1];
+				var symbolId:String = _url.split('//')[1];
 	            try
 	            {
 					var pieces:Array = symbolId.split('.');
@@ -53,8 +53,8 @@ package reprise.external
 					{
 						symbolClass = symbolClass[pieces[i]];
 					}
-					m_sound = new symbolClass() as Sound;
-					m_httpStatus = new HTTPStatus(200, m_url);
+					_sound = new symbolClass() as Sound;
+					_httpStatus = new HTTPStatus(200, _url);
 					onData(true);
 	            } 
 				catch (e : Error)
@@ -65,10 +65,10 @@ package reprise.external
 				return;
 			}
 			
-			m_sound = new Sound();
-			m_sound.addEventListener(IOErrorEvent.IO_ERROR, sound_ioError);
-			m_sound.addEventListener(Event.COMPLETE, sound_complete);
-			m_sound.load(createRequest());
+			_sound = new Sound();
+			_sound.addEventListener(IOErrorEvent.IO_ERROR, sound_ioError);
+			_sound.addEventListener(Event.COMPLETE, sound_complete);
+			_sound.load(createRequest());
 		}
 		
 		protected function sound_complete(e:Event):void

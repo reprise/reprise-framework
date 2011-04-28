@@ -25,12 +25,12 @@ package reprise.controls
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_enabled : Boolean;
-		protected var m_labelStr : String = '';
-		protected var m_verticalScrollingOn : Boolean;
-		protected var m_horizontalScrollingOn : Boolean;
+		protected var _enabled : Boolean;
+		protected var _labelStr : String = '';
+		protected var _verticalScrollingOn : Boolean;
+		protected var _horizontalScrollingOn : Boolean;
 		
-		protected var m_placeholder : String;
+		protected var _placeholder : String;
 		
 		//----------------------               Public Methods               ----------------------//
 		public function TextInput ()
@@ -43,35 +43,35 @@ package reprise.controls
 		 */
 		public override function set enabled(value:Boolean) : void
 		{
-			if (value == m_enabled)
+			if (value == _enabled)
 			{
 				return;
 			}
-			m_enabled = value;
+			_enabled = value;
 			if (!value)
 			{
 				addCSSPseudoClass("disabled");
-				m_labelDisplay.type = "dynamic";
+				_labelDisplay.type = "dynamic";
 			}
 			else
 			{
 				removeCSSPseudoClass("disabled");
-				m_labelDisplay.type = "input";
+				_labelDisplay.type = "input";
 			}
 			invalidate();
 		}
 		public override function get enabled () : Boolean
 		{
-			return m_enabled;
+			return _enabled;
 		}
 		
 		public function setDisplaysAsPassword(bFlag:Boolean):void
 		{
-			m_labelDisplay.displayAsPassword = bFlag;
+			_labelDisplay.displayAsPassword = bFlag;
 		}
 		public function displaysAsPassword():Boolean
 		{
-			return m_labelDisplay.displayAsPassword;
+			return _labelDisplay.displayAsPassword;
 		}
 		
 		/**
@@ -82,34 +82,34 @@ package reprise.controls
 			super.setFocus(value, method);
 			if (value)
 			{
-				stage.focus = m_labelDisplay;
-				if (getLabel() == m_placeholder)
+				stage.focus = _labelDisplay;
+				if (getLabel() == _placeholder)
 				{
 					removeCSSClass('placeholder');
 					setLabel('');
 				}
 				if (method == FocusManager.FOCUS_METHOD_KEYBOARD)
 				{
-					m_labelDisplay.setSelection(0, m_labelDisplay.length);
+					_labelDisplay.setSelection(0, _labelDisplay.length);
 				}
-				else if (m_labelDisplay.length)
+				else if (_labelDisplay.length)
 				{
-					var clickedChar : int = m_labelDisplay.getCharIndexAtPoint(
-						m_labelDisplay.mouseX, m_labelDisplay.mouseY);
+					var clickedChar : int = _labelDisplay.getCharIndexAtPoint(
+						_labelDisplay.mouseX, _labelDisplay.mouseY);
 					if (clickedChar == -1)
 					{
-						clickedChar = m_labelDisplay.length;
+						clickedChar = _labelDisplay.length;
 					}
-					m_labelDisplay.setSelection(clickedChar, clickedChar);
+					_labelDisplay.setSelection(clickedChar, clickedChar);
 				}
 			}
 			else
 			{
-				if (m_placeholder && !m_labelDisplay.length)
+				if (_placeholder && !_labelDisplay.length)
 				{
-					setLabel(m_placeholder);
+					setLabel(_placeholder);
 				}
-				if (m_labelStr == m_placeholder)
+				if (_labelStr == _placeholder)
 				{
 					addCSSClass('placeholder');
 				}
@@ -118,11 +118,11 @@ package reprise.controls
 		
 		public override function setLabel(label:String) : void
 		{
-			if (label == null && m_placeholder)
+			if (label == null && _placeholder)
 			{
-				label = m_placeholder;
+				label = _placeholder;
 			}
-			if (label == m_placeholder)
+			if (label == _placeholder)
 			{
 				addCSSClass('placeholder');
 			}
@@ -130,19 +130,19 @@ package reprise.controls
 			{
 				removeCSSClass('placeholder');
 			}
-			m_labelStr = label;
-			m_labelDisplay.text = label;
+			_labelStr = label;
+			_labelDisplay.text = label;
 			invalidate();
 		}
 		
 		public override function getLabel() : String
 		{
-			return m_labelStr;
+			return _labelStr;
 		}
 		
 		public function getValue() : Object
 		{
-			return getLabel() == m_placeholder ? '' : getLabel();
+			return getLabel() == _placeholder ? '' : getLabel();
 		}
 		public override function setValue(value : *) : void
 		{
@@ -154,25 +154,25 @@ package reprise.controls
 		 */
 		public function setPlaceholderAttribute(value : String):void
 		{
-			m_placeholder = value;
-			if (!m_labelStr)
+			_placeholder = value;
+			if (!_labelStr)
 			{
 				setLabel(value);
 			}
 		}
 		public function getPlaceholderAttribute() : String
 		{
-			return m_placeholder;
+			return _placeholder;
 		}
 
 		public override function didSucceed():Boolean
 		{
-			if (m_validator || !m_required || !m_placeholder)
+			if (_validator || !_required || !_placeholder)
 			{
 				return super.didSucceed();
 			}
 			
-			var success:Boolean = value() != m_placeholder;
+			var success:Boolean = value() != _placeholder;
 			success ? markAsValid() : markAsInvalid();
 			return success;
 		}
@@ -182,16 +182,16 @@ package reprise.controls
 		protected override function initialize() : void
 		{
 			super.initialize();
-			m_canBecomeKeyView = true;
-			m_enabled = true;
+			_canBecomeKeyView = true;
+			_enabled = true;
 		}
 		
 		protected override function createChildren() : void
 		{
 			super.createChildren();
-			m_labelDisplay.type = "input";
-			m_labelDisplay.mouseEnabled = true;
-			m_labelDisplay.addEventListener(Event.CHANGE, label_change);
+			_labelDisplay.type = "input";
+			_labelDisplay.mouseEnabled = true;
+			_labelDisplay.addEventListener(Event.CHANGE, label_change);
 		}
 
 		/**
@@ -204,54 +204,54 @@ package reprise.controls
 		protected override function initDefaultStyles() : void
 		{
 			super.initDefaultStyles();
-			m_elementDefaultStyles.setStyle('multiline', 'false');
-			m_elementDefaultStyles.setStyle('display', 'block');
-			m_elementDefaultStyles.setStyle('wordWrap', 'false');
-			m_elementDefaultStyles.setStyle('height', '18px');
-			m_elementDefaultStyles.setStyle('padding', '2px');
+			_elementDefaultStyles.setStyle('multiline', 'false');
+			_elementDefaultStyles.setStyle('display', 'block');
+			_elementDefaultStyles.setStyle('wordWrap', 'false');
+			_elementDefaultStyles.setStyle('height', '18px');
+			_elementDefaultStyles.setStyle('padding', '2px');
 		}
 		protected override function applyStyles() : void
 		{
 			super.applyStyles();
-			if (m_currentStyles.inputCharRestrict && 
-				m_currentStyles.inputCharRestrict != 'none')
+			if (_currentStyles.inputCharRestrict &&
+				_currentStyles.inputCharRestrict != 'none')
 			{
-				m_labelDisplay.restrict = m_currentStyles.inputCharRestrict;
+				_labelDisplay.restrict = _currentStyles.inputCharRestrict;
 			}
 			else
 			{
-				m_labelDisplay.restrict = null;
+				_labelDisplay.restrict = null;
 			}
-			m_labelDisplay.maxChars = m_currentStyles.inputLengthRestrict || 0;
-			if (m_currentStyles.textTransform && m_currentStyles.textTransform != 'none')
+			_labelDisplay.maxChars = _currentStyles.inputLengthRestrict || 0;
+			if (_currentStyles.textTransform && _currentStyles.textTransform != 'none')
 			{
-				m_labelDisplay.addEventListener(TextEvent.TEXT_INPUT, label_textInput);
+				_labelDisplay.addEventListener(TextEvent.TEXT_INPUT, label_textInput);
 			}
 			else
 			{
-				m_labelDisplay.removeEventListener(TextEvent.TEXT_INPUT, label_textInput);
+				_labelDisplay.removeEventListener(TextEvent.TEXT_INPUT, label_textInput);
 			}
 		}
 
 		protected override function renderLabel() : void
 		{
-			var selectionStart : int = m_labelDisplay.selectionBeginIndex;
-			var selectionEnd : int = m_labelDisplay.selectionEndIndex;
-			m_labelXML = <p>[[!]]</p>;
-			m_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
+			var selectionStart : int = _labelDisplay.selectionBeginIndex;
+			var selectionEnd : int = _labelDisplay.selectionEndIndex;
+			_labelXML = <p>[[!]]</p>;
+			_labelDisplay.styleSheet = CSSDeclaration.TEXT_STYLESHEET;
 			super.renderLabel();
-			var format:TextFormat = m_labelDisplay.getTextFormat();
-			m_labelDisplay.styleSheet = null;
-			m_labelDisplay.defaultTextFormat = format;
-			m_labelDisplay.text = m_labelStr || '';
-			m_labelDisplay.setSelection(selectionStart, selectionEnd);
-			m_labelDisplay.width = calculateContentWidth() + 4;
-			m_labelDisplay.height = calculateContentHeight() + 4;
+			var format:TextFormat = _labelDisplay.getTextFormat();
+			_labelDisplay.styleSheet = null;
+			_labelDisplay.defaultTextFormat = format;
+			_labelDisplay.text = _labelStr || '';
+			_labelDisplay.setSelection(selectionStart, selectionEnd);
+			_labelDisplay.width = calculateContentWidth() + 4;
+			_labelDisplay.height = calculateContentHeight() + 4;
 		}
 		
 		protected function label_change(event : Event) : void
 		{
-			m_labelStr = m_labelDisplay.text;
+			_labelStr = _labelDisplay.text;
 			event.stopImmediatePropagation();
 			event.stopPropagation();
 			dispatchEvent(new Event(Event.CHANGE));
@@ -262,50 +262,50 @@ package reprise.controls
 		{
 			event.preventDefault();
 			var text : String = event.text;
-			if (m_labelDisplay.maxChars)
+			if (_labelDisplay.maxChars)
 			{
 				text = event.text.substr(
-					0, m_labelDisplay.maxChars - m_labelDisplay.length + 
-					m_labelDisplay.selectionEndIndex - m_labelDisplay.selectionBeginIndex);
+					0, _labelDisplay.maxChars - _labelDisplay.length +
+					_labelDisplay.selectionEndIndex - _labelDisplay.selectionBeginIndex);
 				if (!text)
 				{
 					return;
 				}
 			}
-			if (m_currentStyles.textTransform == 'uppercase')
+			if (_currentStyles.textTransform == 'uppercase')
 			{
 				text = text.toUpperCase();
 			}
-			else if (m_currentStyles.textTransform == 'lowercase')
+			else if (_currentStyles.textTransform == 'lowercase')
 			{
 				text = text.toLowerCase();
 			}
-			m_labelDisplay.replaceSelectedText(text);
-			if (m_currentStyles.textTransform == 'capitalize')
+			_labelDisplay.replaceSelectedText(text);
+			if (_currentStyles.textTransform == 'capitalize')
 			{
-				var selStart : int = m_labelDisplay.selectionBeginIndex;
-				var selEnd : int = m_labelDisplay.selectionEndIndex;
-				m_labelDisplay.text = StringUtil.toTitleCase(m_labelDisplay.text);
-				m_labelDisplay.setSelection(selStart, selEnd);
+				var selStart : int = _labelDisplay.selectionBeginIndex;
+				var selEnd : int = _labelDisplay.selectionEndIndex;
+				_labelDisplay.text = StringUtil.toTitleCase(_labelDisplay.text);
+				_labelDisplay.setSelection(selStart, selEnd);
 			}
-			m_labelDisplay.dispatchEvent(new Event(Event.CHANGE, true));
+			_labelDisplay.dispatchEvent(new Event(Event.CHANGE, true));
 		}
 
 		protected override function applyOverflowProperty() : void
 		{
-			if ((m_labelDisplay.maxScrollV > 1) != m_verticalScrollingOn || 
-				(m_labelDisplay.maxScrollH > 0) != m_horizontalScrollingOn)
+			if ((_labelDisplay.maxScrollV > 1) != _verticalScrollingOn ||
+				(_labelDisplay.maxScrollH > 0) != _horizontalScrollingOn)
 			{
-				m_overflowIsInvalid = true;
+				_overflowIsInvalid = true;
 				super.applyOverflowProperty();
-				m_verticalScrollingOn = m_labelDisplay.maxScrollV > 1;
-				m_horizontalScrollingOn = m_labelDisplay.maxScrollH > 0;
+				_verticalScrollingOn = _labelDisplay.maxScrollV > 1;
+				_horizontalScrollingOn = _labelDisplay.maxScrollH > 0;
 			}
 		}
 
 		override protected function updateHover(mouseOut : Boolean = false) : void
 		{
-			if (!stage || stage.focus == m_labelDisplay)
+			if (!stage || stage.focus == _labelDisplay)
 			{
 				return;
 			}

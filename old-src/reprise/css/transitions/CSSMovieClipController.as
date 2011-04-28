@@ -23,16 +23,16 @@ package reprise.css.transitions
 		public static const DIRECTION_BACKWARDS : int = -1;
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_target : MovieClip;
-		protected var m_direction : int = 1;
-		protected var m_frameDelay : int = 1;
-		protected var m_frameDelayCount : int = 0;
-		protected var m_frameRange : Range;
-		protected var m_resetOnExecute : Boolean = false;
-		protected var m_operation : String;
-		protected var m_operationParameters : Array;
-		protected var m_loops : int;
-		protected var m_playedLoops : int;
+		protected var _target : MovieClip;
+		protected var _direction : int = 1;
+		protected var _frameDelay : int = 1;
+		protected var _frameDelayCount : int = 0;
+		protected var _frameRange : Range;
+		protected var _resetOnExecute : Boolean = false;
+		protected var _operation : String;
+		protected var _operationParameters : Array;
+		protected var _loops : int;
+		protected var _playedLoops : int;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -45,22 +45,22 @@ package reprise.css.transitions
 		public override function execute(...args) : void
 		{
 			super.execute();
-			m_target.addEventListener(Event.ENTER_FRAME, target_enterFrame, false, 0, true);
+			_target.addEventListener(Event.ENTER_FRAME, target_enterFrame, false, 0, true);
 			
-			if (m_operation)
+			if (_operation)
 			{
 				applyOperation();
 				return;
 			}
-			if (m_resetOnExecute)
+			if (_resetOnExecute)
 			{
-				if (m_direction == DIRECTION_FORWARDS)
+				if (_direction == DIRECTION_FORWARDS)
 				{
-					gotoAndStop(m_frameRange.location);
+					gotoAndStop(_frameRange.location);
 				}
 				else
 				{
-					gotoAndStop(m_frameRange.location + m_frameRange.length - 1);
+					gotoAndStop(_frameRange.location + _frameRange.length - 1);
 				}
 			}
 			else
@@ -71,65 +71,65 @@ package reprise.css.transitions
 
 		public function setTarget(mc:MovieClip) : void
 		{
-			m_target = mc;
-			if (m_frameRange == null)
+			_target = mc;
+			if (_frameRange == null)
 			{
-				m_frameRange = new Range(1, mc.totalFrames);
+				_frameRange = new Range(1, mc.totalFrames);
 			}
 		}
 		
 		public function setOperation(operation : String, parameters : Array) : void
 		{
-			m_operation = operation;
-			m_operationParameters = parameters;
+			_operation = operation;
+			_operationParameters = parameters;
 		}
 		
 		public function setDirection(direction : int) : void
 		{
-			m_direction = direction;
+			_direction = direction;
 		}
 
 		public function currentFrame() : int
 		{
-			return m_target.currentFrame;
+			return _target.currentFrame;
 		}
 		
 		public function totalFrames() : int
 		{
-			return m_target.totalFrames;
+			return _target.totalFrames;
 		}
 		
 		public function gotoAndStop(frame : int) : void
 		{
 			frame = normalizedFrame(frame);
-			m_target.gotoAndStop(frame);
+			_target.gotoAndStop(frame);
 		}
 		
 		public function gotoAndPlay(frame : int) : void
 		{
 			frame = normalizedFrame(frame);
-			m_target.gotoAndStop(frame);
+			_target.gotoAndStop(frame);
 			execute();
 		}
 		
 		public override function cancel() : void
 		{
-			m_target.removeEventListener(Event.ENTER_FRAME, target_enterFrame);
+			_target.removeEventListener(Event.ENTER_FRAME, target_enterFrame);
 			super.cancel();
 		}
 		
 		public function setFrameDelay(delay : int) : void
 		{
-			m_frameDelay = Math.max(0, delay);
+			_frameDelay = Math.max(0, delay);
 		}
 		
 		public function setFrameRange(range:Range) : void
 		{
-			m_frameRange = range.clone();
-			m_frameRange.location = Math.max(1, m_frameRange.location);
-			m_frameRange.length = Math.min(totalFrames(), 
-				m_frameRange.location + m_frameRange.length - 1) - m_frameRange.location + 1;
-			m_direction = m_frameRange.length < 0 ? DIRECTION_BACKWARDS : DIRECTION_FORWARDS;
+			_frameRange = range.clone();
+			_frameRange.location = Math.max(1, _frameRange.location);
+			_frameRange.length = Math.min(totalFrames(),
+				_frameRange.location + _frameRange.length - 1) - _frameRange.location + 1;
+			_direction = _frameRange.length < 0 ? DIRECTION_BACKWARDS : DIRECTION_FORWARDS;
 			if (isExecuting())
 			{
 				applyFrameRange();
@@ -138,17 +138,17 @@ package reprise.css.transitions
 		
 		public function frameRange() : Range
 		{
-			return m_frameRange.clone();
+			return _frameRange.clone();
 		}
 		
 		public function setResetsOnExecute(bFlag:Boolean):void
 		{
-			m_resetOnExecute = bFlag;
+			_resetOnExecute = bFlag;
 		}
 		
 		public function resetsOnExecute():Boolean
 		{
-			return m_resetOnExecute;
+			return _resetOnExecute;
 		}
 		
 		/**
@@ -217,61 +217,61 @@ package reprise.css.transitions
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected override function notifyComplete(success:Boolean) : void
 		{
-			m_target.removeEventListener(Event.ENTER_FRAME, target_enterFrame);
+			_target.removeEventListener(Event.ENTER_FRAME, target_enterFrame);
 			super.notifyComplete(success);
 		}
 		
 		protected function normalizedFrame(frame : int) : int
 		{
-			frame = Math.max(frame, m_frameRange.location);
-			frame = Math.min(frame, m_frameRange.location + m_frameRange.length - 1);
+			frame = Math.max(frame, _frameRange.location);
+			frame = Math.min(frame, _frameRange.location + _frameRange.length - 1);
 			return frame;
 		}
 		
 		protected function applyFrameRange():void
 		{
-			m_target.gotoAndStop(m_frameRange.location);
+			_target.gotoAndStop(_frameRange.location);
 		}
 		
 		protected function applyOperation() : void
 		{
-			var labels : Array = m_target.currentLabels;
+			var labels : Array = _target.currentLabels;
 			var start : int;
 			var end : int;
-			switch (m_operation)
+			switch (_operation)
 			{
 				case 'play':
 				case 'loop':
 				case 'marquee':
 					{
-					m_loops = 1;
-					m_playedLoops = 0;
-					if (!m_operationParameters || m_operationParameters.length == 0)
+					_loops = 1;
+					_playedLoops = 0;
+					if (!_operationParameters || _operationParameters.length == 0)
 					{
 						start = currentFrame();
 						end = totalFrames();
 					}
-					else if (m_operationParameters.length == 1)
+					else if (_operationParameters.length == 1)
 					{
-						end = absolutizeFrame(m_operationParameters[0], labels);
+						end = absolutizeFrame(_operationParameters[0], labels);
 						start = currentFrame() + 1 * (end > currentFrame() ? 1 : -1);
 					}
 					else
 					{
-						start = absolutizeFrame(m_operationParameters[0], labels);
-						end = absolutizeFrame(m_operationParameters[1], labels);
-						if (m_operationParameters.length > 2 && 
-							(m_operation == 'loop' || m_operation == 'marquee'))
+						start = absolutizeFrame(_operationParameters[0], labels);
+						end = absolutizeFrame(_operationParameters[1], labels);
+						if (_operationParameters.length > 2 &&
+							(_operation == 'loop' || _operation == 'marquee'))
 						{
-							m_loops = m_operationParameters[2];
-							if (m_loops == 0)
+							_loops = _operationParameters[2];
+							if (_loops == 0)
 							{
-								m_loops = int.MAX_VALUE / 2;
+								_loops = int.MAX_VALUE / 2;
 							}
 						}
-						if (m_operation == 'marquee')
+						if (_operation == 'marquee')
 						{
-							m_loops *= 2;
+							_loops *= 2;
 						}
 					}
 					if (start == 0)
@@ -283,14 +283,14 @@ package reprise.css.transitions
 				}
 				case 'stop':
 				{
-					m_target.gotoAndStop(m_operationParameters && m_operationParameters[0] || 
-						m_target.currentFrame);
+					_target.gotoAndStop(_operationParameters && _operationParameters[0] ||
+						_target.currentFrame);
 					break;
 				}
 				default:
 				{
 					throw new Error(
-						'CSSMovieClipController operation not supported: ' + m_operation);
+						'CSSMovieClipController operation not supported: ' + _operation);
 					}
 			}
 		}
@@ -321,37 +321,37 @@ package reprise.css.transitions
 		***************************************************************************/
 		protected function target_enterFrame(e:Event) : void
 		{
-			if (++m_frameDelayCount < m_frameDelay)
+			if (++_frameDelayCount < _frameDelay)
 			{
 				return;
 			}
-			m_frameDelayCount = 0;
-			if (m_operation == 'stop')
+			_frameDelayCount = 0;
+			if (_operation == 'stop')
 			{
 				notifyComplete(true);
 				return;
 			}
-			if (currentFrame() != m_frameRange.location + m_frameRange.length)
+			if (currentFrame() != _frameRange.location + _frameRange.length)
 			{
-				m_target.gotoAndStop(currentFrame() + 1 * m_direction);
-				if (!(currentFrame() == m_frameRange.location + m_frameRange.length && 
-					m_frameDelay == 1) || m_playedLoops < m_loops - 1)
+				_target.gotoAndStop(currentFrame() + 1 * _direction);
+				if (!(currentFrame() == _frameRange.location + _frameRange.length &&
+					_frameDelay == 1) || _playedLoops < _loops - 1)
 				{
 					return;
 				}
 			}
-			if (++m_playedLoops < m_loops)
+			if (++_playedLoops < _loops)
 			{
-				if (m_operation == 'loop')
+				if (_operation == 'loop')
 				{
-					m_target.gotoAndStop(m_frameRange.location);
+					_target.gotoAndStop(_frameRange.location);
 				}
-				else if (m_operation == 'marquee')
+				else if (_operation == 'marquee')
 				{
-					m_frameRange.location = currentFrame();
-					m_frameRange.length *= -1;
-					m_direction *= -1;
-					m_target.gotoAndStop(currentFrame() + 1 * m_direction);
+					_frameRange.location = currentFrame();
+					_frameRange.length *= -1;
+					_direction *= -1;
+					_target.gotoAndStop(currentFrame() + 1 * _direction);
 				}
 				return;
 			}

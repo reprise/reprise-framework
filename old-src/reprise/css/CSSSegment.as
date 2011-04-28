@@ -10,8 +10,8 @@ package reprise.css
 	internal class CSSSegment
 	{	
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_content : String;
-		protected var m_URL : String;
+		protected var _content : String;
+		protected var _URL : String;
 		
 		
 		
@@ -21,28 +21,28 @@ package reprise.css
 		
 		public function content() : String
 		{
-			return m_content;
+			return _content;
 		}
 	
 		public function setContent(val:String) : void
 		{
-			m_content = val;
+			_content = val;
 		}
 		
 		public function url() : String
 		{
-			return m_URL;
+			return _URL;
 		}
 	
 		public function setURL(val:String) : void
 		{
-			m_URL = val;
+			_URL = val;
 		}
 		
 		
 		public function toString() : String
 		{
-			return '[CSSSegment] url: ' + m_URL + '\ncontent:\n' + m_content;
+			return '[CSSSegment] url: ' + _URL + '\ncontent:\n' + _content;
 		}
 	}
 }

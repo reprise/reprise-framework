@@ -29,13 +29,13 @@ package reprise.css.transitions
 		public var hasCompleted : Boolean;
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_startTime : int;
-		protected var m_startValue : CSSProperty;
-		protected var m_endValue : CSSProperty;
-		protected var m_backupValue : CSSProperty;
-		protected var m_lastUpdateTime : int;
+		protected var _startTime : int;
+		protected var _startValue : CSSProperty;
+		protected var _endValue : CSSProperty;
+		protected var _backupValue : CSSProperty;
+		protected var _lastUpdateTime : int;
 		
-		protected var m_propertyTransition : PropertyTransitionVO;
+		protected var _propertyTransition : PropertyTransitionVO;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -43,49 +43,49 @@ package reprise.css.transitions
 		{
 			property = name;
 			this.shortcut = shortcut;
-			m_propertyTransition = TransitionVOFactory.transitionForPropertyName(name);
+			_propertyTransition = TransitionVOFactory.transitionForPropertyName(name);
 		}
 		
 		public function get startTime() : int
 		{
-			return m_startTime;
+			return _startTime;
 		}
 		public function set startTime(startTime : int) : void
 		{
-			m_startTime = m_lastUpdateTime = startTime;
+			_startTime = _lastUpdateTime = startTime;
 		}
 		
 		public function set startValue(value : CSSProperty) : void
 		{
-			m_startValue = value;
+			_startValue = value;
 			currentValue = CSSProperty(value.clone(true));
-			m_backupValue = CSSProperty(value.clone(true));
-			if (m_endValue)
+			_backupValue = CSSProperty(value.clone(true));
+			if (_endValue)
 			{
-				currentValue.setIsWeak(m_endValue.isWeak());
-				m_backupValue.setIsWeak(m_endValue.isWeak());
+				currentValue.setIsWeak(_endValue.isWeak());
+				_backupValue.setIsWeak(_endValue.isWeak());
 			}
-			m_propertyTransition.startValue = value.specifiedValue();
-			m_propertyTransition.currentValue = currentValue.specifiedValue();
+			_propertyTransition.startValue = value.specifiedValue();
+			_propertyTransition.currentValue = currentValue.specifiedValue();
 		}
 		public function get startValue() : CSSProperty
 		{
-			return m_startValue;
+			return _startValue;
 		}
 		
 		public function set endValue(value : CSSProperty) : void
 		{
-			m_endValue = value;
+			_endValue = value;
 			if (currentValue)
 			{
-				currentValue.setIsWeak(m_endValue.isWeak());
-				m_backupValue.setIsWeak(m_endValue.isWeak());
+				currentValue.setIsWeak(_endValue.isWeak());
+				_backupValue.setIsWeak(_endValue.isWeak());
 			}
-			m_propertyTransition.endValue = value.specifiedValue();
+			_propertyTransition.endValue = value.specifiedValue();
 		}
 		public function get endValue() : CSSProperty
 		{
-			return m_endValue;
+			return _endValue;
 		}
 		
 		public function updateValues(endValue : CSSProperty, 
@@ -95,16 +95,16 @@ package reprise.css.transitions
 			var oldStart : CSSProperty = this.startValue;
 			var oldEnd : CSSProperty = this.endValue;
 			var oldCurrent : CSSProperty = this.currentValue;
-			var oldStartTime : int = m_startTime;
-			if (startTime - m_lastUpdateTime > frameDuration)
+			var oldStartTime : int = _startTime;
+			if (startTime - _lastUpdateTime > frameDuration)
 			{
-				oldStartTime += startTime - m_lastUpdateTime - frameDuration;
+				oldStartTime += startTime - _lastUpdateTime - frameDuration;
 			}
 			
 			this.endValue = endValue;
 			this.duration = duration;
 			this.delay = delay;
-			m_startTime = m_lastUpdateTime = startTime;
+			_startTime = _lastUpdateTime = startTime;
 			
 			//check if the current transition is just reversed and adjust time if true
 			if (oldStart == endValue)
@@ -119,7 +119,7 @@ package reprise.css.transitions
 					timeOffset += 5;
 					ratio = easing(timeOffset, 0, 1, durationValue);
 				}
-				this.m_startTime -= timeOffset + (delay ? delay.specifiedValue() : 0);
+				this._startTime -= timeOffset + (delay ? delay.specifiedValue() : 0);
 			}
 			else
 			{
@@ -132,18 +132,18 @@ package reprise.css.transitions
 					var delayValue : int = delay ? delay.specifiedValue() : 0;
 					if (delayValue > spentDelay)
 					{
-						this.m_startTime -= spentDelay;
+						this._startTime -= spentDelay;
 					}
 					else
 					{
-						this.m_startTime -= delayValue;
+						this._startTime -= delayValue;
 					}
-					this.m_startTime -=  spentDelay - delayValue;
+					this._startTime -=  spentDelay - delayValue;
 				}
 				else
 				{
 					//already moving, don't delay any further
-					this.m_startTime -= delay ? delay.specifiedValue() : 0;
+					this._startTime -= delay ? delay.specifiedValue() : 0;
 				}
 			}
 		}
@@ -153,12 +153,12 @@ package reprise.css.transitions
 		{
 			var durationValue : int = duration.valueOf() as int;
 			var delayValue : int = delay ? delay.specifiedValue() : 0;
-			if (time - m_lastUpdateTime > frameDuration)
+			if (time - _lastUpdateTime > frameDuration)
 			{
-				m_startTime += time - m_lastUpdateTime - frameDuration;
+				_startTime += time - _lastUpdateTime - frameDuration;
 			}
-			m_lastUpdateTime = time;
-			var currentTime : int = time - m_startTime - delayValue;
+			_lastUpdateTime = time;
+			var currentTime : int = time - _startTime - delayValue;
 			if (currentTime < 0)
 			{
 				return;
@@ -174,10 +174,10 @@ package reprise.css.transitions
 			//validation. If we don't the validation system doesn't know that anything 
 			//really changed in the style because it compares object identities
 			var backup : CSSProperty = currentValue;
-			currentValue = m_backupValue;
-			m_backupValue = backup;
+			currentValue = _backupValue;
+			_backupValue = backup;
 			currentValue.setSpecifiedValue(
-				m_propertyTransition.setCurrentValueToRatio(currentRatio));
+				_propertyTransition.setCurrentValueToRatio(currentRatio));
 		}
 	}
 }

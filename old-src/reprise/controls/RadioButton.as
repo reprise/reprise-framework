@@ -18,7 +18,7 @@ package reprise.controls
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_groupName:String;
+		protected var _groupName:String;
 	
 		
 		
@@ -44,31 +44,31 @@ package reprise.controls
 		
 		public override function get selected():Boolean
 		{
-			return m_selected;
+			return _selected;
 		}
 		
 		public function setGroupName(name:String):void
 		{
-			if (name == m_groupName)
+			if (name == _groupName)
 			{
 				return;
 			}
-			if (m_groupName)
+			if (_groupName)
 			{
 				group().removeRadioButton(this);
 			}
-			m_groupName = name;
+			_groupName = name;
 			group().addRadioButton(this);
 		}
 		
 		public function groupName():String
 		{
-			return m_groupName;
+			return _groupName;
 		}
 		
 		public function group():RadioButtonGroup
 		{
-			return RadioButtonGroup.groupWithName(m_groupName);
+			return RadioButtonGroup.groupWithName(_groupName);
 		}
 		
 		public function setChecked(value : String) : void
@@ -109,7 +109,7 @@ package reprise.controls
 		protected override function initialize () : void
 		{
 			super.initialize();
-			m_isToggleButton = false;
+			_isToggleButton = false;
 		}
 		
 		protected override function handleKeyEvent(event : KeyboardEvent) : Boolean
@@ -140,7 +140,7 @@ package reprise.controls
 		
 		protected override function buttonDisplay_click(event:MouseEvent):void
 		{
-			if (!m_enabled)
+			if (!_enabled)
 			{
 				return;
 			}

@@ -16,8 +16,8 @@ package reprise.commands {
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_instance:TimeCommandExecutor;
-		protected	var m_commands:HashMap;
-		protected var m_nextKeyIndex:Number;
+		protected	var _commands:HashMap;
+		protected var _nextKeyIndex:Number;
 		
 		
 		
@@ -42,7 +42,7 @@ package reprise.commands {
 			{
 				return;
 			}
-			if (m_commands.containsKey(key))
+			if (_commands.containsKey(key))
 			{
 				removeCommandWithName(key);
 			}
@@ -58,7 +58,7 @@ package reprise.commands {
 			wrapper.command = cmd;
 			wrapper.interval = setInterval(
 				ProxyFunction.create(this, executeWrappedCommand, wrapper), time);
-			m_commands.setObjectForKey(wrapper, key);
+			_commands.setObjectForKey(wrapper, key);
 		}
 		
 		public function removeCommand(cmd:ICommand):void
@@ -69,14 +69,14 @@ package reprise.commands {
 				return;
 			}
 			clearInterval(wrapper.interval);
-			m_commands.removeObject(wrapper);
+			_commands.removeObject(wrapper);
 		}
 		
 		public function removeCommandWithName(key:String):void
 		{
 			var wrapper:Object = wrapperForName(key);
 			clearInterval(wrapper.interval);
-			m_commands.removeObjectForKey(key);
+			_commands.removeObjectForKey(key);
 		}	
 		
 		public function delayCommand(cmd:ICommand, time:Number = 0):void
@@ -97,7 +97,7 @@ package reprise.commands {
 			wrapper.oneOff = true;
 			wrapper.interval = setInterval(
 				ProxyFunction.create(this, executeWrappedCommand, wrapper), time);
-			m_commands.setObjectForKey(wrapper, getNextKey());
+			_commands.setObjectForKey(wrapper, getNextKey());
 		}
 		
 		public function resetCommandBySettingNewTime(cmd:ICommand, time:Number = 0):void
@@ -122,13 +122,13 @@ package reprise.commands {
 		//----------------------         Private / Protected Methods        ----------------------//
 		public function TimeCommandExecutor()
 		{
-			m_commands = new HashMap();
-			m_nextKeyIndex = 0;
+			_commands = new HashMap();
+			_nextKeyIndex = 0;
 		}
 		
 		protected function wrapperForCommand(cmd : ICommand) : Object
 		{
-			var commands : Object = m_commands.toObject();
+			var commands : Object = _commands.toObject();
 			var wrapper : Object;
 			for (var key : String in commands)
 			{
@@ -143,12 +143,12 @@ package reprise.commands {
 		
 		protected function wrapperForName(name : String) : Object
 		{
-			return m_commands.objectForKey(name);
+			return _commands.objectForKey(name);
 		}
 		
 		protected function getNextKey():String
 		{
-			return 'key' + m_nextKeyIndex++;
+			return 'key' + _nextKeyIndex++;
 		}
 		
 		protected function executeWrappedCommand(wrapper : Object) : void

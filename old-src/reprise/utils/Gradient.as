@@ -28,19 +28,19 @@ package reprise.utils {
 		
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_fillType:String;
-		protected var m_colors:Array;
-		protected var m_alphas:Array;
-		protected var m_ratios:Array;
-		protected var m_matrix:Matrix;
-		protected var m_spreadMethod:String;
-		protected var m_interpolationMethod:String;
-		protected var m_focalPointRatio:Number;
+		protected var _fillType:String;
+		protected var _colors:Array;
+		protected var _alphas:Array;
+		protected var _ratios:Array;
+		protected var _matrix:Matrix;
+		protected var _spreadMethod:String;
+		protected var _interpolationMethod:String;
+		protected var _focalPointRatio:Number;
 		
-		protected var m_rotation:Number = 90;
-		protected var m_width:Number;
-		protected var m_height:Number;
-		protected var m_origin:Point;
+		protected var _rotation:Number = 90;
+		protected var _width:Number;
+		protected var _height:Number;
+		protected var _origin:Point;
 		
 		
 		
@@ -49,201 +49,201 @@ package reprise.utils {
 			ratios:Array = null, matrix:Matrix = null, spreadMethod:String = null, 
 			interpolationMethod:String = null, focalPointRatio:Number = 1)
 		{
-			m_fillType = fillType == null ? LINEAR : fillType;
-			m_colors = colors == null ? [0x0, 0xffffff] : colors;
-			m_alphas = alphas == null ? [] : alphas;
-			m_ratios = ratios == null ? [] : ratios; 
-			m_matrix = matrix;
-			m_spreadMethod = spreadMethod;
-			m_interpolationMethod = interpolationMethod;
-			m_focalPointRatio = focalPointRatio;
-			m_origin = new Point(0, 0);
+			_fillType = fillType == null ? LINEAR : fillType;
+			_colors = colors == null ? [0x0, 0xffffff] : colors;
+			_alphas = alphas == null ? [] : alphas;
+			_ratios = ratios == null ? [] : ratios;
+			_matrix = matrix;
+			_spreadMethod = spreadMethod;
+			_interpolationMethod = interpolationMethod;
+			_focalPointRatio = focalPointRatio;
+			_origin = new Point(0, 0);
 		}	
 		
 		public function beginGradientFill(target:Graphics, width:Number = 0, 
 			height:Number = 0, rotation:Number = 0) : void
 		{
-			if (m_alphas == null || m_alphas.length != m_colors.length)
+			if (_alphas == null || _alphas.length != _colors.length)
 			{
 				initDefaultAlphas();
 			}
-			if (m_ratios == null || m_ratios.length != m_colors.length)
+			if (_ratios == null || _ratios.length != _colors.length)
 			{
 				initDefaultRatios();
 			}
 			
-			var matrix : Matrix = m_matrix;
-			if (m_matrix == null)
+			var matrix : Matrix = _matrix;
+			if (_matrix == null)
 			{
 				matrix = new Matrix();
-				matrix.createGradientBox(width, height, (m_rotation / 180) * Math.PI,
-					m_origin.x, m_origin.y);
+				matrix.createGradientBox(width, height, (_rotation / 180) * Math.PI,
+					_origin.x, _origin.y);
 			}
-			target.beginGradientFill(m_fillType, m_colors, m_alphas, m_ratios, 
-				matrix, m_spreadMethod, m_interpolationMethod, m_focalPointRatio);
+			target.beginGradientFill(_fillType, _colors, _alphas, _ratios,
+				matrix, _spreadMethod, _interpolationMethod, _focalPointRatio);
 		}
 		
 		public function lineGradientStyle(target:Graphics, width:Number = 0, height:Number = 0,
 				rotation:Number = 0) : void
 		{
-			if (m_alphas == null || m_alphas.length != m_colors.length)
+			if (_alphas == null || _alphas.length != _colors.length)
 			{
 				initDefaultAlphas();
 			}
-			if (m_ratios == null || m_ratios.length != m_colors.length)
+			if (_ratios == null || _ratios.length != _colors.length)
 			{
 				initDefaultRatios();
 			}
 			
-			var matrix : Matrix = m_matrix;
-			if (m_matrix == null)
+			var matrix : Matrix = _matrix;
+			if (_matrix == null)
 			{
 				matrix = new Matrix();
-				matrix.createGradientBox(width, height, (m_rotation / 180) * Math.PI,
-					m_origin.x, m_origin.y);
+				matrix.createGradientBox(width, height, (_rotation / 180) * Math.PI,
+					_origin.x, _origin.y);
 			}
-			target.lineGradientStyle(m_fillType, m_colors, m_alphas, m_ratios, matrix, m_spreadMethod,
-				m_interpolationMethod, m_focalPointRatio);		
+			target.lineGradientStyle(_fillType, _colors, _alphas, _ratios, matrix, _spreadMethod,
+				_interpolationMethod, _focalPointRatio);
 		}
 		
 		public function fillType() : String
 		{
-			return m_fillType;
+			return _fillType;
 		}
 		public function setFillType(val:String) : void
 		{
-			m_fillType = val;
+			_fillType = val;
 		}
 		
 		public function colors() : Array
 		{
-			return m_colors;
+			return _colors;
 		}
 		public function setColors(val:Array) : void
 		{
 			var color : Object;
-			m_colors = [];
-			m_alphas = [];
+			_colors = [];
+			_alphas = [];
 			
 			for (var i : int = 0; i < val.length; i++)
 			{
 				color = val[i];
 				if (color is AdvancedColor)
 				{
-					m_colors.push(color.rgb());
-					m_alphas.push(color.opacity());
+					_colors.push(color.rgb());
+					_alphas.push(color.opacity());
 				}
 				else
 				{
-					m_colors.push(color);
-					m_alphas.push(1);
+					_colors.push(color);
+					_alphas.push(1);
 				}
 			}
 		}
 		
 		public function alphas() : Array
 		{
-			return m_alphas;
+			return _alphas;
 		}
 		public function setAlphas(val:Array) : void
 		{
-			m_alphas = val;
+			_alphas = val;
 		}
 		
 		public function ratios() : Array
 		{
-			return m_ratios;
+			return _ratios;
 		}
 		public function setRatios(val:Array) : void
 		{
-			m_ratios = val;
+			_ratios = val;
 		}
 		
 		public function matrix() : Matrix
 		{
-			return m_matrix;
+			return _matrix;
 		}
 		public function setMatrix(val:Matrix) : void
 		{
-			m_matrix = val;
+			_matrix = val;
 		}
 		
 		public function spreadMethod() : String
 		{
-			return m_spreadMethod;
+			return _spreadMethod;
 		}
 		public function setSpreadMethod(val:String) : void
 		{
-			m_spreadMethod = val;
+			_spreadMethod = val;
 		}
 		
 		public function interpolationMethod() : String
 		{
-			return m_interpolationMethod;
+			return _interpolationMethod;
 		}
 		public function setInterpolationMethod(val:String) : void
 		{
-			m_interpolationMethod = val;
+			_interpolationMethod = val;
 		}
 		
 		public function focalPointRatio() : Number
 		{
-			return m_focalPointRatio;
+			return _focalPointRatio;
 		}
 		public function setFocalPointRatio(val:Number) : void
 		{
-			m_focalPointRatio = val;
+			_focalPointRatio = val;
 		}
 		
 		public function rotation() : Number
 		{
-			return m_rotation;
+			return _rotation;
 		}
 		public function setRotation(val:Number) : void
 		{
-			m_rotation = val;
+			_rotation = val;
 		}
 		
 		public function width() : Number
 		{
-			return m_width;
+			return _width;
 		}
 		public function setWidth(val:Number) : void
 		{
-			m_width = val;
+			_width = val;
 		}
 		
 		public function height() : Number
 		{
-			return m_height;
+			return _height;
 		}
 		public function setHeight(val:Number) : void
 		{
-			m_height = val;
+			_height = val;
 		}
 		
 		public function setOrigin(origin : Point) : void
 		{
-			m_origin = origin;
+			_origin = origin;
 		}
 		public function origin() : Point
 		{
-			return m_origin;
+			return _origin;
 		}
 		
 		public function clone() : Gradient
 		{
-			var grad : Gradient = new Gradient(m_fillType);
-			grad.setColors(m_colors.concat());
-			grad.setAlphas(m_alphas.concat());
-			grad.setRatios(m_ratios.concat());
-			grad.setSpreadMethod(m_spreadMethod);
-			grad.setInterpolationMethod(m_interpolationMethod);
-			grad.setFocalPointRatio(m_focalPointRatio);
-			grad.setWidth(m_width);
-			grad.setHeight(m_height);
-			grad.setRotation(m_rotation);
-			grad.setMatrix(m_matrix.clone());
+			var grad : Gradient = new Gradient(_fillType);
+			grad.setColors(_colors.concat());
+			grad.setAlphas(_alphas.concat());
+			grad.setRatios(_ratios.concat());
+			grad.setSpreadMethod(_spreadMethod);
+			grad.setInterpolationMethod(_interpolationMethod);
+			grad.setFocalPointRatio(_focalPointRatio);
+			grad.setWidth(_width);
+			grad.setHeight(_height);
+			grad.setRotation(_rotation);
+			grad.setMatrix(_matrix.clone());
 			return grad;
 		}
 		
@@ -268,23 +268,23 @@ package reprise.utils {
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function initDefaultAlphas() : void
 		{
-			m_alphas = [];
-			var len:int = m_colors.length;
+			_alphas = [];
+			var len:int = _colors.length;
 			while (len--)
 			{
-				m_alphas.push(1);
+				_alphas.push(1);
 			}
 		}
 		
 		protected function initDefaultRatios() : void
 		{
-			m_ratios = [];
-			var len:int = m_colors.length;
+			_ratios = [];
+			var len:int = _colors.length;
 			var step:Number = 0xff / (len - 1);
 			var ratio : Number = 0;
 			while (len--)
 			{
-				m_ratios.push(ratio);
+				_ratios.push(ratio);
 				ratio += step;
 			}
 		}

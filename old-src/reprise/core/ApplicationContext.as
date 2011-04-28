@@ -25,10 +25,10 @@ package reprise.core
 		
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static var g_mainContext:ApplicationContext;
-		protected var m_application:Application;
+		protected var _application:Application;
 		
-		protected var m_i18nService : II18NService;
-		protected var m_trackingService : ITrackingService;
+		protected var _i18nService : II18NService;
+		protected var _trackingService : ITrackingService;
 		
 		
 		//----------------------               Public Methods               ----------------------//
@@ -67,26 +67,26 @@ package reprise.core
 		
 		public function setI18NService(i18nService : II18NService) : void
 		{
-			m_i18nService = i18nService;
+			_i18nService = i18nService;
 		}
 		
 		public function setTrackingService(
 			trackingService : ITrackingService) : void
 		{
-			m_trackingService = trackingService;
+			_trackingService = trackingService;
 		}
 		
 		public function i18n(key : String, defaultReturnValue : * = null) : *
 		{
-			if (!m_i18nService)
+			if (!_i18nService)
 			{
 				log('w No i18n service set, can\'t resolve key "' + key + '"');
 				return defaultReturnValue == null ? key : defaultReturnValue;
 			}
 			var result : *;
-			if (m_i18nService.keyExists(key))
+			if (_i18nService.keyExists(key))
 			{
-				result = m_i18nService.contentByKey(key);
+				result = _i18nService.contentByKey(key);
 				if (typeof result == "string")
 				{
 					result = (result as String).split('\r\n').join('\n').split('\r').join('\n');
@@ -102,7 +102,7 @@ package reprise.core
 		
 		public function track(trackingId : String) : void
 		{
-			m_trackingService.track(trackingId);
+			_trackingService.track(trackingId);
 		}
 	}
 }

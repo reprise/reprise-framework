@@ -28,13 +28,13 @@ package reprise.core
 		
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected static const CSS_URL : String = 'flash.css';		
-		protected var m_rootElement : DocumentView;
-		protected var m_currentView : UIObject;
-		protected var m_lastView : UIObject;
+		protected var _rootElement : DocumentView;
+		protected var _currentView : UIObject;
+		protected var _lastView : UIObject;
 		
-		protected var m_appContext:ApplicationContext;
+		protected var _appContext:ApplicationContext;
 		
-		protected var m_css : CSS;
+		protected var _css : CSS;
 
 		
 		//----------------------               Public Methods               ----------------------//
@@ -102,7 +102,7 @@ package reprise.core
 		 */
 		public function rootElement() : DocumentView
 		{
-			return m_rootElement;
+			return _rootElement;
 		}
 		
 		
@@ -118,7 +118,7 @@ package reprise.core
 			var className : String = getQualifiedClassName(this).split('::').pop();
 			zz_init(stage, className);
 			
-			m_appContext = new ApplicationContext(this, this.loaderInfo);
+			_appContext = new ApplicationContext(this, this.loaderInfo);
 			ApplicationRegistry.instance().registerApplication(this);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -127,12 +127,12 @@ package reprise.core
 		
 		protected function initResourceLoading() : void
 		{
-			m_appContext.coreResourceLoader.addEventListener(Event.COMPLETE, resource_complete);
+			_appContext.coreResourceLoader.addEventListener(Event.COMPLETE, resource_complete);
 			loadDefaultResources();
 			loadResources();
-			if (m_appContext.coreResourceLoader.length())
+			if (_appContext.coreResourceLoader.length())
 			{
-				m_appContext.coreResourceLoader.execute();
+				_appContext.coreResourceLoader.execute();
 			}
 			else
 			{
@@ -148,11 +148,11 @@ package reprise.core
 			{
 				return;
 			}
-			var cssURL:String = m_appContext.applicationParameters.css_url || 
+			var cssURL:String = _appContext.applicationParameters.css_url ||
 				Object(this).constructor['CSS_URL'] || CSS_URL;
-			m_css = new CSS(cssURL);
-			m_css.setBaseURL(applicationURL());
-			addResource(m_css);
+			_css = new CSS(cssURL);
+			_css.setBaseURL(applicationURL());
+			addResource(_css);
 		}
 		
 		protected function loadResources() : void
@@ -161,27 +161,27 @@ package reprise.core
 		
 		protected function addResource(resource : IResource) : IResource
 		{
-			m_appContext.coreResourceLoader.addResource(resource);
+			_appContext.coreResourceLoader.addResource(resource);
 			return resource;
 		}
 		protected function resource_complete(event : Event) : void
 		{
-			m_appContext.coreResourceLoader.removeEventListener(Event.COMPLETE, resource_complete);
+			_appContext.coreResourceLoader.removeEventListener(Event.COMPLETE, resource_complete);
 			initApplication();
 		}
 		
 		protected function initApplication() : void
 		{
 			createRootElement();
-			m_rootElement.styleSheet = m_css;
+			_rootElement.styleSheet = _css;
 			startApplication();
 		}
 		protected function createRootElement() : void
 		{
-			m_rootElement = new DocumentView();
-			m_rootElement.setApplicationContext(m_appContext);
-			addChild(m_rootElement);
-			m_rootElement.setParent(m_rootElement);
+			_rootElement = new DocumentView();
+			_rootElement.setApplicationContext(_appContext);
+			addChild(_rootElement);
+			_rootElement.setParent(_rootElement);
 		}
 
 		protected function startApplication() : void
@@ -195,32 +195,32 @@ package reprise.core
 		 */
 		protected function showView(viewClass:Class, delayShow:Boolean) : UIObject
 		{
-			if (m_currentView)
+			if (_currentView)
 			{
-				m_lastView = m_currentView;
-				m_currentView = null;
-				m_lastView.addEventListener(DisplayEvent.HIDE_COMPLETE, 
+				_lastView = _currentView;
+				_currentView = null;
+				_lastView.addEventListener(DisplayEvent.HIDE_COMPLETE,
 				 lastView_hide);
-				m_lastView.hide();
+				_lastView.hide();
 			}
-			m_currentView = UIObject(m_rootElement.addChild(UIObject(new viewClass())));
-			if (!m_lastView && !delayShow)
+			_currentView = UIObject(_rootElement.addChild(UIObject(new viewClass())));
+			if (!_lastView && !delayShow)
 			{
-				m_currentView.show();
+				_currentView.show();
 			}
 			else {
-				m_currentView.setVisibility(false);
+				_currentView.setVisibility(false);
 			}
-			return m_currentView;
+			return _currentView;
 		}
 	
 		protected function lastView_hide() : void
 		{
-			m_lastView.remove();
-			m_lastView = null;
-			if (m_currentView)
+			_lastView.remove();
+			_lastView = null;
+			if (_currentView)
 			{
-				m_currentView.show();
+				_currentView.show();
 			}
 		}
 	}

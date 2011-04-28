@@ -13,66 +13,66 @@ package reprise.external {
 	
 	public class BitmapResource extends AbstractResource
 	{//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_cacheBitmap : Boolean;
-		protected var m_cloneBitmap : Boolean;
-		protected var m_bytesLoaded : int;
-		protected var m_bytesTotal : int;
-		protected var m_applicationURL : String;
-		protected var m_data : BitmapData;
+		protected var _cacheBitmap : Boolean;
+		protected var _cloneBitmap : Boolean;
+		protected var _bytesLoaded : int;
+		protected var _bytesTotal : int;
+		protected var _applicationURL : String;
+		protected var _data : BitmapData;
 		
-		protected var m_containingImageResource : ImageResource;
+		protected var _containingImageResource : ImageResource;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function BitmapResource(url:String = null, 
 			cacheBitmap:Boolean = true, cloneBitmap:Boolean = true)
 		{
-			m_url = url;
-			m_cacheBitmap = cacheBitmap;
-			m_cloneBitmap = cloneBitmap;
-			m_checkPolicyFile = true;
+			_url = url;
+			_cacheBitmap = cacheBitmap;
+			_cloneBitmap = cloneBitmap;
+			_checkPolicyFile = true;
 		}
 
 		public override function execute(...rest) : void
 		{
 			super.execute();
 			// we rely on the events dispatched by ImageResource
-			TimeCommandExecutor.instance().removeCommand(m_controlDelegate);
+			TimeCommandExecutor.instance().removeCommand(_controlDelegate);
 		}
 		
 		public override function bytesLoaded() : int
 		{
-			return m_bytesLoaded;
+			return _bytesLoaded;
 		}
 		
 		public override function bytesTotal() : int
 		{
-			return m_bytesTotal;
+			return _bytesTotal;
 		}	
 		
 		public override function content() : *
 		{
-			return m_data;
+			return _data;
 		}	
 		
 		public function setCacheBitmap(bFlag:Boolean) : void
 		{
-			m_cacheBitmap = bFlag;
+			_cacheBitmap = bFlag;
 		}
 		
 		public function cacheBitmap() : Boolean
 		{
-			return m_cacheBitmap;
+			return _cacheBitmap;
 		}
 		
 		public function setCloneBitmap(bFlag:Boolean) : void
 		{
-			m_cloneBitmap = bFlag;
+			_cloneBitmap = bFlag;
 		}
 		
 		public function cloneBitmap() : Boolean
 		{
-			return m_cloneBitmap;
+			return _cloneBitmap;
 		}
 		
 		
@@ -83,19 +83,19 @@ package reprise.external {
 		**/
 		public function setContent(bitmap:BitmapData, httpStatus:HTTPStatus = null) : void
 		{
-			m_data = bitmap;
-			m_httpStatus = httpStatus;
+			_data = bitmap;
+			_httpStatus = httpStatus;
 			onData(bitmap != null);
 		}
 		
 		public function setBytesLoaded(bytesLoaded:Number) : void
 		{
-			m_bytesLoaded = bytesLoaded;
+			_bytesLoaded = bytesLoaded;
 		}
 		
 		public function setBytesTotal(bytesTotal:Number) : void
 		{
-			m_bytesTotal = bytesTotal;
+			_bytesTotal = bytesTotal;
 		}
 		
 		public function updateProgress() : void
@@ -112,16 +112,16 @@ package reprise.external {
 		public function setContainingImageResource(
 			imageResource : ImageResource) : void
 		{
-			m_containingImageResource = imageResource;
+			_containingImageResource = imageResource;
 		}
 		
 		public override function set priority(value : int) : void
 		{
 			super.priority = value;
 			// @FIXME
-			if (m_containingImageResource)
+			if (_containingImageResource)
 			{
-				m_containingImageResource.priority = value;
+				_containingImageResource.priority = value;
 			}
 		}
 		

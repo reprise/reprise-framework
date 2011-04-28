@@ -24,22 +24,22 @@ package reprise.controls.html
 	{
 		
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var m_fields:Array;
-		protected var m_customValidators:Array;
-		protected var m_submitButtons:Array;
-		protected var m_backButtons:Array;
-		protected var m_data : Object;
-		protected var m_validationCommand:CompositeCommand;
-		protected var m_validationDisabled:Boolean = false;
+		protected var _fields:Array;
+		protected var _customValidators:Array;
+		protected var _submitButtons:Array;
+		protected var _backButtons:Array;
+		protected var _data : Object;
+		protected var _validationCommand:CompositeCommand;
+		protected var _validationDisabled:Boolean = false;
 		
 		
 		//----------------------               Public Methods               ----------------------//
 		public function Form() 
 		{
-			m_fields = [];
-			m_submitButtons = [];
-			m_backButtons = [];
-			m_customValidators = [];
+			_fields = [];
+			_submitButtons = [];
+			_backButtons = [];
+			_customValidators = [];
 			addEventListener(DisplayEvent.ADDED_TO_DOCUMENT, self_displayObjectAdded);
 			addEventListener(DisplayEvent.REMOVED_FROM_DOCUMENT, self_displayObjectRemoved);
 		}
@@ -48,9 +48,9 @@ package reprise.controls.html
 		{
 			var i:int = 0;
 			var data:Object = {};
-			for (; i < m_fields.length; i++)
+			for (; i < _fields.length; i++)
 			{
-				var input:IInput = m_fields[i] as IInput;
+				var input:IInput = _fields[i] as IInput;
 				if (!input.fieldName() || data[input.fieldName()])
 				{
 					continue;
@@ -72,25 +72,25 @@ package reprise.controls.html
 		
 		public function addCustomValidator(validator:IValidator):void
 		{
-			m_customValidators.push(validator);
+			_customValidators.push(validator);
 		}
 		
 		public function failedValidators() : Array
 		{
 			var validators : Array = [];
 			var i:int = 0;
-			for (; i < m_fields.length; i++)
+			for (; i < _fields.length; i++)
 			{
-				var input:IInput = m_fields[i] as IInput;
+				var input:IInput = _fields[i] as IInput;
 				if (input.didSucceed() || (!input.fieldName() && !input.required()))
 				{
 					continue;
 				}
 				validators.push(input);
 			}
-			for (i = 0; i < m_customValidators.length; i++)
+			for (i = 0; i < _customValidators.length; i++)
 			{
-				var validator:IValidator = IValidator(m_customValidators[i]);
+				var validator:IValidator = IValidator(_customValidators[i]);
 				if (!validator.didSucceed())
 				{
 					validators.push(validator);
@@ -103,15 +103,15 @@ package reprise.controls.html
 		public function fields():Array
 		{
 			// don't let anyone modify our fields
-			return m_fields.concat();
+			return _fields.concat();
 		}
 		
 		public function fieldWithName(name:String):IInput
 		{
-			var i:int = m_fields.length;
+			var i:int = _fields.length;
 			while (i--)
 			{
-				var field:IInput = IInput(m_fields[i]);
+				var field:IInput = IInput(_fields[i]);
 				if (field.fieldName() == name)
 				{
 					return field;
@@ -122,14 +122,14 @@ package reprise.controls.html
 		
 		public function setValidationDisabled(bFlag:Boolean):void
 		{
-			m_validationDisabled = bFlag;
+			_validationDisabled = bFlag;
 		}
 		
 		public function markAsValid():void
 		{
-			for (var i:int = 0; i < m_fields.length; i++)
+			for (var i:int = 0; i < _fields.length; i++)
 			{
-				var input:IInput = m_fields[i];
+				var input:IInput = _fields[i];
 				input.markAsValid();
 			}
 			removeCSSPseudoClass('error');
@@ -137,30 +137,30 @@ package reprise.controls.html
 		
 		public function validate():void
 		{
-			if (m_validationDisabled)
+			if (_validationDisabled)
 			{
 				dispatchSubmitEvent();
 				return;
 			}
 			
-			m_validationCommand = new CompositeCommand();
-			m_validationCommand.setAbortOnFailure(false);
+			_validationCommand = new CompositeCommand();
+			_validationCommand.setAbortOnFailure(false);
 			var i:int = 0;
 			var count:int = 0;
-			for (; i < m_fields.length; i++)
+			for (; i < _fields.length; i++)
 			{
-				var input:IInput = m_fields[i] as IInput;
+				var input:IInput = _fields[i] as IInput;
 				if (!input.fieldName() && !input.required())
 				{
 					continue;
 				}
-				m_validationCommand.addCommand(input);
+				_validationCommand.addCommand(input);
 				count++;
 			}
-			for (i = 0; i < m_customValidators.length; i++)
+			for (i = 0; i < _customValidators.length; i++)
 			{
-				var validator:IValidator = IValidator(m_customValidators[i]);
-				m_validationCommand.addCommand(validator);
+				var validator:IValidator = IValidator(_customValidators[i]);
+				_validationCommand.addCommand(validator);
 				count++;
 			}
 			if (!count)
@@ -169,13 +169,13 @@ package reprise.controls.html
 				return;
 			}
 			dispatchEvent(new FormEvent(FormEvent.WILL_VALIDATE));
-			m_validationCommand.addEventListener(Event.COMPLETE, validation_complete);
-			m_validationCommand.execute();
+			_validationCommand.addEventListener(Event.COMPLETE, validation_complete);
+			_validationCommand.execute();
 
-			if (!m_validationCommand.isExecuting())
+			if (!_validationCommand.isExecuting())
 			{
 				validation_complete(
-					new CommandEvent(Event.COMPLETE, m_validationCommand.didSucceed()));
+					new CommandEvent(Event.COMPLETE, _validationCommand.didSucceed()));
 			}
 		}
 		
@@ -209,7 +209,7 @@ package reprise.controls.html
 		{
 			if (e.target is IInput)
 			{
-				m_fields.push(e.target);
+				_fields.push(e.target);
 			}
 			
 			if (!(e.target is UIComponent))
@@ -219,12 +219,12 @@ package reprise.controls.html
 			
 			if (e.target is SubmitButton)
 			{
-				m_submitButtons.push(e.target);
+				_submitButtons.push(e.target);
 				(e.target as UIComponent).addEventListener(MouseEvent.CLICK, submitButton_click);
 			}
 			else if (e.target is BackButton)
 			{
-				m_backButtons.push(e.target);
+				_backButtons.push(e.target);
 				(e.target as UIComponent).addEventListener(MouseEvent.CLICK, backButton_click);
 			}
 		}
@@ -233,18 +233,18 @@ package reprise.controls.html
 		{
 			if (e.target is IInput)
 			{
-				m_fields.splice(m_fields.indexOf(e.target), 1);
+				_fields.splice(_fields.indexOf(e.target), 1);
 			}
 			var index:int;
-			if ((index = m_submitButtons.indexOf(e.target)) != -1)
+			if ((index = _submitButtons.indexOf(e.target)) != -1)
 			{
 				(e.target as UIComponent).removeEventListener(MouseEvent.CLICK, submitButton_click);
-				m_submitButtons.splice(index, 1);
+				_submitButtons.splice(index, 1);
 			}
-			else if ((index = m_backButtons.indexOf(e.target)) != -1)
+			else if ((index = _backButtons.indexOf(e.target)) != -1)
 			{
 				(e.target as UIComponent).removeEventListener(MouseEvent.CLICK, backButton_click);
-				m_backButtons.splice(index, 1);
+				_backButtons.splice(index, 1);
 			}
 		}
 		
@@ -252,9 +252,9 @@ package reprise.controls.html
 		{
 			if (e.shiftKey && e.altKey && e.keyCode == 187)
 			{
-				m_validationDisabled = !m_validationDisabled;
+				_validationDisabled = !_validationDisabled;
 				log('d Magic key! Validation is now ' + 
-					(m_validationDisabled ? 'OFF' : 'ON') + '.');
+					(_validationDisabled ? 'OFF' : 'ON') + '.');
 			}
 		}
 		

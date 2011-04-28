@@ -36,69 +36,69 @@ package reprise.css
 		protected var g_idSource : int;
 		
 		
-		protected var m_cssFile : CSSImport;
-		protected var m_loader : ResourceLoader;
-		protected var m_imagePreloadingResource : ResourceLoader;
-		protected var m_importQueue : Array;
-		protected var m_cssSegments : IndexedArray;
-		protected var m_declarationList : CSSDeclarationList;
-		protected var m_cssVariables : Object;
+		protected var _cssFile : CSSImport;
+		protected var _loader : ResourceLoader;
+		protected var _imagePreloadingResource : ResourceLoader;
+		protected var _importQueue : Array;
+		protected var _cssSegments : IndexedArray;
+		protected var _declarationList : CSSDeclarationList;
+		protected var _cssVariables : Object;
 		
-		protected var m_baseURL : String;
-		protected var m_runtimeParserRegistered : Boolean;
+		protected var _baseURL : String;
+		protected var _runtimeParserRegistered : Boolean;
 		
-		protected var m_cleanupTime : int;
-		protected var m_parseTime : int;
-		protected var m_importsLoaded : int;
-		protected var m_importsTotal : int;
-		private var m_stylesheetURLs : Array;
+		protected var _cleanupTime : int;
+		protected var _parseTime : int;
+		protected var _importsLoaded : int;
+		protected var _importsTotal : int;
+		private var _stylesheetURLs : Array;
 
 		
 		//----------------------               Public Methods               ----------------------//
 		public function CSS(url : String = null)
 		{
-			m_id = g_idSource++;
+			_id = g_idSource++;
 			
-			m_loader = new ResourceLoader();
-			m_cssVariables = {};
+			_loader = new ResourceLoader();
+			_cssVariables = {};
 			
 			if (url)
 			{
-				m_url = url;
+				_url = url;
 			}
-			m_loader.addEventListener(Event.COMPLETE, loader_complete);
+			_loader.addEventListener(Event.COMPLETE, loader_complete);
 		}
 		
 		public override function execute(...rest) : void
 		{
-			if (m_url == null)
+			if (_url == null)
 			{
 				throw new Error('You didn\'t specify an URL for your ' + 
 					'CSS resource! Make sure you do this before calling execute!');
 				return;
 			}
 			
-			if (!m_runtimeParserRegistered)
+			if (!_runtimeParserRegistered)
 			{
 				CSSDeclaration.registerPropertyCollection(RuntimeParser);
-				m_runtimeParserRegistered = true;
+				_runtimeParserRegistered = true;
 			}
 			
-			m_didFinishLoading = false;
-			m_isCancelled = false;
-			m_parseTime = 0;
-			m_cleanupTime = 0;
-			m_importsLoaded = 0;
-			m_importsTotal = 1;
-			m_declarationList = new CSSDeclarationList();
-			m_stylesheetURLs = [];
-			m_importQueue = [];
-			m_cssSegments = new IndexedArray();
-			setURL(m_url);
-			m_cssFile.setURL(CSSParsingHelper.resolvePathAgainstPath(url(), baseURL()));
-			m_stylesheetURLs.push(m_cssFile.url());
-			m_loader.addResource(m_cssFile);
-			m_loader.execute();
+			_didFinishLoading = false;
+			_isCancelled = false;
+			_parseTime = 0;
+			_cleanupTime = 0;
+			_importsLoaded = 0;
+			_importsTotal = 1;
+			_declarationList = new CSSDeclarationList();
+			_stylesheetURLs = [];
+			_importQueue = [];
+			_cssSegments = new IndexedArray();
+			setURL(_url);
+			_cssFile.setURL(CSSParsingHelper.resolvePathAgainstPath(url(), baseURL()));
+			_stylesheetURLs.push(_cssFile.url());
+			_loader.addResource(_cssFile);
+			_loader.execute();
 		}
 		
 		public override function didSucceed():Boolean
@@ -111,7 +111,7 @@ package reprise.css
 		public override function cancel() : void
 		{
 			log('w cancel for CSS is not implemented yet!');
-			m_isCancelled = true;
+			_isCancelled = true;
 			dispatchEvent(new ResourceEvent(Event.CANCEL));
 		}
 		
@@ -127,16 +127,16 @@ package reprise.css
 		}
 		reprise function getStyleForEscapedSelectorPath(sp : String) : CSSDeclaration
 		{
-			if (!m_declarationList)
+			if (!_declarationList)
 			{
 				return new CSSDeclaration();
 			}
-			return m_declarationList.getStyleForSelectorsPath(sp);
+			return _declarationList.getStyleForSelectorsPath(sp);
 		}
 
 		public function stylesheetURLs() : Array
 		{
-			return m_stylesheetURLs;
+			return _stylesheetURLs;
 		}
 
 		/**
@@ -184,12 +184,12 @@ package reprise.css
 		
 		public function baseURL() : String
 		{
-			return m_baseURL; 
+			return _baseURL;
 		}
 	
 		public function setBaseURL(val:String) : void
 		{
-			m_baseURL = val;
+			_baseURL = val;
 		}
 				
 		/**
@@ -197,58 +197,58 @@ package reprise.css
 		**/
 		public override function setURL(src : String) : void
 		{
-			if (!m_cssSegments)
+			if (!_cssSegments)
 			{
-				m_cssSegments = new IndexedArray();
+				_cssSegments = new IndexedArray();
 			}
-			m_url = src;
-			m_cssFile = cssImportWithURL(src);
-			m_cssSegments[0] = m_cssFile;
+			_url = src;
+			_cssFile = cssImportWithURL(src);
+			_cssSegments[0] = _cssFile;
 		}	
 		public override function content() : *
 		{
-			return m_declarationList;
+			return _declarationList;
 		}
 		public override function bytesLoaded() : int
 		{
 			//TODO: Check if we shouldn't return a better status here
-			return m_importsLoaded;
+			return _importsLoaded;
 		}
 		public override function bytesTotal() : int
 		{
 			//TODO: Check if we shouldn't return a better status here
-			return m_importsTotal;
+			return _importsTotal;
 		}
 		
 		public function resolveImport(cssImport:CSSImport) : void
 		{
-			var index:int = m_cssSegments.getIndex(cssImport);
-			m_cssSegments[index] = cssImport.data();
+			var index:int = _cssSegments.getIndex(cssImport);
+			_cssSegments[index] = cssImport.data();
 			parseImportsInCSSSegmentWithIndex(index, cssImport.url());
-			m_importsLoaded++;
+			_importsLoaded++;
 			dispatchEvent(new ResourceEvent(ResourceEvent.PROGRESS));
 		}
 		
 		public function parseCSSStringWithBaseURL(str:String, url:String) : void
 		{
 			url = url || '/';
-			var isLoading : Boolean = m_importsLoaded < m_importsTotal;
-			m_cssSegments.push(str);
+			var isLoading : Boolean = _importsLoaded < _importsTotal;
+			_cssSegments.push(str);
 			
-			parseImportsInCSSSegmentWithIndex(m_cssSegments.length - 1, url);
+			parseImportsInCSSSegmentWithIndex(_cssSegments.length - 1, url);
 			
 			if (isLoading)
 			{
 				return;
 			}
 			
-			if (m_importQueue.length)
+			if (_importQueue.length)
 			{
 				dequeueImports();
 				return;
 			}
 			
-			var result : Boolean = parseCSSSegment(m_cssSegments[0]);
+			var result : Boolean = parseCSSSegment(_cssSegments[0]);
 			if (!result)
 			{
 				log('e Error! Couldn\'t parse css string!');
@@ -257,13 +257,13 @@ package reprise.css
 		
 		public function addCSSVariableWithNameAndValue(name:String, val:String) : void
 		{
-			if (m_cssVariables[name] != null)
+			if (_cssVariables[name] != null)
 			{
 				log('w Warning! CSS Variable with name ' + name + ' is already defined! (' +
-					m_cssVariables[name] + ' -> ' + val + ')');			
+					_cssVariables[name] + ' -> ' + val + ')');
 				return;
 			}
-			m_cssVariables[name] = val;
+			_cssVariables[name] = val;
 		}
 		
 		public function addCSSVariablesFromObject(obj:Object) : void
@@ -285,16 +285,16 @@ package reprise.css
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function parseCSSVariables() : void
 		{
-			for (var i : int = 0; i < m_cssSegments.length; i++)
+			for (var i : int = 0; i < _cssSegments.length; i++)
 			{
-				if (m_cssSegments[i] is CSSImport)
+				if (_cssSegments[i] is CSSImport)
 				{
-					log('w CSS import not loaded: ' + CSSImport(m_cssSegments[i]).url());
-					m_cssSegments.splice(i, 1);
+					log('w CSS import not loaded: ' + CSSImport(_cssSegments[i]).url());
+					_cssSegments.splice(i, 1);
 					i--;
 					continue;
 				}
-				var seg : CSSSegment = CSSSegment(m_cssSegments[i]);
+				var seg : CSSSegment = CSSSegment(_cssSegments[i]);
 				var parts : Array = seg.content().split('@define ');
 		
 				for (var j : int = 1; j < parts.length; j++)
@@ -319,14 +319,14 @@ package reprise.css
 		
 		protected function replaceCSSVariables() : void
 		{
-			var i : int = m_cssSegments.length;
+			var i : int = _cssSegments.length;
 			while (i--)
 			{
-				var seg : CSSSegment = CSSSegment(m_cssSegments[i]);
+				var seg : CSSSegment = CSSSegment(_cssSegments[i]);
 				var cnt : String = seg.content();
-				for (var varName : String in m_cssVariables)
+				for (var varName : String in _cssVariables)
 				{
-					var varCnt : String = m_cssVariables[varName];
+					var varCnt : String = _cssVariables[varName];
 					cnt = cnt.split('${' + varName + '}').join(varCnt);
 				}
 				seg.setContent(cnt);			
@@ -335,7 +335,7 @@ package reprise.css
 		
 		protected function parseImportsInCSSSegmentWithIndex(index:int, baseURL:String) : void
 		{
-			var cssString : String = cleanupCSS(m_cssSegments[index]);
+			var cssString : String = cleanupCSS(_cssSegments[index]);
 			var segments : Array = cssString.split('@import');
 			var parsedSegment : CSSSegment;		
 			var additionalSegments : Array = [];
@@ -343,7 +343,7 @@ package reprise.css
 			parsedSegment = new CSSSegment();
 			parsedSegment.setContent(segments[0]);
 			parsedSegment.setURL(baseURL);
-			m_cssSegments[index] = parsedSegment;
+			_cssSegments[index] = parsedSegment;
 			
 			for (var i : int = 1; i < segments.length; i++)
 			{
@@ -357,10 +357,10 @@ package reprise.css
 				pos = segment.indexOf(';');
 				
 				url = CSSParsingHelper.parseURL(segment.substring(0, pos), baseURL);
-				m_stylesheetURLs.push(url);
+				_stylesheetURLs.push(url);
 				cssImport = cssImportWithURL(url);
-				m_importQueue.push(cssImport);
-				m_importsTotal++;
+				_importQueue.push(cssImport);
+				_importsTotal++;
 				additionalSegments.push(cssImport);
 				
 				segmentContent = segment.substr(pos + 1);
@@ -375,19 +375,19 @@ package reprise.css
 			
 			if (additionalSegments.length)
 			{
-				m_cssSegments.splice.apply(
-					m_cssSegments, ([index + 1, 0]).concat(additionalSegments));
+				_cssSegments.splice.apply(
+					_cssSegments, ([index + 1, 0]).concat(additionalSegments));
 			}
 		}
 	
 		protected function dequeueImports() : void
 		{
-			for (var i : int = 0; i < m_importQueue.length; i++)
+			for (var i : int = 0; i < _importQueue.length; i++)
 			{
-				m_loader.addResource(m_importQueue[i]);
+				_loader.addResource(_importQueue[i]);
 			}
-			m_importQueue = [];
-			m_loader.execute();
+			_importQueue = [];
+			_loader.execute();
 		}
 		
 		protected function cssImportWithURL(url:String) : CSSImport
@@ -402,7 +402,7 @@ package reprise.css
 		
 		protected override function notifyComplete(success:Boolean) : void
 		{
-			m_didFinishLoading = true;
+			_didFinishLoading = true;
 			dispatchEvent(new CommandEvent(Event.COMPLETE, success));
 		}
 		
@@ -414,7 +414,7 @@ package reprise.css
 				return;
 			}
 			
-			if (m_importQueue.length)
+			if (_importQueue.length)
 			{
 				dequeueImports();
 				return;
@@ -430,9 +430,9 @@ package reprise.css
 			parseCSSVariables();
 			replaceCSSVariables();
 			
-			for (var i : int = 0; i < m_cssSegments.length; i++)
+			for (var i : int = 0; i < _cssSegments.length; i++)
 			{
-				var segment : CSSSegment = m_cssSegments[i];
+				var segment : CSSSegment = _cssSegments[i];
 				success = parseCSSSegment(segment);
 				if (!success)
 				{			
@@ -442,23 +442,23 @@ package reprise.css
 					break;
 				}
 			}
-			m_cssSegments = new IndexedArray();
+			_cssSegments = new IndexedArray();
 			
 			var stats : String = '----------------- CSS Stats -----------------\n' +
-				' time spent cleaning up strings: ' + m_cleanupTime + ' ms\n' +
-				' time spent parsing: ' + m_parseTime + ' ms\n' +
+				' time spent cleaning up strings: ' + _cleanupTime + ' ms\n' +
+				' time spent parsing: ' + _parseTime + ' ms\n' +
 				'---------------------------------------------';
 			log('d ' + stats);
 			
-			if (!m_imagePreloadingResource)
+			if (!_imagePreloadingResource)
 			{
 				dispatchEvent(new CommandEvent(Event.COMPLETE, success));
 			}
 			else
 			{
-				m_imagePreloadingResource.addEventListener(
+				_imagePreloadingResource.addEventListener(
 					Event.COMPLETE, imagePreloader_complete);
-				m_imagePreloadingResource.execute();
+				_imagePreloadingResource.execute();
 			}
 		}
 		protected function imagePreloader_complete(event : CommandEvent) : void
@@ -501,25 +501,25 @@ package reprise.css
 					{
 						var className:String = classNames[j];
 						// --- adding parsed style to declarationlist ---
-						m_declarationList.addDeclaration(declaration, className);
+						_declarationList.addDeclaration(declaration, className);
 					}
 				}
 			}
-			m_parseTime += getTimer() - timestamp;		
+			_parseTime += getTimer() - timestamp;
 			return true;
 		}
 		
 		protected function enqueuePreloadableProperty(prop : CSSProperty) : void
 		{
-			if (!m_imagePreloadingResource)
+			if (!_imagePreloadingResource)
 			{
-				m_imagePreloadingResource = new ResourceLoader();
+				_imagePreloadingResource = new ResourceLoader();
 			}
 			var loader : BitmapResource = 
 				new BitmapResource(prop.valueOf() as String, true);
 			loader.setCacheBitmap(true);
 			loader.setCloneBitmap(false);
-			m_imagePreloadingResource.addResource(loader);
+			_imagePreloadingResource.addResource(loader);
 		}
 		
 		/**
@@ -580,7 +580,7 @@ package reprise.css
 				split("{\n}").join("{}");					// clean empty declarations, because the parser returns nothing otherwise
 	
 			cssStr = StringUtil.lTrim( cssStr );		
-			m_cleanupTime += getTimer() - timestamp;		
+			_cleanupTime += getTimer() - timestamp;
 			return cssStr;
 		}	
 	}
