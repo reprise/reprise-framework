@@ -7,10 +7,6 @@
 
 package reprise.test.areas.commands
 {
-	import asmock.framework.Expect;
-	import asmock.framework.MockRepository;
-	import asmock.integration.flexunit.IncludeMocksRule;
-
 	import flash.events.Event;
 
 	import org.hamcrest.assertThat;
@@ -18,27 +14,17 @@ package reprise.test.areas.commands
 	import org.hamcrest.object.notNullValue;
 
 	import reprise.commands.AsyncCommandBase;
-	import reprise.commands.CompositeCommand;
 	import reprise.commands.events.CommandEvent;
 
 	public class AsyncCommandBaseTests
 	{
 		//----------------------              Public Properties             ----------------------//
-		[Rule] public var includeMocks : IncludeMocksRule = new IncludeMocksRule(
-				[CompositeCommand]);
 
 
-		////////////////////////       Private / Protected Properties       ////////////////////////
-		private var _mockRepository : MockRepository;
+		//----------------------       Private / Protected Properties       ----------------------//
 
 
 		//----------------------               Public Methods               ----------------------//
-		[Before]
-		public function beforeTest() : void
-		{
-			_mockRepository = new MockRepository();
-		}
-
 		[Test]
 		public function executeDispatchesComplete() : void
 		{

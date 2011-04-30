@@ -12,12 +12,13 @@ package reprise.resources
 	public interface IResource extends IAsyncCommand
 	{
 		function load(url : String = null) : void;
-		function didFinishLoading() : Boolean;
+		function completed() : Boolean;
 
 		function set url(url : String) : void;
 		function get url() : String;
 
 		function get bytesLoaded() : int;
+		function get bytesTotal() : int;
 
 		function content() : *;
 	}

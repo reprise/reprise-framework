@@ -7,33 +7,20 @@
 
 package reprise.test.areas.commands
 {
-	import asmock.framework.MockRepository;
-	import asmock.integration.flexunit.IncludeMocksRule;
-
 	import org.flexunit.asserts.assertTrue;
 
 	import reprise.commands.CommandBase;
-	import reprise.commands.CompositeCommand;
 	import reprise.commands.events.CommandEvent;
 
 	public class CommandBaseTests
 	{
 		//----------------------              Public Properties             ----------------------//
-		[Rule] public var includeMocks : IncludeMocksRule = new IncludeMocksRule(
-				[CompositeCommand]);
 
 
-		////////////////////////       Private / Protected Properties       ////////////////////////
-		private var _mockRepository : MockRepository;
+		//----------------------       Private / Protected Properties       ----------------------//
 
 
 		//----------------------               Public Methods               ----------------------//
-		[Before]
-		public function beforeTest() : void
-		{
-			_mockRepository = new MockRepository();
-		}
-
 		[Test] public function changingPriorityDispatchesPriorityChangeEvent() : void
 		{
 			var command : CommandBase = new CommandBase();

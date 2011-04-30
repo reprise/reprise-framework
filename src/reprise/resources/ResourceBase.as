@@ -7,7 +7,6 @@
 
 package reprise.resources
 {
-	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	import flash.utils.getDefinitionByName;
@@ -16,7 +15,6 @@ package reprise.resources
 
 	import reprise.commands.AsyncCommandBase;
 	import reprise.commands.events.CommandEvent;
-	import reprise.resources.HTTPStatus;
 	import reprise.resources.events.ResourceEvent;
 
 	public class ResourceBase extends AsyncCommandBase implements IResource
@@ -32,12 +30,14 @@ package reprise.resources
 
 		protected var _timeout : int = 20000;
 		protected var _retryTimes : int = 3;
-		protected var _failedTimes : int;
+		protected var _failedAttempts : int;
 		protected var _lastBytesLoaded : int;
 		protected var _lastCheckTime : int;
 
-		protected var _didFinishLoading : Boolean;
+		protected var _completed : Boolean;
 		protected var _httpStatusCode : int;
+		protected var _ioErrorOccured : Boolean;
+		protected var _ioErrorText : String;
 		protected var _failureReason : int;
 
 
@@ -64,12 +64,12 @@ package reprise.resources
 			}
 			if (!_url)
 			{
-				throw new Error('You didn\'t specify an URL for your ' +
-						'resource! Make sure you do this before calling execute!');
+				var className : String = this['constructor'].toString().split(/[ \]]/)[1];
+				throw new Error('Error loading ' + className + ': No URL given');
 			}
 
 			super.execute();
-			_failedTimes = 0;
+			_failedAttempts = 0;
 			_lastBytesLoaded = 0;
 			_lastCheckTime = getTimer();
 			startProgressListening();
@@ -121,14 +121,14 @@ package reprise.resources
 			return _content;
 		}
 
-		public function didFinishLoading() : Boolean
+		public function completed() : Boolean
 		{
-			return _didFinishLoading;
+			return _completed;
 		}
 
 		public override function cancel() : void
 		{
-			if (_didFinishLoading)
+			if (_completed)
 			{
 				return;
 			}
@@ -142,10 +142,13 @@ package reprise.resources
 
 		public function get bytesLoaded() : int
 		{
-			return 0;
+			return _completed ? 1 : 0;
 		}
-		public function set bytesLoaded(bytes : int) : void
+
+
+		public function get bytesTotal() : int
 		{
+			return 1;
 		}
 
 
@@ -209,6 +212,10 @@ package reprise.resources
 				{
 					setFailureReason(ResourceEvent.ERROR_HTTP);
 				}
+				if (_ioErrorOccured)
+				{
+					setFailureReason(ResourceEvent.ERROR_IO);
+				}
 				else
 				{
 					setFailureReason(ResourceEvent.ERROR_UNKNOWN);
@@ -234,44 +241,52 @@ package reprise.resources
 
 			stopProgressListening();
 
-			if (!success && ++_failedTimes < _retryTimes &&
-				!(HTTPStatus.cancelRetryAfterReceving(_httpStatusCode)))
+			if (!success && ++_failedAttempts < _retryTimes &&
+					!(HTTPStatus.cancelRetryAfterReceving(_httpStatusCode)))
 			{
 				doLoad();
 				return;
 			}
 
-			if (!success)
-			{
-				var errMsg : String = 'w Loading of resource "' + _url + '" failed. ';
-
-				switch (_failureReason)
-				{
-					case ResourceEvent.ERROR_HTTP :
-					{
-						errMsg += 'HTTP error: ' +
-							HTTPStatus.description(_httpStatusCode);
-						break;
-					}
-					case ResourceEvent.ERROR_TIMEOUT :
-					{
-						errMsg += 'Timeout (' + _timeout + ') exceeded.';
-						break;
-					}
-					case ResourceEvent.ERROR_UNKNOWN :
-					default:
-					{
-						errMsg += 'Unknown error. Make sure the resource exists.';
-					}
-				}
-				log(errMsg);
-			}
-
 			_success = success;
 			_isExecuting = false;
-			_didFinishLoading = true;
+			_completed = true;
 
-			dispatchEvent(new ResourceEvent(Event.COMPLETE, success, _failureReason));
+			if (success)
+			{
+				dispatchEvent(new ResourceEvent(CommandEvent.COMPLETE));
+				return;
+			}
+			
+			var errMsg : String = 'Loading of resource "' + _url + '" failed. ';
+			switch (_failureReason)
+			{
+				case ResourceEvent.ERROR_HTTP :
+				{
+					errMsg += 'HTTP error: ' +
+							HTTPStatus.description(_httpStatusCode);
+					break;
+				}
+				case ResourceEvent.ERROR_TIMEOUT :
+				{
+					errMsg += 'Timeout (' + _timeout + ') exceeded.';
+					break;
+				}
+				case ResourceEvent.ERROR_IO :
+				{
+					errMsg += 'IO error: ' + _ioErrorText;
+					break;
+				}
+				case ResourceEvent.ERROR_UNKNOWN :
+				default:
+				{
+					errMsg += 'Unknown error. Make sure the resource exists.';
+				}
+			}
+			log('w ' + errMsg);
+			dispatchEvent(new ResourceEvent(
+					CommandEvent.COMPLETE, false, _failureReason, _httpStatusCode, errMsg));
+
 		}
 
 		protected function resolveAttachSymbol() : Class

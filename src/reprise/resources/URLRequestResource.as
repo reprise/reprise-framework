@@ -9,7 +9,6 @@ package reprise.resources
 {
 	import flash.net.URLRequest;
 	import flash.net.URLRequestHeader;
-	import flash.net.URLRequestMethod;
 
 	public class URLRequestResource extends ResourceBase
 	{
@@ -21,7 +20,7 @@ package reprise.resources
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function URLRequestResource(url:String)
+		public function URLRequestResource(url : String)
 		{
 			super(url);
 		}
@@ -76,19 +75,10 @@ package reprise.resources
 		protected function createRequest() : URLRequest
 		{
 			var request : URLRequest = new URLRequest(_url);
-			if (_requestContentType)
-			{
-				request.contentType = _requestContentType;
-			}
-			if (_requestData)
-			{
-				request.data = _requestData;
-			}
-			if (_requestHeaders)
-			{
-				request.requestHeaders = _requestHeaders;
-			}
-			request.method = _requestMethod || URLRequestMethod.GET;
+			_requestContentType && (request.contentType = _requestContentType);
+			_requestData && (request.data = _requestData);
+			_requestHeaders && (request.requestHeaders = _requestHeaders);
+			_requestMethod && (request.method = _requestMethod);
 			return request;
 		}
 	}

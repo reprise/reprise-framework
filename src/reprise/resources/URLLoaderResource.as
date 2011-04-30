@@ -1,16 +1,16 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.external 
+package reprise.resources
 {
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
+	import flash.events.IOErrorEvent;
 	import flash.net.URLLoader;
-	import flash.net.URLLoaderDataFormat;
 	import flash.utils.ByteArray;
 
 	public class URLLoaderResource extends URLRequestResource
@@ -42,7 +42,7 @@ package reprise.external
 			_dataFormat = format;
 		}
 
-		public override function bytesLoaded() : int
+		public override function get bytesLoaded() : int
 		{
 			if (_attachMode)
 			{
@@ -55,7 +55,7 @@ package reprise.external
 			return _loader.bytesLoaded;
 		}
 
-		public override function bytesTotal() : int
+		public override function get bytesTotal() : int
 		{
 			if (_attachMode)
 			{
@@ -74,7 +74,7 @@ package reprise.external
 		protected override function doLoad() : void
 		{
 			// asset from library
-			if (_url.indexOf('attach://') == 0)
+			if (_url.indexOf('attach://') === 0)
 			{
 				var symbol : Class = resolveAttachSymbol();
 				if (!symbol)
@@ -94,25 +94,38 @@ package reprise.external
 				return;
 			}
 			_loader = new URLLoader();
-			_loader.dataFormat = _dataFormat || URLLoaderDataFormat.TEXT;
+			_dataFormat && (_loader.dataFormat = _dataFormat);
 			_loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			_loader.addEventListener(IOErrorEvent.IO_ERROR, loader_ioError);
 			_loader.addEventListener(Event.COMPLETE, loader_complete);
 			_loader.load(createRequest());
 			//TODO: add error handling
 		}
-		
+
 		protected override function doCancel() : void
 		{
-			if (_isExecuting)
+			if (!_isExecuting)
 			{
-				_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
-				_loader.removeEventListener(Event.COMPLETE, loader_complete);
-				_loader.close();
-				_loader = null;
+				return;
 			}
-		}	
-		
-		// LoadVars event	
+			_loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, loader_httpStatus);
+			_loader.removeEventListener(Event.COMPLETE, loader_complete);
+			_loader.close();
+			_loader = null;
+		}
+
+		protected function loader_httpStatus(event : HTTPStatusEvent) : void
+		{
+			setHttpStatusCode(event.status);
+		}
+
+		private function loader_ioError(event : IOErrorEvent) : void
+		{
+			_ioErrorOccured = true;
+			_ioErrorText = event.text;
+			onData(false);
+		}
+
 		protected function loader_complete(event : Event) : void
 		{
 			_data = _loader.data;

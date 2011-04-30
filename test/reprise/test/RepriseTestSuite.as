@@ -8,11 +8,13 @@
 package reprise.test
 {
 	import reprise.test.suites.CommandTests;
+	import reprise.test.suites.ResourceTests;
 
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class RepriseTestSuite
 	{
 		public var commandTests : CommandTests;
+		public var resourceTests : ResourceTests;
 	}
 }

@@ -17,16 +17,18 @@ package reprise.resources.events
 
 		public static const ERROR_TIMEOUT : uint = 1;
 		public static const ERROR_HTTP : uint = 2;
-		public static const ERROR_UNKNOWN : uint = 3;
-		public static const ERROR_CANCELLED : uint = 4;
+		public static const ERROR_IO : uint = 3;
+		public static const ERROR_UNKNOWN : uint = 4;
+		public static const ERROR_CANCELLED : uint = 5;
 
 		public var success : Boolean;
 		public var error : int;
 		public var httpStatusCode : int;
+		public var errorDescription : String;
 
 
-		public function ResourceEvent(
-				type : String, success : Boolean = true, error : int = -1, httpStatusCode : int = 0)
+		public function ResourceEvent(type : String, success : Boolean = true,
+				error : int = -1, httpStatusCode : int = 0, errorDescription : String = '')
 		{
 			super(type);
 			if (type === COMPLETE && !success && error === -1)
@@ -37,11 +39,12 @@ package reprise.resources.events
 			this.error = error;
 			this.success = success;
 			this.httpStatusCode = httpStatusCode;
+			this.errorDescription = errorDescription;
 		}
 
 		public override function clone() : Event
 		{
-			return new ResourceEvent(type, success, error, httpStatusCode);
+			return new ResourceEvent(type, success, error, httpStatusCode, errorDescription);
 		}
 	}
 }
