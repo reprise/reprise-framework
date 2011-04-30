@@ -85,7 +85,7 @@ package reprise.resources
 				var binaryObject : Object = new symbol();
 				if (!(binaryObject is ByteArray))
 				{
-					logUnsupportedTypeMessage(symbol);
+					log ('w ' + createUnsupportedTypeMessage(symbol));
 					onData(false);
 					return;
 				}

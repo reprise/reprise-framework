@@ -64,8 +64,7 @@ package reprise.resources
 			}
 			if (!_url)
 			{
-				var className : String = this['constructor'].toString().split(/[ \]]/)[1];
-				throw new Error('Error loading ' + className + ': No URL given');
+				throw new Error('Error loading ' + getQualifiedClassName(this) + ': No URL given');
 			}
 
 			super.execute();
@@ -345,14 +344,14 @@ package reprise.resources
 		 * 
 		 * @param symbol The symbol with the unsupported type
 		 */
-		protected function logUnsupportedTypeMessage(symbol : Class) : void
+		protected function createUnsupportedTypeMessage(symbol : Class) : String
 		{
 			var symbolId : String = _url.substr(9);
 			var className : String = symbolId.substr(0, symbolId.indexOf('/'));
 			var propertyName : String = symbolId.substr(symbolId.indexOf('/') + 1);
 			var fqcn : String = getQualifiedClassName(symbol);
 			var resourceName : String = getQualifiedClassName(this['constructor']);
-			log('w Unable to use attach:// procotol. Static property ' + propertyName +
+			return('Unable to use attach:// procotol. Static property ' + propertyName +
 					' on Class ' +
 					className + ' has type ' + fqcn + ', which is not supported by ' +
 					resourceName);

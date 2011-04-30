@@ -7,6 +7,7 @@
 
 package reprise.test.suites
 {
+	import reprise.test.areas.resources.ResourceBaseTests;
 	import reprise.test.areas.resources.URLLoaderResourceTests;
 
 	[Suite]
@@ -14,5 +15,6 @@ package reprise.test.suites
 	public class ResourceTests
 	{
 		public var urlLoaderResourceTests : URLLoaderResourceTests;
+		public var resourceBaseTests : ResourceBaseTests;
 	}
 }

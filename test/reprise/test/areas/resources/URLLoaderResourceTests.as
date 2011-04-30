@@ -22,35 +22,35 @@ package reprise.test.areas.resources
 
 
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _loader : URLLoaderResource;
+		private var _resource : URLLoaderResource;
 
 
 		//----------------------               Public Methods               ----------------------//
 		[Test(expects='Error')] public function invokingLoadWithoutURLThrows() : void
 		{
-			_loader = new URLLoaderResource('');
-			_loader.load();
+			_resource = new URLLoaderResource('');
+			_resource.load();
 		}
 		[Test] public function invokingLoadSetsExecutingFlag() : void
 		{
-			_loader = new URLLoaderResource('doesn\'t matter');
-			_loader.load();
-			assertThat(_loader, hasPropertyWithValue('isExecuting', true));
-			_loader.cancel();
+			_resource = new URLLoaderResource('doesn\'t matter');
+			_resource.load();
+			assertThat(_resource, hasPropertyWithValue('isExecuting', true));
+			_resource.cancel();
 		}
 		[Test] public function invokingCancelAfterLoadResetsExecutingFlag() : void
 		{
-			_loader = new URLLoaderResource('doesn\'t matter');
-			_loader.load();
-			_loader.cancel();
-			assertThat(_loader, hasPropertyWithValue('isExecuting', false));
+			_resource = new URLLoaderResource('doesn\'t matter');
+			_resource.load();
+			_resource.cancel();
+			assertThat(_resource, hasPropertyWithValue('isExecuting', false));
 		}
 		[Test(async)] public function urlLoaderCompletesWhenLoadingNonExistingLocalFile() : void
 		{
-			_loader = new URLLoaderResource('foo.bar');
-			Async.handleEvent(this, _loader, CommandEvent.COMPLETE,
+			_resource = new URLLoaderResource('foo.bar');
+			Async.handleEvent(this, _resource, CommandEvent.COMPLETE,
 					urlLoaderCompletesWhenLoadingNonExistingLocalFile_result, 5000);
-			_loader.load();
+			_resource.load();
 		}
 		private function urlLoaderCompletesWhenLoadingNonExistingLocalFile_result(...args) : void
 		{
@@ -59,10 +59,10 @@ package reprise.test.areas.resources
 		[Test(async)]
 		public function urlLoaderCompletesWithIOErrorWhenLoadingNonExistingLocalFile() : void
 		{
-			_loader = new URLLoaderResource('foo.bar');
-			Async.handleEvent(this, _loader, CommandEvent.COMPLETE,
+			_resource = new URLLoaderResource('foo.bar');
+			Async.handleEvent(this, _resource, CommandEvent.COMPLETE,
 					urlLoaderCompletesWithIOErrorWhenLoadingNonExistingLocalFile_result, 5000);
-			_loader.load();
+			_resource.load();
 		}
 		private function urlLoaderCompletesWithIOErrorWhenLoadingNonExistingLocalFile_result(
 				event : ResourceEvent, rest : Object) : void
