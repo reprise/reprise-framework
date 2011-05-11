@@ -1,11 +1,11 @@
 /*
-* Copyright (c) 2006-2010 the original author or authors
+* Copyright (c) 2006-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package reprise.external
+package reprise.resources
 {
 	import flash.net.URLRequestMethod;
 
@@ -15,18 +15,18 @@ package reprise.external
 		public function XMLResource(url:String) 
 		{
 			super(url);
-			setRequestContentType('text/xml; charset=utf-8');
-			setRequestMethod(URLRequestMethod.POST);
+			requestContentType = 'text/xml; charset=utf-8';
+			requestMethod = URLRequestMethod.POST;
 		}
 		
-		public function setRequestXML(xml : XML) : void
+		public function set requestXML(xml : XML) : void
 		{
-			setRequestData(xml.toXMLString());
+			requestData = xml.toXMLString();
 		}
 
 		public override function content() : *
 		{
-			return new XML(_data.split("\r\n").join("\n"));
+			return new XML(_data);
 		}
 	}
 }
