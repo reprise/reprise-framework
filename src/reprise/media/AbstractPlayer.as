@@ -266,13 +266,16 @@ package reprise.media
 		{
 			stop();
 			doUnload();
-			m_buffer.reset();
-			m_source.reset();
-			m_statusObserverTimer.reset();
-			m_statusObserverTimer.removeEventListener(TimerEvent.TIMER, observeStatus);
-			m_statusObserverTimer = null;
+			m_buffer && m_buffer.reset();
+			m_source && m_source.reset();
 			m_source = null;
-			
+			if (m_statusObserverTimer)
+			{
+				m_statusObserverTimer.reset();
+				m_statusObserverTimer.removeEventListener(TimerEvent.TIMER, observeStatus);
+				m_statusObserverTimer = null;
+			}
+
 			if (m_status & STATUS_LOAD_FINISHED)
 			{
 				return;
