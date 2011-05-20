@@ -47,7 +47,10 @@ package reprise.controls.html
 			{
 				return;
 			}
-			src = document.resolveURL(src);
+			if (document)
+			{
+				src = document.resolveURL(src);
+			}
 			m_loaded = false;
 			if (m_imageLoader)
 			{
