@@ -226,14 +226,7 @@ package reprise.controls
 			
 			if(isToggleButton)
 			{
-				if(selected)
-				{
-					selected = false;
-				}
-				else
-				{
-					selected = true;	
-				}
+				selected = !selected;
 			}
 		}
 	}
