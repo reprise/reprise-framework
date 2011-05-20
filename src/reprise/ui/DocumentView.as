@@ -337,6 +337,8 @@ package reprise.ui
 			{
 				m_tooltipManager = new TooltipManager(m_rootElement, m_tooltipContainer);
 			}
+
+			reprise::markChildAsInvalid(this);
 			
 			DebugInterface.addDocument(this);
 		}
