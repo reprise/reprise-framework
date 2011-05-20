@@ -51,18 +51,21 @@ package reprise.css.propertyparsers
 		
 		public function Filters() {}
 		
-		public static function parseBackgroundShadow(val:String, file:String) : CSSParsingResult
+		public static function parseBackgroundShadow(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseShadow('background', val, file);
+			return parseShadow('background', val, selector, file);
 		}
 		
-		public static function parseTextShadow(val:String, file:String) : CSSParsingResult
+		public static function parseTextShadow(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseShadow('text', val, file);
+			return parseShadow('text', val, selector, file);
 		}
 		
 		// color x-offset y-offset blur	
-		protected static function parseShadow(name:String, val:String, file:String) : CSSParsingResult
+		protected static function parseShadow(
+				name:String, val:String, selector:String, file:String) : CSSParsingResult
 		{
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -87,25 +90,25 @@ package reprise.css.propertyparsers
 			var part : String = parts[counter++];
 			if (CSSParsingHelper.valueIsColor(part))
 			{
-				res.addPropertyForKey(strToColorProperty(part + important, file), 
+				res.addPropertyForKey(strToColorProperty(part + important, selector, file),
 					name + 'ShadowColor');
 			}
 
 			if (parts.length < 3)
 			{
 				part = parts[counter++];
-				res.addPropertyForKey(strToIntProperty(part + important, file), 
+				res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 					name + 'ShadowXOffset');
-				res.addPropertyForKey(strToIntProperty(part + important, file), 
+				res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 					name + 'ShadowYOffset');
 				return res;
 			}
 			
 			part = parts[counter++];
-			res.addPropertyForKey(strToIntProperty(part + important, file), 
+			res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 				name + 'ShadowXOffset');
 			part = parts[counter++];
-			res.addPropertyForKey(strToIntProperty(part + important, file), 
+			res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 					name + 'ShadowYOffset');
 			
 			if (counter == parts.length)
@@ -114,13 +117,13 @@ package reprise.css.propertyparsers
 			}
 			
 			part = parts[counter++];
-			res.addPropertyForKey(strToIntProperty(part + important, file), 
+			res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 				name + 'ShadowXBlur');
 			if (counter <= parts.length)
 			{
 				part = parts[counter++];				
 			}
-			res.addPropertyForKey(strToIntProperty(part + important, file), 
+			res.addPropertyForKey(strToIntProperty(part + important, selector, file),
 			 	name + 'ShadowYBlur');
 					
 			return res;

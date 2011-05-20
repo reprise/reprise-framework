@@ -56,7 +56,8 @@ package reprise.css.propertyparsers
 			Expo : Expo
 		};
 		
-		public static function parseRepriseTransition(val:String, file:String) : CSSParsingResult
+		public static function parseRepriseTransition(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			var important : Boolean = obj.important;
@@ -73,7 +74,7 @@ package reprise.css.propertyparsers
 			var parts : Array = CSSParsingHelper.splitPropertyList(val);
 			for each (var part : String in parts)
 			{
-				var partResult : Object = parseRepriseTransitionPart(part, file);
+				var partResult : Object = parseRepriseTransitionPart(part, selector, file);
 				if (partResult)
 				{
 					properties.push(partResult.property);
@@ -112,7 +113,7 @@ package reprise.css.propertyparsers
 			return result;
 		}
 		public static function parseRepriseTransitionPart(
-			str : String, file : String) : Object
+			str : String, selector : String, file : String) : Object
 		{
 			var result : Object = {};
 			
@@ -123,12 +124,12 @@ package reprise.css.propertyparsers
 			str = extractionResult.filteredString;
 			
 			//extract duration
-			extractionResult = extractDurationFromString(str, file);
+			extractionResult = extractDurationFromString(str, selector, file);
 			result.duration = extractionResult.duration;
 			str = extractionResult.filteredString;
 			
 			//extract delay
-			extractionResult = extractDurationFromString(str, file);
+			extractionResult = extractDurationFromString(str, selector, file);
 			result.delay = extractionResult.duration;
 			str = extractionResult.filteredString;
 			
@@ -138,16 +139,16 @@ package reprise.css.propertyparsers
 			str = extractionResult.filteredString;
 			
 			//extract easing
-			result.easing = parseRepriseTransitionTimingFunctionPart(str, file);
+			result.easing = parseRepriseTransitionTimingFunctionPart(str, selector, file);
 			
 			return result;
 		}
 		
 		
 		public static function parseRepriseTransitionProperty(
-			val:String, file:String) : CSSProperty
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var intermediateResult : Object = strToProperty(val, file);
+			var intermediateResult : Object = strToProperty(val, selector, file);
 			var property : CSSProperty = intermediateResult.property;
 			if (property.inheritsValue())
 			{
@@ -164,9 +165,9 @@ package reprise.css.propertyparsers
 		}
 		
 		public static function parseRepriseTransitionDuration(
-			val:String, file:String) : CSSProperty
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var intermediateResult : Object = strToProperty(val, file);
+			var intermediateResult : Object = strToProperty(val, selector, file);
 			var property : CSSProperty = intermediateResult.property;
 			if (property.inheritsValue())
 			{
@@ -177,24 +178,24 @@ package reprise.css.propertyparsers
 			for each (var entry : String in 
 				(intermediateResult.filteredString as String).split(','))
 			{
-				entries.push(strToDurationProperty(entry, file));
+				entries.push(strToDurationProperty(entry, selector, file));
 			}
 			property.setSpecifiedValue(entries);
 			return property;
 		}
 		
 		public static function parseRepriseTransitionDelay(
-			val:String, file:String) : CSSProperty
+				val:String, selector:String, file:String) : CSSProperty
 		{
 			//no need to duplicate the code as the properties 
 			//duration and delay are identical in structure
-			return parseRepriseTransitionDuration(val, file);
+			return parseRepriseTransitionDuration(val, selector, file);
 		}
 		
 		public static function parseRepriseTransitionTimingFunction(
-			val:String, file:String) : CSSProperty
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var intermediateResult : Object = strToProperty(val, file);
+			var intermediateResult : Object = strToProperty(val, selector, file);
 			var property : CSSProperty = intermediateResult.property;
 			if (property.inheritsValue())
 			{
@@ -205,13 +206,13 @@ package reprise.css.propertyparsers
 			for each (var entry : String in CSSParsingHelper.splitPropertyList(
 				intermediateResult.filteredString as String))
 			{
-				entries.push(parseRepriseTransitionTimingFunctionPart(entry, file));
+				entries.push(parseRepriseTransitionTimingFunctionPart(entry, selector, file));
 			}
 			property.setSpecifiedValue(entries);
 			return property;
 		}
 		public static function parseRepriseTransitionTimingFunctionPart(
-			val:String, file : String) : Function
+				val:String, selector:String, file : String) : Function
 		{
 			var easingName : String = CSSParsingHelper.camelCaseCSSValueName(val);
 			var regExp : RegExp = /ease(InOut|In|Out)(\w+)/;
@@ -228,9 +229,9 @@ package reprise.css.propertyparsers
 			return easingType['ease' + matchResult[1]];
 		}
 		public static function parseRepriseTransitionDefaultValue(
-			val:String, file : String) : CSSProperty
+				val:String, selector:String, file : String) : CSSProperty
 		{
-			var intermediateResult : Object = strToProperty(val, file);
+			var intermediateResult : Object = strToProperty(val, selector, file);
 			var property : CSSProperty = intermediateResult.property;
 			if (property.inheritsValue())
 			{

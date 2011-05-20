@@ -152,7 +152,7 @@ package reprise.css
 		}
 		
 		public static function parseDeclarationString(
-			declarationString : String, url : String) : CSSDeclaration
+			declarationString : String, selector : String, url : String) : CSSDeclaration
 		{
 			var declaration : CSSDeclaration = new CSSDeclaration();
 			
@@ -166,7 +166,7 @@ package reprise.css
 				}
 				var name : String = camelCaseCSSValueName(result[1]);
 				var value : String = result[2];
-				declaration.setValueForKeyDefinedInFile(value, name, url);
+				declaration.setValueForKeyDefinedInFile(value, name, selector, url);
 			}
 			return declaration;
 		}
@@ -204,7 +204,7 @@ package reprise.css
 					return result;
 				}
 				
-				if (openParens == 0)
+				if (openParens === 0)
 				{
 					var nextComma : int = input.indexOf(',', offset);
 					if (nextComma == -1)
@@ -284,7 +284,6 @@ package reprise.css
 							break;
 						}
 					}
-					continue;
 				}
 			}
 			return result;

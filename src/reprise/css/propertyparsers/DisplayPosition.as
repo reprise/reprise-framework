@@ -87,28 +87,31 @@ package reprise.css.propertyparsers
 		
 		public function DisplayPosition() {}
 		
-		public static function parseOverflow(val:String, file:String):CSSParsingResult
+		public static function parseOverflow(
+				val:String, selector:String, file:String):CSSParsingResult
 		{
 			var values:Array = val.split(' ');
-			var overflowX:CSSProperty = strToStringProperty(values[0] as String, file);
+			var overflowX:CSSProperty = strToStringProperty(values[0], selector, file);
 			var overflowY:CSSProperty = values.length > 1 
-				? strToStringProperty(values[1] as String, file) 
-				: strToStringProperty(values[0] as String, file);
+				? strToStringProperty(values[1], selector, file)
+				: strToStringProperty(values[0], selector, file);
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				overflowX, 'overflowX', overflowY, 'overflowY');
 		}
 		
-		public static function parseCursor(val:String, file:String):CSSProperty
+		public static function parseCursor(
+				val:String, selector:String, file:String):CSSProperty
 		{
 			if (val.indexOf('url') != -1)
-				return strToURLProperty(val, file);
+				return strToURLProperty(val, selector, file);
 			else
-				return strToStringProperty(val, file);
+				return strToStringProperty(val, selector, file);
 		}
 		
-		public static function parseTransform(val:String, file:String) : CSSProperty
+		public static function parseTransform(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			
 			if (prop.inheritsValue())
@@ -139,14 +142,14 @@ package reprise.css.propertyparsers
 				{
 					case 'translate' : 
 					{
-						parameters[0] = strToFloatProperty(rawParams[0], file);
+						parameters[0] = strToFloatProperty(rawParams[0], selector, file);
 						if (rawParams.length == 1)
 						{
 							parameters[1] = parameters[0];
 						}
 						else
 						{
-							parameters[1] = strToFloatProperty(rawParams[1], file);
+							parameters[1] = strToFloatProperty(rawParams[1], selector, file);
 						}
 						break;
 					}
@@ -222,12 +225,12 @@ package reprise.css.propertyparsers
 		}
 		
 		public static function parseTransformOrigin(
-			val:String, file:String) : CSSParsingResult
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
 			var values:Array = val.split(' ');
-			var originX:CSSProperty = strToIntProperty(values[0], file);
+			var originX:CSSProperty = strToIntProperty(values[0], selector, file);
 			var originY:CSSProperty = values.length > 1 
-				? strToIntProperty(values[1], file) 
+				? strToIntProperty(values[1], selector, file)
 				: originX;
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
 				originX, 'transformOriginX', originY, 'transformOriginY');

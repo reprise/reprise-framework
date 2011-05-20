@@ -32,14 +32,15 @@ package reprise.css
 		/**
 		* don't touch this. no need to call this directly
 		**/
-		protected static function strToProperty(val:String, file:String = null) : Object
+		protected static function strToProperty(val:String, selector:String, file:String) : Object
 		{
 			var prop : CSSProperty = new CSSProperty();
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			val = StringUtil.trim(obj.result);
 			prop.setImportant(obj.important);
+			prop.setCSSSelector(selector);
 			prop.setCSSFile(file);
-			
+
 			if (CSSParsingHelper.valueShouldInherit(val))
 			{
 				prop.setInheritsValue(true);
@@ -49,9 +50,9 @@ package reprise.css
 		}
 		
 		protected static function strToNumericProperty(
-			val:String, file:String = null) : Object
+				val:String, selector:String, file:String) : Object
 		{		
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 	
@@ -78,9 +79,10 @@ package reprise.css
 		/**
 		* convert string into properties, by declaring the type of the value
 		**/
-		protected static function strToFloatProperty(val:String, file:String = null) : CSSProperty
+		protected static function strToFloatProperty(
+				val:String, selector:String, file:String) : CSSProperty
 		{		
-			var obj : Object = strToNumericProperty(val, file);
+			var obj : Object = strToNumericProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -98,9 +100,10 @@ package reprise.css
 			return prop;
 		}
 		
-		protected static function strToIntProperty(val:String, file:String = null) : CSSProperty
+		protected static function strToIntProperty(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var obj : Object = strToNumericProperty(val, file);
+			var obj : Object = strToNumericProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -118,9 +121,10 @@ package reprise.css
 			return prop;		
 		}
 		
-		protected static function strToStringProperty(val:String, file:String = null) : CSSProperty
+		protected static function strToStringProperty(
+				val:String, selector : String, file:String) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -133,9 +137,10 @@ package reprise.css
 			return prop;
 		}
 		
-		protected static function strToColorProperty(val:String, file:String = null) : CSSProperty
+		protected static function strToColorProperty(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -148,9 +153,10 @@ package reprise.css
 			return prop;
 		}
 		
-		protected static function strToURLProperty(val:String, file:String = null) : CSSProperty
+		protected static function strToURLProperty(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -163,10 +169,10 @@ package reprise.css
 			return prop;
 		}
 		
-		protected static function strToBoolProperty(val:String, 
-			file:String = null, trueFlags:Array = null) : CSSProperty
+		protected static function strToBoolProperty(
+				val:String, selector:String, file:String, trueFlags:Array = null) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = obj.filteredString;
 			
@@ -175,7 +181,7 @@ package reprise.css
 				return prop;
 			}
 			
-			if (trueFlags == null)
+			if (!trueFlags)
 			{
 				trueFlags = ['true', '1'];
 			}
@@ -185,10 +191,10 @@ package reprise.css
 			return prop;		
 		}
 		
-		protected static function strToRectParsingResult(val : String, file : String, 
-			prefix : String, postfix : String, parser : Function) : CSSParsingResult
+		protected static function strToRectParsingResult(val : String, selector:String,
+			file : String, prefix : String, postfix : String, parser : Function) : CSSParsingResult
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var prop : CSSProperty = obj.property;
 			val = StringUtil.trim(obj.filteredString);
 			
@@ -202,7 +208,7 @@ package reprise.css
 				res.addPropertyForKey(prop, prefix + 'Left' + postfix);
 			}
 			
-			if (val.length == 0)
+			if (val.length === 0)
 			{
 				return null;
 			}
@@ -219,29 +225,30 @@ package reprise.css
 			{
 				case 1:
 					rectTop = rectRight = rectBottom = 
-						rectLeft = parser(parts[0], file);
+						rectLeft = parser(parts[0], selector, file);
 					break;
 					
 				case 2:
-					rectTop = rectBottom = parser(parts[0], file);
-					rectRight = rectLeft = parser(parts[1], file);								
+					rectTop = rectBottom = parser(parts[0], selector, file);
+					rectRight = rectLeft = parser(parts[1], selector, file);
 					break;
 					
 				case 3:
-					rectTop = parser(parts[0], file);
-					rectRight = rectLeft = parser(parts[1], file);
-					rectBottom = parser(parts[2], file);
+					rectTop = parser(parts[0], selector, file);
+					rectRight = rectLeft = parser(parts[1], selector, file);
+					rectBottom = parser(parts[2], selector, file);
 					break;
 					
 				case 4:
-					rectTop = parser(parts[0], file);
-					rectRight = parser(parts[1], file);
-					rectBottom = parser(parts[2], file);
-					rectLeft = parser(parts[3], file);
+					rectTop = parser(parts[0], selector, file);
+					rectRight = parser(parts[1], selector, file);
+					rectBottom = parser(parts[2], selector, file);
+					rectLeft = parser(parts[3], selector, file);
 					break;
 					
 				default:
-					log('w Wrong number of parameters for CSSProperty rect with name"' + prefix + '"');
+					log('w Wrong number of parameters for CSSProperty rect with name"' +
+							prefix + '"');
 					return res;
 			}
 			rectTop.setImportant(important);
@@ -257,9 +264,9 @@ package reprise.css
 		}
 		
 		protected static function strToDurationProperty(
-			str : String, file : String = null) : CSSProperty
+			str : String, selector:String, file : String) : CSSProperty
 		{
-			var obj : Object = strToProperty(str, file);
+			var obj : Object = strToProperty(str, selector, file);
 			var prop : CSSProperty = obj.property;
 			str = obj.filteredString;
 			
@@ -297,7 +304,7 @@ package reprise.css
 		}
 		
 		public static function extractBorderStyleFromString(
-			input : String, file : String = null) : Object
+			input : String, selector:String, file : String) : Object
 		{
 			var regexp : RegExp = 
 				/none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/;
@@ -305,46 +312,46 @@ package reprise.css
 			var match : Array = input.match(regexp);
 			if (match)
 			{
-				result.borderStyle = strToStringProperty(match[0], file);
+				result.borderStyle = strToStringProperty(match[0], selector, file);
 				result.filteredString = input.substr(
 					0, match.index) + input.substr(match.index + match[0].length);
 			}
 			else
 			{
-				result.borderStyle = strToStringProperty('none', file);
+				result.borderStyle = strToStringProperty('none', selector, file);
 				result.filteredString = input;
 			}
 			return result;
 		}
 		
 		public static function extractBorderWidthFromString(
-			input : String, file : String = null) : Object
+			input : String, selector:String, file : String) : Object
 		{
 			var regexp : RegExp = /\d+px|d+%0/;
 			var result : Object = {};
 			var match : Array = input.match(regexp);
 			if (match)
 			{
-				result.borderWidth = strToIntProperty(match[0], file);
+				result.borderWidth = strToIntProperty(match[0], selector, file);
 				result.filteredString = input.substr(
 					0, match.index) + input.substr(match.index + match[0].length);
 			}
 			else
 			{
-				result.borderWidth = strToIntProperty('1px', file);
+				result.borderWidth = strToIntProperty('1px', selector, file);
 				result.filteredString = input;
 			}
 			return result;
 		}
 		
 		public static function extractDurationFromString(
-			input : String, file : String = null) : Object
+			input : String, selector:String, file : String) : Object
 		{
 			var result : Object = {};
 			var match : Array = input.match(CSSParsingHelper.durationExpression);
 			if (match)
 			{
-				result.duration = strToDurationProperty(match[0], file);
+				result.duration = strToDurationProperty(match[0], selector, file);
 				result.filteredString = input.substr(
 					0, match.index) + input.substr(match.index + match[0].length);
 			}

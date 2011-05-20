@@ -37,10 +37,11 @@ package reprise.css.propertyparsers
 			]
 		};
 	
-		public static function parsePadding(val:String, file:String) : CSSParsingResult
+		public static function parsePadding(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
 			return strToRectParsingResult(
-				val, file, 'padding', '', strToIntProperty);
+					val, selector, file, 'padding', '', strToIntProperty);
 		}
 	}
 }

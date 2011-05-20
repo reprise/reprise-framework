@@ -37,10 +37,11 @@ package reprise.css.propertyparsers
 			]
 		};
 		
-		public static function parseMargin(val:String, file:String) : CSSParsingResult
+		public static function parseMargin(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
 			return strToRectParsingResult(
-				val, file, 'margin', '', strToIntProperty);
+					val, selector, file, 'margin', '', strToIntProperty);
 		}
 	}
 }

@@ -484,11 +484,12 @@ package reprise.controls
 			if (stylesStr.length)
 			{
 				nodeStyle.mergeCSSDeclaration(
-					CSSParsingHelper.parseDeclarationString(stylesStr, null));
+					CSSParsingHelper.parseDeclarationString(
+							stylesStr, 'Style Attribute', applicationURL()));
 				delete node.@style;
 			}
 			
-			var styleName : String = nodeStyle.textStyleName(m_internalStyleIndex++ == 0);
+			var styleName : String = nodeStyle.textStyleName(m_internalStyleIndex++ === 0);
 			node.@['class'] = styleName;
 			
 			// check if the label has mixed textAlign properties.
@@ -547,11 +548,13 @@ package reprise.controls
 					 */ 
 					if (nodeStyle.hasStyle('marginBottom'))
 					{
-						var leading : Number = ((nodeStyle.getStyle(
-							'marginBottom').valueOf() as Number) - 2);
+						var marginBottomDeclaration : CSSProperty =
+								nodeStyle.getStyle('marginBottom');
+						var leading : Number = ((marginBottomDeclaration.valueOf() as Number) - 2);
 						stylesStr = 'leading: ' + leading + '; font-size: 1;';
 						var leadingStyle : CSSDeclaration = 
-							CSSParsingHelper.parseDeclarationString(stylesStr, null);
+								CSSParsingHelper.parseDeclarationString(stylesStr,
+								marginBottomDeclaration.cssSelector(), applicationURL());
 						styleName = 
 							leadingStyle.textStyleName(m_internalStyleIndex++ == 0);
 						node.parent().insertChildAfter(node, new XML(

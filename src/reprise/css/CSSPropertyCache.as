@@ -27,14 +27,14 @@ package reprise.css
 		/***************************************************************************
 		*							public methods								   *
 		***************************************************************************/
-		reprise static function propertyForKeyValue(
-			key:String, value:String, file : String, weak : Boolean = false) : Object
+		reprise static function propertyForKeyValue(key:String, value:String,
+				selector : String, file : String, weak : Boolean = false) : Object
 		{
 			var prop:Object = g_propertyCache[key+"="+value+file + weak];
 			if (!prop)
 			{
 				var parser : Function = CSSDeclaration.parserForProperty(key);
-				prop = parser(value, file);
+				prop = parser(value, selector, file);
 				if (weak)
 				{
 					if (prop is CSSProperty)

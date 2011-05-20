@@ -49,25 +49,22 @@ package reprise.css.propertyparsers
 		/***************************************************************************
 		*							private methods								   *
 		***************************************************************************/
-		private static function parseEmbedFonts(val:String, file:String) : CSSProperty
+		private static function parseEmbedFonts(
+				val:String, selector:String, file:String) : CSSProperty
 		{		
-			return strToBoolProperty(val, file, ['embed']);
+			return strToBoolProperty(val, selector, file, ['embed']);
 		}
 		
-		private static function parseCacheAsBitmap(val:String, file:String) : CSSProperty
+		private static function parseCacheAsBitmap(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			return strToBoolProperty(val, file, ['cache']);
-		}
-		
-		private static function parseFixLineEndings(val:String, file:String) : CSSProperty
-		{
-			return strToBoolProperty(val, file, ['fix']);
+			return strToBoolProperty(val, selector, file, ['cache']);
 		}
 		
 		private static function parseRasterizeDeviceFonts(
-			val:String, file:String) : CSSProperty
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			return strToBoolProperty(val, file, ['rasterize']);
+			return strToBoolProperty(val, selector, file, ['rasterize']);
 		}
 	}
 }

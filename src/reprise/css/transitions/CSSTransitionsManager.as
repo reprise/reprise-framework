@@ -210,8 +210,8 @@ package reprise.css.transitions
 					if (m_defaultValues[i] && (m_defaultValues[i] != 'none' || 
 						transitionPropName == 'display'))
 					{
-						defaultValue = CSSPropertyCache.propertyForKeyValue(
-							transitionPropName, m_defaultValues[i], null);
+						defaultValue = CSSPropertyCache.propertyForKeyValue(transitionPropName,
+							m_defaultValues[i], 'Transition Default Value', '[Transition Manager]');
 					}
 					if (g_transitionShortcuts[transitionPropName])
 					{

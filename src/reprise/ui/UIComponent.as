@@ -1219,7 +1219,8 @@ package reprise.ui
 		 */
 		public function setStyleAttribute(value : String) : void
 		{
-			m_instanceStyles = CSSParsingHelper.parseDeclarationString(value, applicationURL());
+			m_instanceStyles = CSSParsingHelper.parseDeclarationString(
+					value, 'Style Attribute', applicationURL());
 		}
 
 		/**

@@ -15,9 +15,10 @@ package reprise.css.propertyparsers
 	
 	public class DefaultParser extends CSSPropertyParser
 	{
-		public static function parseAnything(val:String, file:String) : CSSProperty
+		public static function parseAnything(
+				val:String, selector : String, file:String) : CSSProperty
 		{
-			return strToStringProperty(val, file);
+			return strToStringProperty(val, selector, file);
 		}	
 	}
 }

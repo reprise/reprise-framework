@@ -488,9 +488,12 @@ package reprise.css
 				var cssClassDefArr:Array = classesArr[i].split("{");
 				if (cssClassDefArr.length == 2)
 				{
+					var selector : String = cssClassDefArr[0].split("\n").join(" ").
+							split("  ").join(" ").split(", ").join(",");
+
 					//parse all properties of this class into a declaration
 					var declaration : CSSDeclaration = 
-						CSSParsingHelper.parseDeclarationString(cssClassDefArr[1], url);
+						CSSParsingHelper.parseDeclarationString(cssClassDefArr[1], selector, url);
 					
 					//add assets to preloader queue if necessary
 					var preloadProp : CSSProperty = 
@@ -501,10 +504,9 @@ package reprise.css
 							declaration.getStyle('backgroundImage');
 						imageProp && enqueuePreloadableProperty(imageProp);
 					}
-					
-					var classNames:Array = cssClassDefArr[0].split("\n").join(" ").
-						split("  ").join(" ").split(", ").join(",").split(",");			
-					
+
+
+					var classNames:Array = selector.split(",");
 					var classNamesLen:int = classNames.length;
 					for (var j : int = 0; j < classNamesLen; j++)
 					{

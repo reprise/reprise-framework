@@ -48,9 +48,10 @@ package reprise.css
 		protected var m_calculationResultsCache : Object;
 		
 		protected var m_unit : String = null;
-		
+
+		protected var m_cssSelector : String;
 		protected var m_cssFile : String;
-	
+
 		protected var m_id : int;
 		protected var m_isWeak : Boolean;
 
@@ -197,6 +198,16 @@ package reprise.css
 		public function cssFile() : String
 		{
 			return m_cssFile;
+		}
+
+		public function setCSSSelector(selector : String) : void
+		{
+			m_cssSelector = selector;
+		}
+
+		public function cssSelector() : String
+		{
+			return m_cssSelector;
 		}
 		
 		public function toString() : String

@@ -149,7 +149,7 @@ package reprise.css
 				m_properties[key] && delete m_properties[key];
 				return;
 			}
-			setValueForKeyDefinedInFile(value, key, '', weak);
+			setValueForKeyDefinedInFile(value, key, 'Style Attribute', 'script', weak);
 		}
 		// Alias for getPropertyForKey
 		public function getStyle(key : String) : CSSProperty
@@ -347,10 +347,11 @@ package reprise.css
 		*							protected methods								   *
 		***************************************************************************/
 		// internal handling of getting and setting properties
-		reprise function setValueForKeyDefinedInFile(
-			val:String, key:String, file:String = '', weak : Boolean = false) : void
+		reprise function setValueForKeyDefinedInFile(val:String, key:String,
+				selector : String = '', file:String = '', weak : Boolean = false) : void
 		{
-			var result : Object = CSSPropertyCache.propertyForKeyValue(key, val, file, weak);
+			var result : Object =
+					CSSPropertyCache.propertyForKeyValue(key, val, selector, file, weak);
 			
 			if (result is CSSProperty)
 			{
@@ -373,7 +374,7 @@ package reprise.css
 				'and retry!' : 'value of wrong type.';
 			msg += 'Parsing property via DefaultParser (probably as String).';
 			
-			result = DefaultParser.parseAnything(val, file);
+			result = DefaultParser.parseAnything(val, selector, file);
 			m_properties[key] = result;
 			
 			log(msg);

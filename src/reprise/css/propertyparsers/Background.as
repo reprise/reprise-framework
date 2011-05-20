@@ -115,7 +115,8 @@ package reprise.css.propertyparsers
 		public function Background() {}
 		
 		
-		public static function parseBackground(val:String, file:String) : CSSParsingResult
+		public static function parseBackground(
+				val:String, selector : String, file:String) : CSSParsingResult
 		{
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -132,7 +133,7 @@ package reprise.css.propertyparsers
 			if (result)
 			{
 				res.addPropertyForKey(
-					strToURLProperty(result[0] + important, file), 'backgroundImage');
+					strToURLProperty(result[0] + important, selector, file), 'backgroundImage');
 				val = val.split(result[0]).join('');
 			}
 			
@@ -141,7 +142,7 @@ package reprise.css.propertyparsers
 			if (result)
 			{
 				res.addPropertyForKey(
-					strToColorProperty(result[0] + important, file), 'backgroundColor');
+					strToColorProperty(result[0] + important, selector, file), 'backgroundColor');
 				val = val.split(result[0]).join('');
 			}
 			
@@ -150,7 +151,7 @@ package reprise.css.propertyparsers
 			if (result)
 			{
 				res.addPropertyForKey(
-					strToStringProperty(result[0] + important, file), 'backgroundRepeat');
+					strToStringProperty(result[0] + important, selector, file), 'backgroundRepeat');
 				val = val.split(result[0]).join('');
 			}
 			
@@ -159,7 +160,7 @@ package reprise.css.propertyparsers
 			if (result)
 			{
 				res.addPropertyForKey(strToStringProperty(
-					result[0] + important, file), 'backgroundAttachment');
+					result[0] + important, selector, file), 'backgroundAttachment');
 				val = val.split(result[0]).join('');
 			}
 			
@@ -168,7 +169,7 @@ package reprise.css.propertyparsers
 			if (result && result[0])
 			{
 				res.addEntriesFromResult(
-					parseBackgroundPosition(result[0] + important, file));
+					parseBackgroundPosition(result[0] + important, selector, file));
 			}
 			
 			//get preload value
@@ -176,12 +177,13 @@ package reprise.css.propertyparsers
 			if (result)
 			{
 				res.addPropertyForKey(parseBackgroundImagePreload(
-					result[0] + important, file), 'backgroundImagePreload');
+					result[0] + important, selector, file), 'backgroundImagePreload');
 			}
 			return res;
 		}
 		
-		public static function parseBackgroundGradient(val:String, file:String) : CSSParsingResult
+		public static function parseBackgroundGradient(
+				val:String, selector : String, file:String) : CSSParsingResult
 		{
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -216,7 +218,7 @@ package reprise.css.propertyparsers
 			lcPart = part.toLowerCase();
 			if (gradientTypeLookup[lcPart])
 			{
-				res.addPropertyForKey(strToStringProperty(lcPart + important, file),
+				res.addPropertyForKey(strToStringProperty(lcPart + important, selector, file),
 					'backgroundGradientType');
 				part = parts[++counter];
 			}
@@ -224,30 +226,30 @@ package reprise.css.propertyparsers
 			// rotation
 			if (part != null && !isNaN(parseInt(part)))
 			{
-				res.addPropertyForKey(strToIntProperty(part, file), 'backgroundGradientRotation');
+				res.addPropertyForKey(
+						strToIntProperty(part, selector, file), 'backgroundGradientRotation');
 				part = parts[++counter];
 			}
 			
 			if (colorsPart != null)
 			{
 				res.addPropertyForKey(
-					parseBackgroundGradientColors(
-						colorsPart + important, file), 
+					parseBackgroundGradientColors(colorsPart + important, selector, file),
 					'backgroundGradientColors');
 			}
 			
 			if (ratiosPart != null)
 			{
 				res.addPropertyForKey(
-					parseBackgroundGradientRatios(
-						ratiosPart + important, file),
+					parseBackgroundGradientRatios(ratiosPart + important, selector, file),
 					'backgroundGradientRatios');
 			}
 			
 			return res;
 		}
 		
-		public static function parseBackgroundPosition(val:String, file:String) : CSSParsingResult
+		public static function parseBackgroundPosition(
+				val:String, selector : String, file:String) : CSSParsingResult
 		{		
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -259,13 +261,14 @@ package reprise.css.propertyparsers
 			var parts : Array = val.split(" ");
 			
 			return CSSParsingResult.ResultWithPropertiesAndKeys(
-				strToIntProperty(parts[0] + important, file), 'backgroundPositionX',
-				strToIntProperty(parts[1] + important, file), 'backgroundPositionY');
+				strToIntProperty(parts[0] + important, selector, file), 'backgroundPositionX',
+				strToIntProperty(parts[1] + important, selector, file), 'backgroundPositionY');
 		}
 		
-		public static function parseBackgroundGradientType(val:String, file:String) : CSSProperty
+		public static function parseBackgroundGradientType(
+				val:String, selector : String, file:String) : CSSProperty
 		{
-			var prop : CSSProperty = strToStringProperty(val, file);
+			var prop : CSSProperty = strToStringProperty(val, selector, file);
 			if (prop.specifiedValue() == GRADIENT_TYPE_RADIAL ||
 				prop.specifiedValue() == GRADIENT_TYPE_LINEAR)
 			{
@@ -274,15 +277,17 @@ package reprise.css.propertyparsers
 			return null;
 		}
 		
-		public static function parseBackgroundGradientColors(val:String, file:String) : CSSProperty
+		public static function parseBackgroundGradientColors(
+				val:String, selector : String, file:String) : CSSProperty
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			val = obj.result;
 			
 			var prop : CSSProperty = new CSSProperty();
 			prop.setImportant(obj.important);
+			prop.setCSSSelector(selector);
 			prop.setCSSFile(file);
-			
+
 			if (CSSParsingHelper.valueShouldInherit(val))
 			{
 				prop.setInheritsValue(true);
@@ -300,13 +305,15 @@ package reprise.css.propertyparsers
 			return prop;
 		}
 		
-		public static function parseBackgroundGradientRatios(val:String, file:String) : CSSProperty
+		public static function parseBackgroundGradientRatios(
+				val:String, selector:String, file:String) : CSSProperty
 		{
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			val = obj.result;
 			
 			var prop : CSSProperty = new CSSProperty();
 			prop.setImportant(obj.important);
+			prop.setCSSSelector(selector);
 			prop.setCSSFile(file);
 			
 			if (CSSParsingHelper.valueShouldInherit(val))
@@ -327,7 +334,8 @@ package reprise.css.propertyparsers
 		}
 		
 		
-		public static function parseBackgroundScale9(val:String, file:String) : CSSParsingResult
+		public static function parseBackgroundScale9(
+				val:String, selector : String, file:String) : CSSParsingResult
 		{
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -344,48 +352,54 @@ package reprise.css.propertyparsers
 			if (typeMap[parts[0]])
 			{
 				res.addPropertyForKey(
-					parseBackgroundScale9Type(String(parts.shift()) + important, file),
+					parseBackgroundScale9Type(String(parts.shift()) + important, selector, file),
 					'backgroundScale9Type');
 			}
 			val = parts.join(' ');
-			res.addEntriesFromResult(parseBackgroundScale9Rect(val, file));
+			res.addEntriesFromResult(parseBackgroundScale9Rect(val, selector, file));
 			return res;
 		}
 		
-		public static function parseBackgroundScale9Type(val:String, file:String) : CSSProperty
+		public static function parseBackgroundScale9Type(
+				val:String, selector:String, file:String) : CSSProperty
 		{
 			if (val == SCALE9_TYPE_REPEAT)
-				return strToStringProperty(SCALE9_TYPE_REPEAT, file);
+				return strToStringProperty(SCALE9_TYPE_REPEAT, selector, file);
 			else if (val == SCALE9_TYPE_STRETCH)
-				return strToStringProperty(SCALE9_TYPE_STRETCH, file);
+				return strToStringProperty(SCALE9_TYPE_STRETCH, selector, file);
 			else
-				return strToStringProperty(SCALE9_TYPE_NONE, file);
+				return strToStringProperty(SCALE9_TYPE_NONE, selector, file);
 		}
 		
-		public static function parseBackgroundScale9Rect(val:String, file:String) : CSSParsingResult
+		public static function parseBackgroundScale9Rect(
+				val:String, selector : String, file:String) : CSSParsingResult
 		{
 			return strToRectParsingResult(
-				val, file, 'backgroundScale9Rect', '', strToIntProperty);
+				val, selector, file, 'backgroundScale9Rect', '', strToIntProperty);
 		}
 		
-		public static function parseBackgroundImageType(val:String, file:String) : CSSProperty
+		public static function parseBackgroundImageType(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			return strToStringProperty(val.toLowerCase(), file);
+			return strToStringProperty(val.toLowerCase(), selector, file);
 		}
 		
-		public static function parseBackgroundImagePreload(val:String, file:String) : CSSProperty
+		public static function parseBackgroundImagePreload(
+				val:String, selector:String, file:String) : CSSProperty
 		{		
-			return strToBoolProperty(val, file, ['preload']);
+			return strToBoolProperty(val, selector, file, ['preload']);
 		}
 		
-		public static function parseBackgroundImageAliasing(val:String, file:String) : CSSProperty
+		public static function parseBackgroundImageAliasing(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			return strToStringProperty(val.toLowerCase(), file);
+			return strToStringProperty(val.toLowerCase(), selector, file);
 		}
 		
-		public static function parseBackgroundAnimationControl(val:String, file:String) : CSSProperty
+		public static function parseBackgroundAnimationControl(
+				val:String, selector:String, file:String) : CSSProperty
 		{
-			var obj : Object = strToProperty(val, file);
+			var obj : Object = strToProperty(val, selector, file);
 			var property : CSSProperty = obj.property;
 			val = obj.filteredString;
 			var controlExtractor : RegExp = /\s*(play|stop|loop|marquee)\s*\((.*?)\)/g;

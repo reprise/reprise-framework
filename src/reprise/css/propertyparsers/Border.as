@@ -118,33 +118,39 @@ package reprise.css.propertyparsers
 		/**
 		* Shortcuts
 		**/
-		public static function parseBorder(val:String, file:String) : CSSParsingResult
+		public static function parseBorder(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseBorderForSide(val, '', file);
+			return parseBorderForSide(val, '', selector, file);
 		}
 		
-		public static function parseBorderTop(val:String, file:String) : CSSParsingResult
+		public static function parseBorderTop(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseBorderForSide(val, "Top", file);
+			return parseBorderForSide(val, "Top", selector, file);
 		}
 		
-		public static function parseBorderRight(val:String, file:String) : CSSParsingResult
+		public static function parseBorderRight(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseBorderForSide(val, "Right", file);
+			return parseBorderForSide(val, "Right", selector, file);
 		}
 		
-		public static function parseBorderBottom(val:String, file:String) : CSSParsingResult
+		public static function parseBorderBottom(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseBorderForSide(val, "Bottom", file);
+			return parseBorderForSide(val, "Bottom", selector, file);
 		}
 		
-		public static function parseBorderLeft(val:String, file:String) : CSSParsingResult
+		public static function parseBorderLeft(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return parseBorderForSide(val, "Left", file);
+			return parseBorderForSide(val, "Left", selector, file);
 		}
 		
 		
-		protected static function parseBorderForSide(val:String, side:String, file:String) : CSSParsingResult
+		protected static function parseBorderForSide(
+				val:String, side:String, selector:String, file:String) : CSSParsingResult
 		{
 			var res : CSSParsingResult = new CSSParsingResult();
 			
@@ -152,9 +158,9 @@ package reprise.css.propertyparsers
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
 			var important : String = obj.important ? CSSProperty.IMPORTANT_FLAG : '';
 			val = obj.result;
-			
+
 			//extract border style value
-			var extractionResult : Object = extractBorderStyleFromString(val, file);
+			var extractionResult : Object = extractBorderStyleFromString(val, selector, file);
 			var borderStyle : CSSProperty = extractionResult.borderStyle;
 			val = extractionResult.filteredString;
 			if (side == '')
@@ -169,7 +175,7 @@ package reprise.css.propertyparsers
 				res.addPropertyForKey(borderStyle, 'border' + side + 'Style');
 			}
 			//extract border width value
-			extractionResult = extractBorderWidthFromString(val, file);
+			extractionResult = extractBorderWidthFromString(val, selector, file);
 			var borderWidth : CSSProperty = extractionResult.borderWidth;
 			val = StringUtil.lTrim(extractionResult.filteredString);
 			if (side == '')
@@ -189,7 +195,7 @@ package reprise.css.propertyparsers
 			
 			if (parts.length)
 			{
-				borderColor = strToColorProperty(String(parts.shift()) + important, file);
+				borderColor = strToColorProperty(String(parts.shift()) + important, selector, file);
 				if (side == '')
 				{
 					res.addPropertyForKey(borderColor, 'borderTopColor');
@@ -208,28 +214,32 @@ package reprise.css.propertyparsers
 		
 	
 		
-		public static function parseBorderStyle(val:String, file:String) : CSSParsingResult
+		public static function parseBorderStyle(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(val, file, 'border', 'Style', strToStringProperty);
+			return strToRectParsingResult(val, selector, file, 'border', 'Style', strToStringProperty);
 		}
 		
 		
-		public static function parseBorderColor(val:String, file:String) : CSSParsingResult
+		public static function parseBorderColor(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(val, file, 'border', 'Color', strToColorProperty);
+			return strToRectParsingResult(val, selector, file, 'border', 'Color', strToColorProperty);
 		}
 		
 		
-		public static function parseBorderWidth(val:String, file:String) : CSSParsingResult
+		public static function parseBorderWidth(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
-			return strToRectParsingResult(val, file, 'border', 'Width', strToIntProperty);
+			return strToRectParsingResult(val, selector, file, 'border', 'Width', strToIntProperty);
 		}	
 		
 		
 		/**
 		* Border radius
 		**/
-		public static function parseBorderRadius(val:String, file:String) : CSSParsingResult
+		public static function parseBorderRadius(
+				val:String, selector:String, file:String) : CSSParsingResult
 		{
 			// evaluate important flag
 			var obj : Object = CSSParsingHelper.removeImportantFlagFromString(val);
@@ -247,25 +257,28 @@ package reprise.css.propertyparsers
 			{
 				case 1:
 					borderTopLeftRadius = borderTopRightRadius = borderBottomRightRadius = 
-						borderBottomLeftRadius = strToIntProperty(parts[0], file);
+						borderBottomLeftRadius = strToIntProperty(parts[0], selector, file);
 					break;
 					
 				case 2:
-					borderTopLeftRadius = borderBottomRightRadius = strToIntProperty(parts[0], file);
-					borderTopRightRadius = borderBottomLeftRadius = strToIntProperty(parts[1], file);
+					borderTopLeftRadius = borderBottomRightRadius =
+							strToIntProperty(parts[0], selector, file);
+					borderTopRightRadius = borderBottomLeftRadius =
+							strToIntProperty(parts[1], selector, file);
 					break;
 					
 				case 3:
-					borderTopLeftRadius = strToIntProperty(parts[0], file);
-					borderTopRightRadius = borderBottomLeftRadius = strToIntProperty(parts[1], file);
-					borderBottomRightRadius = strToIntProperty(parts[2], file);
+					borderTopLeftRadius = strToIntProperty(parts[0], selector, file);
+					borderTopRightRadius = borderBottomLeftRadius =
+							strToIntProperty(parts[1], selector, file);
+					borderBottomRightRadius = strToIntProperty(parts[2], selector, file);
 					break;
 					
 				case 4:
-					borderTopLeftRadius = strToIntProperty(parts[0], file);
-					borderTopRightRadius = strToIntProperty(parts[1], file);
-					borderBottomRightRadius = strToIntProperty(parts[2], file);
-					borderBottomLeftRadius = strToIntProperty(parts[3], file);
+					borderTopLeftRadius = strToIntProperty(parts[0], selector, file);
+					borderTopRightRadius = strToIntProperty(parts[1], selector, file);
+					borderBottomRightRadius = strToIntProperty(parts[2], selector, file);
+					borderBottomLeftRadius = strToIntProperty(parts[3], selector, file);
 					break;
 					
 				default:
