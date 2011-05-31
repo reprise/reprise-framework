@@ -7,6 +7,9 @@
 
 package reprise.css
 {
+	import flash.events.Event;
+	import flash.utils.getTimer;
+
 	import reprise.core.reprise;
 	import reprise.css.propertyparsers.RuntimeParser;
 	import reprise.data.collection.IndexedArray;
@@ -14,12 +17,11 @@ package reprise.css
 	import reprise.events.ResourceEvent;
 	import reprise.external.AbstractResource;
 	import reprise.external.BitmapResource;
+	import reprise.external.IResource;
+	import reprise.external.ImageResource;
 	import reprise.external.ResourceLoader;
 	import reprise.utils.StringUtil;
 
-	import flash.events.Event;
-	import flash.utils.getTimer;
-	
 	use namespace reprise;
 
 	public class CSS extends AbstractResource
@@ -461,7 +463,7 @@ package reprise.css
 			
 			if (!m_imagePreloadingResource)
 			{
-				dispatchEvent(new CommandEvent(Event.COMPLETE, success));
+				notifyComplete(success);
 			}
 			else
 			{
@@ -502,7 +504,9 @@ package reprise.css
 					{
 						var imageProp : CSSProperty = 
 							declaration.getStyle('backgroundImage');
-						imageProp && enqueuePreloadableProperty(imageProp);
+						var isAnimation : Boolean = declaration.hasStyle('backgroundImageType') &&
+								declaration.getStyle('backgroundImageType').valueOf();
+						imageProp && enqueuePreloadableProperty(imageProp, isAnimation);
 					}
 
 
@@ -520,17 +524,27 @@ package reprise.css
 			return true;
 		}
 		
-		protected function enqueuePreloadableProperty(prop : CSSProperty) : void
+		protected function enqueuePreloadableProperty(
+				imageProperty : CSSProperty, isAnimation : Boolean) : void
 		{
 			if (!m_imagePreloadingResource)
 			{
 				m_imagePreloadingResource = new ResourceLoader();
 			}
-			var loader : BitmapResource = 
-				new BitmapResource(prop.valueOf() as String, true);
-			loader.setCacheBitmap(true);
-			loader.setCloneBitmap(false);
-			m_imagePreloadingResource.addResource(loader);
+			var url : String = imageProperty.valueOf() as String;
+			var resource : IResource;
+			if (isAnimation)
+			{
+				resource = new ImageResource(url);
+			}
+			else
+			{
+				var loader : BitmapResource = new BitmapResource(url, true);
+				loader.setCacheBitmap(true);
+				loader.setCloneBitmap(false);
+				resource = loader;
+			}
+			m_imagePreloadingResource.addResource(resource);
 		}
 		
 		/**
