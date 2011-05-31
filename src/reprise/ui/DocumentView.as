@@ -326,7 +326,8 @@ package reprise.ui
 			m_containingBlock = this;
 			if (!m_baseURL)
 			{
-				m_baseURL = loaderInfo.url.substr(0, loaderInfo.url.lastIndexOf('/') + 1);
+				var stageURL : String = stage.loaderInfo.url;
+				m_baseURL = stageURL.substr(0, stageURL.lastIndexOf('/') + 1);
 			}
 			stage.addEventListener(Event.RESIZE, stage_resize, false, 0, true);
 			addEventListener(Event.REMOVED_FROM_STAGE, self_removedFromStage, false, 0, true);
