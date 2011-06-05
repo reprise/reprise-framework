@@ -170,7 +170,7 @@ package reprise.media
 
 		protected override function doPlay():void
 		{
-			if (!m_source.isExecuting())
+			if (!(m_source.isExecuting() || m_source.didFinishLoading()))
 			{
 				m_source.execute();
 			}
