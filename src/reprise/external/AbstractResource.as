@@ -319,7 +319,7 @@ package reprise.external
 
 		protected function resolveAttachSymbol() : Class
 		{
-			if (!(m_url && m_url.indexOf('attach://') == 0))
+			if (!(m_url && m_url.indexOf('attach://') === 0))
 			{
 				m_attachMode = false;
 				return null;
@@ -341,20 +341,21 @@ package reprise.external
 				return null;
 			}
 
+            pieces = pieces.join('/').split(/[.-]/).join('_').split('/');
 			//iterate over remaining path parts, getting nested symbols from the assets class
 			for (var i:int = 0; i < pieces.length; i++)
 			{
 				symbol = symbol[pieces[i]];
 				if (!symbol)
 				{
-					log('w Unable to use attach:// procotol! Static property ' + pieces.join('/') +
+					log('w Unable to use attach:// procotol! Static property ' + pieces.join('.') +
 							' not found on Class ' + className);
 					return null;
 				}
 			}
 			if (!(symbol is Class))
 			{
-				log('w Unable to use attach:// procotol. Static property ' + pieces.join('/') +
+				log('w Unable to use attach:// procotol. Static property ' + pieces.join('.') +
 						' on Class ' + className + ' is not of type Class.');
 				return null;
 			}
