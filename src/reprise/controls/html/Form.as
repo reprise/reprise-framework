@@ -1,9 +1,9 @@
-//
-//  Form.as
-//
-//  Created by Marc Bauer on 2008-06-19.
-//  Copyright (c) 2008 Fork Unstable Media GmbH. All rights reserved.
-//
+/*
+ * Copyright (c) 2006-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package reprise.controls.html
 {

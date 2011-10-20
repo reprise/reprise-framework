@@ -1,37 +1,39 @@
-//
-//  FormSet.as
-//
-//  Created by Marc Bauer on 2008-06-19.
-//  Copyright (c) 2008 Fork Unstable Media GmbH. All rights reserved.
-//
+/*
+ * Copyright (c) 2006-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package reprise.controls.html
 {
 	import flash.events.Event;
-	
+	import flash.events.MouseEvent;
+
+	import reprise.controls.AbstractButton;
 	import reprise.events.DisplayEvent;
 	import reprise.events.FormEvent;
 	import reprise.ui.UIComponent;
+	import reprise.ui.UIObject;
 
-	
 	public class FormSet extends UIComponent
 	{
-		
+
 		/***************************************************************************
-		*                           protected properties                           *
-		***************************************************************************/
-		protected var m_forms:Array;
-		protected var m_activeFormIndex:int;
-		
-		
-		
+		 *                           protected properties                           *
+		 ***************************************************************************/
+		protected var m_forms : Array;
+		protected var m_Buttons : Array;
+		protected var m_activeFormIndex : int;
+
+
 		/***************************************************************************
-		*                              Public methods                              *
-		***************************************************************************/
-		public function FormSet() 
+		 *                              Public methods                              *
+		 ***************************************************************************/
+		public function FormSet()
 		{
 		}
-		
+
 		public function data() : Array
 		{
 			var data : Array = [];
@@ -46,63 +48,63 @@ package reprise.controls.html
 			}
 			return data;
 		}
-		
-		public function flattenedData():Object
+
+		public function flattenedData() : Object
 		{
-			var data:Object = {};
-			for each (var form:Form in m_forms)
+			var data : Object = {};
+			for each (var form : Form in m_forms)
 			{
 				var formData : Object = form.data();
-				for (var key:String in formData)
+				for (var key : String in formData)
 				{
 					data[key] = formData[key];
 				}
 			}
 			return data;
 		}
-		
-		public function activeFormIndex():int
+
+		public function activeFormIndex() : int
 		{
 			return m_activeFormIndex;
 		}
-		
-		public function activeForm():Form
+
+		public function activeForm() : Form
 		{
 			return Form(m_forms[m_activeFormIndex]);
 		}
-		
-		public function numForms():int
+
+		public function numForms() : int
 		{
 			return m_forms.length;
 		}
-		
-		public function setActiveFormIndex(index:int):void
+
+		public function setActiveFormIndex(index : int) : void
 		{
 			applyFormIndex(index, false);
 		}
-		
-		public function setValidationDisabled(bFlag:Boolean):void
+
+		public function setValidationDisabled(bFlag : Boolean) : void
 		{
-			for each (var form:Form in m_forms)
+			for each (var form : Form in m_forms)
 			{
 				form.setValidationDisabled(bFlag);
 			}
 		}
-		
-		
-		
+
+
 		/***************************************************************************
-		*                             protected methods                            *
-		***************************************************************************/
+		 *                             protected methods                            *
+		 ***************************************************************************/
 		protected override function initialize() : void
 		{
 			super.initialize();
 			m_forms = [];
+			m_Buttons = [];
 			m_activeFormIndex = -1;
 			addEventListener(DisplayEvent.ADDED_TO_DOCUMENT, self_displayObjectAdded);
 			addEventListener(DisplayEvent.REMOVED_FROM_DOCUMENT, self_displayObjectRemoved);
 		}
-		
+
 		protected override function validateBeforeChildren() : void
 		{
 			super.validateBeforeChildren();
@@ -120,7 +122,7 @@ package reprise.controls.html
 			applyFormIndex(m_activeFormIndex, false);
 		}
 
-		protected function applyFormIndex(index:int, dispatchEvents : Boolean) : void
+		protected function applyFormIndex(index : int, dispatchEvents : Boolean) : void
 		{
 			index = Math.max(Math.min(index, m_forms.length - 1), 0);
 			if (index == m_activeFormIndex)
@@ -128,10 +130,10 @@ package reprise.controls.html
 				return;
 			}
 
-			var oldIndex:int = m_activeFormIndex;
-			var newIndex:int = index;
-			
-			var event:FormEvent;
+			var oldIndex : int = m_activeFormIndex;
+			var newIndex : int = index;
+
+			var event : FormEvent;
 			if (dispatchEvents && m_activeFormIndex != -1)
 			{
 				event = new FormEvent(FormEvent.FORM_WILL_CHANGE, false, true);
@@ -160,13 +162,17 @@ package reprise.controls.html
 				dispatchEvent(event);
 			}
 		}
-		
+
 		protected function addForm(form : Form) : void
 		{
+			if (m_forms.indexOf(form) > -1)
+			{
+				return;
+			}
 			m_forms.push(form);
 			form.addEventListener(FormEvent.SUBMIT, form_submit);
 			form.addEventListener(FormEvent.BACK, form_back);
-			
+
 			if (m_firstDraw)
 			{
 				if (m_activeFormIndex == -1 || m_activeFormIndex == m_forms.length - 1)
@@ -175,32 +181,64 @@ package reprise.controls.html
 				}
 			}
 		}
-		
+
 		protected function removeForm(form : Form) : void
 		{
-			var index:int = m_forms.indexOf(form);
+			var index : int = m_forms.indexOf(form);
 			form.removeEventListener(FormEvent.SUBMIT, form_submit);
 			form.removeEventListener(FormEvent.BACK, form_back);
 			m_forms.splice(index, 1);
 		}
-		
-		protected function self_displayObjectAdded(e:Event):void
+
+		protected function addButton(button : AbstractButton) : void
+		{
+			//ignore all buttons inside of forms
+			var parent : UIObject = button.parentElement();
+			while (parent != this)
+			{
+				if (parent is Form)
+				{
+					return;
+				}
+			}
+			m_Buttons.push(button);
+			button.addEventListener(MouseEvent.CLICK, button_click);
+		}
+
+		protected function removeButton(button : AbstractButton) : void
+		{
+			m_Buttons.splice(m_Buttons.indexOf(button), 1);
+			button.removeEventListener(MouseEvent.CLICK, button_click);
+		}
+
+		protected function self_displayObjectAdded(e : Event) : void
 		{
 			if (e.target is Form)
 			{
+				log(e.target);
 				addForm(Form(e.target));
 			}
+			else if ((e.target is SubmitButton) || (e.target is BackButton))
+			{
+				addButton(AbstractButton(e.target));
+			}
 		}
-		
-		protected function self_displayObjectRemoved(e:Event):void
+
+		protected function self_displayObjectRemoved(e : Event) : void
 		{
 			if (e.target is Form)
 			{
+				log(e.target);
 				removeForm(Form(e.target));
 			}
+			else if (((e.target is SubmitButton) || (e.target is BackButton))
+				&& m_Buttons.indexOf(e.target) > -1)
+			{
+				removeButton(AbstractButton(e.target));
+			}
 		}
-		
-		protected function form_submit(e:FormEvent):void
+
+		protected function form_submit(e : FormEvent) : void
 		{
 			if (m_activeFormIndex == m_forms.length - 1)
 			{
@@ -211,10 +249,17 @@ package reprise.controls.html
 				applyFormIndex(m_activeFormIndex + 1, true);
 			}
 		}
-		
-		protected function form_back(e:FormEvent):void
+
+		protected function form_back(e : FormEvent) : void
 		{
 			applyFormIndex(m_activeFormIndex - 1, true);
+		}
+
+		private function button_click(event : MouseEvent) : void
+		{
+			const eventType : String = event.target is SubmitButton
+				? FormEvent.SUBMIT : FormEvent.BACK;
+			activeForm().dispatchEvent(new FormEvent(eventType));
 		}
 	}
 }
