@@ -132,37 +132,42 @@ package reprise.controls.html
 
 			var oldIndex : int = m_activeFormIndex;
 			var newIndex : int = index;
+			
+			var form : Form;
 
 			var event : FormEvent;
-			if (dispatchEvents && m_activeFormIndex != -1)
+			if (m_activeFormIndex != -1)
 			{
-				event = new FormEvent(FormEvent.FORM_WILL_CHANGE, false, true);
+				if (dispatchEvents && hasEventListener(FormEvent.FORM_WILL_CHANGE))
+				{
+					event = new FormEvent(FormEvent.FORM_WILL_CHANGE, false, true);
+					event.oldIndex = oldIndex;
+					event.newIndex = newIndex;
+					dispatchEvent(event);
+					if (event.isDefaultPrevented())
+					{
+						return;
+					}
+				}
+				form = activeForm();
+				removeCSSClass(form.cssID);
+				form.deactivate();
+			}
+
+			m_activeFormIndex = index;
+			form = activeForm();
+			addCSSClass(form.cssID);
+			form.activate();
+			invalidate();
+
+			if (dispatchEvents && hasEventListener(FormEvent.FORM_CHANGE))
+			{
+				event = new FormEvent(FormEvent.FORM_CHANGE);
 				event.oldIndex = oldIndex;
 				event.newIndex = newIndex;
 				dispatchEvent(event);
-				if (event.isDefaultPrevented())
-				{
-					return;
-				}
-			}
-
-			if (m_activeFormIndex != -1)
-			{
-				Form(m_forms[m_activeFormIndex]).deactivate();
-			}
-			Form(m_forms[index]).activate();
-			m_activeFormIndex = index;
-			invalidate();
-
-			event = new FormEvent(FormEvent.FORM_CHANGE);
-			event.oldIndex = oldIndex;
-			event.newIndex = newIndex;
-			if (dispatchEvents)
-			{
-				dispatchEvent(event);
 			}
 		}
-
 		protected function addForm(form : Form) : void
 		{
 			if (m_forms.indexOf(form) > -1)
@@ -215,7 +220,6 @@ package reprise.controls.html
 		{
 			if (e.target is Form)
 			{
-				log(e.target);
 				addForm(Form(e.target));
 			}
 			else if ((e.target is SubmitButton) || (e.target is BackButton))
@@ -228,7 +232,6 @@ package reprise.controls.html
 		{
 			if (e.target is Form)
 			{
-				log(e.target);
 				removeForm(Form(e.target));
 			}
 			else if (((e.target is SubmitButton) || (e.target is BackButton))
@@ -252,7 +255,10 @@ package reprise.controls.html
 
 		protected function form_back(e : FormEvent) : void
 		{
-			applyFormIndex(m_activeFormIndex - 1, true);
+			if (m_activeFormIndex > 0)
+			{
+				applyFormIndex(m_activeFormIndex - 1, true);
+			}
 		}
 
 		private function button_click(event : MouseEvent) : void
